@@ -1,0 +1,75 @@
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. User & Profile Models
+model User {
+  id          String        @id @default(uuid())
+  phoneNumber String?       @unique
+  email       String?       @unique
+  password    String?       // Optional if only using OTP
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  profiles    Profile?
+  testAttempts TestAttempt[]
+}
+
+model Profile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName  String
+  targetExam String   @default("JEE")
+  avatarUrl String?
+}
+
+// 2. Exam Structure Models
+model Exam {
+  id          String   @id @default(uuid())
+  name        String   // e.g., "JEE Main"
+  shifts      Shift[]
+}
+
+model Shift {
+  id        String     @id @default(uuid())
+  examId    String
+  exam      Exam       @relation(fields: [examId], references: [id], onDelete: Cascade)
+  name      String     // e.g., "2026 Jan Shift 1"
+  date      DateTime
+  questions Question[]
+  attempts  TestAttempt[]
+}
+
+model Question {
+  id            String   @id @default(uuid())
+  shiftId       String
+  shift         Shift    @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  subject       String   // "Physics", "Chemistry", "Math"
+  questionText  String   @db.Text
+  imageUrl      String?  // If question contains a complex diagram
+  optionA       String   @db.Text
+  optionB       String   @db.Text
+  optionC       String   @db.Text
+  optionD       String   @db.Text
+  correctOption String   // "A", "B", "C", or "D"
+  positiveMarks Int      @default(4)
+  negativeMarks Int      @default(-1)
+}
+
+// 3. Post-Exam Storage Models
+model TestAttempt {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shiftId      String
+  shift        Shift    @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  score        Int
+  submittedAt  DateTime @default(now())
+  answersSaved Json     // Stores final chosen answers and per-question time array as JSON block
+}
