@@ -1,7 +1,5 @@
 const redisClient = require('../config/redis');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
+const prisma = require("../lib/prisma");
 // 1. Save mid-test question answer and current elapsed time to Redis cache
 exports.saveAnswerToCache = async (req, res) => {
   try {
