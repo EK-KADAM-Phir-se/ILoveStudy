@@ -31,10 +31,9 @@ const Login = () => {
         return;
       }
 
-      // 👇 PLACE THE NEW CODE RIGHT HERE! 👇
-     localStorage.setItem('token', data.token);
-router.push('/dashboard'); // Changed target to a clean core dashboard!
-      
+      localStorage.setItem('token', data.token);
+      router.push('/pages/dashboard');
+
     } catch (err) {
       setError('Failed to connect to the server.');
     }
@@ -45,31 +44,31 @@ router.push('/dashboard'); // Changed target to a clean core dashboard!
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
         {error && <div className="text-red-500 text-sm font-semibold">{error}</div>}
 
-        <input 
-          type="text" 
-          placeholder="Email Address" 
+        <input
+          type="text"
+          placeholder="Email Address"
           value={email}
-          onChange={(e) => setEmail(e.target.value)} 
+          onChange={(e) => setEmail(e.target.value)}
           className="border p-2 rounded text-black w-full"
           required
         />
-        
-        <input 
-          type="password" 
-          placeholder="Password" 
+
+        <input
+          type="password"
+          placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)} 
+          onChange={(e) => setPassword(e.target.value)}
           className="border p-2 rounded text-black w-full"
           required
         />
 
         {/* Conditionally show Confirm Password if registering */}
         {isRegistering && (
-          <input 
-            type="password" 
-            placeholder="Confirm Password" 
+          <input
+            type="password"
+            placeholder="Confirm Password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)} 
+            onChange={(e) => setConfirmPassword(e.target.value)}
             className="border p-2 rounded text-black w-full"
             required
           />
@@ -81,7 +80,7 @@ router.push('/dashboard'); // Changed target to a clean core dashboard!
       </form>
 
       <div className="text-center mt-4">
-        <button 
+        <button
           onClick={() => { setIsRegistering(!isRegistering); setError(''); }}
           className="text-blue-600 hover:underline text-sm"
         >

@@ -10,7 +10,6 @@ const ExamDashboard = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-        
         if (!response.ok) throw new Error('Failed to fetch exams');
         
         const data = await response.json();
