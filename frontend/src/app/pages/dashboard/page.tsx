@@ -6,17 +6,23 @@ import { useRouter } from 'next/navigation';
 export default function GeneralDashboard() {
   const router = useRouter();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) router.push('/login');
-  }, [router]);
-
-  const student = {
+  const [student, setStudent] = useState({
     name: "Raushan Kumar",
     age: 20,
     examPrep: "Mechatronics Engineering & Competitive Exams"
-  };
+  });
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    } else {
+      const storedName = localStorage.getItem('displayName');
+      if (storedName) {
+        setStudent(prev => ({ ...prev, name: storedName }));
+      }
+    }
+  }, [router]);
 
   const exams = [
     { id: 'jee-mains', name: 'JEE Mains', route: '/pages/dashboard/jee-mains?type=mains', category: 'Engineering' },
@@ -27,6 +33,7 @@ export default function GeneralDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('displayName');
     router.push('/login');
   };
 
