@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient(); // Connects to your PostgreSQL database directly
+const prisma = require("../lib/prisma");
+// const prisma = new PrismaClient(); // Connects to your PostgreSQL database directly
 const bcrypt = require('bcryptjs'); //  Use the installed bcryptjs package!
 const jwt = require('jsonwebtoken');
 const redisClient = require('../config/redis'); // Your ioredis config
