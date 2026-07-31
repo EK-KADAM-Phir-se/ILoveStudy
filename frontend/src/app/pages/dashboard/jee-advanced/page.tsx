@@ -15,7 +15,7 @@ export default function JeeAdvancedDashboard() {
   return (
     <div className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-4xl mx-auto mb-4">
-        <button onClick={() => router.push('/dashboard')} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">&larr; Back to Dashboard</button>
+        <button onClick={() => router.push('/pages/dashboard')} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">&larr; Back to Dashboard</button>
       </div>
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
         <h1 className="text-3xl font-extrabold text-slate-900 mb-2">JEE Advanced Ultimate Portal</h1>
@@ -23,12 +23,11 @@ export default function JeeAdvancedDashboard() {
 
         <div className="space-y-3 mb-8">
           {papers.map((paper) => (
-            <div 
+            <div
               key={paper.id}
               onClick={() => setSelectedPaper(paper.name)}
-              className={`p-5 border-2 rounded-xl cursor-pointer transition flex justify-between items-center ${
-                selectedPaper === paper.name ? 'border-indigo-600 bg-indigo-50/50' : 'border-slate-200 bg-white hover:border-indigo-300'
-              }`}
+              className={`p-5 border-2 rounded-xl cursor-pointer transition flex justify-between items-center ${selectedPaper === paper.name ? 'border-indigo-600 bg-indigo-50/50' : 'border-slate-200 bg-white hover:border-indigo-300'
+                }`}
             >
               <div>
                 <p className="font-bold text-slate-800">{paper.name}</p>

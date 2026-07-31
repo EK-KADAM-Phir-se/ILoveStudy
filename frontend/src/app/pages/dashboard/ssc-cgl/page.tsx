@@ -10,7 +10,7 @@ export default function SscCglDashboard() {
   return (
     <div className="min-h-screen bg-zinc-50 p-6">
       <div className="max-w-4xl mx-auto mb-4">
-        <button onClick={() => router.push('/dashboard')} className="text-sm font-semibold text-emerald-600 hover:text-emerald-800 flex items-center gap-1">&larr; Back to Dashboard</button>
+        <button onClick={() => router.push('/pages/dashboard')} className="text-sm font-semibold text-emerald-600 hover:text-emerald-800 flex items-center gap-1">&larr; Back to Dashboard</button>
       </div>
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-zinc-200">
         <h1 className="text-3xl font-extrabold text-zinc-900 mb-2">SSC CGL Combined Graduate Level</h1>
@@ -18,12 +18,11 @@ export default function SscCglDashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           {['Tier 1: Prelims Mock', 'Tier 2: Mains Mock'].map((tier) => (
-            <div 
+            <div
               key={tier}
               onClick={() => setSelectedTier(tier)}
-              className={`p-6 border-2 rounded-xl cursor-pointer transition text-left ${
-                selectedTier === tier ? 'border-emerald-600 bg-emerald-50/30' : 'border-zinc-200 bg-white hover:border-emerald-400'
-              }`}
+              className={`p-6 border-2 rounded-xl cursor-pointer transition text-left ${selectedTier === tier ? 'border-emerald-600 bg-emerald-50/30' : 'border-zinc-200 bg-white hover:border-emerald-400'
+                }`}
             >
               <p className="font-bold text-zinc-800 text-lg">{tier}</p>
               <p className="text-xs text-emerald-600 font-medium mt-2">● 100 Questions Live</p>

@@ -19,10 +19,10 @@ export default function GeneralDashboard() {
   };
 
   const exams = [
-    { id: 'jee-mains', name: 'JEE Mains', route: '/dashboard/jee-mains?type=mains', category: 'Engineering' },
-    { id: 'jee-advanced', name: 'JEE Advanced', route: '/dashboard/jee-mains?type=advanced', category: 'Engineering' }, // Fixed folder to jee-mains
-    { id: 'ssc-cgl', name: 'SSC CGL', route: '/dashboard/ssc-cgl', category: 'Staff Selection' },                       // Fixed folder to ssc-cgl
-    { id: 'ssc-chsl', name: 'SSC CHSL', route: '/dashboard/ssc-cgl', category: 'Staff Selection' },                      // Maps correctly to your ssc layout
+    { id: 'jee-mains', name: 'JEE Mains', route: '/pages/dashboard/jee-mains?type=mains', category: 'Engineering' },
+    { id: 'jee-advanced', name: 'JEE Advanced', route: '/pages/dashboard/jee-advanced', category: 'Engineering' },
+    { id: 'ssc-cgl', name: 'SSC CGL', route: '/pages/dashboard/ssc-cgl', category: 'Staff Selection' },
+    { id: 'ssc-chsl', name: 'SSC CHSL', route: '/pages/dashboard/ssc-chsl', category: 'Staff Selection' },
   ];
 
   const handleLogout = () => {
@@ -35,9 +35,9 @@ export default function GeneralDashboard() {
       {/* Top Navbar Header */}
       <header className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center relative z-50 w-full">
         <h1 className="text-2xl font-extrabold text-blue-600 tracking-wide">ILoveStudy</h1>
-        
+
         <div className="relative">
-          <button 
+          <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="h-10 w-10 bg-blue-600 text-white rounded-full font-bold flex items-center justify-center shadow hover:bg-blue-700 transition focus:outline-none"
           >
@@ -54,7 +54,7 @@ export default function GeneralDashboard() {
                 <p><strong>Age:</strong> {student.age}</p>
                 <p><strong>Target:</strong> {student.examPrep}</p>
               </div>
-              <button 
+              <button
                 onClick={handleLogout}
                 className="w-full bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-center py-2 rounded-lg font-semibold text-sm transition"
               >
@@ -68,10 +68,10 @@ export default function GeneralDashboard() {
       {/* Main Body Content List - Stretched to Full Width */}
       <main className="w-full px-8 py-6 flex-grow">
         <p className="text-gray-500 mb-6 text-sm">Select an active exam stream below to open your workspace.</p>
-        
+
         <div className="space-y-4 w-full">
           {exams.map((exam) => (
-            <div 
+            <div
               key={exam.id}
               onClick={() => router.push(exam.route)}
               className="w-full bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex justify-between items-center cursor-pointer hover:border-blue-500 hover:bg-blue-50/30 transition"

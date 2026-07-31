@@ -12,14 +12,14 @@ interface PageProps {
 
 export default function YearWorkspacePage({ params }: PageProps) {
   const router = useRouter();
-  
+
   // Next.js magically extracts the year from the URL!
-  const currentYear = params.year; 
+  const currentYear = params.year;
 
   return (
     <div className="p-8">
-      <button 
-        onClick={() => router.push('/dashboard/jee-mains?type=mains')} 
+      <button
+        onClick={() => router.push('/pages/dashboard/jee-mains?type=mains')}
         className="text-blue-600 mb-6 font-bold"
       >
         &larr; Back to Years List

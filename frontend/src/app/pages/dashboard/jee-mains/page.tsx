@@ -27,11 +27,11 @@ const advancedPapersData = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018
 export default function JeeExamPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const examType = searchParams.get('type') || 'mains';
   const isAdvanced = examType === 'advanced';
   const displayName = isAdvanced ? 'JEE Advanced' : 'JEE Mains';
-  
+
   const [expandedYear, setExpandedYear] = useState<number | null>(null);
   const years = Array.from({ length: 10 }, (_, index) => 2026 - index);
 
@@ -44,7 +44,7 @@ export default function JeeExamPage() {
       {/* Top Header */}
       <header className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center w-full">
         <div className="flex items-center space-x-4">
-          <button onClick={() => router.push('/dashboard')} className="text-gray-600 hover:text-blue-600 font-semibold text-sm transition">
+          <button onClick={() => router.push('/pages/dashboard')} className="text-gray-600 hover:text-blue-600 font-semibold text-sm transition">
             &larr; Dashboard
           </button>
           <span className="text-gray-300">|</span>
@@ -55,11 +55,11 @@ export default function JeeExamPage() {
       {/* Main Container */}
       <main className="w-full px-8 py-6 flex-grow">
         <p className="text-gray-500 mb-6 text-sm">
-          {isAdvanced 
-            ? "Select an examination year to instantly access Paper 1 and Paper 2 workspaces." 
+          {isAdvanced
+            ? "Select an examination year to instantly access Paper 1 and Paper 2 workspaces."
             : `Select a year to explore its ${expandedYear === 2026 ? '10' : '16'} shifted papers divided by session attempts.`}
         </p>
-        
+
         <div className="space-y-4 w-full">
           {years.map((year) => {
             const isExpanded = expandedYear === year;
@@ -68,11 +68,10 @@ export default function JeeExamPage() {
             return (
               <div key={year} className="w-full bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition">
                 {/* Accordion Row Clicker */}
-                <div 
+                <div
                   onClick={() => setExpandedYear(isExpanded ? null : year)}
-                  className={`w-full p-5 flex justify-between items-center cursor-pointer transition ${
-                    isExpanded ? 'bg-blue-50/40 border-b border-gray-100' : 'hover:bg-gray-50/50'
-                  }`}
+                  className={`w-full p-5 flex justify-between items-center cursor-pointer transition ${isExpanded ? 'bg-blue-50/40 border-b border-gray-100' : 'hover:bg-gray-50/50'
+                    }`}
                 >
                   <span className="text-xl font-bold text-gray-800">{year} Papers</span>
                   <span className="text-blue-600 font-semibold text-sm">
@@ -86,7 +85,7 @@ export default function JeeExamPage() {
                     {isAdvanced ? (
                       /* ====== JEE ADVANCED VIEW ====== */
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div 
+                        <div
                           onClick={() => handleStartExam("Paper 1 (PCM)", year)}
                           className="bg-white p-5 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50/10 cursor-pointer transition flex justify-between items-center group"
                         >
@@ -99,7 +98,7 @@ export default function JeeExamPage() {
                           </span>
                         </div>
 
-                        <div 
+                        <div
                           onClick={() => handleStartExam("Paper 2 (PCM)", year)}
                           className="bg-white p-5 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50/10 cursor-pointer transition flex justify-between items-center group"
                         >
