@@ -1,0 +1,754 @@
+{
+    "questions": [
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $A = \\begin{bmatrix} \\frac{1}{\\sqrt{2}} & -2 \\\\ 0 & 1 \\end{bmatrix}$ and $P = \\begin{bmatrix} \\cos\\theta & -\\sin\\theta \\\\ \\sin\\theta & \\cos\\theta \\end{bmatrix}$, $\\theta > 0$. If $B = PAP^T$, $C = P^T B^{10} P$ and the sum of the diagonal elements of C is $\\frac{m}{n}$, where $\\gcd(m, n) = 1$, then $m + n$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 127",
+            "optionB": "(2) 258",
+            "optionC": "(3) 65",
+            "optionD": "(4) 2049",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If the components of $\\vec{a} = \\alpha\\hat{i} + \\beta\\hat{j} + \\gamma\\hat{k}$ along and perpendicular to $\\vec{b} = 3\\hat{i} + \\hat{j} - \\hat{k}$ respectively, are $\\frac{16}{11}(3\\hat{i} + \\hat{j} - \\hat{k})$ and $\\frac{1}{11}(-4\\hat{i} - 5\\hat{j} - 17\\hat{k})$, then $\\alpha^2 + \\beta^2 + \\gamma^2$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 26",
+            "optionB": "(2) 18",
+            "optionC": "(3) 23",
+            "optionD": "(4) 16",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let A, B, C be three points in $xy$-plane, whose position vector are given by $\\sqrt{3}\\hat{i} + \\hat{j}$, $\\hat{i} + \\sqrt{3}\\hat{j}$ and $a\\hat{i} + (1 - a)\\hat{j}$ respectively with respect to the origin O . If the distance of the point C from the line bisecting the angle between the vectors $\\vec{OA}$ and $\\vec{OB}$ is $\\frac{9}{\\sqrt{2}}$, then the sum of all the possible values of a is :",
+            "imageUrl": null,
+            "optionA": "(1) 2",
+            "optionB": "(2) 9/2",
+            "optionC": "(3) 1",
+            "optionD": "(4) 0",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let the coefficients of three consecutive terms $T_r, T_{r+1}$ and $T_{r+2}$ in the binomial expansion of $(a + b)^{12}$ be in a G.P. and let p be the number of all possible values of r. Let q be the sum of all rational terms in the binomial expansion of $(\\sqrt[3]{3} + \\sqrt[4]{4})^{12}$. Then $p + q$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 283",
+            "optionB": "(2) 287",
+            "optionC": "(3) 295",
+            "optionD": "(4) 299",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $[x]$ denote the greatest integer less than or equal to x. Then the domain of $f(x) = \\sec^{-1}(2[x] + 1)$ is :",
+            "imageUrl": null,
+            "optionA": "(1) $(-\\infty, -1] \\cup [0,\\infty)$",
+            "optionB": "(2) $(-\\infty, -1] \\cup [1,\\infty)$",
+            "optionC": "(3) $(-\\infty,\\infty)$",
+            "optionD": "(4) $(-\\infty,\\infty) - \\{0\\}$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let S be the set of all the words that can be formed by arranging all the letters of the word GARDEN. From the set S, one word is selected at random. The probability that the selected word will NOT have vowels in alphabetical order is :",
+            "imageUrl": null,
+            "optionA": "(1) 1/2",
+            "optionB": "(2) 1/4",
+            "optionC": "(3) 2/3",
+            "optionD": "(4) 1/3",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $\\sum_{r=1}^{13} \\left\\{ \\frac{1}{\\sin(\\frac{\\pi}{4} + (r-1)\\frac{\\pi}{6}) \\sin(\\frac{\\pi}{4} + \\frac{r\\pi}{6})} \\right\\} = a\\sqrt{3} + b, a, b \\in \\mathbb{Z}$, then $a^2 + b^2$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 10",
+            "optionB": "(2) 4",
+            "optionC": "(3) 2",
+            "optionD": "(4) 8",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let f be a real valued continuous function defined on the positive real axis such that $g(x) = \\int_0^x t f(t) dt$. If $g(x^3) = x^6 + x^7$, then value of $\\sum_{r=1}^{15} f(r^3)$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 270",
+            "optionB": "(2) 340",
+            "optionC": "(3) 320",
+            "optionD": "(4) 310",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $f : [0, 3] \\to A$ be defined by $f(x) = 2x^3 - 15x^2 + 36x + 7$ and $g : [0,\\infty) \\to B$ be defined by $g(x) = \\frac{x^{2025}}{x^{2025}+1}$. If both the functions are onto and $S = \\{x \\in \\mathbb{Z} : x \\in A \\text{ or } x \\in B\\}$, then $n(S)$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 29",
+            "optionB": "(2) 30",
+            "optionC": "(3) 31",
+            "optionD": "(4) 36",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Bag $B_1$ contains 6 white and 4 blue balls, Bag $B_2$ contains 4 white and 6 blue balls, and Bag $B_3$ contains 5 white and 5 blue balls. One of the bags is selected at random and a ball is drawn from it. If the ball is white, then the probability, that the ball is drawn from Bag $B_2$, is :",
+            "imageUrl": null,
+            "optionA": "(1) 4/15",
+            "optionB": "(2) 1/3",
+            "optionC": "(3) 2/5",
+            "optionD": "(4) 2/3",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $f : \\mathbb{R} \\to \\mathbb{R}$ be a twice differentiable function such that $f(2) = 1$. If $F(x) = xf(x)$ for all $x \\in \\mathbb{R}$, $\\int_0^2 x F'(x)dx = 6$ and $\\int_0^2 x^2 F''(x)dx = 40$, then $F'(2) + \\int_0^2 F(x)dx$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 11",
+            "optionB": "(2) 13",
+            "optionC": "(3) 15",
+            "optionD": "(4) 9",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "For positive integers n, if $4a_n = (n^2 + 5n + 6)$ and $S_n = \\sum_{k=1}^n \\left(\\frac{1}{a_k}\\right)$, then the value of $507S_{2025}$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 540",
+            "optionB": "(2) 675",
+            "optionC": "(3) 1350",
+            "optionD": "(4) 135",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $f : \\mathbb{R} - \\{0\\} \\to (-\\infty, 1)$ be a polynomial of degree 2, satisfying $f(x)f(\\frac{1}{x}) = f(x) + f(\\frac{1}{x})$. If $f(K) = -2K$, then the sum of squares of all possible values of K is :",
+            "imageUrl": null,
+            "optionA": "(1) 7",
+            "optionB": "(2) 6",
+            "optionC": "(3) 1",
+            "optionD": "(4) 9",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If A and B are the points of intersection of the circle $x^2 + y^2 - 8x = 0$ and the hyperbola $\\frac{x^2}{9} - \\frac{y^2}{4} = 1$ and a point P moves on the line $2x - 3y + 4 = 0$, then the centroid of $\\triangle\\text{PAB}$ lies on the line :",
+            "imageUrl": null,
+            "optionA": "(1) $x + 9y = 36$",
+            "optionB": "(2) $4x - 9y = 12$",
+            "optionC": "(3) $6x - 9y = 20$",
+            "optionD": "(4) $9x - 9y = 32$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $f(x) = \\int \\frac{1}{x^{1/4}(1+x^{1/4})} dx$, $f(0) = -6$, then $f(1)$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) $4(\\log_e 2 - 2)$",
+            "optionB": "(2) $2 - \\log_e 2$",
+            "optionC": "(3) $\\log_e 2 + 2$",
+            "optionD": "(4) $4(\\log_e 2 + 2)$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The area of the region bounded by the curves $x(1 + y^2) = 1$ and $y^2 = 2x$ is:",
+            "imageUrl": null,
+            "optionA": "(1) $2\\left(\\frac{\\pi}{2} - \\frac{1}{3}\\right)$",
+            "optionB": "(2) $\\frac{\\pi}{2} - \\frac{1}{3}$",
+            "optionC": "(3) $\\frac{\\pi}{4} - \\frac{1}{3}$",
+            "optionD": "(4) $\\frac{1}{2}\\left(\\frac{\\pi}{2} - \\frac{1}{3}\\right)$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The square of the distance of the point $\\left(\\frac{15}{7}, \\frac{32}{7}, 7\\right)$ from the line $\\frac{x+1}{3} = \\frac{y+3}{5} = \\frac{z+5}{7}$ in the direction of the vector $\\hat{i} + 4\\hat{j} + 7\\hat{k}$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 54",
+            "optionB": "(2) 44",
+            "optionC": "(3) 41",
+            "optionD": "(4) 66",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If the midpoint of a chord of the ellipse $\\frac{x^2}{9} + \\frac{y^2}{4} = 1$ is $(\\sqrt{2}, 4/3)$, and the length of the chord is $\\frac{2\\sqrt{\\alpha}}{3}$, then $\\alpha$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 20",
+            "optionB": "(2) 22",
+            "optionC": "(3) 18",
+            "optionD": "(4) 26",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $\\alpha + i\\beta$ and $\\gamma + i\\delta$ are the roots of $x^2 - (3 - 2i)x - (2i - 2) = 0$, $i = \\sqrt{-1}$, then $\\alpha\\gamma + \\beta\\delta$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) -2",
+            "optionB": "(2) 6",
+            "optionC": "(3) -6",
+            "optionD": "(4) 2",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Two equal sides of an isosceles triangle are along $-x + 2y = 4$ and $x + y = 4$. If m is the slope of its third side, then the sum, of all possible distinct values of m, is :",
+            "imageUrl": null,
+            "optionA": "(1) $-2\\sqrt{10}$",
+            "optionB": "(2) 12",
+            "optionC": "(3) 6",
+            "optionD": "(4) -6",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let A and B be the two points of intersection of the line $y + 5 = 0$ and the mirror image of the parabola $y^2 = 4x$ with respect to the line $x + y + 4 = 0$. If d denotes the distance between A and B , and a denotes the area of $\\triangle\\text{SAB}$, where S is the focus of the parabola $y^2 = 4x$, then the value of $(a + d)$ is _______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "14"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The number of natural numbers, between 212 and 999 , such that the sum of their digits is 15 , is _______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "64"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $y = y(x)$ is the solution of the differential equation $\\sqrt{4-x^2}\\frac{dy}{dx} = ((\\sin^{-1}(\\frac{x}{2}))^2 - y)\\sin^{-1}(\\frac{x}{2})$, $-2 \\le x \\le 2$, $y(2) = \\frac{\\pi^2-8}{4}$, then $y^2(0)$ is equal to _______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "4"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The interior angles of a polygon with n sides, are in an A.P. with common difference $6^circ$. If the largest interior angle of the polygon is $219^circ$, then n is equal to _______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "20"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $f(x) = \\lim_{n \\to \\infty} \\sum_{r=0}^n \\left( \\frac{\\tan(x/2^{r+1})+\\tan^3(x/2^{r+1})}{1-\\tan^2(x/2^{r+1})} \\right)$. Then $\\lim_{x \\to 0} \\frac{e^x - e^{f(x)}}{x-f(x)}$ is equal to _______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "1"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A bar magnet has total length $2l = 20\\text{ units}$ and the field point P is at a distance $d = 10\\text{ units}$ from the centre of the magnet. If the relative uncertainty of length measurement is 1%, then uncertainty of the magnetic field at point P is :",
+            "imageUrl": "28th_jan_s2_q26_diagram.png",
+            "optionA": "(1) 4%",
+            "optionB": "(2) 15%",
+            "optionC": "(3) 5%",
+            "optionD": "(4) 10%",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A concave mirror produces an image of an object such that the distance between the object and image is 20 cm . If the magnification of the image is ' -3 ', then the magnitude of the radius of curvature of the mirror is :",
+            "imageUrl": null,
+            "optionA": "(1) 30 cm",
+            "optionB": "(2) 3.75 cm",
+            "optionC": "(3) 15 cm",
+            "optionD": "(4) 7.5 cm",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The velocity-time graph of an object moving along a straight line is shown in figure. What is the distance covered by the object between $t = 0$ to $t = 4\\text{ s}$ ?",
+            "imageUrl": "28th_jan_s2_q28_diagram.png",
+            "optionA": "(1) 30 m",
+            "optionB": "(2) 11 m",
+            "optionC": "(3) 10 m",
+            "optionD": "(4) 13 m",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A body of mass 4 kg is placed on a plane at a point P having coordinate $(3, 4)\\text{m}$. Under the action of force $\\vec{F} = (2\\hat{i} + 3\\hat{j})\\text{N}$, it moves to a new point Q having coordinates $(6, 10)\\text{m}$ in 4 sec . The average power and instantaneous power at the end of 4 sec are in the ratio of :",
+            "imageUrl": null,
+            "optionA": "(1) 13 : 6",
+            "optionB": "(2) 4 : 3",
+            "optionC": "(3) 1 : 2",
+            "optionD": "(4) 6 : 13",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Match List - I with List - II.",
+            "imageUrl": "28th_jan_s2_q30_diagram.png",
+            "optionA": "(1) (A)-(II), (B)-(I), (C)-(IV), (D)-(III)",
+            "optionB": "(2) (A)-(I), (B)-(III), (C)-(IV), (D)-(II)",
+            "optionC": "(3) (A)-(III), (B)-(I), (C)-(II), (D)-(IV)",
+            "optionD": "(4) (A)-(III), (B)-(I), (C)-(IV), (D)-(II)",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A uniform magnetic field of 0.4 T acts perpendicular to a circular copper disc 20 cm in radius. The disc is having a uniform angular velocity of $10\\pi\\text{rads}^{-1}$ about an axis through its centre and perpendicular to the disc. What is the potential difference developed between the axis of the disc and the rim ? ($\\pi = 3.14$)",
+            "imageUrl": null,
+            "optionA": "(1) 0.5024 V",
+            "optionB": "(2) 5 V",
+            "optionC": "(3) 0.2512 V",
+            "optionD": "(4) 0.1256 V",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "An infinite wire has a circular bend of radius a, and carrying a current I as shown in figure. The magnitude of magnetic field at the origin O of the arc is given by :",
+            "imageUrl": "28th_jan_s2_q32_diagram.png",
+            "optionA": "(1) $\\frac{\\mu_0 I}{4\\pi a}[\\frac{\\pi}{2} + 1]$",
+            "optionB": "(2) $\\frac{\\mu_0 I}{4\\pi a}[\\frac{3\\pi}{2} + 2]$",
+            "optionC": "(3) $\\frac{\\mu_0 I}{2\\pi a}[\\frac{\\pi}{2} + 2]$",
+            "optionD": "(4) $\\frac{\\mu_0 I}{4\\pi a}[\\frac{3\\pi}{2} + 1]$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "In a long glass tube, mixture of two liquids A and B with refractive indices 1.3 and 1.4 respectively, forms a convex refractive meniscus towards A. If an object placed at 13 cm from the vertex of the meniscus in A forms an image with a magnification of '-2' then the radius of curvature of meniscus is :",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{1}{3}\\text{ cm}$",
+            "optionB": "(2) $\\frac{4}{3}\\text{ cm}$",
+            "optionC": "(3) 1 cm",
+            "optionD": "(4) $\\frac{2}{3}\\text{ cm}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A 400 g solid cube having an edge of length 10 cm floats in water. How much volume of the cube is outside the water ? (Given : density of water $= 1000\\text{ kg m}^{-3}$)",
+            "imageUrl": null,
+            "optionA": "(1) $1400\\text{ cm}^3$",
+            "optionB": "(2) $600\\text{ cm}^3$",
+            "optionC": "(3) $4000\\text{ cm}^3$",
+            "optionD": "(4) $400\\text{ cm}^3$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Given below are two statements. One is labelled as Assertion (A) and the other is labelled as Reason (R).\nAssertion (A) : Knowing initial position $x_0$ and initial momentum $p_0$ is enough to determine the position and momentum at any time t for a simple harmonic motion with a given angular frequency $\\omega$.\nReason (R): The amplitude and phase can be expressed in terms of $x_0$ and $p_0$.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A) is false but (R) is true",
+            "optionB": "(2) (A) is true but (R) is false",
+            "optionC": "(3) Both (A) and (R) are true but (R) is NOT the correct explanation of (A)",
+            "optionD": "(4) Both (A) and (R) are true and (R) is the correct explanation of (A)",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A uniform rod of mass 250 g having length 100 cm is balanced on a sharp edge at 40 cm mark. A mass of 400 g is suspended at 10 cm mark. To maintain the balance of the rod, the mass to be suspended at 90 cm mark, is",
+            "imageUrl": null,
+            "optionA": "(1) 190 g",
+            "optionB": "(2) 200 g",
+            "optionC": "(3) 300 g",
+            "optionD": "(4) 290 g",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Earth has mass 8 times and radius 2 times that of a planet. If the escape velocity from the earth is $11.2\\text{ km/s}$, the escape velocity in $\\text{km/s}$ from the planet will be :",
+            "imageUrl": null,
+            "optionA": "(1) 2.8",
+            "optionB": "(2) 11.2",
+            "optionC": "(3) 5.6",
+            "optionD": "(4) 8.4",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The magnetic field of an E.M. wave is given by $\\vec{B} = (\\frac{\\sqrt{3}}{2}\\hat{i} + \\frac{1}{2}\\hat{j}) 30 \\sin [\\omega(t - \\frac{z}{c})]$ (S.I. Units). The corresponding electric field in S.I. units is :",
+            "imageUrl": null,
+            "optionA": "(1) $\\vec{E} = (\\frac{1}{2}\\hat{i} - \\frac{\\sqrt{3}}{2}\\hat{j})30c \\sin [\\omega(t - \\frac{z}{c})]$",
+            "optionB": "(2) $\\vec{E} = (\\frac{3}{4}\\hat{i} + \\frac{1}{4}\\hat{j})30c \\cos [\\omega(t - \\frac{z}{c})]$",
+            "optionC": "(3) $\\vec{E} = (\\frac{1}{2}\\hat{i} + \\frac{\\sqrt{3}}{2}\\hat{j})30c \\sin [\\omega(t + \\frac{z}{c})]$",
+            "optionD": "(4) $\\vec{E} = (\\frac{\\sqrt{3}}{2}\\hat{i} - \\frac{1}{2}\\hat{j})30c \\sin [\\omega(t + \\frac{z}{c})]$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The kinetic energy of translation of the molecules in 50 g of $\\text{CO}_2$ gas at $17^\\circ\\text{C}$ is",
+            "imageUrl": null,
+            "optionA": "(1) 4205.5 J",
+            "optionB": "(2) 4102.8 J",
+            "optionC": "(3) 3582.7 J",
+            "optionD": "(4) 3986.3 J",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Which of the following phenomena can not be explained by wave theory of light?",
+            "imageUrl": null,
+            "optionA": "(1) Compton effect",
+            "optionB": "(2) Refraction of light",
+            "optionC": "(3) Reflection of light",
+            "optionD": "(4) Diffraction of light",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A balloon and its content having mass M is moving up with an acceleration 'a'. The mass that must be released from the content so that the balloon starts moving up with an acceleration '3a' will be (Take 'g' as acceleration due to gravity)",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{2Ma}{3a+g}$",
+            "optionB": "(2) $\\frac{3Ma}{2a-g}$",
+            "optionC": "(3) $\\frac{3Ma}{2a+g}$",
+            "optionD": "(4) $\\frac{2Ma}{3a-g}$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The ratio of vapour densities of two gases at the same temperature is $\\frac{4}{25}$, then the ratio of r.m.s. velocities will be:",
+            "imageUrl": null,
+            "optionA": "(1) 25/4",
+            "optionB": "(2) 2/5",
+            "optionC": "(3) 5/2",
+            "optionD": "(4) 4/25",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A parallel plate capacitor of capacitance $1\\mu\\text{ F}$ is charged to a potential difference of 20 V . The distance between plates is $1\\mu\\text{ m}$. The energy density between plates of capacitor is.",
+            "imageUrl": null,
+            "optionA": "(1) $2 \\times 10^{-4}\\text{ J/m}^3$",
+            "optionB": "(2) $1.8 \\times 10^5\\text{ J/m}^3$",
+            "optionC": "(3) $1.8 \\times 10^3\\text{ J/m}^3$",
+            "optionD": "(4) $2 \\times 10^2\\text{ J/m}^3$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The frequency of revolution of the electron in Bohr's orbit varies with n, the principal quantum number as",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{1}{n^4}$",
+            "optionB": "(2) $\\frac{1}{n^2}$",
+            "optionC": "(3) $\\frac{1}{n}$",
+            "optionD": "(4) $\\frac{1}{n^3}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "In the circuit shown here, assuming threshold voltage of diode is negligibly small, then voltage $V_{AB}$ is correctly represented by :",
+            "imageUrl": "28th_jan_s2_q45_diagram.png",
+            "optionA": "(1) $V_{AB}$ would be zero at all times",
+            "optionB": "(2) Plot 2",
+            "optionC": "(3) Plot 3",
+            "optionD": "(4) Plot 4",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A thin transparent film with refractive index 1.4 , is held on circular ring of radius 1.8 cm . The fluid in the film evaporates such that transmission through the film at wavelength 560 nm goes to a minimum every 12 seconds. Assuming that the film is flat on its two sides, the rate of evaporation is $\\pi \\times 10^{-13}\\text{ m}^3/\\text{s}$. The value of evaporation rate is _______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "54"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The value of current I in the electrical circuit as given below, when potential at A is equal to the potential at B, will be ____ A.",
+            "imageUrl": "28th_jan_s2_q47_diagram.png",
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "2"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "An electric dipole of dipole moment $6 \\times 10^{-6}\\text{Cm}$ is placed in uniform electric field of magnitude $10^6\\text{ V/m}$. Initially, the dipole moment is parallel to electric field. The work that needs to be done on the dipole to make its dipole moment opposite to the field, will be ____ J.",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "12"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A conducting bar moves on two conducting rails as shown in the figure. A constant magnetic field B exists into the page. The bar starts to move from the vertex at time $t = 0$ with a constant velocity. If the induced EMF is $E \\propto t^n$, then value of n is _______ .",
+            "imageUrl": "28th_jan_s2_q49_diagram.png",
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "1"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The volume contraction of a solid copper cube of edge length 10 cm , when subjected to a hydraulic pressure of $7 \\times 10^6\\text{ Pa}$, would be ____ $\\text{mm}^3$. (Given bulk modulus of copper $= 1.4 \\times 10^{11}\\text{ N m}^{-2}$ )",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "50"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Concentrated nitric acid is labelled as 75% by mass. The volume in mL of the solution which contains 30 g of nitric acid is ____. Given : Density of nitric acid solution is 1.25 g/mL.",
+            "imageUrl": null,
+            "optionA": "(1) 40",
+            "optionB": "(2) 32",
+            "optionC": "(3) 45",
+            "optionD": "(4) 55",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements :\nStatement (I) : are isomeric compounds. (alkene vs cyclic)\nStatement (II) : are functional group isomers. (amine isomers)\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": "28th_jan_s2_q52_diagram.png",
+            "optionA": "(1) Both Statement I and Statement II are false",
+            "optionB": "(2) Both Statement I and Statement II are true",
+            "optionC": "(3) Statement I is false but Statement II is true",
+            "optionD": "(4) Statement I is true but Statement II is false",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Identify product [A], [B] and [C] in the following reaction sequence.",
+            "imageUrl": "28th_jan_s2_q53_diagram.png",
+            "optionA": "(1) Option 1",
+            "optionB": "(2) Option 2",
+            "optionC": "(3) Option 3",
+            "optionD": "(4) Option 4",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The total number of compounds from below when treated with hot $\\text{KMnO}_4$ giving benzoic acid is :",
+            "imageUrl": "28th_jan_s2_q54_diagram.png",
+            "optionA": "(1) 6",
+            "optionB": "(2) 3",
+            "optionC": "(3) 5",
+            "optionD": "(4) 4",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Match List - I with List - II.\n\nList - I (Complex):\n(A) $[\\text{CoF}_6]^{3-}$\n(B) $[\\text{NiCl}_4]^{2-}$\n(C) $[\\text{Co(NH}_3)_6]^{3+}$\n(D) $[\\text{Ni(CN)}_4]^{2-}$\n\nList - II (Hybridisation of central metal ion):\n(I) $d^2sp^3$\n(II) $sp^3$\n(III) $sp^3d^2$\n(IV) $dsp^2$\n\nChoose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A)-(III), (B)-(II), (C)-(I), (D)-(IV)",
+            "optionB": "(2) (A)-(I), (B)-(IV), (C)-(III), (D)-(II)",
+            "optionC": "(3) (A)-(III), (B)-(IV), (C)-(I), (D)-(II)",
+            "optionD": "(4) (A)-(I), (B)-(II), (C)-(III), (D)-(IV)",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Identify correct statements : (A) Primary amines do not give diazonium salts when treated with $\\text{NaNO}_2$ in acidic condition. (B) Aliphatic and aromatic primary amines on heating with $\\text{CHCl}_3$ and ethanolic KOH form carbylamines. (C) Secondary and tertiary amines also give carbylamine test. (D) Benzenesulfonyl chloride is known as Hinsberg's reagent. (E) Tertiary amines reacts with benzenesulfonyl chloride very easily.\nChoose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A) and (B) only",
+            "optionB": "(2) (D) and (E) only",
+            "optionC": "(3) (B) and (D) only",
+            "optionD": "(4) (B) and (C) only",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "For bacterial growth in a cell culture, growth law is very similar to the law of radioactive decay. Which of the following graphs is most suitable to represent bacterial colony growth ? Where N - Number of Bacteria at any time, $N_0$ - Initial number of Bacteria.",
+            "imageUrl": "28th_jan_s2_q57_diagram.png",
+            "optionA": "(1) Graph 1",
+            "optionB": "(2) Graph 2",
+            "optionC": "(3) Graph 3",
+            "optionD": "(4) Graph 4",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The amphoteric oxide among $\\text{V}_2\\text{O}_3$, $\\text{V}_2\\text{O}_4$ and $\\text{V}_2\\text{O}_5$, upon reaction with alkali leads to formation of an oxide anion. The oxidation state of V in the oxide anion is :",
+            "imageUrl": null,
+            "optionA": "(1) +3",
+            "optionB": "(2) +4",
+            "optionC": "(3) +7",
+            "optionD": "(4) +5",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Arrange the following in increasing order of solubility product : $\\text{Ca(OH)}_2, \\text{AgBr}, \\text{PbS}, \\text{HgS}$",
+            "imageUrl": null,
+            "optionA": "(1) $\\text{HgS} < \\text{AgBr} < \\text{PbS} < \\text{Ca(OH)}_2$",
+            "optionB": "(2) $\\text{Ca(OH)}_2 < \\text{AgBr} < \\text{HgS} < \\text{PbS}$",
+            "optionC": "(3) $\\text{PbS} < \\text{HgS} < \\text{Ca(OH)}_2 < \\text{AgBr}$",
+            "optionD": "(4) $\\text{HgS} < \\text{PbS} < \\text{AgBr} < \\text{Ca(OH)}_2$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The purification method based on the following physical transformation is :",
+            "imageUrl": "28th_jan_s2_q60_diagram.png",
+            "optionA": "(1) Distillation",
+            "optionB": "(2) Extraction",
+            "optionC": "(3) Sublimation",
+            "optionD": "(4) Crystallization",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Which of the following is/are not correct with respect to energy of atomic orbitals of hydrogen atom?\n(A) $1s < 2p < 3d < 4s$\n(B) $1s < 2s = 2p < 3s = 3p$\n(C) $1s < 2s < 2p < 3s < 3p$\n(D) $1s < 2s < 4s < 3d$\nChoose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A) and (C) only",
+            "optionB": "(2) (B) and (D) only",
+            "optionC": "(3) (C) and (D) only",
+            "optionD": "(4) (A) and (B) only",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Consider an elementary reaction $A(g) + B(g) \\to C(g) + D(g)$. If the volume of reaction mixture is suddenly reduced to $\\frac{1}{3}$ of its initial volume, the reaction rate will become 'x' times of the original reaction rate. The value of x is :",
+            "imageUrl": null,
+            "optionA": "(1) 3",
+            "optionB": "(2) 1/9",
+            "optionC": "(3) 9",
+            "optionD": "(4) 1/3",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The product B formed in the following reaction sequence is :",
+            "imageUrl": "28th_jan_s2_q63_diagram.png",
+            "optionA": "(1) Option 1",
+            "optionB": "(2) Option 2",
+            "optionC": "(3) Option 3",
+            "optionD": "(4) Option 4",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Assume a living cell with 0.9%(w/w) of glucose solution (aqueous). This cell is immersed in another solution having equal mole fraction of glucose and water. (Consider the data upto first decimal place only) The cell will :",
+            "imageUrl": null,
+            "optionA": "(1) show no change in volume since solution is 0.9%(w/w)",
+            "optionB": "(2) shrink since solution is 0.5%(w/w)",
+            "optionC": "(3) swell up since solution is 1%(w/w)",
+            "optionD": "(4) None of these",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements :\nStatement (I): According to the Law of Octaves, the elements were arranged in the increasing order of their atomic number.\nStatement (II): Meyer observed a periodically repeated pattern upon plotting physical properties of certain elements against their respective atomic numbers.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Both Statement I and Statement II are false",
+            "optionB": "(2) Both Statement I and Statement II are true",
+            "optionC": "(3) Statement I is false but Statement II is true",
+            "optionD": "(4) Statement I is true but Statement II is false",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Match List - I with List - II.\n\nList - I (Saccharides):\n(A) Sucrose\n(B) Maltose\n(C) Lactose\n(D) Amylopectin\n\nList - II (Glycosidic-linkages found):\n(I) $\\alpha\\ 1 - 4$\n(II) $\\alpha\\ 1 - 4$ and $\\alpha\\ 1 - 6$\n(III) $\\alpha\\ 1 - \\beta\\ 2$\n(IV) $\\beta\\ 1 - 4$\n\nChoose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A)-(III), (B)-(I), (C)-(IV), (D)-(II)",
+            "optionB": "(2) (A)-(I), (B)-(II), (C)-(III), (D)-(IV)",
+            "optionC": "(3) (A)-(IV), (B)-(II), (C)-(I), (D)-(III)",
+            "optionD": "(4) (A)-(II), (B)-(IV), (C)-(III), (D)-(I)",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "An ideal gas undergoes a cyclic transformation starting from the point A and coming back to the same point by tracing the path $A \\to B \\to C \\to D \\to A$ as shown in the three cases. Choose the correct option regarding $\\Delta U$ :",
+            "imageUrl": "28th_jan_s2_q67_diagram.png",
+            "optionA": "(1) $\\Delta U(\\text{Case-I}) = \\Delta U(\\text{Case-II}) = \\Delta U(\\text{Case-III})$",
+            "optionB": "(2) $\\Delta U(\\text{Case-I}) > \\Delta U(\\text{Case-III}) > \\Delta U(\\text{Case-II})$",
+            "optionC": "(3) $\\Delta U(\\text{Case-III}) > \\Delta U(\\text{Case-II}) > \\Delta U(\\text{Case-I})$",
+            "optionD": "(4) $\\Delta U(\\text{Case-I}) > \\Delta U(\\text{Case-II}) > \\Delta U(\\text{Case-III})$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Identify the inorganic sulphides that are yellow in colour : (A) $(\\text{NH}_4)_2\\text{S}$ (B) PbS (C) CuS (D) $\\text{As}_2\\text{S}_3$ (E) $\\text{As}_2\\text{S}_5$\nChoose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A), (D) and (E) only",
+            "optionB": "(2) (D) and (E) only",
+            "optionC": "(3) (A) and (B) only",
+            "optionD": "(4) (A) and (C) only",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The major product of the following reaction is : (2-bromo-6-phenylhept-4-ene reacted with excess KOH/EtOH and heat)",
+            "imageUrl": null,
+            "optionA": "(1) 2-Phenylhepta-2,5-diene",
+            "optionB": "(2) 6-Phenylhepta-2,4-diene",
+            "optionC": "(3) 6-Phenylhepta-3,5-diene",
+            "optionD": "(4) 2-Phenylhepta-2,4-diene",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Identify correct conversion during acidic hydrolysis from the following : (A) starch gives galactose. (B) cane sugar gives equal amount of glucose and fructose. (C) milk sugar gives glucose and galactose. (D) amylopectin gives glucose and fructose. (E) amylose gives only glucose.\nChoose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A), (B) and (C) only",
+            "optionB": "(2) (B), (C) and (E) only",
+            "optionC": "(3) (C), (D) and (E) only",
+            "optionD": "(4) (B), (C) and (D) only",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Electrolysis of 600 mL aqueous solution of NaCl for 5 min changes the pH of the solution to 12 . The current in Amperes used for the given electrolysis is ____. (Nearest integer).",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "2"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "A group 15 element forms $d\\pi - p\\pi$ bond with transition metals. It also forms hydride, which is a strongest base among the hydrides of other group members that form $d\\pi - p\\pi$ bond. The atomic number of the element is ____.",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "15"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Total number of molecules/species from following which will be paramagnetic is ______\n$\\text{O}_2, \\text{O}_2^+, \\text{O}_2^-, \\text{NO}, \\text{NO}_2, \\text{CO}, \\text{K}_2 [\\text{NiCl}_4], [\\text{Co(NH}_3)_6]\\text{Cl}_3, \\text{K}_2 [\\text{Ni(CN)}_4]$",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "6"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Consider the following data : Heat of formation of $\\text{CO}_2(g) = -393.5\\text{ kJ mol}^{-1}$ Heat of formation of $\\text{H}_2\\text{O}(l) = -286.0\\text{ kJ mol}^{-1}$ Heat of combustion of benzene $= -3267.0\\text{ kJ mol}^{-1}$ The heat of formation of benzene is _ $\\text{kJmol}^{-1}$. (Nearest integer)",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "48"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The spin only magnetic moment ( $\\mu$ ) value (B.M.) of the compound with strongest oxidising power among $\\text{Mn}_2\\text{O}_3$, $\\text{TiO}$ and $\\text{VO}$ is ____ B.M. (Nearest integer).",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "5"
+        }
+    ]
+}

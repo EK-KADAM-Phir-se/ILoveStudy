@@ -1,0 +1,754 @@
+{
+    "questions": [
+        {
+            "subject": "Mathematics",
+            "questionText": "For a $3 \\times 3$ matrix $M$, let trace $(M)$ denote the sum of all the diagonal elements of $M$. Let $A$ be a $3 \\times 3$ matrix such that $|A| = \\frac{1}{2}$ and trace $(A) = 3$. If $B = \\operatorname{adj}(\\operatorname{adj}(2A))$, then the value of $|B| + \\operatorname{trace}(B)$ equals :",
+            "imageUrl": null,
+            "optionA": "(1) 56",
+            "optionB": "(2) 132",
+            "optionC": "(3) 174",
+            "optionD": "(4) 280",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "In a group of 3 girls and 4 boys, there are two boys $B_1$ and $B_2$. The number of ways, in which these girls and boys can stand in a queue such that all the girls stand together, all the boys stand together, but $B_1$ and $B_2$ are not adjacent to each other, is :",
+            "imageUrl": null,
+            "optionA": "(1) 96",
+            "optionB": "(2) 144",
+            "optionC": "(3) 120",
+            "optionD": "(4) 72",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $\\alpha, \\beta, \\gamma$ and $\\delta$ be the coefficients of $x^7, x^5, x^3$ and $x$ respectively in the expansion of $\\left(x + \\sqrt{x^3 - 1}\\right)^5 + \\left(x - \\sqrt{x^3 - 1}\\right)^5, x > 1$. If $u$ and $v$ satisfy the equations $\\alpha u + \\beta v = 18$ and $\\gamma u + \\delta v = 20$, then $u + v$ equals :",
+            "imageUrl": null,
+            "optionA": "(1) 5",
+            "optionB": "(2) 3",
+            "optionC": "(3) 4",
+            "optionD": "(4) 8",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let a line pass through two distinct points $P(-2, -1, 3)$ and $Q$, and be parallel to the vector $3\\hat{i} + 2\\hat{j} + 2\\hat{k}$. If the distance of the point $Q$ from the point $R(1, 3, 3)$ is 5, then the square of the area of $\\triangle\\text{PQR}$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 148",
+            "optionB": "(2) 136",
+            "optionC": "(3) 144",
+            "optionD": "(4) 140",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $A$ and $B$ are two events such that $P(A \\cap B) = 0.1$, and $P(A \\mid B)$ and $P(B \\mid A)$ are the roots of the equation $12x^2 - 7x + 1 = 0$, then the value of $\\frac{P(A \\cup B)}{P(A \\cap B)}$ is :",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{4}{3}$",
+            "optionB": "(2) $\\frac{7}{4}$",
+            "optionC": "(3) $\\frac{5}{3}$",
+            "optionD": "(4) $\\frac{9}{4}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $\\int e^x \\left( \\frac{x \\sin^{-1} x}{\\sqrt{1-x^2}} + \\frac{\\sin^{-1} x}{(1-x^2)^{3/2}} + \\frac{x}{1-x^2} \\right) dx = g(x) + C$, where C is the constant of integration, then $g\\left(\\frac{1}{2}\\right)$ equals :",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{\\pi}{4} \\sqrt{e^3}$",
+            "optionB": "(2) $\\frac{\\pi}{6} \\sqrt{e^3}$",
+            "optionC": "(3) $\\frac{\\pi}{4} \\sqrt{e^2}$",
+            "optionD": "(4) $\\frac{\\pi}{6} \\sqrt{e^2}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The area of the region enclosed by the curves $y = x^2 - 4x + 4$ and $y^2 = 16 - 8x$ is :",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{8}{3}$",
+            "optionB": "(2) $\\frac{4}{3}$",
+            "optionC": "(3) 8",
+            "optionD": "(4) 5",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $f(x) = \\int_0^{x^2} \\frac{t^2-8t+15}{e^t} dt, x \\in \\mathbb{R}$. Then the numbers of local maximum and local minimum points of $f$, respectively, are :",
+            "imageUrl": null,
+            "optionA": "(1) 2 and 3",
+            "optionB": "(2) 2 and 2",
+            "optionC": "(3) 3 and 2",
+            "optionD": "(4) 1 and 3",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $P(4, 4\\sqrt{3})$ be a point on the parabola $y^2 = 4ax$ and PQ be a focal chord of the parabola. If M and N are the foot of perpendiculars drawn from P and Q respectively on the directrix of the parabola, then the area of the quadrilateral PQMN is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) $17\\sqrt{3}$",
+            "optionB": "(2) $\\frac{263\\sqrt{3}}{8}$",
+            "optionC": "(3) $\\frac{34\\sqrt{3}}{3}$",
+            "optionD": "(4) $\\frac{343\\sqrt{3}}{8}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $\\vec{a}$ and $\\vec{b}$ be two unit vectors such that the angle between them is $\\frac{\\pi}{3}$. If $\\lambda\\vec{a} + 2\\vec{b}$ and $3\\vec{a} - \\lambda\\vec{b}$ are perpendicular to each other, then the number of values of $\\lambda$ in $[-1, 3]$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 2",
+            "optionB": "(2) 1",
+            "optionC": "(3) 0",
+            "optionD": "(4) 3",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $\\lim_{x \\to \\infty} \\left( \\left(\\frac{e}{1-e}\\right) \\left( \\frac{1}{e} - \\frac{x}{1+x} \\right) \\right)^x = \\alpha$, then the value of $\\frac{\\log_e \\alpha}{1 + \\log_e \\alpha}$ equals :",
+            "imageUrl": null,
+            "optionA": "(1) $e^{-1}$",
+            "optionB": "(2) $e^2$",
+            "optionC": "(3) $e^{-2}$",
+            "optionD": "(4) $e$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $A = \\{1, 2, 3, 4\\}$ and $B = \\{1, 4, 9, 16\\}$. Then the number of many-one functions $f : A \\to B$ such that $1 \\in f(A)$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 151",
+            "optionB": "(2) 139",
+            "optionC": "(3) 163",
+            "optionD": "(4) 127",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Suppose that the number of terms in an A.P. is $2k, k \\in \\mathbb{N}$. If the sum of all odd terms of the A.P. is 40, the sum of all even terms is 55 and the last term of the A.P. exceeds the first term by 27, then $k$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 6",
+            "optionB": "(2) 5",
+            "optionC": "(3) 8",
+            "optionD": "(4) 4",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The perpendicular distance, of the line $\\frac{x-1}{2} = \\frac{y+2}{-1} = \\frac{z+3}{2}$ from the point $P(2, -10, 1)$, is :",
+            "imageUrl": null,
+            "optionA": "(1) 6",
+            "optionB": "(2) $5\\sqrt{2}$",
+            "optionC": "(3) $4\\sqrt{3}$",
+            "optionD": "(4) $3\\sqrt{5}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If the system of linear equations : $x + y + 2z = 6$, $2x + 3y + az = a + 1$, $-x - 3y + bz = 2b$ where $a, b \\in \\mathbb{R}$, has infinitely many solutions, then $7a + 3b$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 16",
+            "optionB": "(2) 12",
+            "optionC": "(3) 22",
+            "optionD": "(4) 9",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $x = f(y)$ is the solution of the differential equation $(1+y^2) + (x - 2e^{\\tan^{-1}y}) \\frac{dy}{dx} = 0, y \\in (-\\frac{\\pi}{2}, \\frac{\\pi}{2})$ with $f(0) = 1$, then $f\\left(\\frac{1}{\\sqrt{3}}\\right)$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) $e^{\\pi/12}$",
+            "optionB": "(2) $e^{\\pi/4}$",
+            "optionC": "(3) $e^{\\pi/3}$",
+            "optionD": "(4) $e^{\\pi/6}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $\\alpha_\\theta$ and $\\beta_\\theta$ be the distinct roots of $2x^2 + (\\cos\\theta)x - 1 = 0, \\theta \\in (0, 2\\pi)$. If $m$ and $M$ are the minimum and the maximum values of $\\alpha_\\theta^4 + \\beta_\\theta^4$, then $16(M + m)$ equals :",
+            "imageUrl": null,
+            "optionA": "(1) 24",
+            "optionB": "(2) 25",
+            "optionC": "(3) 17",
+            "optionD": "(4) 27",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The sum of all values of $\\theta \\in [0, 2\\pi]$ satisfying $2 \\sin^2 \\theta = \\cos 2\\theta$ and $2 \\cos^2 \\theta = 3 \\sin \\theta$ is :",
+            "imageUrl": null,
+            "optionA": "(1) $4\\pi$",
+            "optionB": "(2) $\\frac{5\\pi}{6}$",
+            "optionC": "(3) $\\pi$",
+            "optionD": "(4) $\\frac{\\pi}{2}$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let the curve $z(1+i) + \\bar{z}(1-i) = 4, z \\in \\mathbb{C}$, divide the region $|z-3| \\le 1$ into two parts of areas $\\alpha$ and $\\beta$. Then $|\\alpha - \\beta|$ equals :",
+            "imageUrl": null,
+            "optionA": "(1) $1 + \\frac{\\pi}{2}$",
+            "optionB": "(2) $1 + \\frac{\\pi}{3}$",
+            "optionC": "(3) $1 + \\frac{\\pi}{6}$",
+            "optionD": "(4) $1 + \\frac{\\pi}{4}$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $E : \\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1, a > b$ and $H : \\frac{x^2}{A^2} - \\frac{y^2}{B^2} = 1$. Let the distance between the foci of $E$ and the foci of $H$ be $2\\sqrt{3}$. If $a - A = 2$, and the ratio of the eccentricities of $E$ and $H$ is $\\frac{1}{3}$, then the sum of the lengths of their latus rectums is equal to:",
+            "imageUrl": null,
+            "optionA": "(1) 10",
+            "optionB": "(2) 9",
+            "optionC": "(3) 8",
+            "optionD": "(4) 7",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $\\sum_{r=1}^{30} \\frac{r^2(^{30}C_r)^2}{^{30}C_{r-1}} = \\alpha \\times 2^{29}$, then $\\alpha$ is equal to ______",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "465"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $A = \\{1, 2, 3\\}$. The number of relations on $A$, containing $(1, 2)$ and $(2, 3)$, which are reflexive and transitive but not symmetric, is ______",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "3"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $A(6, 8), B(10 \\cos\\alpha, -10\\sin\\alpha)$ and $C(-10\\sin\\alpha, 10\\cos\\alpha)$, be the vertices of a triangle. If $L(a, 9)$ and $G(h, k)$ be its orthocenter and centroid respectively, then $(5a - 3h + 6k + 100\\sin 2\\alpha)$ is equal to ______",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "145"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $y = f(x)$ be the solution of the differential equation $\\frac{dy}{dx} + \\frac{xy}{x^2-1} = \\frac{x^6+4x}{\\sqrt{1-x^2}}, -1 < x < 1$ such that $f(0) = 0$. If $6 \\int_{-1/2}^{1/2} f(x) dx = 2\\pi - \\alpha$, then $\\alpha^2$ is equal to _______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "27"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let the distance between two parallel lines be 5 units and a point P lie between the lines at a unit distance from one of them. An equilateral triangle PQR is formed such that Q lies on one of the parallel lines, while R lies on the other. Then $(QR)^2$ is equal to _______",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "28"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "To obtain the given truth table, following logic gate should be placed at G:",
+            "imageUrl": "22nd_jan_s2_q26_diagram.png",
+            "optionA": "(1) OR Gate",
+            "optionB": "(2) AND Gate",
+            "optionC": "(3) NOR Gate",
+            "optionD": "(4) NAND Gate",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A small rigid spherical ball of mass M is dropped in a long vertical tube containing glycerine. The velocity of the ball becomes constant after some time. If the density of glycerine is half of the density of the ball, then the viscous force acting on the ball will be (consider g as acceleration due to gravity)",
+            "imageUrl": null,
+            "optionA": "(1) 2 Mg",
+            "optionB": "(2) Mg",
+            "optionC": "(3) $\\frac{3}{2} Mg$",
+            "optionD": "(4) $\\frac{Mg}{2}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The torque due to the force $(2\\hat{i} + \\hat{j} + 2\\hat{k})$ about the origin, acting on a particle whose position vector is $(\\hat{i} + \\hat{j} + \\hat{k})$, would be",
+            "imageUrl": null,
+            "optionA": "(1) $\\hat{i} - \\hat{k}$",
+            "optionB": "(2) $\\hat{i} + \\hat{k}$",
+            "optionC": "(3) $\\hat{j} + \\hat{k}$",
+            "optionD": "(4) $\\hat{i} - \\hat{j} + \\hat{k}$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A symmetric thin biconvex lens is cut into four equal parts by two planes AB and CD as shown in figure. If the power of original lens is 4 D then the power of a part of the divided lens is",
+            "imageUrl": "22nd_jan_s2_q29_diagram.png",
+            "optionA": "(1) D",
+            "optionB": "(2) 8D",
+            "optionC": "(3) 2D",
+            "optionD": "(4) 4D",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "For a short dipole placed at origin O, the dipole moment P is along $x$-axis, as shown in the figure. If the electric potential and electric field at A are $V_0$ and $E_0$, respectively, then the correct combination of the electric potential and electric field, respectively, at point B on the $y$-axis is given by",
+            "imageUrl": "22nd_jan_s2_q30_diagram.png",
+            "optionA": "(1) $V_0$ and $\\frac{E_0}{4}$",
+            "optionB": "(2) zero and $\\frac{E_0}{16}$",
+            "optionC": "(3) zero and $\\frac{E_0}{8}$",
+            "optionD": "(4) $\\frac{V_0}{2}$ and $\\frac{E_0}{16}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A transparent film of refractive index, 2.0 is coated on a glass slab of refractive index, 1.45. What is the minimum thickness of transparent film to be coated for the maximum transmission of Green light of wavelength 550 nm . [Assume that the light is incident nearly perpendicular to the glass surface.]",
+            "imageUrl": null,
+            "optionA": "(1) 137.5 nm",
+            "optionB": "(2) 275 nm",
+            "optionC": "(3) 94.8 nm",
+            "optionD": "(4) 68.7 nm",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Given are statements for certain thermodynamic variables, (A) Internal energy, volume (V) and mass (M) are extensive variables. (B) Pressure (P), temperature (T) and density ($\\rho$) are intensive variables. (C) Volume (V), temperature (T) and density ($\\rho$) are intensive variables. (D) Mass (M), temperature (T) and internal energy are extensive variables. Choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (B) and (C) Only",
+            "optionB": "(2) (C) and (D) Only",
+            "optionC": "(3) (D) and (A) Only",
+            "optionD": "(4) (A) and (B) Only",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "An electron projected perpendicular to a uniform magnetic field B moves in a circle. If Bohr's quantization is applicable, then the radius of the electronic orbit in the first excited state is :",
+            "imageUrl": null,
+            "optionA": "(1) $\\sqrt{\\frac{h}{\\pi e B}}$",
+            "optionB": "(2) $\\sqrt{\\frac{2h}{\\pi e B}}$",
+            "optionC": "(3) $\\sqrt{\\frac{h}{2\\pi e B}}$",
+            "optionD": "(4) $\\sqrt{\\frac{4h}{\\pi e B}}$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Given below are two statements. One is labelled as Assertion (A) and the other is labelled as Reason (R).\nAssertion (A) : In Young's double slit experiment, the fringes produced by red light are closer as compared to those produced by blue light.\nReason (R): The fringe width is directly proportional to the wavelength of light.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Both (A) and (R) are true but (R) is NOT the correct explanation of (A)",
+            "optionB": "(2) (A) is true but (R) is false",
+            "optionC": "(3) Both (A) and (R) are true and (R) is the correct explanation of (A)",
+            "optionD": "(4) (A) is false but (R) is true",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A rectangular metallic loop is moving out of a uniform magnetic field region to a field free region with a constant speed. When the loop is partially inside the magnetic field, the plot of magnitude of induced emf ($\\varepsilon$) with time ($t$) is given by",
+            "imageUrl": "22nd_jan_s2_q35_diagram.png",
+            "optionA": "(1) Plot 1",
+            "optionB": "(2) Plot 2",
+            "optionC": "(3) Plot 3",
+            "optionD": "(4) Plot 4",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A ball of mass 100 g is projected with velocity 20 m/s at $60^\\circ$ with horizontal. The decrease in kinetic energy of the ball during the motion from point of projection to highest point is",
+            "imageUrl": null,
+            "optionA": "(1) 5 J",
+            "optionB": "(2) 15 J",
+            "optionC": "(3) 20 J",
+            "optionD": "(4) zero",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A body of mass 100 g is moving in circular path of radius 2 m on vertical plane as shown in figure. The velocity of the body at point A is 10 m/s. The ratio of its kinetic energies at point B and C is : (Take acceleration due to gravity as $10\\text{ m/s}^2$)",
+            "imageUrl": "22nd_jan_s2_q37_diagram.png",
+            "optionA": "(1) $\\frac{2+\\sqrt{2}}{3}$",
+            "optionB": "(2) $\\frac{2+\\sqrt{3}}{3}$",
+            "optionC": "(3) $\\frac{3+\\sqrt{3}}{2}$",
+            "optionD": "(4) $\\frac{3-\\sqrt{2}}{2}$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Given below are two statements. One is labelled as Assertion (A) and the other is labelled as Reason (R).\nAssertion (A) : A simple pendulum is taken to a planet of mass and radius, 4 times and 2 times, respectively, than the Earth. The time period of the pendulum remains same on earth and the planet.\nReason (R): The mass of the pendulum remains unchanged at Earth and the other planet.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A) is false but (R) is true",
+            "optionB": "(2) (A) is true but (R) is false",
+            "optionC": "(3) Both (A) and (R) are true and (R) is the correct explanation of (A)",
+            "optionD": "(4) Both (A) and (R) are true but (R) is NOT the correct explanation of (A)",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A series LCR circuit is connected to an alternating source of emf E. The current amplitude at resonant frequency is $I_0$. If the value of resistance R becomes twice of its initial value then amplitude of current at resonance will be",
+            "imageUrl": null,
+            "optionA": "(1) $2I_0$",
+            "optionB": "(2) $I_0$",
+            "optionC": "(3) $\\frac{I_0}{2}$",
+            "optionD": "(4) $\\frac{I_0}{\\sqrt{2}}$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Which one of the following is the correct dimensional formula for the capacitance in F ? M, L, T and C stand for unit of mass, length, time and charge,",
+            "imageUrl": null,
+            "optionA": "(1) $[F] = [C^2 M^{-1} L^{-2} T^2]$",
+            "optionB": "(2) $[F] = [C^2 M^{-2} L^2 T^2]$",
+            "optionC": "(3) $[F] = [CM^{-2} L^{-2} T^{-2}]$",
+            "optionD": "(4) $[F] = [CM^{-1} L^{-2} T^2]$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A tube of length $L$ is shown in the figure. The radius of cross section at the point (1) is 2 cm and at the point (2) is 1 cm, respectively. If the velocity of water entering at point (1) is 2 m/s, then velocity of water leaving the point (2) will be",
+            "imageUrl": "22nd_jan_s2_q41_diagram.png",
+            "optionA": "(1) 4 m/s",
+            "optionB": "(2) 2 m/s",
+            "optionC": "(3) 6 m/s",
+            "optionD": "(4) 8 m/s",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A light source of wavelength $\\lambda$ illuminates a metal surface and electrons are ejected with maximum kinetic energy of 2 eV . If the same surface is illuminated by a light source of wavelength $\\frac{\\lambda}{2}$, then the maximum kinetic energy of ejected electrons will be (The work function of metal is 1 eV)",
+            "imageUrl": null,
+            "optionA": "(1) 3 eV",
+            "optionB": "(2) 2 eV",
+            "optionC": "(3) 6 eV",
+            "optionD": "(4) 5 eV",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The maximum percentage error in the measurement of density of a wire is [Given, mass of wire $= (0.60 \\pm 0.003)\\text{g}$, radius of wire $= (0.50 \\pm 0.01)\\text{cm}$, length of wire $= (10.00 \\pm 0.05)\\text{cm}$]",
+            "imageUrl": null,
+            "optionA": "(1) 8",
+            "optionB": "(2) 5",
+            "optionC": "(3) 4",
+            "optionD": "(4) 7",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "For a diatomic gas, if $\\gamma_1 = (\\frac{C_p}{C_v})$ for rigid molecules and $\\gamma_2 = (\\frac{C_p}{C_v})$ for another diatomic molecules, but also having vibrational modes. Then, which one of the following options is correct ? (Cp and Cv are specific heats of the gas at constant pressure and volume)",
+            "imageUrl": null,
+            "optionA": "(1) $\\gamma_2 = \\gamma_1$",
+            "optionB": "(2) $2\\gamma_2 = \\gamma_1$",
+            "optionC": "(3) $\\gamma_2 < \\gamma_1$",
+            "optionD": "(4) $\\gamma_2 > \\gamma_1$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A force $\\vec{F} = 2\\hat{i} + b\\hat{j} + \\hat{k}$ is applied on a particle and it undergoes a displacement $\\hat{i} - 2\\hat{j} - \\hat{k}$. What will be the value of $b$, if work done on the particle is zero.",
+            "imageUrl": null,
+            "optionA": "(1) 0",
+            "optionB": "(2) $\\frac{1}{2}$",
+            "optionC": "(3) 2",
+            "optionD": "(4) $\\frac{1}{3}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A proton is moving undeflected in a region of crossed electric and magnetic fields at a constant speed of $2 \\times 10^5\\text{ ms}^{-1}$. When the electric field is switched off, the proton moves along a circular path of radius 2 cm . The magnitude of electric field is $x \\times 10^4\\text{ N/C}$. The value of $x$ is _______ Take the mass of the proton $= 1.6 \\times 10^{-27}\\text{ kg}$.",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "2"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Two soap bubbles of radius 2 cm and 4 cm, respectively, are in contact with each other. The radius of curvature of the common surface, in cm, is ______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "1"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A parallel plate capacitor of area $A = 16\\text{ cm}^2$ and separation between the plates 10 cm , is charged by a DC current. Consider a hypothetical plane surface of area $A_0 = 3.2\\text{ cm}^2$ inside the capacitor and parallel to the plates. At an instant, the current through the circuit is 6A. At the same instant the displacement current through $A_0$ is ________ mA .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "1200"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A tube of length 1 m is filled completely with an ideal liquid of mass 2 M , and closed at both ends. The tube is rotated uniformly in horizontal plane about one of its ends. If the force exerted by the liquid at the other end is F then angular velocity of the tube is $\\sqrt{\\frac{F}{\\alpha M}}$ in SI unit. The value of $\\alpha$ is __________.",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "1"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Two long parallel wires X and Y, separated by a distance of 6 cm , carry currents of 5A and 4A, respectively, in opposite directions as shown in the figure. Magnitude of the resultant magnetic field at point P at a distance of 4 cm from wire Y is $x \\times 10^{-5}\\text{ T}$. The value of $x$ is__________ . Take permeability of free space as $\\mu_0 = 4\\pi \\times 10^{-7}\\text{SI units}$.",
+            "imageUrl": "22nd_jan_s2_q50_diagram.png",
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "1"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements :\nStatement (I) : Nitrogen, sulphur, halogen and phosphorus present in an organic compound are detected by Lassaigne's Test.\nStatement (II) : The elements present in the compound are converted from covalent form into ionic form by fusing the compound with Magnesium in Lassaigne's test.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Statement I is false but Statement II is true",
+            "optionB": "(2) Both Statement I and Statement II are true",
+            "optionC": "(3) Both Statement I and Statement II are false",
+            "optionD": "(4) Statement I is true but Statement II is false",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Density of 3 M NaCl solution is $1.25\\text{ g/mL}$. The molality of the solution is :",
+            "imageUrl": null,
+            "optionA": "(1) 1.79 m",
+            "optionB": "(2) 2.79 m",
+            "optionC": "(3) 2 m",
+            "optionD": "(4) 3 m",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The correct order of the following complexes in terms of their crystal field stabilization energies is :",
+            "imageUrl": null,
+            "optionA": "(1) $[\\text{Co(NH}_3)_4]^{2+} < [\\text{Co(NH}_3)_6]^{2+} < [\\text{Co(en)}_3]^{3+} < [\\text{Co(NH}_3)_6]^{3+}$",
+            "optionB": "(2) $[\\text{Co(NH}_3)_6]^{2+} < [\\text{Co(NH}_3)_6]^{3+} < [\\text{Co(NH}_3)_4]^{2+} < [\\text{Co(en)}_3]^{3+}$",
+            "optionC": "(3) $[\\text{Co(en)}_3]^{3+} < [\\text{Co(NH}_3)_6]^{3+} < [\\text{Co(NH}_3)_6]^{2+} < [\\text{Co(NH}_3)_4]^{2+}$",
+            "optionD": "(4) $[\\text{Co(NH}_3)_4]^{2+} < [\\text{Co(NH}_3)_6]^{2+} < [\\text{Co(NH}_3)_6]^{3+} < [\\text{Co(en)}_3]^{3+}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements :\nStatement (I) : Corrosion is an electrochemical phenomenon in which pure metal acts as an anode and impure metal as a cathode.\nStatement (II) : The rate of corrosion is more in alkaline medium than in acidic medium.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Both Statement I and Statement II are true",
+            "optionB": "(2) Statement I is false but Statement II is true",
+            "optionC": "(3) Statement I is true but Statement II is false",
+            "optionD": "(4) Both Statement I and Statement II are false",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Consider the given figure and choose the correct option :",
+            "imageUrl": "22nd_jan_s2_q55_diagram.png",
+            "optionA": "(1) Activation energy of both forward and backward reaction is $E_1 + E_2$ and reactant is more stable than product.",
+            "optionB": "(2) Activation energy of forward reaction is $E_1 + E_2$ and product is less stable than reactant.",
+            "optionC": "(3) Activation energy of backward reaction is $E_1$ and product is more stable than reactant.",
+            "optionD": "(4) Activation energy of forward reaction is $E_1 + E_2$ and product is more stable than reactant.",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The maximum number of RBr producing 2-methylbutane by above sequence of reactions is : (Consider the structural isomers only)",
+            "imageUrl": "22nd_jan_s2_q56_diagram.png",
+            "optionA": "(1) 5",
+            "optionB": "(2) 4",
+            "optionC": "(3) 3",
+            "optionD": "(4) 1",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The species which does not undergo disproportionation reaction is :",
+            "imageUrl": null,
+            "optionA": "(1) $\\text{ClO}_3^-$",
+            "optionB": "(2) $\\text{ClO}^-$",
+            "optionC": "(3) $\\text{ClO}_2^-$",
+            "optionD": "(4) $\\text{ClO}_4^-$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The molar solubility(s) of zirconium phosphate with molecular formula $(\\text{Zr}^{4+})_3(\\text{PO}_4^{3-})_4$ is given by relation :",
+            "imageUrl": null,
+            "optionA": "(1) $\\left( \\frac{K_{sp}}{9612} \\right)^{1/3}$",
+            "optionB": "(2) $\\left( \\frac{K_{sp}}{6912} \\right)^{1/7}$",
+            "optionC": "(3) $\\left( \\frac{K_{sp}}{8435} \\right)^{1/7}$",
+            "optionD": "(4) $\\left( \\frac{K_{sp}}{5348} \\right)^{1/6}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Identify the homoleptic complex(es) that is/are low spin. (A) $[\\text{Fe(CN)}_5\\text{NO}]^{2-}$ (B) $[\\text{CoF}_6]^{3-}$ (C) $[\\text{Fe(CN)}_6]^{4-}$ (D) $[\\text{Co(NH}_3)_6]^{3+}$ (E) $[\\text{Cr(H}_2\\text{O)}_6]^{2+}$ Choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (C) only",
+            "optionB": "(2) (C) and (D) only",
+            "optionC": "(3) (A) and (C) only",
+            "optionD": "(4) (B) and (E) only",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Match List - I with List - II.\n\nList - I (Partial Derivatives):\n(A) $(\\frac{\\partial G}{\\partial T})_p$\n(B) $(\\frac{\\partial H}{\\partial T})_p$\n(C) $(\\frac{\\partial G}{\\partial P})_T$\n(D) $(\\frac{\\partial U}{\\partial V})_T$\n\nList - II (Thermodynamic Quantity):\n(I) $C_p$\n(II) $-S$\n(III) $C_v$\n(IV) $V$\n\nChoose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A)-(II), (B)-(I), (C)-(III), (D)-(IV)",
+            "optionB": "(2) (A)-(I), (B)-(II), (C)-(IV), (D)-(III)",
+            "optionC": "(3) (A)-(II), (B)-(I), (C)-(IV), (D)-(III)",
+            "optionD": "(4) (A)-(II), (B)-(III), (C)-(I), (D)-(IV)",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Identify the number of structure/s from the following which can be correlated to D-glyceraldehyde.",
+            "imageUrl": "22nd_jan_s2_q61_diagram.png",
+            "optionA": "(1) four",
+            "optionB": "(2) one",
+            "optionC": "(3) two",
+            "optionD": "(4) three",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements :\nStatement (I) : A spectral line will be observed for a $2p_x \\to 2p_y$ transition.\nStatement (II) : $2p_x$ and $2p_y$ are degenerate orbitals.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Both Statement I and Statement II are true",
+            "optionB": "(2) Statement I is false but Statement II is true",
+            "optionC": "(3) Both Statement I and Statement II are false",
+            "optionD": "(4) Statement I is true but Statement II is false",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements :\nStatement (I) : An element in the extreme left of the periodic table forms acidic oxides.\nStatement (II) : Acid is formed during the reaction between water and oxide of a reactive element present in the extreme right of the periodic table.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Statement I is true but Statement II is false",
+            "optionB": "(2) Both Statement I and Statement II are true",
+            "optionC": "(3) Both Statement I and Statement II are false",
+            "optionD": "(4) Statement I is false but Statement II is true",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Residue (A) + HCl (dil) -> Compound (B) Structure of residue (A) and compound (B) formed respectively is :",
+            "imageUrl": "22nd_jan_s2_q64_diagram.png",
+            "optionA": "(1) Option 1",
+            "optionB": "(2) Option 2",
+            "optionC": "(3) Option 3",
+            "optionD": "(4) Option 4",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The alkane from below having two secondary hydrogens is :",
+            "imageUrl": null,
+            "optionA": "(1) 4-Ethyl-3,4-dimethyloctane",
+            "optionB": "(2) 2,2,3,3-Tetramethylpentane",
+            "optionC": "(3) 2,2,4,5-Tetramethylheptane",
+            "optionD": "(4) 2,2,4,4-Tetramethylhexane",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "When sec-butylcyclohexane reacts with bromine in the presence of sunlight, the major product is :",
+            "imageUrl": "22nd_jan_s2_q66_diagram.png",
+            "optionA": "(1) Option 1",
+            "optionB": "(2) Option 2",
+            "optionC": "(3) Option 3",
+            "optionD": "(4) Option 4",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The most stable carbocation from the following is :",
+            "imageUrl": "22nd_jan_s2_q67_diagram.png",
+            "optionA": "(1) Option 1",
+            "optionB": "(2) Option 2",
+            "optionC": "(3) Option 3",
+            "optionD": "(4) Option 4",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Match the Compounds (List - I) with the appropriate Catalyst/Reagents (List - II) for their reduction into corresponding amines.",
+            "imageUrl": "22nd_jan_s2_q68_diagram.png",
+            "optionA": "(1) (A)-(II), (B)-(I), (C)-(III), (D)-(IV)",
+            "optionB": "(2) (A)-(III), (B)-(II), (C)-(IV), (D)-(I)",
+            "optionC": "(3) (A)-(II), (B)-(IV), (C)-(III), (D)-(I)",
+            "optionD": "(4) (A)-(III), (B)-(IV), (C)-(II), (D)-(I)",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Arrange the following compounds in increasing order of their dipole moment : HBr, H2S, NF3 and CHCl3",
+            "imageUrl": null,
+            "optionA": "(1) H2S < HBr < NF3 < CHCl3",
+            "optionB": "(2) NF3 < HBr < H2S < CHCl3",
+            "optionC": "(3) HBr < H2S < NF3 < CHCl3",
+            "optionD": "(4) CHCl3 < NF3 < HBr < H2S",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The maximum covalency of a non-metallic group 15 element 'E' with weakest E - E bond is :",
+            "imageUrl": null,
+            "optionA": "(1) 4",
+            "optionB": "(2) 6",
+            "optionC": "(3) 3",
+            "optionD": "(4) 5",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The compound with molecular formula $C_6H_6$, which gives only one monobromo derivative and takes up four moles of hydrogen per mole for complete hydrogenation has ________ = electrons.",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "8"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "20 mL of 2 M NaOH solution is added to 400 mL of 0.5 M NaOH solution. The final concentration of the solution is _______ $\\times 10^{-2}$M. (Nearest integer)",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "57"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Consider the following cases of standard enthalpy of reaction ($\\Delta H^\\circ_r$ in $\\text{kJmol}^{-1}$)\\n$C_2H_6(g) + \\frac{7}{2}O_2(g) \\to 2CO_2(g) + 3H_2O(l) \\Delta H^\\circ_1 = -1550$\\n$C(graphite) + O_2(g) \\to CO_2(g) \\Delta H^\\circ_2 = -393.5$\\n$H_2(g) + \\frac{1}{2}O_2(g) \\to H_2O(l) \\Delta H^\\circ_3 = -286$\\nThe magnitude of $\\Delta H^\\circ_{f, C_2H_6(g)}$ is _______ $\\text{kJmol}^{-1}$ (Nearest integer).",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "95"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Niobium (Nb) and ruthenium (Ru) have \"$x$\" and \"$y$\" number of electrons in their respective $4d$ orbitals. The value of $x + y$ is ______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "11"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The complex of $\\text{Ni}^{2+}$ ion and dimethyl glyoxime contains ________ number of Hydrogen (H) atoms.",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "14"
+        }
+    ]
+}

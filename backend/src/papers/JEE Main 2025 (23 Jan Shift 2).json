@@ -1,0 +1,754 @@
+{
+    "questions": [
+        {
+            "subject": "Mathematics",
+            "questionText": "The distance of the line $\\frac{x-2}{2} = \\frac{y-6}{3} = \\frac{z-3}{4}$ from the point $(1, 4, 0)$ along the line $\\frac{x}{1} = \\frac{y-2}{2} = \\frac{z+3}{3}$ is :",
+            "imageUrl": null,
+            "optionA": "(1) $\\sqrt{17}$",
+            "optionB": "(2) $\\sqrt{15}$",
+            "optionC": "(3) $\\sqrt{14}$",
+            "optionD": "(4) $\\sqrt{13}$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $A = \\{(x, y) \\in \\mathbb{R} \\times \\mathbb{R} \\mid |x + y| \\ge 3\\}$ and $B = \\{(x, y) \\in \\mathbb{R} \\times \\mathbb{R} \\mid |x| + |y| \\le 3\\}$. If $C = \\{(x, y) \\in A \\cap B \\mid x = 0 \\text{ or } y = 0\\}$, then $\\sum_{(x,y) \\in C} |x + y|$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 15",
+            "optionB": "(2) 24",
+            "optionC": "(3) 18",
+            "optionD": "(4) 12",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $X = \\mathbb{R} \\times \\mathbb{R}$. Define a relation $R$ on $X$ as : $(a_1, b_1)R(a_2, b_2) \\iff b_1 = b_2$.\nStatement I : $R$ is an equivalence relation.\nStatement II : For some $(a, b) \\in X$, the set $S = \\{(x, y) \\in X \\mid (x, y)R(a, b)\\}$ represents a line parallel to $y = x$.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Both Statement I and Statement II are false",
+            "optionB": "(2) Statement I is true but Statement II is false",
+            "optionC": "(3) Both Statement I and Statement II are true",
+            "optionD": "(4) Statement I is false but Statement II is true",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $\\int x^3 \\sin x\\, dx = g(x) + C$, where C is the constant of integration. If $8 \\left(g\\left(\\frac{\\pi}{2}\\right) + g'\\left(\\frac{\\pi}{2}\\right)\\right) = \\alpha \\pi^3 + \\beta \\pi^2 + \\gamma$, $\\alpha, \\beta, \\gamma \\in \\mathbb{Z}$, then $\\alpha + \\beta - \\gamma$ equals :",
+            "imageUrl": null,
+            "optionA": "(1) 48",
+            "optionB": "(2) 55",
+            "optionC": "(3) 62",
+            "optionD": "(4) 47",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "A rod of length eight units moves such that its ends $A$ and $B$ always lie on the lines $x - y + 2 = 0$ and $y + 2 = 0$, respectively. If the locus of the point $P$, that divides the rod $AB$ internally in the ratio $2 : 1$ is $9 \\left(x^2 + \\alpha y^2 + \\beta xy + \\gamma x + 28y\\right) - 76 = 0$, then $\\alpha - \\beta - \\gamma$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 22",
+            "optionB": "(2) 21",
+            "optionC": "(3) 23",
+            "optionD": "(4) 24",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If the square of the shortest distance between the lines $\\frac{x-2}{1} = \\frac{y-1}{2} = \\frac{z+3}{-3}$ and $\\frac{x+1}{2} = \\frac{y+3}{4} = \\frac{z+5}{-5}$ is $\\frac{m}{n}$, where $m, n$ are coprime numbers, then $m + n$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 21",
+            "optionB": "(2) 9",
+            "optionC": "(3) 14",
+            "optionD": "(4) 6",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "$\\lim_{x \\to \\infty} \\frac{(2x^2-3x+5)(3x-1)^{\\frac{x}{2}}}{(3x^2+5x+4)\\sqrt{(3x+2)^x}}$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{2}{\\sqrt{3e}}$",
+            "optionB": "(2) $\\frac{2e}{\\sqrt{3}}$",
+            "optionC": "(3) $\\frac{2}{3\\sqrt{e}}$",
+            "optionD": "(4) $\\frac{2e}{3}$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let the point A divide the line segment joining the points $P(-1, -1, 2)$ and $Q(5, 5, 10)$ internally in the ratio $r : 1\\ (r > 0)$. If O is the origin and $(\\vec{OQ} \\cdot \\vec{OA}) - \\frac{1}{5} |\\vec{OP} \\times \\vec{OA}|^2 = 10$, then the value of $r$ is :",
+            "imageUrl": null,
+            "optionA": "(1) $\\sqrt{7}$",
+            "optionB": "(2) 14",
+            "optionC": "(3) 3",
+            "optionD": "(4) 7",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The length of the chord of the ellipse $\\frac{x^2}{4} + \\frac{y^2}{2} = 1$, whose mid-point is $\\left(1, \\frac{1}{2}\\right)$, is :",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{5}{3}\\sqrt{15}$",
+            "optionB": "(2) $\\frac{1}{3}\\sqrt{15}$",
+            "optionC": "(3) $\\frac{2}{3}\\sqrt{15}$",
+            "optionD": "(4) $\\sqrt{15}$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The system of equations $x + y + z = 6$, $x + 2y + 5z = 9$, $x + 5y + \\lambda z = \\mu$, has no solution if :",
+            "imageUrl": null,
+            "optionA": "(1) $\\lambda = 15, \\mu \\ne 17$",
+            "optionB": "(2) $\\lambda \\ne 17, \\mu \\ne 18$",
+            "optionC": "(3) $\\lambda = 17, \\mu \\ne 18$",
+            "optionD": "(4) $\\lambda = 17, \\mu = 18$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let the range of the function $f(x) = 6 + 16 \\cos x \\cdot \\cos\\left(\\frac{\\pi}{3} - x\\right) \\cdot \\cos\\left(\\frac{\\pi}{3} + x\\right) \\cdot \\sin 3x \\cdot \\cos 6x$, $x \\in \\mathbb{R}$ be $[\\alpha, \\beta]$. Then the distance of the point $(\\alpha, \\beta)$ from the line $3x + 4y + 12 = 0$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 11",
+            "optionB": "(2) 8",
+            "optionC": "(3) 10",
+            "optionD": "(4) 9",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $x = x(y)$ be the solution of the differential equation $y = \\left(x - y \\frac{dx}{dy}\\right) \\sin\\left(\\frac{x}{y}\\right)$, $y > 0$ and $x(1) = \\frac{\\pi}{2}$. Then $\\cos(x(2))$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) $1 - 2(\\log_e 2)^2$",
+            "optionB": "(2) $1 - 2(\\log_e 2)$",
+            "optionC": "(3) $2(\\log_e 2) - 1$",
+            "optionD": "(4) $2(\\log_e 2)^2 - 1$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "A spherical chocolate ball has a layer of ice-cream of uniform thickness around it. When the thickness of the ice-cream layer is 1 cm , the ice-cream melts at the rate of $81\\text{ cm}^3/\\text{min}$ and the thickness of the ice-cream layer decreases at the rate of $\\frac{1}{4\\pi}\\text{ cm/min}$. The surface area (in $\\text{cm}^2$) of the chocolate ball (without the ice-cream layer) is :",
+            "imageUrl": null,
+            "optionA": "(1) $196\\pi$",
+            "optionB": "(2) $256\\pi$",
+            "optionC": "(3) $225\\pi$",
+            "optionD": "(4) $128\\pi$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The number of complex numbers $z$, satisfying $|z| = 1$ and $\\left| \\frac{z}{\\bar{z}} + \\frac{\\bar{z}}{z} \\right| = 1$, is :",
+            "imageUrl": null,
+            "optionA": "(1) 4",
+            "optionB": "(2) 8",
+            "optionC": "(3) 10",
+            "optionD": "(4) 6",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $A = [a_{ij}]$ be a $3 \\times 3$ matrix such that $A \\begin{bmatrix} 0 \\\\ 1 \\\\ 0 \\end{bmatrix} = \\begin{bmatrix} 0 \\\\ 0 \\\\ 1 \\end{bmatrix}$, $A \\begin{bmatrix} 4 \\\\ 1 \\\\ 3 \\end{bmatrix} = \\begin{bmatrix} 0 \\\\ 1 \\\\ 0 \\end{bmatrix}$ and $A \\begin{bmatrix} 2 \\\\ 1 \\\\ 2 \\end{bmatrix} = \\begin{bmatrix} 1 \\\\ 0 \\\\ 0 \\end{bmatrix}$, then $a_{23}$ equals :",
+            "imageUrl": null,
+            "optionA": "(1) -1",
+            "optionB": "(2) 2",
+            "optionC": "(3) 1",
+            "optionD": "(4) 0",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If $I = \\int_0^{\\pi/2} \\frac{\\sin^{3/2} x}{\\sin^{3/2} x + \\cos^{3/2} x} dx$, then $\\int_0^{21} \\frac{x \\sin x \\cos x}{\\sin^4 x + \\cos^4 x} dx$ equals :",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{\\pi^2}{12}$",
+            "optionB": "(2) $\\frac{\\pi^2}{4}$",
+            "optionC": "(3) $\\frac{\\pi^2}{16}$",
+            "optionD": "(4) $\\frac{\\pi^2}{8}$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "A board has 16 squares as shown in the figure (4x4 board). Out of these 16 squares, two squares are chosen at random. The probability that they have no side in common is :",
+            "imageUrl": null,
+            "optionA": "(1) 7/10",
+            "optionB": "(2) 4/5",
+            "optionC": "(3) 23/30",
+            "optionD": "(4) 3/5",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let the shortest distance from $(a, 0), a > 0$, to the parabola $y^2 = 4x$ be 4. Then the equation of the circle passing through the point $(a, 0)$ and the focus of the parabola, and having its centre on the axis of the parabola is :",
+            "imageUrl": null,
+            "optionA": "(1) $x^2 + y^2 - 10x + 9 = 0$",
+            "optionB": "(2) $x^2 + y^2 - 6x + 5 = 0$",
+            "optionC": "(3) $x^2 + y^2 - 4x + 3 = 0$",
+            "optionD": "(4) $x^2 + y^2 - 8x + 7 = 0$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If in the expansion of $(1 + x)^p (1 - x)^q$, the coefficients of $x$ and $x^2$ are 1 and -2, respectively, then $p^2 + q^2$ is equal to :",
+            "imageUrl": null,
+            "optionA": "(1) 18",
+            "optionB": "(2) 13",
+            "optionC": "(3) 8",
+            "optionD": "(4) 20",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "If the area of the region $\\{(x, y) : -1 \\le x \\le 1, 0 \\le y \\le a + e^{|x|} - e^{-x}, a > 0\\}$ is $\\frac{e^2+8e+1}{e}$, then the value of $a$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 8",
+            "optionB": "(2) 7",
+            "optionC": "(3) 5",
+            "optionD": "(4) 6",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The variance of the numbers 8, 21, 34, 47, ..., 320 is _______",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "8788"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The roots of the quadratic equation $3x^2 - px + q = 0$ are $10^{\\text{th}}$ and $11^{\\text{th}}$ terms of an arithmetic progression with common difference $\\frac{3}{2}$. If the sum of the first 11 terms of this arithmetic progression is 88, then $q - 2p$ is equal to _______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "474"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The number of ways, 5 boys and 4 girls can sit in a row so that either all the boys sit together or no two boys sit together, is _______",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "17280"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "The focus of the parabola $y^2 = 4x + 16$ is the centre of the circle $C$ of radius 5. If the values of $\\lambda$, for which C passes through the point of intersection of the lines $3x - y = 0$ and $x + \\lambda y = 4$, are $\\lambda_1$ and $\\lambda_2, \\lambda_1 < \\lambda_2$, then $12\\lambda_1 + 29\\lambda_2$ is equal to _______",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "15"
+        },
+        {
+            "subject": "Mathematics",
+            "questionText": "Let $\\alpha, \\beta$ be the roots of the equation $x^2 - ax - b = 0$ with $\\operatorname{Im}(\\alpha) < \\operatorname{Im}(\\beta)$. Let $P_n = \\alpha^n - \\beta^n$. If $P_3 = -5\\sqrt{7}i, P_4 = -3\\sqrt{7}i, P_5 = 11\\sqrt{7}i$ and $P_6 = 45\\sqrt{7}i$, then $|\\alpha^4 + \\beta^4|$ is equal to _______ .",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "31"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A galvanometer having a coil of resistance $30\\:\\Omega$ need 20 mA of current for full-scale deflection. If a maximum current of 3 A is to be measured using this galvanometer, the resistance of the shunt to be added to the galvanometer should be $\\frac{30}{X}\\:\\Omega$, where $X$ is",
+            "imageUrl": null,
+            "optionA": "(1) 596",
+            "optionB": "(2) 149",
+            "optionC": "(3) 298",
+            "optionD": "(4) 447",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A ball having kinetic energy KE, is projected at an angle of $60^\\circ$ from the horizontal. What will be the kinetic energy of ball at the highest point of its flight ?",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{KE}{8}$",
+            "optionB": "(2) $\\frac{KE}{2}$",
+            "optionC": "(3) $\\frac{KE}{16}$",
+            "optionD": "(4) $\\frac{KE}{4}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Two charges $7\\:\\mu\\text{c}$ and $-4\\:\\mu\\text{c}$ are placed at $(-7\\text{ cm}, 0, 0)$ and $(7\\text{ cm}, 0, 0)$ respectively. Given, $\\varepsilon_0 = 8.85 \\times 10^{-12}\\text{C}^2\\text{ N}^{-1}\\text{ m}^{-2}$, the electrostatic potential energy of the charge configuration is :",
+            "imageUrl": null,
+            "optionA": "(1) -1.8 J",
+            "optionB": "(2) -2.0 J",
+            "optionC": "(3) -1.5 J",
+            "optionD": "(4) -1.2 J",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Two point charges $-4\\:\\mu\\text{c}$ and $4\\:\\mu\\text{c}$, constituting an electric dipole, are placed at $(-9, 0, 0)\\text{cm}$ and $(9, 0, 0)\\text{cm}$ in a uniform electric field of strength $10^4\\text{NC}^{-1}$. The work done on the dipole in rotating it from the equilibrium through $180^\\circ$ is :",
+            "imageUrl": null,
+            "optionA": "(1) 18.4 mJ",
+            "optionB": "(2) 14.4 mJ",
+            "optionC": "(3) 12.4 mJ",
+            "optionD": "(4) 16.4 mJ",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A massless spring gets elongated by amount $x_1$ under a tension of 5 N . Its elongation is $x_2$ under the tension of 7 N . For the elongation of $(5x_1 - 2x_2)$, the tension in the spring will be,",
+            "imageUrl": null,
+            "optionA": "(1) 39 N",
+            "optionB": "(2) 15 N",
+            "optionC": "(3) 11 N",
+            "optionD": "(4) 20 N",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Water of mass m gram is slowly heated to increase the temperature from $T_1$ to $T_2$. The change in entropy of the water, given specific heat of water is $1\\text{Jkg}^{-1}\\text{ K}^{-1}$, is :",
+            "imageUrl": null,
+            "optionA": "(1) $m \\ln \\left(\\frac{T_2}{T_1}\\right)$",
+            "optionB": "(2) zero",
+            "optionC": "(3) $m \\ln \\left(\\frac{T_1}{T_2}\\right)$",
+            "optionD": "(4) $m(T_2 - T_1)$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Water flows in a horizontal pipe whose one end is closed with a valve. The reading of the pressure gauge attached to the pipe is $P_1$. The reading of the pressure gauge falls to $P_2$ when the valve is opened. The speed of water flowing in the pipe is proportional to",
+            "imageUrl": null,
+            "optionA": "(1) $P_1 - P_2$",
+            "optionB": "(2) $(P_1 - P_2)^4$",
+            "optionC": "(3) $(P_1 - P_2)^2$",
+            "optionD": "(4) $\\sqrt{P_1 - P_2}$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A concave mirror of focal length $f$ in air is dipped in a liquid of refractive index $\\mu$. Its focal length in the liquid will be:",
+            "imageUrl": null,
+            "optionA": "(1) $\\mu f$",
+            "optionB": "(2) $f$",
+            "optionC": "(3) $\\frac{f}{\\mu-1}$",
+            "optionD": "(4) $\\frac{f}{\\mu}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "What is the current through the battery in the circuit shown below",
+            "imageUrl": "23rd_jan_s2_q34_diagram.png",
+            "optionA": "(1) 1.5 A",
+            "optionB": "(2) 0.5 A",
+            "optionC": "(3) 0.25 A",
+            "optionD": "(4) 1.0 A",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The refractive index of the material of a glass prism is $\\sqrt{3}$. The angle of minimum deviation is equal to the angle of the prism. What is the angle of the prism?",
+            "imageUrl": null,
+            "optionA": "(1) $60^\\circ$",
+            "optionB": "(2) $58^\\circ$",
+            "optionC": "(3) $48^\\circ$",
+            "optionD": "(4) $50^\\circ$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The width of one of the two slits in Young's double slit experiment is d while that of the other slit is $x\\cdot d$. If the ratio of the maximum to the minimum intensity in the interference pattern on the screen is $9 : 4$ then what is the value of $x$ ? (Assume that the field strength varies according to the slit width.)",
+            "imageUrl": null,
+            "optionA": "(1) 4",
+            "optionB": "(2) 5",
+            "optionC": "(3) 3",
+            "optionD": "(4) 2",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Using the given P - V diagram, the work done by an ideal gas along the path ABCD is :",
+            "imageUrl": "23rd_jan_s2_q37_diagram.png",
+            "optionA": "(1) $3P_0 V_0$",
+            "optionB": "(2) $-4P_0 V_0$",
+            "optionC": "(3) $-3P_0 V_0$",
+            "optionD": "(4) $4P_0 V_0$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A plane electromagnetic wave of frequency 20 MHz travels in free space along the $+x$ direction. At a particular point in space and time, the electric field vector of the wave is $E_y = 9.3\\text{Vm}^{-1}$. Then, the magnetic field vector of the wave at that point is",
+            "imageUrl": null,
+            "optionA": "(1) $B_z = 6.2 \\times 10^{-8}\\text{ T}$",
+            "optionB": "(2) $B_z = 3.1 \\times 10^{-8}\\text{ T}$",
+            "optionC": "(3) $B_z = 1.55 \\times 10^{-8}\\text{ T}$",
+            "optionD": "(4) $B_z = 9.3 \\times 10^{-8}\\text{ T}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The equation of a transverse wave travelling along a string is $y(x,t) = 4.0 \\sin [20 \\times 10^{-3}x + 600t]\\text{mm}$, where $x$ is in mm and $t$ is in second. The velocity of the wave is :",
+            "imageUrl": null,
+            "optionA": "(1) $-60\\text{ m/s}$",
+            "optionB": "(2) $-30\\text{ m/s}$",
+            "optionC": "(3) $+30\\text{ m/s}$",
+            "optionD": "(4) $+60\\text{ m/s}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Given below are two statements. One is labelled as Assertion (A) and the other is labelled as Reason (R).\nAssertion (A) : The binding energy per nucleon is found to be practically independent of the atomic number A, for nuclei with mass numbers between 30 and 170.\nReason (R): Nuclear force is long range.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A) is true but (R) is false",
+            "optionB": "(2) (A) is false but (R) is true",
+            "optionC": "(3) Both (A) and (R) are true and (R) is the correct explanation of (A)",
+            "optionD": "(4) Both (A) and (R) are true but (R) is NOT the correct explanation of (A)",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "If a satellite orbiting the Earth is 9 times closer to the Earth than the Moon, what is the time period of rotation of the satellite? Given rotational time period of Moon $= 27$ days and gravitational attraction between the satellite and the moon is neglected.",
+            "imageUrl": null,
+            "optionA": "(1) 27 days",
+            "optionB": "(2) 1 day",
+            "optionC": "(3) 81 days",
+            "optionD": "(4) 3 days",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A circular disk of radius R meter and mass M kg is rotating around the axis perpendicular to the disk. An external torque is applied to the disk such that $\\theta(t) = 5t^2 - 8t$, where $\\theta(t)$ is the angular position of the rotating disc as a function of time $t$. How much power is delivered by the applied torque, when $t = 2\\text{ s}$ ?",
+            "imageUrl": null,
+            "optionA": "(1) $72MR^2$",
+            "optionB": "(2) $8MR^2$",
+            "optionC": "(3) $108MR^2$",
+            "optionD": "(4) $60MR^2$",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "The energy of a system is given as $E(t) = \\alpha^3 e^{-\\beta t}$, where t is the time and $\\beta = 0.3\\text{ s}^{-1}$. The errors in the measurement of $\\alpha$ and $t$ are 1.2% and 1.6%, respectively. At $t = 5\\text{ s}$, maximum percentage error in the energy is :",
+            "imageUrl": null,
+            "optionA": "(1) 6%",
+            "optionB": "(2) 8.4%",
+            "optionC": "(3) 11.6%",
+            "optionD": "(4) 4%",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "Match List - I with List - II.\n\nList - I:\n(A) Permeability of free space\n(B) Magnetic field\n(C) Magnetic moment\n(D) Torsional constant\n\nList - II:\n(I) $[M L^2 T^{-2}]$\n(II) $[M T^{-2} A^{-1}]$\n(III) $[M L T^{-2} A^{-2}]$\n(IV) $[L^2 A]$\n\nChoose the correct answer from the options given below:",
+            "imageUrl": null,
+            "optionA": "(1) (A)-(IV), (B)-(III), (C)-(I), (D)-(II)",
+            "optionB": "(2) (A)-(III), (B)-(II), (C)-(IV), (D)-(I)",
+            "optionC": "(3) (A)-(I), (B)-(IV), (C)-(II), (D)-(III)",
+            "optionD": "(4) (A)-(II), (B)-(I), (C)-(III), (D)-(IV)",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "In photoelectric effect an em-wave is incident on a metal surface and electrons are ejected from the surface. If the work function of the metal is 2.14 eV and stopping potential is 2 V , what is the wavelength of the em-wave ? (Given hc $= 1242\\text{eVnm}$ where h is the Planck's constant and c is the speed of light in vacuum.)",
+            "imageUrl": null,
+            "optionA": "(1) 300 nm",
+            "optionB": "(2) 400 nm",
+            "optionC": "(3) 600 nm",
+            "optionD": "(4) 200 nm",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A time varying potential difference is applied between the plates of a parallel plate capacitor of capacitance $2.5\\mu\\text{ F}$. The dielectric constant of the medium between the capacitor plates is 1 . It produces an instantaneous displacement current of 0.25 mA in the intervening space between the capacitor plates, the magnitude of the rate of change of the potential difference will be _____ $\\text{Vs}^{-1}$.",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "100"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "In a series LCR circuit, a resistor of $300\\Omega$, a capacitor of 25 nF and an inductor of 100 mH are used. For maximum current in the circuit, the angular frequency of the ac source is _____ $\\times 10^4\\text{ s}^{-1}$.",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "2"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "An air bubble of radius 1.0 mm is observed at a depth of 20 cm below the free surface of a liquid having surface tension $0.095\\text{ J/m}^2$ and density $10^3\\text{ kg/m}^3$. The difference between pressure inside the bubble and atmospheric pressure is _____ $\\text{N/m}^2$. (Take $g = 10\\text{ m/s}^2$)",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "2190"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "A satellite of mass $\\frac{M}{2}$ is revolving around earth in a circular orbit at a height of $\\frac{R}{3}$ from earth surface. The angular momentum of the satellite is $M\\sqrt{\\frac{GMR}{x}}$. The value of $x$ is ______ , where $M$ and $R$ are the mass and radius of earth, respectively. ( G is the gravitational constant)",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "3"
+        },
+        {
+            "subject": "Physics",
+            "questionText": "At steady state the charge on the capacitor, as shown in the circuit below, is _____ $\\mu C$.",
+            "imageUrl": "23rd_jan_s2_q50_diagram.png",
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "16"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Identify the products [A] and [B], respectively in the following reaction :",
+            "imageUrl": "23rd_jan_s2_q51_diagram.png",
+            "optionA": "(1) Option 1",
+            "optionB": "(2) Option 2",
+            "optionC": "(3) Option 3",
+            "optionD": "(4) Option 4",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Consider the following reactions:\n$\\text{K}_2\\text{Cr}_2\\text{O}_7 \\xrightarrow[-\\text{H}_2\\text{O}]{\\text{KOH}} [A] \\xrightarrow[-\\text{H}_2\\text{O}]{\\text{H}_2\\text{SO}_4} [B] + \\text{K}_2\\text{SO}_4$\nThe products [A] and [B], respectively are :",
+            "imageUrl": null,
+            "optionA": "(1) $\\text{K}_2\\text{CrO}_4$ and $\\text{CrO}_3$",
+            "optionB": "(2) $\\text{K}_2\\text{CrO}_4$ and $\\text{Cr}_2\\text{O}_3$",
+            "optionC": "(3) $\\text{K}_2\\text{CrO}_4$ and $\\text{K}_2\\text{Cr}_2\\text{O}_7$",
+            "optionD": "(4) $\\text{K}_2\\text{Cr(OH)}_6$ and $\\text{Cr}_2\\text{O}_3$",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The effect of temperature on spontaneity of reactions are represented as :",
+            "imageUrl": null,
+            "optionA": "(1) (B) and (C) only",
+            "optionB": "(2) (B) and (D) only",
+            "optionC": "(3) (A) and (D) only",
+            "optionD": "(4) (A) and (C) only",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Which of the following graphs most appropriately represents a zero order reaction ?",
+            "imageUrl": "23rd_jan_s2_q54_diagram.png",
+            "optionA": "(1) Graph 1",
+            "optionB": "(2) Graph 2",
+            "optionC": "(3) Graph 3",
+            "optionD": "(4) Graph 4",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Consider the reaction $\\text{X}_2\\text{Y(g)} = \\text{X}_2\\text{(g)} + \\frac{1}{2}\\text{Y}_2\\text{(g)}$. The equation representing correct relationship between the degree of dissociation (x) of $\\text{X}_2\\text{Y(g)}$ with its equilibrium constant Kp is ______ . Assume $x$ to be very very small.",
+            "imageUrl": null,
+            "optionA": "(1) $x = \\sqrt[3]{\\frac{2K_p}{p}}$",
+            "optionB": "(2) $x = \\sqrt[3]{\\frac{2K_p^2}{p}}$",
+            "optionC": "(3) $x = \\sqrt[3]{\\frac{K_p}{p}}$",
+            "optionD": "(4) $x = \\sqrt[3]{\\frac{K_p}{2p}}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements : Consider the following reaction",
+            "imageUrl": "23rd_jan_s2_q56_diagram.png",
+            "optionA": "(1) Both Statement I and Statement II are false",
+            "optionB": "(2) Statement I is true but Statement II is false",
+            "optionC": "(3) Statement I is false but Statement II is true",
+            "optionD": "(4) Both Statement I and Statement II are true",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements :\nStatement (I) : For a given shell, the total number of allowed orbitals is given by $n^2$.\nStatement (II) : For any subshell, the spatial orientation of the orbitals is given by $-l$ to $+l$ values including zero.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Both Statement I and Statement II are false",
+            "optionB": "(2) Statement I is true but Statement II is false",
+            "optionC": "(3) Both Statement I and Statement II are true",
+            "optionD": "(4) Statement I is false but Statement II is true",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Standard electrode potentials for a few half cells are mentioned below :\n$\\text{E}^\\circ_{\\text{Cu}^{2+}/\\text{Cu}} = 0.34\\text{ V}$, $\\text{E}^\\circ_{\\text{Zn}^{2+}/\\text{Zn}} = -0.76\\text{ V}$\n$\\text{E}^\\circ_{\\text{Ag}^+/\\text{Ag}} = 0.80\\text{ V}$, $\\text{E}^\\circ_{\\text{Mg}^{2+}/\\text{Mg}} = -2.37\\text{ V}$\nWhich one of the following cells gives the most negative value of $\\Delta G^\\circ$ ?",
+            "imageUrl": null,
+            "optionA": "(1) $\\text{Zn} \\mid \\text{Zn}^{2+}(1\\text{M}) \\parallel \\text{Ag}^+(1\\text{M}) \\mid \\text{Ag}$",
+            "optionB": "(2) $\\text{Zn} \\mid \\text{Zn}^{2+}(1\\text{M}) \\parallel \\text{Mg}^{2+}(1\\text{M}) \\mid \\text{Mg}$",
+            "optionC": "(3) $\\text{Ag} \\mid \\text{Ag}^+(1\\text{M}) \\parallel \\text{Mg}^{2+}(1\\text{M}) \\mid \\text{Mg}$",
+            "optionD": "(4) $\\text{Cu} \\mid \\text{Cu}^{2+}(1\\text{M}) \\parallel \\text{Ag}^+(1\\text{M}) \\mid \\text{Ag}$",
+            "correctOption": "A"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The $\\alpha$-Helix and $\\beta$-Pleated sheet structures of protein are associated with its :",
+            "imageUrl": null,
+            "optionA": "(1) tertiary structure",
+            "optionB": "(2) quaternary structure",
+            "optionC": "(3) secondary structure",
+            "optionD": "(4) primary structure",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are the atomic numbers of some group 14 elements. The atomic number of the element with lowest melting point is :",
+            "imageUrl": null,
+            "optionA": "(1) 6",
+            "optionB": "(2) 82",
+            "optionC": "(3) 14",
+            "optionD": "(4) 50",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements about X-ray spectra of elements :\nStatement (I) : A plot of $\\sqrt{\\nu}$ ($\\nu$ = frequency of X-rays emitted) vs atomic mass is a straight line.\nStatement (II) : A plot of $\\nu$ ($\\nu$ = frequency of X-rays emitted) vs atomic number is a straight line.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Both Statement I and Statement II are true",
+            "optionB": "(2) Statement I is false but Statement II is true",
+            "optionC": "(3) Both Statement I and Statement II are false",
+            "optionD": "(4) Statement I is true but Statement II is false",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Identify A, B and C in the given below reaction sequence:\n$\\text{Pb(NO}_3)_2 \\xrightarrow{\\text{HNO}_3} A \\xrightarrow{\\text{H}_2\\text{SO}_4} B \\xrightarrow[\\text{Acetic acid}]{\\text{Ammonium acetate}} \\xrightarrow{\\text{K}_2\\text{CrO}_4} C$",
+            "imageUrl": "23rd_jan_s2_q62_diagram.png",
+            "optionA": "(1) Option 1",
+            "optionB": "(2) Option 2",
+            "optionC": "(3) Option 3",
+            "optionD": "(4) Option 4",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Given below are two statements :\nStatement (I) : The boiling points of alcohols and phenols increase with increase in the number of C-atoms.\nStatement (II) : The boiling points of alcohols and phenols are higher in comparison to other class of compounds such as ethers, haloalkanes.\nIn the light of the above statements, choose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) Both Statement I and Statement II are false",
+            "optionB": "(2) Both Statement I and Statement II are true",
+            "optionC": "(3) Statement I is false but Statement II is true",
+            "optionD": "(4) Statement I is true but Statement II is false",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Consider a binary solution of two volatile liquid components 1 and 2. $x_1$ and $y_1$ are the mole fractions of component 1 in liquid and vapour phase, respectively. The slope and intercept of the linear plot of $\\frac{1}{x_1}$ vs $\\frac{1}{y_1}$ are given respectively as:",
+            "imageUrl": null,
+            "optionA": "(1) $\\frac{P_2^0}{P_1^0}$, $\\frac{P_2^0-P_1^0}{P_2^0}$",
+            "optionB": "(2) $\\frac{P_2^0-P_1^0}{P_2^0}$, $\\frac{P_2^0}{P_1^0}$",
+            "optionC": "(3) $\\frac{P_1^0}{P_2^0}$, $\\frac{P_1^0-P_2^0}{P_2^0}$",
+            "optionD": "(4) $\\frac{P_2^0}{P_1^0}$, $\\frac{P_1^0-P_2^0}{P_2^0}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The ascending order of relative rate of solvolysis of following compounds is :\n(A) 2-Bromo-1,3-diphenylpropane\n(B) 2-Bromopropane\n(C) Bromobenzene\n(D) Benzyl bromide",
+            "imageUrl": null,
+            "optionA": "(1) (C) < (B) < (A) < (D)",
+            "optionB": "(2) (D) < (A) < (B) < (C)",
+            "optionC": "(3) (D) < (B) < (A) < (C)",
+            "optionD": "(4) (C) < (D) < (B) < (A)",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Match List - I with List - II.\n\nList - I:\n(A) Bronze\n(B) Brass\n(C) UK silver coin\n(D) Stainless steel\n\nList - II:\n(I) Cu, Ni\n(II) Fe, Cr, Ni, C\n(III) Cu, Zn\n(IV) Cu, Sn\n\nChoose the correct answer from the options given below :",
+            "imageUrl": null,
+            "optionA": "(1) (A)-(IV), (B)-(II), (C)-(III), (D)-(I)",
+            "optionB": "(2) (A)-(IV), (B)-(III), (C)-(I), (D)-(II)",
+            "optionC": "(3) (A)-(III), (B)-(IV), (C)-(II), (D)-(I)",
+            "optionD": "(4) (A)-(III), (B)-(I), (C)-(IV), (D)-(II)",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Isomers of $C_{10}H_{14}$ and their ozonolysis products match list:",
+            "imageUrl": "23rd_jan_s2_q67_diagram.png",
+            "optionA": "(1) (A)-(I), (B)-(IV), (C)-(III), (D)-(II)",
+            "optionB": "(2) (A)-(III), (B)-(II), (C)-(I), (D)-(IV)",
+            "optionC": "(3) (A)-(III), (B)-(IV), (C)-(I), (D)-(II)",
+            "optionD": "(4) (A)-(II), (B)-(III), (C)-(I), (D)-(IV)",
+            "correctOption": "C"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Match the Compounds (List - I) with the appropriate Catalyst/Reagents (List - II) for their reduction into corresponding amines.",
+            "imageUrl": null,
+            "optionA": "(1) (A)-(II), (B)-(I), (C)-(III), (D)-(IV)",
+            "optionB": "(2) (A)-(III), (B)-(II), (C)-(IV), (D)-(I)",
+            "optionC": "(3) (A)-(II), (B)-(IV), (C)-(III), (D)-(I)",
+            "optionD": "(4) (A)-(III), (B)-(IV), (C)-(II), (D)-(I)",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Arrange the following compounds in increasing order of their dipole moment : HBr, H2S, NF3 and CHCl3",
+            "imageUrl": null,
+            "optionA": "(1) $\\text{H}_2\\text{S} < \\text{HBr} < \\text{NF}_3 < \\text{CHCl}_3$",
+            "optionB": "(2) $\\text{NF}_3 < \\text{HBr} < \\text{H}_2\\text{S} < \\text{CHCl}_3$",
+            "optionC": "(3) $\\text{HBr} < \\text{H}_2\\text{S} < \\text{NF}_3 < \\text{CHCl}_3$",
+            "optionD": "(4) $\\text{CHCl}_3 < \\text{NF}_3 < \\text{HBr} < \\text{H}_2\\text{S}$",
+            "correctOption": "B"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The maximum covalency of a non-metallic group 15 element 'E' with weakest E - E bond is :",
+            "imageUrl": null,
+            "optionA": "(1) 4",
+            "optionB": "(2) 6",
+            "optionC": "(3) 3",
+            "optionD": "(4) 5",
+            "correctOption": "D"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "0.01 mole of an organic compound (X) containing 10% hydrogen, on complete combustion produced 0.9 g $H_2O$. Molar mass of (X) is _____ $\\text{gmol}^{-1}$.",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "100"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "A compound X' absorbs 2 moles of hydrogen and X' upon oxidation with $KMnO_4 \\mid H^+$ gives: the total number of $\\sigma$ bonds present in the compound X' is______",
+            "imageUrl": "23rd_jan_s2_q72_diagram.png",
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "27"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "When 81.0 g of aluminium is allowed to react with 128.0 g of oxygen gas, the mass of aluminium oxide produced in grams is_______ (Nearest integer) [Given : Molar mass of Al is 27.0 g/mol, Molar mass of O is 16.0 g/mol]",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "153"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "The bond dissociation enthalpy of $X_2\\ \\Delta H_{\\text{bond}}$ calculated from the given data is _______ $\\text{kJmol}^{-1}$. (Nearest integer)\\n$\\text{M}^+\\text{X}^-(s) \\to \\text{M}^+(g) + \\text{X}^-(g)\\ \\Delta H_{\\text{lattice}}^* = 800\\text{ kJ mol}^{-1}$\\n$\\text{M}(s) \\to \\text{M}(g)\\ \\Delta H_{\\text{sub}}^\\circ = 100\\text{ kJ mol}^{-1}$\\n$\\text{M}(g) \\to \\text{M}^+(g) + e^-\\ \\Delta H_{\\text{i}} = 500\\text{ kJ mol}^{-1}$\\n$\\text{X}(g) + e^- \\to \\text{X}^-(g)\\ \\Delta H_{\\text{eg}}^* = -300\\text{ kJ mol}^{-1}$\\n$\\text{M}(s) + \\frac{1}{2}\\text{X}_2(g) \\to \\text{M}^+\\text{X}^-(s)\\ \\Delta H_{\\text{f}}^\\circ = -400\\text{ kJ mol}^{-1}$",
+            "imageUrl": null,
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "200"
+        },
+        {
+            "subject": "Chemistry",
+            "questionText": "Consider the following sequence of reactions. Total number of $sp^3$ hybridised carbon atoms in the major product C formed is_______",
+            "imageUrl": "23rd_jan_s2_q75_diagram.png",
+            "optionA": "",
+            "optionB": "",
+            "optionC": "",
+            "optionD": "",
+            "correctOption": "4"
+        }
+    ]
+}
