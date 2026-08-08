@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 // Real NTA schedule days for January
@@ -22,8 +22,6 @@ const mainsPapersData: Record<number, { january: string[]; april: string[] }> = 
   }
 };
 
-const advancedPapersData = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017];
-
 export default function JeeExamPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -33,10 +31,78 @@ export default function JeeExamPage() {
   const displayName = isAdvanced ? 'JEE Advanced' : 'JEE Mains';
 
   const [expandedYear, setExpandedYear] = useState<number | null>(null);
+  const [dbShifts, setDbShifts] = useState<any[]>([]);
   const years = Array.from({ length: 10 }, (_, index) => 2026 - index);
 
-  const handleStartExam = (details: string, year: number) => {
-    alert(`Launching Exam Workspace...\nSeries: ${displayName}\nYear: ${year}\nTarget: ${details}`);
+  // Load database shifts on component mount
+  useEffect(() => {
+    const fetchDbShifts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/exams');
+        if (!response.ok) throw new Error('Failed to fetch exams');
+        const data = await response.json();
+        
+        // Find the "JEE Main" exam in the fetched exams list
+        const jeeMain = data.find((e: any) => e.name === 'JEE Main');
+        if (jeeMain && jeeMain.shifts) {
+          setDbShifts(jeeMain.shifts);
+        }
+      } catch (error) {
+        console.error('Error fetching exams from backend:', error);
+      }
+    };
+    fetchDbShifts();
+  }, []);
+
+  const handleStartExam = (name: string, year: number, shiftId?: string) => {
+    if (shiftId) {
+      router.push(`/pages/dashboard/jee-mains/workspace?shiftId=${shiftId}&name=${encodeURIComponent(name)}&year=${year}`);
+    } else {
+      alert(`Launching Exam Workspace...\nSeries: ${displayName}\nYear: ${year}\nTarget: ${name}\n\n(Note: This is a static mock card; database-seeded cards will say 'Start DB Exam')`);
+    }
+  };
+
+  // Helper to merge static shift structure with dynamic DB shifts
+  const getShiftsForAttempt = (year: number, attempt: 'january' | 'april') => {
+    const staticNames = mainsPapersData[year]?.[attempt] || [];
+    
+    // Filter DB shifts matching this year and attempt month
+    const matchingDbShifts = dbShifts.filter((shift: any) => {
+      const shiftDate = new Date(shift.date);
+      const shiftYear = shiftDate.getUTCFullYear();
+      const shiftMonth = shiftDate.getUTCMonth(); // 0 = Jan, 3 = Apr
+      
+      const matchesYear = shiftYear === year;
+      const matchesAttempt = (attempt === 'january' && shiftMonth === 0) || 
+                             (attempt === 'april' && shiftMonth === 3);
+                             
+      return matchesYear && matchesAttempt;
+    });
+    
+    const combined: { name: string; id?: string }[] = [];
+    
+    // Add DB shifts first
+    matchingDbShifts.forEach((shift: any) => {
+      combined.push({ name: shift.name, id: shift.id });
+    });
+    
+    // Add static mock shifts if they don't duplicate a DB shift name
+    staticNames.forEach((name: string) => {
+      if (!combined.some(c => c.name === name)) {
+        combined.push({ name });
+      }
+    });
+
+    // Sort by day number in the name
+    combined.sort((a, b) => {
+      const getDayNum = (name: string) => {
+        const match = name.match(/^(\d+)/);
+        return match ? parseInt(match[1], 10) : 999;
+      };
+      return getDayNum(a.name) - getDayNum(b.name);
+    });
+    
+    return combined;
   };
 
   return (
@@ -57,13 +123,15 @@ export default function JeeExamPage() {
         <p className="text-gray-500 mb-6 text-sm">
           {isAdvanced
             ? "Select an examination year to instantly access Paper 1 and Paper 2 workspaces."
-            : `Select a year to explore its ${expandedYear === 2026 ? '10' : '16'} shifted papers divided by session attempts.`}
+            : `Select a year to explore its shifted papers divided by session attempts.`}
         </p>
 
         <div className="space-y-4 w-full">
           {years.map((year) => {
             const isExpanded = expandedYear === year;
-            const totalPapersCount = isAdvanced ? 2 : (year === 2026 ? 10 : 16);
+            const janShifts = getShiftsForAttempt(year, 'january');
+            const aprShifts = getShiftsForAttempt(year, 'april');
+            const totalPapersCount = isAdvanced ? 2 : (janShifts.length + aprShifts.length);
 
             return (
               <div key={year} className="w-full bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition">
@@ -117,20 +185,32 @@ export default function JeeExamPage() {
                         {/* January Column */}
                         <div className="space-y-2">
                           <h3 className="text-sm font-bold text-blue-700 uppercase tracking-wider mb-3 border-l-4 border-blue-600 pl-2">January Attempt</h3>
-                          {(mainsPapersData[year]?.january || []).map((shift, idx) => (
-                            <div key={idx} onClick={() => handleStartExam(shift, year)} className="w-full bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50/10 cursor-pointer transition flex justify-between items-center group">
-                              <span className="text-sm font-medium text-gray-700">{shift}</span>
-                              <span className="text-xs font-bold text-blue-600 bg-blue-50 group-hover:bg-blue-600 group-hover:text-white px-2.5 py-1.5 rounded transition">Start &rarr;</span>
+                          {janShifts.map((shift, idx) => (
+                            <div key={idx} onClick={() => handleStartExam(shift.name, year, shift.id)} className="w-full bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-500 hover:bg-blue-50/10 cursor-pointer transition flex justify-between items-center group">
+                              <span className="text-sm font-medium text-gray-700">{shift.name}</span>
+                              <span className={`text-xs font-bold px-2.5 py-1.5 rounded transition ${
+                                shift.id 
+                                  ? 'text-green-700 bg-green-50 group-hover:bg-green-600 group-hover:text-white' 
+                                  : 'text-blue-600 bg-blue-50 group-hover:bg-blue-600 group-hover:text-white'
+                              }`}>
+                                {shift.id ? 'Start DB Exam \u2192' : 'Start Mock \u2192'}
+                              </span>
                             </div>
                           ))}
                         </div>
                         {/* April Column */}
                         <div className="space-y-2">
                           <h3 className="text-sm font-bold text-orange-700 uppercase tracking-wider mb-3 border-l-4 border-orange-500 pl-2">April Attempt</h3>
-                          {(mainsPapersData[year]?.april || []).map((shift, idx) => (
-                            <div key={idx} onClick={() => handleStartExam(shift, year)} className="w-full bg-white p-4 rounded-lg border border-gray-200 hover:border-orange-500 hover:bg-orange-50/10 cursor-pointer transition flex justify-between items-center group">
-                              <span className="text-sm font-medium text-gray-700">{shift}</span>
-                              <span className="text-xs font-bold text-orange-600 bg-orange-50 group-hover:bg-orange-600 group-hover:text-white px-2.5 py-1.5 rounded transition">Start &rarr;</span>
+                          {aprShifts.map((shift, idx) => (
+                            <div key={idx} onClick={() => handleStartExam(shift.name, year, shift.id)} className="w-full bg-white p-4 rounded-lg border border-gray-200 hover:border-orange-500 hover:bg-orange-50/10 cursor-pointer transition flex justify-between items-center group">
+                              <span className="text-sm font-medium text-gray-700">{shift.name}</span>
+                              <span className={`text-xs font-bold px-2.5 py-1.5 rounded transition ${
+                                shift.id 
+                                  ? 'text-green-700 bg-green-50 group-hover:bg-green-600 group-hover:text-white' 
+                                  : 'text-orange-600 bg-orange-50 group-hover:bg-orange-600 group-hover:text-white'
+                              }`}>
+                                {shift.id ? 'Start DB Exam \u2192' : 'Start Mock \u2192'}
+                              </span>
                             </div>
                           ))}
                         </div>

@@ -11,6 +11,7 @@ interface Question {
   optionB: string;
   optionC: string;
   optionD: string;
+  imageUrl?: string | null;
 }
 
 interface TestContextType {
@@ -21,9 +22,17 @@ interface TestContextType {
   selectOption: (questionId: string, option: string) => void;
   examTimeLeft: number;
   questionTimers: Record<string, number>;
+  setQuestionTimers: React.Dispatch<React.SetStateAction<Record<string, number>>>;
   isFullscreen: boolean;
   setIsFullscreen: (val: boolean) => void;
   submitFinalExam: () => Promise<void>;
+  activeShiftId: string;
+  activeShiftName: string;
+  activeShiftYear: number | null;
+  loading: boolean;
+  loadShift: (shiftId: string, name: string, year: number) => Promise<void>;
+  isExamActive: boolean;
+  setIsExamActive: (val: boolean) => void;
 }
 
 const TestContext = createContext<TestContextType | undefined>(undefined);
@@ -35,18 +44,49 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
   const [examTimeLeft, setExamTimeLeft] = useState<number>(10800); // 3 Hours
   const [questionTimers, setQuestionTimers] = useState<Record<string, number>>({});
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-
-  // Define a static active Shift ID for our testing staging sandbox environment
-  const targetShiftId = "sandbox-shift-jee-2026";
+  const [isExamActive, setIsExamActive] = useState<boolean>(false);
+  
+  const [activeShiftId, setActiveShiftId] = useState<string>("");
+  const [activeShiftName, setActiveShiftName] = useState<string>("");
+  const [activeShiftYear, setActiveShiftYear] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Master countdown tracking loop
   useEffect(() => {
-    if (examTimeLeft <= 0) return;
+    if (examTimeLeft <= 0 || activeShiftId === "" || !isExamActive) return;
     const masterClock = setInterval(() => {
       setExamTimeLeft((prev) => prev - 1);
     }, 1000);
     return () => clearInterval(masterClock);
-  }, [examTimeLeft]);
+  }, [examTimeLeft, activeShiftId, isExamActive]);
+
+  // Load questions for a specific shift from the database
+  const loadShift = async (shiftId: string, name: string, year: number) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token') || 'SIMULATED_TOKEN';
+      const response = await axios.get(`http://localhost:5000/api/exams/shifts/${shiftId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const shiftData = response.data;
+      setQuestions(shiftData.questions || []);
+      setActiveShiftId(shiftId);
+      setActiveShiftName(name);
+      setActiveShiftYear(year);
+      setCurrentQuestionIndex(0);
+      setAnswers({});
+      setQuestionTimers({});
+      setExamTimeLeft(10800); // Reset countdown to 3 hours
+      setIsExamActive(false); // Reset to false on reload
+    } catch (err) {
+      console.error("Failed to load shift questions:", err);
+      alert("Failed to load questions for this shift.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Integrated Fire-and-Forget Network synchronization method
   const selectOption = async (questionId: string, option: string) => {
@@ -54,16 +94,16 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
     setAnswers((prev) => ({ ...prev, [questionId]: option }));
 
     try {
+      const token = localStorage.getItem('token') || 'SIMULATED_TOKEN';
       // 2. Stream payload directly into our high-performance Redis cache backend
       await axios.post('http://localhost:5000/api/test/save-answer', {
-        shiftId: targetShiftId,
+        shiftId: activeShiftId,
         questionId,
         selectedOption: option,
         timeSpent: questionTimers[questionId] || 0
       }, {
         headers: { 
-          // Temporary placeholder fallback bypass auth signature token parameter key
-          'Authorization': 'Bearer SIMULATED_TOKEN' 
+          'Authorization': `Bearer ${token}` 
         }
       });
     } catch (err) {
@@ -72,25 +112,23 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Final Exam submission wrapper
-  const submitFinalExam = async () => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/test/submit', {
-        shiftId: targetShiftId
-      }, {
-        headers: { 'Authorization': 'Bearer SIMULATED_TOKEN' }
-      });
-      alert(`Exam submitted successfully! Your calculated score is: ${response.data.finalScore}`);
-    } catch (err) {
-      console.error("Submission pipeline failure:", err);
-      alert("Failed to submit exam cleanly.");
-    }
+  const submitFinalExam = async (): Promise<any> => {
+    const token = localStorage.getItem('token') || 'SIMULATED_TOKEN';
+    const response = await axios.post('http://localhost:5000/api/test/submit', {
+      shiftId: activeShiftId
+    }, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    setIsExamActive(false); // Disable exam timer on submission
+    return response.data;
   };
 
   return (
     <TestContext.Provider value={{
       questions, currentQuestionIndex, setCurrentQuestionIndex,
-      answers, selectOption, examTimeLeft, questionTimers, isFullscreen, setIsFullscreen,
-      submitFinalExam
+      answers, selectOption, examTimeLeft, questionTimers, setQuestionTimers, isFullscreen, setIsFullscreen,
+      submitFinalExam, activeShiftId, activeShiftName, activeShiftYear, loading, loadShift,
+      isExamActive, setIsExamActive
     }}>
       {children}
     </TestContext.Provider>

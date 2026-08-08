@@ -68,9 +68,8 @@ exports.submitTest = async (req, res) => {
     const userAnswers = await redisClient.hgetall(redisAnswersKey);
     const userTimers = await redisClient.hgetall(redisTimersKey);
 
-    if (!userAnswers || Object.keys(userAnswers).length === 0) {
-      return res.status(400).json({ error: "No exam answers found in session to submit." });
-    }
+    const activeAnswers = userAnswers || {};
+    const activeTimers = userTimers || {};
 
     // 2. Fetch the master correct answer key from PostgreSQL
     const officialQuestions = await prisma.question.findMany({
@@ -82,8 +81,8 @@ exports.submitTest = async (req, res) => {
 
     // 3. Evaluate each answer
     officialQuestions.forEach((q) => {
-      const selectedOption = userAnswers[q.id];
-      const timeSpentOnQuestion = parseInt(userTimers[q.id] || "0", 10);
+      const selectedOption = activeAnswers[q.id];
+      const timeSpentOnQuestion = parseInt(activeTimers[q.id] || "0", 10);
 
       evaluationMetrics[q.id] = {
         selected: selectedOption || null,
