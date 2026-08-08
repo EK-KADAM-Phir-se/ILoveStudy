@@ -20,7 +20,8 @@
             "optionB": "(2) $\\frac{1}{2}$",
             "optionC": "(3) $\\frac{4}{9}$",
             "optionD": "(4) $\\frac{3}{5}$",
-            "correctOption": null,
+            "correctOption": null
+            ,
             "positiveMarks": 4,
             "negativeMarks": -1
         },

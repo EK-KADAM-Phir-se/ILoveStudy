@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 // Real NTA schedule days for January
@@ -22,7 +22,7 @@ const mainsPapersData: Record<number, { january: string[]; april: string[] }> = 
   }
 };
 
-export default function JeeExamPage() {
+function JeeExamPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -224,5 +224,13 @@ export default function JeeExamPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function JeeExamPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">Loading exam dashboard...</div>}>
+      <JeeExamPageContent />
+    </Suspense>
   );
 }

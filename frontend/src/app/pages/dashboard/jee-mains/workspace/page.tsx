@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useTest } from '../../../../context/TestContext';
+import { LatexRenderer } from '../../../../components/LatexRenderer';
 
-export default function TestWorkspacePage() {
+function TestWorkspacePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const shiftId = searchParams.get('shiftId') || "";
@@ -642,9 +643,9 @@ export default function TestWorkspacePage() {
                   </div>
                 </div>
 
-                <p className="text-slate-100 text-base leading-relaxed whitespace-pre-line">
-                  {activeQuestion.questionText}
-                </p>
+                <div className="text-slate-100 text-base leading-relaxed whitespace-pre-line">
+                  <LatexRenderer text={activeQuestion.questionText} />
+                </div>
 
                 {activeQuestion.imageUrl && (
                   <div className="mt-4 border border-slate-800 rounded-lg p-4 bg-slate-950 flex justify-center">
@@ -679,9 +680,9 @@ export default function TestWorkspacePage() {
                       }`}>
                         {opt.key}
                       </span>
-                      <span className={`text-sm ${isSelected ? 'text-indigo-200 font-semibold' : 'text-slate-300'}`}>
-                        {opt.value}
-                      </span>
+                      <div className={`text-sm ${isSelected ? 'text-indigo-200 font-semibold' : 'text-slate-300'}`}>
+                        <LatexRenderer text={opt.value} />
+                      </div>
                     </div>
                   );
                 })}
@@ -942,5 +943,13 @@ export default function TestWorkspacePage() {
       )}
 
     </div>
+  );
+}
+
+export default function TestWorkspacePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">Loading workspace...</div>}>
+      <TestWorkspacePageContent />
+    </Suspense>
   );
 }

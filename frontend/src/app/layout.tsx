@@ -1,6 +1,7 @@
 "use client";
 
 import "./globals.css";
+import "katex/dist/katex.min.css";
 import { TestProvider } from "./context/TestContext"; // Relative bypass mapping!
 
 export default function RootLayout({
