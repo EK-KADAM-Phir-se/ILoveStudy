@@ -21,17 +21,6 @@ const mainsPapersData: Record<
       (_, i) => `25 Apr - Shift ${i % 2 === 0 ? 1 : 2}`
     ),
   },
-
-  2025: {
-    january: Array.from(
-      { length: 8 },
-      (_, i) => `25 Jan - Shift ${i % 2 === 0 ? 1 : 2}`
-    ),
-    april: Array.from(
-      { length: 8 },
-      (_, i) => `25 Apr - Shift ${i % 2 === 0 ? 1 : 2}`
-    ),
-  },
 };
 
 function CalendarIcon({ className = "" }: { className?: string }) {

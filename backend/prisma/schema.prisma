@@ -58,8 +58,8 @@ model Question {
   optionC       String   @db.Text
   optionD       String   @db.Text
   correctOption String   // "A", "B", "C", or "D"
-  positiveMarks Int      @default(4)
-  negativeMarks Int      @default(-1)
+  positiveMarks Float    @default(4)
+  negativeMarks Float    @default(-1)
 }
 
 // 3. Post-Exam Storage Models
@@ -69,7 +69,7 @@ model TestAttempt {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   shiftId      String
   shift        Shift    @relation(fields: [shiftId], references: [id], onDelete: Cascade)
-  score        Int
+  score        Float
   submittedAt  DateTime @default(now())
   answersSaved Json     // Stores final chosen answers and per-question time array as JSON block
 }

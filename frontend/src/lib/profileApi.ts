@@ -10,6 +10,22 @@ export type UserProfile = {
   avatarUrl: string | null;
 };
 
+async function handleJsonResponse(response: Response, defaultErrorMessage: string) {
+  const contentType = response.headers.get("content-type");
+  if (!contentType || !contentType.includes("application/json")) {
+    const text = await response.text();
+    console.error(`Non-JSON response from ${response.url}:`, text);
+    throw new Error(
+      `Server error (${response.status}). The server returned an unexpected response. Please ensure the backend is running at ${API_BASE}.`
+    );
+  }
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || defaultErrorMessage);
+  }
+  return data;
+}
+
 export async function syncUserProfile(data: {
   email: string;
   fullName: string;
@@ -22,10 +38,7 @@ export async function syncUserProfile(data: {
       body: JSON.stringify(data),
     });
 
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.error || "Failed to sync profile");
-    }
+    const result = await handleJsonResponse(response, "Failed to sync profile");
 
     localStorage.setItem("backendToken", result.token);
     localStorage.setItem("displayName", result.profile.fullName);
@@ -51,11 +64,7 @@ export async function fetchProfile(): Promise<UserProfile> {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.error || "Failed to fetch profile");
-  }
-
+  const result = await handleJsonResponse(response, "Failed to fetch profile");
   return result.profile;
 }
 
@@ -74,11 +83,7 @@ export async function updateProfile(
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.error || "Failed to update profile");
-  }
-
+  const result = await handleJsonResponse(response, "Failed to update profile");
   localStorage.setItem("displayName", result.profile.fullName);
   return result.profile;
 }
@@ -132,11 +137,7 @@ export async function fetchTestPerformance(): Promise<PerformanceSummary> {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.error || "Failed to fetch test performance");
-    }
-
+    const result = await handleJsonResponse(response, "Failed to fetch test performance");
     return result.performance;
   } catch (err) {
     console.warn("Using fallback/empty test performance data:", err);
