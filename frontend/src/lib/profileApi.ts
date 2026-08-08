@@ -93,3 +93,60 @@ export const EXAM_OPTIONS = [
   "GATE",
   "Other",
 ];
+
+export type TestAttemptItem = {
+  id: string;
+  examName: string;
+  shiftName: string;
+  score: number;
+  maxMarks: number;
+  percentage: number;
+  submittedAt: string;
+  correctCount: number;
+  incorrectCount: number;
+  unattemptedCount: number;
+};
+
+export type PerformanceSummary = {
+  highestScoresByExam: Record<string, { score: number; maxMarks: number; percentage: number; shiftName: string; date: string }>;
+  overallMaxScore: number;
+  totalTestsTaken: number;
+  averagePercentage: number;
+  attempts: TestAttemptItem[];
+};
+
+export async function fetchTestPerformance(): Promise<PerformanceSummary> {
+  const token = localStorage.getItem("backendToken");
+  if (!token) {
+    return {
+      highestScoresByExam: {},
+      overallMaxScore: 0,
+      totalTestsTaken: 0,
+      averagePercentage: 0,
+      attempts: [],
+    };
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/api/profile/attempts`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to fetch test performance");
+    }
+
+    return result.performance;
+  } catch (err) {
+    console.warn("Using fallback/empty test performance data:", err);
+    return {
+      highestScoresByExam: {},
+      overallMaxScore: 0,
+      totalTestsTaken: 0,
+      averagePercentage: 0,
+      attempts: [],
+    };
+  }
+}
+
