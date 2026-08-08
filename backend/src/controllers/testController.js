@@ -106,6 +106,13 @@ exports.submitTest = async (req, res) => {
     let unattemptedCount = 0;
     const evaluationMetrics = {};
 
+    // Helper function to extract numerical values from option strings like "(1) 5120" -> "5120"
+    const extractNumericValue = (str) => {
+      if (!str) return "";
+      const match = str.toString().match(/\(?[1-4]?\)?\s*(-?\d+(\.\d+)?)/);
+      return match ? match[1] : str.toString().trim();
+    };
+
     // 3. Evaluate each answer
     officialQuestions.forEach((q) => {
       const selectedOption = activeAnswers[q.id];
@@ -117,8 +124,28 @@ exports.submitTest = async (req, res) => {
         isCorrect: false
       };
 
-      if (selectedOption) {
-        if (selectedOption === q.correctOption) {
+      if (selectedOption !== undefined && selectedOption !== null && selectedOption.toString().trim() !== "") {
+        const userAns = selectedOption.toString().trim();
+        const correctOptKey = q.correctOption ? q.correctOption.toString().trim() : "A";
+
+        // Determine if this is a numerical question
+        const isNumerical = !q.optionA || !q.optionB || !q.optionC || !q.optionD || 
+                            (extractNumericValue(q.optionA) === extractNumericValue(q.optionB));
+
+        // Get target numerical answer from option text or correctOption key
+        const targetOptionText = q[`option${correctOptKey}`] || q.optionA || "";
+        const targetNumeric = extractNumericValue(targetOptionText);
+
+        let isCorrect = false;
+        if (isNumerical) {
+          // Compare numerical user answer with correct numerical value
+          isCorrect = userAns === targetNumeric || parseFloat(userAns) === parseFloat(targetNumeric) || userAns === correctOptKey;
+        } else {
+          // Standard MCQ answer comparison
+          isCorrect = userAns.toUpperCase() === correctOptKey.toUpperCase() || userAns === targetNumeric;
+        }
+
+        if (isCorrect) {
           finalScore += q.positiveMarks; // +4 Marks
           evaluationMetrics[q.id].isCorrect = true;
           correctCount++;

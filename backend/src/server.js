@@ -24,7 +24,7 @@ app.get('/health', (req, res) => {
 });
 
 // Start listening
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is roaring to go on port ${PORT}`);
 });
 
