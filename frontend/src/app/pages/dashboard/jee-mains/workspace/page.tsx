@@ -35,6 +35,7 @@ function TestWorkspacePageContent() {
   const [showSubmitModal, setShowSubmitModal] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+  const [submitResult, setSubmitResult] = useState<any>(null);
 
   // Proctoring states
   const [violationsCount, setViolationsCount] = useState<number>(0);
@@ -51,11 +52,14 @@ function TestWorkspacePageContent() {
   const handleFinalSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await submitFinalExam();
+      const resData = await submitFinalExam();
+      setSubmitResult(resData);
+      setSubmitSuccess(true);
+      setShowAutoSubmitModal(false);
+      setShowSubmitModal(true);
       if (document.fullscreenElement) {
         await document.exitFullscreen().catch(err => console.error("Error exiting fullscreen:", err));
       }
-      router.push('/pages/dashboard/jee-mains?type=mains');
     } catch (err) {
       console.error("Failed to submit exam:", err);
       alert("Failed to submit exam. Please try again.");
@@ -799,8 +803,30 @@ function TestWorkspacePageContent() {
                 </div>
                 <h3 className="text-xl font-bold text-slate-100">Exam Submitted!</h3>
                 <p className="text-sm text-slate-400">
-                  Your exam has been submitted successfully.
+                  Your exam has been submitted successfully. Here is your performance:
                 </p>
+
+                {submitResult && (
+                  <div className="bg-slate-950/60 border border-slate-800 rounded-xl divide-y divide-slate-800 text-sm text-left">
+                    <div className="flex justify-between items-center p-3">
+                      <span className="text-slate-400 font-semibold">Total Score:</span>
+                      <span className="font-extrabold text-indigo-400 text-lg">{submitResult.finalScore} / {submitResult.totalQuestions * 4}</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3">
+                      <span className="text-slate-400">Correct Answers:</span>
+                      <span className="font-extrabold text-emerald-400 text-base">{submitResult.correctCount}</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3">
+                      <span className="text-slate-400">Incorrect Answers:</span>
+                      <span className="font-extrabold text-rose-400 text-base">{submitResult.incorrectCount}</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3">
+                      <span className="text-slate-400">Unattempted Questions:</span>
+                      <span className="font-extrabold text-slate-400 text-base">{submitResult.unattemptedCount}</span>
+                    </div>
+                  </div>
+                )}
+
                 <div className="pt-2">
                   <button
                     onClick={() => {

@@ -77,6 +77,9 @@ exports.submitTest = async (req, res) => {
     });
 
     let finalScore = 0;
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let unattemptedCount = 0;
     const evaluationMetrics = {};
 
     // 3. Evaluate each answer
@@ -94,9 +97,13 @@ exports.submitTest = async (req, res) => {
         if (selectedOption === q.correctOption) {
           finalScore += q.positiveMarks; // +4 Marks
           evaluationMetrics[q.id].isCorrect = true;
+          correctCount++;
         } else {
           finalScore += q.negativeMarks; // -1 Mark
+          incorrectCount++;
         }
+      } else {
+        unattemptedCount++;
       }
     });
 
@@ -116,7 +123,11 @@ exports.submitTest = async (req, res) => {
     res.status(200).json({
       message: "Exam submitted successfully! Results locked.",
       attemptId: cleanAttempt.id,
-      finalScore
+      finalScore,
+      correctCount,
+      incorrectCount,
+      unattemptedCount,
+      totalQuestions: officialQuestions.length
     });
   } catch (error) {
     console.error("Exam Submission Error:", error);
