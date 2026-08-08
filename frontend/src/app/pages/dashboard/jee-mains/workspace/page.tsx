@@ -662,39 +662,89 @@ function TestWorkspacePageContent() {
                 )}
               </div>
 
-              {/* Options lists */}
-              <div className="space-y-3">
-                {[
-                  { key: 'A', value: activeQuestion.optionA },
-                  { key: 'B', value: activeQuestion.optionB },
-                  { key: 'C', value: activeQuestion.optionC },
-                  { key: 'D', value: activeQuestion.optionD }
-                ].map((opt) => {
-                  const isSelected = answers[activeQuestion.id] === opt.key;
+              {/* Options or Numerical Input lists */}
+              {(() => {
+                const getNumericVal = (str?: string | null) => {
+                  if (!str) return "";
+                  const match = str.toString().match(/\(?[1-4]?\)?\s*(-?\d+(\.\d+)?)/);
+                  return match ? match[1] : str.toString().trim();
+                };
+
+                const isNumerical =
+                  !activeQuestion.optionA ||
+                  !activeQuestion.optionB ||
+                  !activeQuestion.optionC ||
+                  !activeQuestion.optionD ||
+                  (getNumericVal(activeQuestion.optionA) === getNumericVal(activeQuestion.optionB));
+
+                if (isNumerical) {
                   return (
-                    <div
-                      key={opt.key}
-                      onClick={() => selectOption(activeQuestion.id, opt.key)}
-                      className={`group flex items-center p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
-                        isSelected
-                          ? 'bg-indigo-950/40 border-indigo-500 shadow-md shadow-indigo-500/5'
-                          : 'bg-slate-900 border-slate-800/80 hover:border-slate-700/80 hover:bg-slate-850/50'
-                      }`}
-                    >
-                      <span className={`h-8 w-8 rounded-lg font-bold flex items-center justify-center mr-4 transition ${
-                        isSelected
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-slate-950 text-slate-400 group-hover:bg-slate-800 group-hover:text-slate-200'
-                      }`}>
-                        {opt.key}
-                      </span>
-                      <div className={`text-sm ${isSelected ? 'text-indigo-200 font-semibold' : 'text-slate-300'}`}>
-                        <LatexRenderer text={opt.value} />
+                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+                      <div className="flex items-center space-x-2">
+                        <span className="h-3 w-3 rounded-full bg-indigo-500 animate-pulse"></span>
+                        <label className="text-sm font-bold text-indigo-300 uppercase tracking-wider">
+                          Numerical Answer Input
+                        </label>
+                      </div>
+                      <p className="text-xs text-slate-400">
+                        This is a Section B Numerical Question. Enter your calculated integer or decimal value below.
+                      </p>
+                      <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <input
+                          type="text"
+                          value={answers[activeQuestion.id] || ''}
+                          onChange={(e) => selectOption(activeQuestion.id, e.target.value)}
+                          placeholder="Enter numerical response (e.g., 5120, 14)..."
+                          className="w-full sm:w-80 bg-slate-950 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-slate-100 text-lg font-mono focus:ring-2 focus:ring-indigo-500/20 outline-none transition"
+                        />
+                        {answers[activeQuestion.id] && (
+                          <button
+                            onClick={() => selectOption(activeQuestion.id, '')}
+                            className="px-4 py-3 border border-slate-700 hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-xl text-xs font-semibold transition"
+                          >
+                            Clear Value
+                          </button>
+                        )}
                       </div>
                     </div>
                   );
-                })}
-              </div>
+                }
+
+                return (
+                  <div className="space-y-3">
+                    {[
+                      { key: 'A', value: activeQuestion.optionA },
+                      { key: 'B', value: activeQuestion.optionB },
+                      { key: 'C', value: activeQuestion.optionC },
+                      { key: 'D', value: activeQuestion.optionD }
+                    ].map((opt) => {
+                      const isSelected = answers[activeQuestion.id] === opt.key;
+                      return (
+                        <div
+                          key={opt.key}
+                          onClick={() => selectOption(activeQuestion.id, opt.key)}
+                          className={`group flex items-center p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                            isSelected
+                              ? 'bg-indigo-950/40 border-indigo-500 shadow-md shadow-indigo-500/5'
+                              : 'bg-slate-900 border-slate-800/80 hover:border-slate-700/80 hover:bg-slate-850/50'
+                          }`}
+                        >
+                          <span className={`h-8 w-8 rounded-lg font-bold flex items-center justify-center mr-4 transition ${
+                            isSelected
+                              ? 'bg-indigo-600 text-white'
+                              : 'bg-slate-950 text-slate-400 group-hover:bg-slate-800 group-hover:text-slate-200'
+                          }`}>
+                            {opt.key}
+                          </span>
+                          <div className={`text-sm ${isSelected ? 'text-indigo-200 font-semibold' : 'text-slate-300'}`}>
+                            <LatexRenderer text={opt.value} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
 
             </div>
           </div>

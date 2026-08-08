@@ -145,3 +145,103 @@ exports.updateProfile = async (req, res) => {
     return res.status(500).json({ error: "Failed to update profile." });
   }
 };
+
+exports.getTestAttempts = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const attempts = await prisma.testAttempt.findMany({
+      where: { userId },
+      include: {
+        shift: {
+          include: {
+            exam: true,
+            questions: {
+              select: { id: true, positiveMarks: true }
+            }
+          }
+        }
+      },
+      orderBy: { submittedAt: 'asc' }
+    });
+
+    const highestScoresByExam = {};
+    let overallMaxScore = 0;
+    let totalPctSum = 0;
+
+    const formattedAttempts = attempts.map((attempt) => {
+      const examName = attempt.shift?.exam?.name || "JEE Main";
+      const shiftName = attempt.shift?.name || "Shift Paper";
+      const questionCount = attempt.shift?.questions?.length || 75;
+      
+      const maxMarks = questionCount > 0 
+        ? attempt.shift.questions.reduce((sum, q) => sum + (q.positiveMarks || 4), 0)
+        : 300;
+
+      const score = attempt.score;
+      const percentage = Math.max(0, parseFloat(((score / maxMarks) * 100).toFixed(1)));
+      totalPctSum += percentage;
+
+      if (!highestScoresByExam[examName] || score > highestScoresByExam[examName].score) {
+        highestScoresByExam[examName] = {
+          score,
+          maxMarks,
+          percentage,
+          shiftName,
+          date: attempt.submittedAt
+        };
+      }
+
+      if (score > overallMaxScore) {
+        overallMaxScore = score;
+      }
+
+      let correctCount = 0;
+      let incorrectCount = 0;
+      let unattemptedCount = 0;
+
+      if (attempt.answersSaved && typeof attempt.answersSaved === 'object') {
+        const metrics = Object.values(attempt.answersSaved);
+        metrics.forEach((m) => {
+          if (m.selected) {
+            if (m.isCorrect) correctCount++;
+            else incorrectCount++;
+          } else {
+            unattemptedCount++;
+          }
+        });
+      }
+
+      return {
+        id: attempt.id,
+        examName,
+        shiftName,
+        score,
+        maxMarks,
+        percentage,
+        submittedAt: attempt.submittedAt,
+        correctCount,
+        incorrectCount,
+        unattemptedCount
+      };
+    });
+
+    const averagePercentage = attempts.length > 0 
+      ? parseFloat((totalPctSum / attempts.length).toFixed(1)) 
+      : 0;
+
+    return res.json({
+      performance: {
+        highestScoresByExam,
+        overallMaxScore,
+        totalTestsTaken: attempts.length,
+        averagePercentage,
+        attempts: formattedAttempts
+      }
+    });
+  } catch (error) {
+    console.error("Get Test Attempts Error:", error);
+    return res.status(500).json({ error: "Failed to fetch test attempt history." });
+  }
+};
+
