@@ -653,7 +653,11 @@ function TestWorkspacePageContent() {
 
                 {activeQuestion.imageUrl && (
                   <div className="mt-4 border border-slate-800 rounded-lg p-4 bg-slate-950 flex justify-center">
-                    <img src={activeQuestion.imageUrl} alt="Question Diagram" className="max-h-72 object-contain" />
+                    <img 
+                      src={activeQuestion.imageUrl.startsWith('http') || activeQuestion.imageUrl.startsWith('/') ? activeQuestion.imageUrl : `/${activeQuestion.imageUrl}`} 
+                      alt="Question Diagram" 
+                      className="max-h-72 object-contain" 
+                    />
                   </div>
                 )}
               </div>
