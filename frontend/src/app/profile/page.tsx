@@ -95,6 +95,122 @@ export default function ProfilePage() {
     }
   };
 
+  // Dynamically generate filter tabs (includes default exams plus any attended exams like SSC, UPSC, GATE etc.)
+  const dynamicFilterTabs = React.useMemo(() => {
+    const baseTabs = ["All", "JEE Main", "JEE Advanced", "NEET"];
+    const extraExams: string[] = [];
+
+    const normBase = baseTabs.map((t) => t.toLowerCase().replace(/s$/, "").trim());
+
+    if (performance?.attempts) {
+      performance.attempts.forEach((item) => {
+        const name = item.examName?.trim();
+        if (!name) return;
+        const norm = name.toLowerCase().replace(/s$/, "").trim();
+        if (
+          !normBase.includes(norm) &&
+          !extraExams.some((e) => e.toLowerCase().replace(/s$/, "").trim() === norm)
+        ) {
+          extraExams.push(name);
+        }
+      });
+    }
+
+    if (performance?.highestScoresByExam) {
+      Object.keys(performance.highestScoresByExam).forEach((key) => {
+        const name = key.trim();
+        if (!name) return;
+        const norm = name.toLowerCase().replace(/s$/, "").trim();
+        if (
+          !normBase.includes(norm) &&
+          !extraExams.some((e) => e.toLowerCase().replace(/s$/, "").trim() === norm)
+        ) {
+          extraExams.push(name);
+        }
+      });
+    }
+
+    return [...baseTabs, ...extraExams];
+  }, [performance]);
+
+  // Filter attempts by selected exam tab with normalized matching
+  const filteredAttempts = React.useMemo(() => {
+    if (!performance?.attempts) return [];
+    if (selectedFilterExam === "All") return performance.attempts;
+
+    const normSelected = selectedFilterExam.toLowerCase().replace(/s$/, "").trim();
+    return performance.attempts.filter((item) => {
+      const normExam = (item.examName || "").toLowerCase().replace(/s$/, "").trim();
+      return normExam.includes(normSelected) || normSelected.includes(normExam);
+    });
+  }, [performance, selectedFilterExam]);
+
+  // Calculate highest score & max marks in filtered view
+  const highestScoreInFilter = React.useMemo(() => {
+    if (filteredAttempts.length === 0) return 0;
+    return Math.max(...filteredAttempts.map((item) => item.score));
+  }, [filteredAttempts]);
+
+  const maxMarksInFilter = React.useMemo(() => {
+    if (filteredAttempts.length === 0) return 300;
+    return Math.max(...filteredAttempts.map((item) => item.maxMarks || 300));
+  }, [filteredAttempts]);
+
+  // Summary Metrics per Filter tab selection
+  const cardMaxScore = selectedFilterExam === "All"
+    ? (performance?.overallMaxScore || 0)
+    : highestScoreInFilter;
+
+  const cardMaxMarks = selectedFilterExam === "All"
+    ? (performance?.attempts && performance.attempts.length > 0
+        ? Math.max(...performance.attempts.map((a) => a.maxMarks || 300))
+        : 300)
+    : maxMarksInFilter;
+
+  const cardTotalTests = selectedFilterExam === "All"
+    ? (performance?.totalTestsTaken || 0)
+    : filteredAttempts.length;
+
+  const cardAverageAccuracy = React.useMemo(() => {
+    if (selectedFilterExam === "All") {
+      return performance?.averagePercentage || 0;
+    }
+    if (filteredAttempts.length === 0) return 0;
+    const totalPct = filteredAttempts.reduce((sum, item) => sum + item.percentage, 0);
+    return parseFloat((totalPct / filteredAttempts.length).toFixed(1));
+  }, [performance, selectedFilterExam, filteredAttempts]);
+
+  // Helper to find peak score for any target/selected exam name
+  const getExamPeakScore = (examName: string) => {
+    if (!performance?.attempts || performance.attempts.length === 0) {
+      if (performance?.highestScoresByExam?.[examName]) {
+        return performance.highestScoresByExam[examName].score || 0;
+      }
+      return 0;
+    }
+
+    const normTarget = examName.toLowerCase().replace(/s$/, "").trim();
+    const matching = performance.attempts.filter((item) => {
+      const normExam = (item.examName || "").toLowerCase().replace(/s$/, "").trim();
+      return normExam.includes(normTarget) || normTarget.includes(normExam);
+    });
+
+    if (matching.length > 0) {
+      return Math.max(...matching.map((item) => item.score));
+    }
+
+    if (performance?.highestScoresByExam) {
+      for (const [key, val] of Object.entries(performance.highestScoresByExam)) {
+        const normKey = key.toLowerCase().replace(/s$/, "").trim();
+        if (normKey.includes(normTarget) || normTarget.includes(normKey)) {
+          return val.score || 0;
+        }
+      }
+    }
+
+    return 0;
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f5f8fc]">
@@ -109,18 +225,6 @@ export default function ProfilePage() {
       </div>
     );
   }
-
-  // Filter attempts by exam category
-  const filteredAttempts = performance?.attempts.filter((item) => {
-    if (selectedFilterExam === "All") return true;
-    return item.examName.toLowerCase().includes(selectedFilterExam.toLowerCase());
-  }) || [];
-
-  // Calculate highest score in filtered view
-  const highestScoreInFilter = filteredAttempts.reduce(
-    (max, item) => (item.score > max ? item.score : max),
-    0
-  );
 
   return (
     <div className="min-h-screen bg-[#f5f8fc] px-4 py-6 sm:px-6 lg:px-8">
@@ -516,8 +620,8 @@ export default function ProfilePage() {
                   </div>
 
                   {/* Filter Tabs */}
-                  <div className="flex items-center gap-1 rounded-2xl bg-slate-100/80 p-1.5 border border-slate-200/60">
-                    {["All", "JEE Main", "JEE Advanced", "NEET"].map((tab) => (
+                  <div className="flex flex-wrap items-center gap-1 rounded-2xl bg-slate-100/80 p-1.5 border border-slate-200/60">
+                    {dynamicFilterTabs.map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setSelectedFilterExam(tab)}
@@ -547,13 +651,13 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <p className="mt-3 text-2xl font-black text-slate-900">
-                      {performance?.overallMaxScore || 0}{" "}
-                      <span className="text-xs font-semibold text-slate-400">/ 300</span>
+                      {cardMaxScore}{" "}
+                      <span className="text-xs font-semibold text-slate-400">/ {cardMaxMarks}</span>
                     </p>
                     <p className="mt-1 text-xs text-amber-700 font-medium">
-                      {performance?.overallMaxScore 
-                        ? `Highest score till now across attempts`
-                        : "No test records yet"}
+                      {selectedFilterExam === "All"
+                        ? (cardMaxScore > 0 ? "Highest score till now across attempts" : "No test records yet")
+                        : (filteredAttempts.length > 0 ? `Highest score in ${selectedFilterExam}` : `No ${selectedFilterExam} records yet`)}
                     </p>
                   </div>
 
@@ -568,10 +672,10 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <p className="mt-3 text-2xl font-black text-slate-900">
-                      {performance?.totalTestsTaken || 0}
+                      {cardTotalTests}
                     </p>
                     <p className="mt-1 text-xs text-blue-700 font-medium">
-                      Completed test attempts
+                      {selectedFilterExam === "All" ? "Completed test attempts" : `Completed ${selectedFilterExam} attempts`}
                     </p>
                   </div>
 
@@ -586,10 +690,10 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <p className="mt-3 text-2xl font-black text-slate-900">
-                      {performance?.averagePercentage || 0}%
+                      {cardAverageAccuracy}%
                     </p>
                     <p className="mt-1 text-xs text-emerald-700 font-medium">
-                      Overall average score rate
+                      {selectedFilterExam === "All" ? "Overall average score rate" : `${selectedFilterExam} average score rate`}
                     </p>
                   </div>
 
@@ -597,17 +701,17 @@ export default function ProfilePage() {
                   <div className="rounded-2xl border border-purple-200/80 bg-gradient-to-br from-purple-50/80 via-white to-purple-50/40 p-5 shadow-sm">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700">
-                        Target Exam Peak
+                        {selectedFilterExam === "All" ? "Target Exam Peak" : `${selectedFilterExam} Peak`}
                       </span>
                       <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-100 text-purple-600 font-bold">
                         ⚡
                       </span>
                     </div>
                     <p className="mt-3 text-lg font-bold text-slate-900 truncate">
-                      {profile?.targetExam || "JEE Mains"}
+                      {selectedFilterExam === "All" ? (profile?.targetExam || "JEE Mains") : selectedFilterExam}
                     </p>
                     <p className="mt-1 text-xs text-purple-700 font-medium">
-                      Peak: {performance?.highestScoresByExam[profile?.targetExam || "JEE Main"]?.score || 0} pts
+                      Peak: {getExamPeakScore(selectedFilterExam === "All" ? (profile?.targetExam || "JEE Mains") : selectedFilterExam)} pts
                     </p>
                   </div>
                 </div>

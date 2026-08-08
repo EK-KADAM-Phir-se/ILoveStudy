@@ -192,6 +192,20 @@ exports.getTestAttempts = async (req, res) => {
         };
       }
 
+      // Also map "JEE Main" to "JEE Mains" and vice versa for robust lookup
+      const altExamName = examName.toLowerCase().replace(/s$/, "") === "jee main"
+        ? (examName.toLowerCase().endsWith("s") ? "JEE Main" : "JEE Mains")
+        : null;
+      if (altExamName && (!highestScoresByExam[altExamName] || score > highestScoresByExam[altExamName].score)) {
+        highestScoresByExam[altExamName] = {
+          score,
+          maxMarks,
+          percentage,
+          shiftName,
+          date: attempt.submittedAt
+        };
+      }
+
       if (score > overallMaxScore) {
         overallMaxScore = score;
       }
