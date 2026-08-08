@@ -5,6 +5,14 @@ let client;
 let isMock = false;
 const store = {};
 
+const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+const redisClient = new Redis(redisUrl, {
+  lazyConnect: true,
+  retryStrategy: (times) => (times >= 2 ? null : 2000),
+  maxRetriesPerRequest: 1,
+  enableOfflineQueue: false,
+});
+
 const mockClient = {
   async set(key, value, mode, duration) {
     store[key] = { value, expires: mode === 'EX' ? Date.now() + duration * 1000 : null };

@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 // Real NTA schedule days for January
 const janExamDays = [22, 23, 24, 28, 29];
 
 const mainsPapersData: Record<number, { january: string[]; april: string[] }> = {
   2026: {
-    // Generates 10 distinct papers using the explicit exam timeline
     january: Array.from({ length: 10 }, (_, i) => {
       const day = janExamDays[Math.floor(i / 2)];
       const shift = i % 2 === 0 ? 1 : 2;
@@ -23,10 +22,10 @@ const mainsPapersData: Record<number, { january: string[]; april: string[] }> = 
 };
 
 function JeeExamPageContent() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-
-  const examType = searchParams.get('type') || 'mains';
+  const searchParams = useSearchParams();
+  const rawExamType = searchParams.get('type');
+  const examType = rawExamType || 'mains';
   const isAdvanced = examType === 'advanced';
   const displayName = isAdvanced ? 'JEE Advanced' : 'JEE Mains';
 
@@ -229,7 +228,7 @@ function JeeExamPageContent() {
 
 export default function JeeExamPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">Loading exam dashboard...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-gray-500">Loading JEE Exam Workspace...</div>}>
       <JeeExamPageContent />
     </Suspense>
   );

@@ -3,12 +3,13 @@ require("dotenv").config();
 const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
 
-const adapter = new PrismaPg({
-  connectionString: process.env.DIRECT_URL || process.env.DATABASE_URL,
-});
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set in .env");
+}
 
 const prisma = new PrismaClient({
-  adapter,
+  adapter: new PrismaPg({ connectionString }),
 });
 
 module.exports = prisma;

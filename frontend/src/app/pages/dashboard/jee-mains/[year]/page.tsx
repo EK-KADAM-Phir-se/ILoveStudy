@@ -1,20 +1,14 @@
 "use client";
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
-// We define the shape of our params object
-interface PageProps {
-  params: {
-    year: string;
-  };
-}
-
-export default function YearWorkspacePage({ params }: PageProps) {
+export default function YearWorkspacePage() {
   const router = useRouter();
+  const params = useParams();
 
-  // Next.js magically extracts the year from the URL!
-  const currentYear = params.year;
+  // Next.js useParams extracts the year from the URL safely in client components
+  const currentYear = (params?.year as string) || '2026';
 
   return (
     <div className="p-8">

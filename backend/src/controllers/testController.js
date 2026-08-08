@@ -14,14 +14,19 @@ exports.saveAnswerToCache = async (req, res) => {
     const redisAnswersKey = `active_test:${userId}:${shiftId}:answers`;
     const redisTimersKey = `active_test:${userId}:${shiftId}:timers`;
 
-    // Save selected choice option to a Redis Hash table Map
-    if (selectedOption) {
-      await redisClient.hset(redisAnswersKey, questionId, selectedOption);
-    }
+    try {
+      // Save selected choice option to a Redis Hash table Map
+      if (selectedOption) {
+        await redisClient.hset(redisAnswersKey, questionId, selectedOption);
+      }
 
-    // Save updated total elapsed seconds spent on this question to a second Redis Hash map
-    if (timeSpent !== undefined) {
-      await redisClient.hset(redisTimersKey, questionId, timeSpent.toString());
+      // Save updated total elapsed seconds spent on this question to a second Redis Hash map
+      if (timeSpent !== undefined) {
+        await redisClient.hset(redisTimersKey, questionId, timeSpent.toString());
+      }
+    } catch (redisError) {
+      console.error('Redis cache warning during saveAnswerToCache:', redisError);
+      return res.status(503).json({ error: 'Temporary caching unavailable. Please try again later.' });
     }
 
     res.json({ status: "Success", message: "Progress saved instantly to memory cache." });
@@ -40,14 +45,24 @@ exports.getTestSnapshot = async (req, res) => {
     const redisAnswersKey = `active_test:${userId}:${shiftId}:answers`;
     const redisTimersKey = `active_test:${userId}:${shiftId}:timers`;
 
-    // Fetch entire maps out of Redis memory in one millisecond step
-    const savedAnswers = await redisClient.hgetall(redisAnswersKey);
-    const savedTimers = await redisClient.hgetall(redisTimersKey);
+    let savedAnswers = {};
+    let savedTimers = {};
+
+    try {
+      // Fetch entire maps out of Redis memory in one millisecond step
+      savedAnswers = await redisClient.hgetall(redisAnswersKey);
+      savedTimers = await redisClient.hgetall(redisTimersKey);
+    } catch (redisError) {
+      console.error('Redis cache warning during getTestSnapshot:', redisError);
+      return res.status(503).json({
+        error: 'Temporary caching unavailable. Please try again later.',
+      });
+    }
 
     res.json({
       shiftId,
       answers: savedAnswers || {},
-      timers: savedTimers || {}
+      timers: savedTimers || {},
     });
   } catch (error) {
     console.error("Redis Cache Fetch Error:", error);
@@ -65,8 +80,17 @@ exports.submitTest = async (req, res) => {
     const redisTimersKey = `active_test:${userId}:${shiftId}:timers`;
 
     // 1. Fetch user inputs from Redis cache
-    const userAnswers = await redisClient.hgetall(redisAnswersKey);
-    const userTimers = await redisClient.hgetall(redisTimersKey);
+    let userAnswers = {};
+    let userTimers = {};
+    try {
+      userAnswers = await redisClient.hgetall(redisAnswersKey);
+      userTimers = await redisClient.hgetall(redisTimersKey);
+    } catch (redisError) {
+      console.error('Redis cache warning during submitTest:', redisError);
+      return res.status(503).json({
+        error: 'Temporary caching unavailable. Please try again later.',
+      });
+    }
 
     const activeAnswers = userAnswers || {};
     const activeTimers = userTimers || {};

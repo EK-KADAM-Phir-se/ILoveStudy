@@ -1,54 +1,82 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // 1. Import the router hook
-import { signInWithPopup } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
+import { syncUserProfile } from '../../lib/profileApi';
 
 const Login = () => {
-  const router = useRouter(); // 2. Initialize the router
+  const router = useRouter();
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const persistSession = async (firebaseUser, token) => {
+    const userEmail = firebaseUser.email;
+    if (!userEmail) throw new Error('No email found on account.');
+
+    const fullName = firebaseUser.displayName || userEmail.split('@')[0];
+
+    localStorage.setItem('token', token);
+    await syncUserProfile({
+      email: userEmail,
+      fullName,
+      avatarUrl: firebaseUser.photoURL,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    // [Keep your email and password validation rules here]
+    setLoading(true);
 
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, isRegistering }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || 'Something went wrong');
-        return;
+      let userCredential;
+      if (isRegistering) {
+        if (password !== confirmPassword) {
+          setError('Passwords do not match.');
+          setLoading(false);
+          return;
+        }
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       }
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('displayName', email.split('@')[0]);
+      const token = await userCredential.user.getIdToken();
+      await persistSession(userCredential.user, token);
       router.push('/pages/dashboard');
-
     } catch (err) {
-      setError('Failed to connect to the server.');
+      console.error("Authentication Error:", err);
+      let errorMessage = 'Authentication failed';
+      if (err.code === 'auth/email-already-in-use') {
+        errorMessage = 'Email is already registered.';
+      } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+        errorMessage = 'Invalid email or password.';
+      } else if (err.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address format.';
+      } else if (err.code === 'auth/weak-password') {
+        errorMessage = 'Password should be at least 6 characters.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
     setError('');
+    setLoading(true);
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
       const token = await userCredential.user.getIdToken();
-      localStorage.setItem('token', token);
-      localStorage.setItem('displayName', userCredential.user.displayName || userCredential.user.email.split('@')[0]);
+      await persistSession(userCredential.user, token);
       router.push('/pages/dashboard');
     } catch (err) {
       console.error("Google Sign-In Error:", err);
@@ -59,6 +87,8 @@ const Login = () => {
       } else {
         setError(err.message || 'Failed to sign in with Google.');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,9 +133,10 @@ const Login = () => {
 
         <button 
           type="submit" 
-          className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:via-indigo-500 hover:to-violet-500 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-[0_0_15px_rgba(79,70,229,0.2)] hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] transform hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] cursor-pointer text-sm"
+          disabled={loading}
+          className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:via-indigo-500 hover:to-violet-500 disabled:opacity-60 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-[0_0_15px_rgba(79,70,229,0.2)] hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] transform hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] cursor-pointer text-sm"
         >
-          {isRegistering ? 'Sign Up' : 'Sign In'}
+          {loading ? 'Please wait...' : isRegistering ? 'Sign Up' : 'Sign In'}
         </button>
       </form>
 
@@ -118,7 +149,8 @@ const Login = () => {
       <button
         type="button"
         onClick={handleGoogleSignIn}
-        className="w-full flex items-center justify-center bg-slate-900 text-slate-300 border border-slate-800 p-3 rounded-lg hover:bg-slate-850 hover:text-white hover:border-slate-700 transition-all duration-200 font-medium text-sm shadow-sm active:scale-[0.98] cursor-pointer transform hover:-translate-y-0.5 gap-2"
+        disabled={loading}
+        className="w-full flex items-center justify-center bg-slate-900 text-slate-300 border border-slate-800 p-3 rounded-lg hover:bg-slate-850 hover:text-white hover:border-slate-700 disabled:opacity-60 transition-all duration-200 font-medium text-sm shadow-sm active:scale-[0.98] cursor-pointer transform hover:-translate-y-0.5 gap-2"
       >
         <svg className="w-5 h-5 mr-1" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
           <g transform="matrix(1, 0, 0, 1, 0, 0)">

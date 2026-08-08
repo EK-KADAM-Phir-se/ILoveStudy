@@ -19,12 +19,14 @@ model User {
 }
 
 model Profile {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fullName  String
-  targetExam String   @default("JEE")
-  avatarUrl String?
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName   String
+  targetExam String   @default("JEE Mains")
+  age        Int?
+  school     String?
+  avatarUrl  String?
 }
 
 // 2. Exam Structure Models

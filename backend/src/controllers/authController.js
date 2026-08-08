@@ -77,19 +77,26 @@ exports.sendOTP = async (req, res) => {
     // Generate a 6-digit random code
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Store in Redis with a 5-minute (300 seconds) expiration
-    // Using the universal .set() method to support ioredis perfectly!
-    await redisClient.set(`otp:${email}`, otp, 'EX', 300);
+    let otpSaved = false;
+    try {
+      otpSaved = await redisClient.set(`otp:${email}`, otp, 'EX', 300);
+    } catch (redisError) {
+      console.error('Redis OTP Save Warning:', redisError);
+    }
 
     // Send the email
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Your Verification Code",
+      subject: "Your verification code",
       text: `Your verification code is: ${otp}. It will expire in 5 minutes.`,
     };
 
     await transporter.sendMail(mailOptions);
+
+    if (!otpSaved) {
+      console.warn('OTP email sent, but Redis storage is unavailable.');
+    }
 
     return res.status(200).json({ message: "Verification code sent to your email!" });
   } catch (error) {
