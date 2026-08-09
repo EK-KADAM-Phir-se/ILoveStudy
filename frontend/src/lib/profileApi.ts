@@ -1,5 +1,13 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+export type StreakData = {
+  currentStreak: number;
+  longestStreak: number;
+  lastActiveDate: string | null;
+  isActiveToday: boolean;
+  streakHistory: string[];
+};
+
 export type UserProfile = {
   id: string;
   email: string;
@@ -8,6 +16,10 @@ export type UserProfile = {
   age: number | null;
   school: string;
   avatarUrl: string | null;
+  currentStreak?: number;
+  longestStreak?: number;
+  lastActiveDate?: string | null;
+  streakHistory?: string[];
 };
 
 async function handleJsonResponse(response: Response, defaultErrorMessage: string) {
@@ -149,5 +161,50 @@ export async function fetchTestPerformance(): Promise<PerformanceSummary> {
       attempts: [],
     };
   }
+}
+
+export async function fetchStreakData(): Promise<StreakData> {
+  const token = localStorage.getItem("backendToken");
+  if (!token) {
+    const todayStr = new Date().toISOString().split("T")[0];
+    return {
+      currentStreak: 1,
+      longestStreak: 1,
+      lastActiveDate: new Date().toISOString(),
+      isActiveToday: true,
+      streakHistory: [todayStr],
+    };
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/api/profile/streak`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const result = await handleJsonResponse(response, "Failed to fetch streak data");
+    return result.streak;
+  } catch (err) {
+    console.warn("Fallback streak data used:", err);
+    const todayStr = new Date().toISOString().split("T")[0];
+    return {
+      currentStreak: 1,
+      longestStreak: 1,
+      lastActiveDate: new Date().toISOString(),
+      isActiveToday: true,
+      streakHistory: [todayStr],
+    };
+  }
+}
+
+export async function recordDailyCheckIn(): Promise<StreakData> {
+  const token = localStorage.getItem("backendToken");
+  if (!token) throw new Error("Not authenticated");
+
+  const response = await fetch(`${API_BASE}/api/profile/streak/check-in`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const result = await handleJsonResponse(response, "Failed to record check-in");
+  return result.streak;
 }
 

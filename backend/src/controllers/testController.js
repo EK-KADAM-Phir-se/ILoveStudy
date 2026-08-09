@@ -171,6 +171,27 @@ exports.submitTest = async (req, res) => {
     // 5. Clean up temporary Redis cache keys to free memory space
     await redisClient.del(redisAnswersKey, redisTimersKey);
 
+    // 6. Update user's profile streak history with today's date
+    try {
+      const todayStr = new Date().toISOString().split("T")[0];
+      const userProfile = await prisma.profile.findUnique({ where: { userId } });
+      if (userProfile) {
+        const existingHistory = Array.isArray(userProfile.streakHistory) ? userProfile.streakHistory : [];
+        if (!existingHistory.includes(todayStr)) {
+          existingHistory.push(todayStr);
+          await prisma.profile.update({
+            where: { userId },
+            data: {
+              lastActiveDate: new Date(),
+              streakHistory: existingHistory,
+            },
+          });
+        }
+      }
+    } catch (e) {
+      console.warn("Streak update on test submission warning:", e);
+    }
+
     res.status(200).json({
       message: "Exam submitted successfully! Results locked.",
       attemptId: cleanAttempt.id,

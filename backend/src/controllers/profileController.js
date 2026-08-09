@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret";
 
-function formatProfile(user) {
+function formatProfile(user, streakData = null) {
   const profile = user.profiles;
   return {
     id: user.id,
@@ -13,6 +13,131 @@ function formatProfile(user) {
     age: profile?.age ?? null,
     school: profile?.school ?? "",
     avatarUrl: profile?.avatarUrl ?? null,
+    currentStreak: streakData?.currentStreak ?? profile?.currentStreak ?? 1,
+    longestStreak: streakData?.longestStreak ?? profile?.longestStreak ?? 1,
+    lastActiveDate: streakData?.lastActiveDate ?? (profile?.lastActiveDate ? new Date(profile.lastActiveDate).toISOString() : null),
+    streakHistory: streakData?.streakHistory ?? (Array.isArray(profile?.streakHistory) ? profile.streakHistory : []),
+  };
+}
+
+async function updateAndGetStreak(userId, forceCheckInToday = false) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { profiles: true },
+  });
+
+  if (!user || !user.profiles) {
+    const todayStr = new Date().toISOString().split("T")[0];
+    return {
+      currentStreak: 1,
+      longestStreak: 1,
+      lastActiveDate: new Date().toISOString(),
+      isActiveToday: true,
+      streakHistory: [todayStr],
+    };
+  }
+
+  const profile = user.profiles;
+
+  const attempts = await prisma.testAttempt.findMany({
+    where: { userId },
+    select: { submittedAt: true },
+  });
+
+  const activeDatesSet = new Set();
+
+  attempts.forEach((a) => {
+    if (a.submittedAt) {
+      const dStr = new Date(a.submittedAt).toISOString().split("T")[0];
+      activeDatesSet.add(dStr);
+    }
+  });
+
+  if (Array.isArray(profile.streakHistory)) {
+    profile.streakHistory.forEach((dStr) => {
+      if (dStr) activeDatesSet.add(dStr);
+    });
+  }
+
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  if (forceCheckInToday) {
+    activeDatesSet.add(todayStr);
+  }
+
+  const isActiveToday = activeDatesSet.has(todayStr);
+
+  let count = 0;
+  let checkDate = new Date();
+  let dateStr = checkDate.toISOString().split("T")[0];
+
+  if (activeDatesSet.has(dateStr)) {
+    while (activeDatesSet.has(dateStr)) {
+      count++;
+      checkDate.setDate(checkDate.getDate() - 1);
+      dateStr = checkDate.toISOString().split("T")[0];
+    }
+  } else {
+    const yesterday = new Date(checkDate);
+    yesterday.setDate(yesterday.getDate() - 1);
+    let yDateStr = yesterday.toISOString().split("T")[0];
+
+    if (activeDatesSet.has(yDateStr)) {
+      checkDate = yesterday;
+      while (activeDatesSet.has(yDateStr)) {
+        count++;
+        checkDate.setDate(checkDate.getDate() - 1);
+        yDateStr = checkDate.toISOString().split("T")[0];
+      }
+    } else {
+      count = 0;
+    }
+  }
+
+  const sortedDates = Array.from(activeDatesSet).sort();
+  let maxStreak = 0;
+  let tempStreak = 0;
+  let prevDate = null;
+
+  for (const dStr of sortedDates) {
+    const d = new Date(dStr);
+    if (!prevDate) {
+      tempStreak = 1;
+    } else {
+      const diffMs = d.getTime() - prevDate.getTime();
+      const diffDays = Math.round(diffMs / (1000 * 3600 * 24));
+      if (diffDays === 1) {
+        tempStreak++;
+      } else if (diffDays > 1) {
+        tempStreak = 1;
+      }
+    }
+    prevDate = d;
+    if (tempStreak > maxStreak) {
+      maxStreak = tempStreak;
+    }
+  }
+
+  const finalCurrentStreak = Math.max(count, 0);
+  const finalLongestStreak = Math.max(maxStreak, finalCurrentStreak, 1);
+  const streakHistory = Array.from(activeDatesSet).sort();
+
+  await prisma.profile.update({
+    where: { userId },
+    data: {
+      currentStreak: finalCurrentStreak,
+      longestStreak: finalLongestStreak,
+      lastActiveDate: isActiveToday ? new Date() : profile.lastActiveDate,
+      streakHistory,
+    },
+  });
+
+  return {
+    currentStreak: finalCurrentStreak,
+    longestStreak: finalLongestStreak,
+    lastActiveDate: profile.lastActiveDate ? new Date(profile.lastActiveDate).toISOString() : null,
+    isActiveToday,
+    streakHistory,
   };
 }
 
@@ -44,6 +169,10 @@ exports.syncFirebaseUser = async (req, res) => {
             userId: user.id,
             fullName,
             avatarUrl: avatarUrl ?? null,
+            currentStreak: 1,
+            longestStreak: 1,
+            lastActiveDate: new Date(),
+            streakHistory: [new Date().toISOString().split("T")[0]],
           },
         });
       }
@@ -55,6 +184,10 @@ exports.syncFirebaseUser = async (req, res) => {
             userId: newUser.id,
             fullName,
             avatarUrl: avatarUrl ?? null,
+            currentStreak: 1,
+            longestStreak: 1,
+            lastActiveDate: new Date(),
+            streakHistory: [new Date().toISOString().split("T")[0]],
           },
         });
         return newUser;
@@ -66,12 +199,13 @@ exports.syncFirebaseUser = async (req, res) => {
       include: { profiles: true },
     });
 
+    const streakData = await updateAndGetStreak(user.id);
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "30d" });
 
     return res.json({
       message: "Profile synced successfully.",
       token,
-      profile: formatProfile(user),
+      profile: formatProfile(user, streakData),
     });
   } catch (error) {
     console.error("Sync Error:", error);
@@ -90,10 +224,32 @@ exports.getProfile = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    return res.json({ profile: formatProfile(user) });
+    const streakData = await updateAndGetStreak(req.user.userId);
+
+    return res.json({ profile: formatProfile(user, streakData) });
   } catch (error) {
     console.error("Get Profile Error:", error);
     return res.status(500).json({ error: "Failed to fetch profile." });
+  }
+};
+
+exports.getStreak = async (req, res) => {
+  try {
+    const streakData = await updateAndGetStreak(req.user.userId);
+    return res.json({ streak: streakData });
+  } catch (error) {
+    console.error("Get Streak Error:", error);
+    return res.status(500).json({ error: "Failed to fetch streak." });
+  }
+};
+
+exports.checkInStreak = async (req, res) => {
+  try {
+    const streakData = await updateAndGetStreak(req.user.userId, true);
+    return res.json({ message: "Check-in recorded successfully!", streak: streakData });
+  } catch (error) {
+    console.error("Check In Error:", error);
+    return res.status(500).json({ error: "Failed to record check-in." });
   }
 };
 

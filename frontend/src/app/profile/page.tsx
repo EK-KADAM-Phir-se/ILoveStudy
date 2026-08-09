@@ -31,6 +31,40 @@ export default function ProfilePage() {
     targetExam: "JEE Mains",
   });
 
+  const normalizeExamName = (name: string = "") => {
+  const value = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "")
+    .trim();
+
+  // Keep JEE Main and JEE Advanced completely separate
+  if (value === "jee" || value === "jeemain" || value === "jeemains") {
+    return "jee-main";
+  }
+
+  if (value === "jeeadvanced") {
+    return "jee-advanced";
+  }
+
+  if (value === "neet") {
+    return "neet";
+  }
+
+  if (value === "ssc") {
+    return "ssc";
+  }
+
+  if (value === "upsc") {
+    return "upsc";
+  }
+
+  if (value === "gate") {
+    return "gate";
+  }
+
+  return value;
+};
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -133,15 +167,18 @@ export default function ProfilePage() {
     return [...baseTabs, ...extraExams];
   }, [performance]);
 
-  // Filter attempts by selected exam tab with normalized matching
+  // Filter attempts strictly by selected exam
   const filteredAttempts = React.useMemo(() => {
     if (!performance?.attempts) return [];
-    if (selectedFilterExam === "All") return performance.attempts;
 
-    const normSelected = selectedFilterExam.toLowerCase().replace(/s$/, "").trim();
+    if (selectedFilterExam === "All") {
+      return performance.attempts;
+    }
+
+    const selectedExam = normalizeExamName(selectedFilterExam);
+
     return performance.attempts.filter((item) => {
-      const normExam = (item.examName || "").toLowerCase().replace(/s$/, "").trim();
-      return normExam.includes(normSelected) || normSelected.includes(normExam);
+      return normalizeExamName(item.examName) === selectedExam;
     });
   }, [performance, selectedFilterExam]);
 
@@ -163,8 +200,8 @@ export default function ProfilePage() {
 
   const cardMaxMarks = selectedFilterExam === "All"
     ? (performance?.attempts && performance.attempts.length > 0
-        ? Math.max(...performance.attempts.map((a) => a.maxMarks || 300))
-        : 300)
+      ? Math.max(...performance.attempts.map((a) => a.maxMarks || 300))
+      : 300)
     : maxMarksInFilter;
 
   const cardTotalTests = selectedFilterExam === "All"
@@ -603,6 +640,8 @@ export default function ProfilePage() {
                 />
               </div>
 
+              
+
               {/* =========================================================
                   TEST PERFORMANCE & HIGHEST MARKS SECTION
               ========================================================= */}
@@ -625,11 +664,10 @@ export default function ProfilePage() {
                       <button
                         key={tab}
                         onClick={() => setSelectedFilterExam(tab)}
-                        className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition ${
-                          selectedFilterExam === tab
+                        className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition ${selectedFilterExam === tab
                             ? "bg-white text-blue-600 shadow-sm"
                             : "text-slate-600 hover:text-slate-900"
-                        }`}
+                          }`}
                       >
                         {tab}
                       </button>
@@ -748,183 +786,429 @@ export default function ProfilePage() {
                   {filteredAttempts.length > 0 ? (
                     <div className="space-y-4 pt-4">
 
-                      {/* Tooltip display box if hovering */}
-                      <div className="h-10 flex items-center justify-between bg-slate-950/80 px-4 py-2 rounded-xl border border-slate-800 text-xs">
-                        {hoveredAttempt ? (
-                          <>
-                            <span className="font-bold text-indigo-300">
-                              {hoveredAttempt.shiftName} ({hoveredAttempt.examName})
-                            </span>
-                            <span className="text-slate-300">
-                              Score: <strong className="text-emerald-400">{hoveredAttempt.score}</strong> / {hoveredAttempt.maxMarks} ({hoveredAttempt.percentage}%)
-                            </span>
-                            <span className="text-slate-400">
-                              Correct: {hoveredAttempt.correctCount} | Wrong: {hoveredAttempt.incorrectCount}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="text-slate-400 italic">
-                            Hover over any bar in the graph to see detailed attempt metrics
-                          </span>
-                        )}
-                      </div>
+                      {/* Selected exam information */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                        <div>
+                          <p className="text-sm font-bold text-white">
+                            {selectedFilterExam === "All"
+                              ? "All Exams"
+                              : `${selectedFilterExam} Performance`}
+                          </p>
 
-                      {/* Visual Bar Chart */}
-                      <div className="relative h-56 w-full flex items-end justify-between gap-2 sm:gap-4 pt-6 px-4 border-b border-l border-slate-800">
-
-                        {/* Benchmark High-Water Line */}
-                        <div 
-                          className="absolute left-0 right-0 border-t-2 border-dashed border-amber-400/70 z-10 transition-all"
-                          style={{
-                            bottom: `${Math.min(100, Math.max(10, (highestScoreInFilter / 300) * 100))}%`
-                          }}
-                        >
-                          <span className="absolute right-2 -top-5 text-[10px] font-bold text-amber-400 bg-slate-950 px-2 py-0.5 rounded border border-amber-400/30">
-                            PEAK: {highestScoreInFilter} PTS
-                          </span>
+                          <p className="mt-0.5 text-[11px] text-slate-400">
+                            {filteredAttempts.length} test
+                            {filteredAttempts.length !== 1 ? "s" : ""} recorded
+                          </p>
                         </div>
 
-                        {filteredAttempts.map((item, idx) => {
-                          const barHeight = Math.max(12, item.percentage);
-                          return (
-                            <div
-                              key={item.id || idx}
-                              onMouseEnter={() => setHoveredAttempt(item)}
-                              onMouseLeave={() => setHoveredAttempt(null)}
-                              className="group flex-1 flex flex-col items-center h-full justify-end cursor-pointer relative"
-                            >
-                              <div
-                                style={{ height: `${barHeight}%` }}
-                                className="w-full max-w-[40px] rounded-t-lg bg-gradient-to-t from-indigo-600 via-blue-500 to-emerald-400 transition-all duration-300 group-hover:brightness-125 group-hover:scale-105 shadow-lg shadow-indigo-500/20"
-                              />
-                              <span className="mt-2 text-[10px] text-slate-400 truncate max-w-[50px] font-mono">
-                                #{idx + 1}
-                              </span>
-                            </div>
-                          );
-                        })}
+                        <div className="flex items-center gap-5 text-xs">
+                          <span className="text-slate-400">
+                            Average:
+                            <strong className="ml-1 text-emerald-400">
+                              {cardAverageAccuracy}%
+                            </strong>
+                          </span>
+
+                          <span className="text-slate-400">
+                            Peak:
+                            <strong className="ml-1 text-amber-400">
+                              {highestScoreInFilter}/{maxMarksInFilter}
+                            </strong>
+                          </span>
+                        </div>
                       </div>
 
+                      {/* LINE GRAPH */}
+                      <div className="relative h-[330px] w-full overflow-hidden rounded-2xl border border-slate-800 bg-[#080f23] px-2 pt-5 sm:px-4">
+
+                        {(() => {
+                          const chartAttempts = filteredAttempts;
+
+                          const chartWidth = 1000;
+                          const chartHeight = 250;
+
+                          const maxMarks =
+                            Math.max(
+                              ...chartAttempts.map((item) => item.maxMarks || 300),
+                              300
+                            );
+
+                          const highestScore = Math.max(
+                            ...chartAttempts.map((item) => item.score)
+                          );
+
+                          const points = chartAttempts.map((item, index) => {
+                            const x =
+                              chartAttempts.length === 1
+                                ? chartWidth / 2
+                                : (index / (chartAttempts.length - 1)) *
+                                (chartWidth - 40) +
+                                20;
+
+                            const y =
+                              chartHeight -
+                              ((item.score / maxMarks) * (chartHeight - 30));
+
+                            return {
+                              x,
+                              y,
+                              item,
+                              index,
+                            };
+                          });
+
+                          const linePath = points
+                            .map(
+                              (point, index) =>
+                                `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`
+                            )
+                            .join(" ");
+
+                          const areaPath = `
+          ${linePath}
+          L ${points[points.length - 1].x} ${chartHeight}
+          L ${points[0].x} ${chartHeight}
+          Z
+        `;
+
+                          return (
+                            <>
+                              {/* Grid lines */}
+                              <div className="pointer-events-none absolute inset-x-4 top-5 bottom-10 flex flex-col justify-between">
+                                {[100, 75, 50, 25, 0].map((value) => (
+                                  <div
+                                    key={value}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <span className="w-8 text-right text-[10px] text-slate-500">
+                                      {Math.round((value / 100) * maxMarks)}
+                                    </span>
+
+                                    <div className="h-px flex-1 border-t border-dashed border-slate-800" />
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* SVG Chart */}
+                              <svg
+                                viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+                                className="relative z-10 h-full w-full overflow-visible"
+                                preserveAspectRatio="none"
+                              >
+                                {/* Gradient */}
+                                <defs>
+                                  <linearGradient
+                                    id="scoreAreaGradient"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                  >
+                                    <stop
+                                      offset="0%"
+                                      stopColor="#3b82f6"
+                                      stopOpacity="0.35"
+                                    />
+
+                                    <stop
+                                      offset="100%"
+                                      stopColor="#3b82f6"
+                                      stopOpacity="0"
+                                    />
+                                  </linearGradient>
+                                </defs>
+
+                                {/* Max score line */}
+                                <line
+                                  x1="20"
+                                  x2={chartWidth - 20}
+                                  y1={
+                                    chartHeight -
+                                    (highestScore / maxMarks) *
+                                    (chartHeight - 30)
+                                  }
+                                  y2={
+                                    chartHeight -
+                                    (highestScore / maxMarks) *
+                                    (chartHeight - 30)
+                                  }
+                                  stroke="#fbbf24"
+                                  strokeWidth="1.5"
+                                  strokeDasharray="7 6"
+                                  opacity="0.8"
+                                />
+
+                                {/* Peak label */}
+                                <text
+                                  x={chartWidth - 25}
+                                  y={
+                                    chartHeight -
+                                    (highestScore / maxMarks) *
+                                    (chartHeight - 30) -
+                                    8
+                                  }
+                                  textAnchor="end"
+                                  fill="#fbbf24"
+                                  fontSize="11"
+                                  fontWeight="700"
+                                >
+                                  PEAK {highestScore}
+                                </text>
+
+                                {/* Area */}
+                                <path
+                                  d={areaPath}
+                                  fill="url(#scoreAreaGradient)"
+                                />
+
+                                {/* Main score line */}
+                                <path
+                                  d={linePath}
+                                  fill="none"
+                                  stroke="#3b82f6"
+                                  strokeWidth="3"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+
+                                {/* Attempts */}
+                                {points.map((point) => (
+                                  <g key={point.item.id || point.index}>
+                                    <circle
+                                      cx={point.x}
+                                      cy={point.y}
+                                      r="6"
+                                      fill="#080f23"
+                                      stroke="#60a5fa"
+                                      strokeWidth="3"
+                                      className="cursor-pointer transition-all duration-200 hover:r-8"
+                                      onMouseEnter={() =>
+                                        setHoveredAttempt(point.item)
+                                      }
+                                      onMouseLeave={() =>
+                                        setHoveredAttempt(null)
+                                      }
+                                    />
+
+                                    {/* Show score labels only for important points */}
+                                    {(point.index === 0 ||
+                                      point.index === chartAttempts.length - 1 ||
+                                      point.item.score === highestScore) && (
+                                        <text
+                                          x={point.x}
+                                          y={point.y - 12}
+                                          textAnchor="middle"
+                                          fill="white"
+                                          fontSize="11"
+                                          fontWeight="700"
+                                        >
+                                          {point.item.score}
+                                        </text>
+                                      )}
+                                  </g>
+                                ))}
+                              </svg>
+
+                              {/* X-axis labels */}
+                              <div className="absolute bottom-1 left-12 right-5 flex justify-between text-[10px] text-slate-500">
+                                {chartAttempts.length <= 10 ? (
+                                  chartAttempts.map((_, index) => (
+                                    <span key={index}>
+                                      #{index + 1}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <>
+                                    <span>#1</span>
+
+                                    <span>
+                                      #{Math.floor(chartAttempts.length * 0.25)}
+                                    </span>
+
+                                    <span>
+                                      #{Math.floor(chartAttempts.length * 0.5)}
+                                    </span>
+
+                                    <span>
+                                      #{Math.floor(chartAttempts.length * 0.75)}
+                                    </span>
+
+                                    <span>
+                                      #{chartAttempts.length}
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+
+                      {/* Hover details */}
+                      <div className="min-h-[42px] rounded-xl border border-slate-800 bg-slate-950/80 px-4 py-2.5 text-xs">
+                        {hoveredAttempt ? (
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <span className="font-bold text-indigo-300">
+                              {hoveredAttempt.shiftName}
+                            </span>
+
+                            <span className="text-slate-300">
+                              Score:
+                              <strong className="ml-1 text-emerald-400">
+                                {hoveredAttempt.score}
+                              </strong>
+                              {" / "}
+                              {hoveredAttempt.maxMarks}
+                            </span>
+
+                            <span className="text-slate-300">
+                              Accuracy:
+                              <strong className="ml-1 text-blue-400">
+                                {hoveredAttempt.percentage}%
+                              </strong>
+                            </span>
+
+                            <span className="text-slate-400">
+                              Correct: {hoveredAttempt.correctCount}
+                              {" | "}
+                              Wrong: {hoveredAttempt.incorrectCount}
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500">
+                              Hover over a point to see test details
+                            </span>
+
+                            <span className="hidden text-slate-500 sm:block">
+                              {selectedFilterExam === "All"
+                                ? "Showing all exams"
+                                : `Showing only ${selectedFilterExam}`}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <div className="py-12 text-center space-y-3">
                       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-800 text-2xl text-slate-400">
                         📊
                       </div>
+
                       <p className="text-sm font-semibold text-slate-300">
                         No test attempts recorded for {selectedFilterExam}.
                       </p>
-                      <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                        Attend JEE Main, JEE Advanced, or NEET test shifts from the workspace to record your performance graph here!
+
+                      <p className="mx-auto max-w-sm text-xs text-slate-500">
+                        Attend a {selectedFilterExam} test from the workspace to
+                        start tracking your performance here.
                       </p>
                     </div>
                   )}
 
-                </div>
+                  {/* DETAILED TEST ATTEMPTS HISTORY TABLE */}
+                  <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+                    <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                      <h4 className="font-bold text-slate-900 text-sm">
+                        Test Attendance History ({filteredAttempts.length})
+                      </h4>
+                      <button
+                        onClick={() => router.push("/pages/dashboard/jee-mains")}
+                        className="text-xs font-bold text-blue-600 hover:text-blue-700 transition"
+                      >
+                        + Attend New Test
+                      </button>
+                    </div>
 
-                {/* DETAILED TEST ATTEMPTS HISTORY TABLE */}
-                <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
-                  <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm">
-                      Test Attendance History ({filteredAttempts.length})
-                    </h4>
-                    <button
-                      onClick={() => router.push("/pages/dashboard/jee-mains")}
-                      className="text-xs font-bold text-blue-600 hover:text-blue-700 transition"
-                    >
-                      + Attend New Test
-                    </button>
-                  </div>
-
-                  {filteredAttempts.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs">
-                        <thead className="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-100">
-                          <tr>
-                            <th className="px-6 py-3">Test Name / Shift</th>
-                            <th className="px-6 py-3">Exam Type</th>
-                            <th className="px-6 py-3">Date</th>
-                            <th className="px-6 py-3">Score / Max</th>
-                            <th className="px-6 py-3">Accuracy %</th>
-                            <th className="px-6 py-3 text-right">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 text-slate-700">
-                          {filteredAttempts.map((item) => (
-                            <tr key={item.id} className="hover:bg-slate-50/80 transition">
-                              <td className="px-6 py-4 font-bold text-slate-900">
-                                {item.shiftName}
-                              </td>
-                              <td className="px-6 py-4">
-                                <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-blue-600">
-                                  {item.examName}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 text-slate-500">
-                                {new Date(item.submittedAt).toLocaleDateString("en-IN", {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric",
-                                })}
-                              </td>
-                              <td className="px-6 py-4 font-extrabold text-slate-900">
-                                {item.score} <span className="text-slate-400 font-normal">/ {item.maxMarks}</span>
-                              </td>
-                              <td className="px-6 py-4">
-                                <span
-                                  className={`rounded-full px-3 py-1 text-[11px] font-bold ${
-                                    item.percentage >= 70
-                                      ? "bg-emerald-50 text-emerald-600"
-                                      : item.percentage >= 40
-                                      ? "bg-amber-50 text-amber-600"
-                                      : "bg-rose-50 text-rose-600"
-                                  }`}
-                                >
-                                  {item.percentage}%
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 text-right">
-                                <button
-                                  onClick={() => router.push("/pages/dashboard/jee-mains")}
-                                  className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition"
-                                >
-                                  Re-attempt &rarr;
-                                </button>
-                              </td>
+                    {filteredAttempts.length > 0 ? (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead className="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-100">
+                            <tr>
+                              <th className="px-6 py-3">Test Name / Shift</th>
+                              <th className="px-6 py-3">Exam Type</th>
+                              <th className="px-6 py-3">Date</th>
+                              <th className="px-6 py-3">Score / Max</th>
+                              <th className="px-6 py-3">Accuracy %</th>
+                              <th className="px-6 py-3 text-right">Action</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="p-8 text-center text-slate-400 text-xs">
-                      No test history found. Attend an exam from the dashboard to start tracking!
-                    </div>
-                  )}
-                </div>
-
-              </div>
-
-              {/* Security / information banner */}
-              <div className="relative mt-7 overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 to-indigo-50 p-5 sm:p-6">
-                <div className="relative z-10 flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
-                    <ShieldIcon />
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 text-slate-700">
+                            {filteredAttempts.map((item) => (
+                              <tr key={item.id} className="hover:bg-slate-50/80 transition">
+                                <td className="px-6 py-4 font-bold text-slate-900">
+                                  {item.shiftName}
+                                </td>
+                                <td className="px-6 py-4">
+                                  <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-blue-600">
+                                    {item.examName}
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 text-slate-500">
+                                  {new Date(item.submittedAt).toLocaleDateString("en-IN", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                  })}
+                                </td>
+                                <td className="px-6 py-4 font-extrabold text-slate-900">
+                                  {item.score} <span className="text-slate-400 font-normal">/ {item.maxMarks}</span>
+                                </td>
+                                <td className="px-6 py-4">
+                                  <span
+                                    className={`rounded-full px-3 py-1 text-[11px] font-bold ${item.percentage >= 70
+                                        ? "bg-emerald-50 text-emerald-600"
+                                        : item.percentage >= 40
+                                          ? "bg-amber-50 text-amber-600"
+                                          : "bg-rose-50 text-rose-600"
+                                      }`}
+                                  >
+                                    {item.percentage}%
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 text-right">
+                                  <button
+                                    onClick={() => router.push("/pages/dashboard/jee-mains")}
+                                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition"
+                                  >
+                                    Re-attempt &rarr;
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="p-8 text-center text-slate-400 text-xs">
+                        No test history found. Attend an exam from the dashboard to start tracking!
+                      </div>
+                    )}
                   </div>
 
-                  <div>
-                    <h3 className="font-semibold text-slate-900">
-                      Your information is secure
-                    </h3>
-
-                    <p className="mt-1 text-sm leading-6 text-slate-500">
-                      Your profile and performance analytics are encrypted and personalized for your learning journey.
-                    </p>
-                  </div>
                 </div>
 
-                <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-blue-100/60" />
-                <div className="absolute -bottom-12 right-16 h-24 w-24 rounded-full bg-indigo-100/60" />
+                {/* Security / information banner */}
+                <div className="relative mt-7 overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 to-indigo-50 p-5 sm:p-6">
+                  <div className="relative z-10 flex items-start gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
+                      <ShieldIcon />
+                    </div>
+
+                    <div>
+                      <h3 className="font-semibold text-slate-900">
+                        Your information is secure
+                      </h3>
+
+                      <p className="mt-1 text-sm leading-6 text-slate-500">
+                        Your profile and performance analytics are encrypted and personalized for your learning journey.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-blue-100/60" />
+                  <div className="absolute -bottom-12 right-16 h-24 w-24 rounded-full bg-indigo-100/60" />
+                </div>
               </div>
             </>
           )}
