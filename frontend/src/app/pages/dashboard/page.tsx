@@ -29,8 +29,13 @@ import {
 export default function GeneralDashboard() {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
-  const [displayName, setDisplayName] = useState("Student");
+  const [loading, setLoading] = useState(false);
+  const [displayName, setDisplayName] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("displayName") || "Student";
+    }
+    return "Student";
+  });
   const [darkMode, setDarkMode] = useState(false);
   const [showStreakModal, setShowStreakModal] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
@@ -51,22 +56,25 @@ export default function GeneralDashboard() {
       return;
     }
 
-    const storedName = localStorage.getItem("displayName");
-    if (storedName) {
-      setDisplayName(storedName);
-    }
-
-    Promise.all([fetchProfile(), fetchStreakData()])
-      .then(([prof, streak]) => {
+    fetchProfile()
+      .then((prof) => {
         if (prof?.fullName) {
           setDisplayName(prof.fullName);
         }
-        if (streak) {
-          setStreakData(streak);
+        if (prof) {
+          const todayStr = new Date().toISOString().split("T")[0];
+          const history = prof.streakHistory || [];
+          setStreakData({
+            currentStreak: prof.currentStreak ?? 1,
+            longestStreak: prof.longestStreak ?? 1,
+            lastActiveDate: prof.lastActiveDate ?? new Date().toISOString(),
+            isActiveToday: history.includes(todayStr),
+            streakHistory: history,
+          });
         }
       })
       .catch((err) => {
-        console.warn("Error loading dashboard profile/streak:", err);
+        console.warn("Error loading dashboard profile:", err);
       })
       .finally(() => setLoading(false));
   }, [router]);
@@ -576,3 +584,5 @@ export default function GeneralDashboard() {
     </div>
   );
 }
+
+

@@ -1,13 +1,26 @@
 const prisma = require("../lib/prisma");
 
+let cachedExams = null;
+let lastExamsFetchTime = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
 // Get all exams along with their corresponding shifts
 const getExams = async (req, res) => {
   try {
+    const now = Date.now();
+    if (cachedExams && now - lastExamsFetchTime < CACHE_TTL_MS) {
+      return res.status(200).json(cachedExams);
+    }
+
     const exams = await prisma.exam.findMany({
       include: {
         shifts: true, // This automatically performs a SQL JOIN to pull in all shifts for each exam!
       },
     });
+    
+    cachedExams = exams;
+    lastExamsFetchTime = now;
+    
     return res.status(200).json(exams);
   } catch (error) {
     console.error("Error fetching exams:", error);

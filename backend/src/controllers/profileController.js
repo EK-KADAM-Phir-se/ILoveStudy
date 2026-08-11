@@ -20,11 +20,16 @@ function formatProfile(user, streakData = null) {
   };
 }
 
-async function updateAndGetStreak(userId, forceCheckInToday = false) {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: { profiles: true },
-  });
+async function calculateStreak(userOrId, forceCheckInToday = false) {
+  let user = typeof userOrId === "object" ? userOrId : null;
+  const userId = user ? user.id : userOrId;
+
+  if (!user) {
+    user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { profiles: true },
+    });
+  }
 
   if (!user || !user.profiles) {
     const todayStr = new Date().toISOString().split("T")[0];
@@ -122,16 +127,6 @@ async function updateAndGetStreak(userId, forceCheckInToday = false) {
   const finalLongestStreak = Math.max(maxStreak, finalCurrentStreak, 1);
   const streakHistory = Array.from(activeDatesSet).sort();
 
-  await prisma.profile.update({
-    where: { userId },
-    data: {
-      currentStreak: finalCurrentStreak,
-      longestStreak: finalLongestStreak,
-      lastActiveDate: isActiveToday ? new Date() : profile.lastActiveDate,
-      streakHistory,
-    },
-  });
-
   return {
     currentStreak: finalCurrentStreak,
     longestStreak: finalLongestStreak,
@@ -139,6 +134,22 @@ async function updateAndGetStreak(userId, forceCheckInToday = false) {
     isActiveToday,
     streakHistory,
   };
+}
+
+async function updateAndGetStreak(userId, forceCheckInToday = false) {
+  const streakData = await calculateStreak(userId, forceCheckInToday);
+
+  await prisma.profile.update({
+    where: { userId },
+    data: {
+      currentStreak: streakData.currentStreak,
+      longestStreak: streakData.longestStreak,
+      lastActiveDate: streakData.isActiveToday ? new Date() : undefined,
+      streakHistory: streakData.streakHistory,
+    },
+  });
+
+  return streakData;
 }
 
 exports.syncFirebaseUser = async (req, res) => {
@@ -224,7 +235,7 @@ exports.getProfile = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    const streakData = await updateAndGetStreak(req.user.userId);
+    const streakData = await calculateStreak(user);
 
     return res.json({ profile: formatProfile(user, streakData) });
   } catch (error) {
@@ -235,7 +246,7 @@ exports.getProfile = async (req, res) => {
 
 exports.getStreak = async (req, res) => {
   try {
-    const streakData = await updateAndGetStreak(req.user.userId);
+    const streakData = await calculateStreak(req.user.userId);
     return res.json({ streak: streakData });
   } catch (error) {
     console.error("Get Streak Error:", error);
@@ -310,10 +321,14 @@ exports.getTestAttempts = async (req, res) => {
       where: { userId },
       include: {
         shift: {
-          include: {
-            exam: true,
-            questions: {
-              select: { id: true, positiveMarks: true }
+          select: {
+            id: true,
+            name: true,
+            exam: {
+              select: { name: true }
+            },
+            _count: {
+              select: { questions: true }
             }
           }
         }
@@ -328,11 +343,9 @@ exports.getTestAttempts = async (req, res) => {
     const formattedAttempts = attempts.map((attempt) => {
       const examName = attempt.shift?.exam?.name || "JEE Main";
       const shiftName = attempt.shift?.name || "Shift Paper";
-      const questionCount = attempt.shift?.questions?.length || 75;
+      const questionCount = attempt.shift?._count?.questions || 75;
       
-      const maxMarks = questionCount > 0 
-        ? attempt.shift.questions.reduce((sum, q) => sum + (q.positiveMarks || 4), 0)
-        : 300;
+      const maxMarks = questionCount > 0 ? questionCount * 4 : 300;
 
       const score = attempt.score;
       const percentage = Math.max(0, parseFloat(((score / maxMarks) * 100).toFixed(1)));

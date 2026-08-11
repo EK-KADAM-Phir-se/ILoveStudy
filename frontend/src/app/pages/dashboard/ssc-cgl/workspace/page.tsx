@@ -4,6 +4,7 @@ import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useTest } from '../../../../context/TestContext';
 import { LatexRenderer } from '../../../../components/LatexRenderer';
+import { QuestionImage } from '@/src/components/QuestionImage';
 
 function SscTestWorkspaceContent() {
   const router = useRouter();
@@ -573,10 +574,12 @@ function SscTestWorkspaceContent() {
 
               {currentQuestion.imageUrl && (
                 <div className="mt-3 border border-slate-800 rounded-xl p-4 bg-slate-900/80 flex justify-center shadow-inner">
-                  <img 
-                    src={currentQuestion.imageUrl} 
-                    alt="Question Figure / Diagram" 
-                    className="max-h-80 object-contain rounded-lg" 
+                  <QuestionImage
+                    imageUrl={currentQuestion.imageUrl}
+                    examName="SSC CGL"
+                    year={year}
+                    alt="Question Figure / Diagram"
+                    className="max-h-80 object-contain rounded-lg"
                   />
                 </div>
               )}

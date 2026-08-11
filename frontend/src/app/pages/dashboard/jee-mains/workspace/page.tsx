@@ -4,6 +4,7 @@ import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useTest } from '../../../../context/TestContext';
 import { LatexRenderer } from '../../../../components/LatexRenderer';
+import { QuestionImage, preloadExamImages } from '@/src/components/QuestionImage';
 
 function TestWorkspacePageContent() {
   const router = useRouter();
@@ -47,6 +48,9 @@ function TestWorkspacePageContent() {
   const [showPreCheck, setShowPreCheck] = useState<boolean>(true);
   const [internetStatus, setInternetStatus] = useState<'checking' | 'connected' | 'limited' | 'disconnected'>('checking');
   const [extensionStatus, setExtensionStatus] = useState<'checking' | 'clean' | 'warning'>('checking');
+  const [assetStatus, setAssetStatus] = useState<'checking' | 'ready'>('checking');
+  const [assetProgress, setAssetProgress] = useState<{ loaded: number; total: number }>({ loaded: 0, total: 0 });
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [detectedExts, setDetectedExts] = useState<string[]>([]);
 
   const handleFinalSubmit = async () => {
@@ -121,6 +125,19 @@ function TestWorkspacePageContent() {
 
     setDetectedExts(detectedExtensions);
     setExtensionStatus(detectedExtensions.length > 0 ? 'warning' : 'clean');
+
+    // 3. Preload all question diagram images
+    setAssetStatus('checking');
+    try {
+      const res = await preloadExamImages(questions, "Jee Mains", year, (loaded, total) => {
+        setAssetProgress({ loaded, total });
+      });
+      setAssetProgress(res);
+      setAssetStatus('ready');
+    } catch (err) {
+      console.warn("Asset preloading encountered an error:", err);
+      setAssetStatus('ready');
+    }
   };
 
   useEffect(() => {
@@ -227,14 +244,24 @@ function TestWorkspacePageContent() {
   };
 
   const startExamAndEnableFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        console.error("Error enabling full-screen:", err);
+    setCountdown(3);
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          clearInterval(timer);
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+              console.error("Error enabling full-screen:", err);
+            });
+            setIsFullscreen(true);
+          }
+          setIsExamActive(true);
+          setShowPreCheck(false);
+          return null;
+        }
+        return prev - 1;
       });
-      setIsFullscreen(true);
-    }
-    setIsExamActive(true);
-    setShowPreCheck(false);
+    }, 1000);
   };
 
   // Exam stats calculations
@@ -423,6 +450,34 @@ function TestWorkspacePageContent() {
               )}
             </div>
 
+            {/* Asset Preloader check card */}
+            <div className="bg-slate-950/60 border border-slate-850 p-4 rounded-xl flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className={`p-2.5 rounded-lg ${
+                  assetStatus === 'ready' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400 animate-pulse'
+                }`}>
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-200">Paper Diagrams &amp; Assets</h3>
+                  <p className="text-xs text-slate-500">
+                    {assetStatus === 'checking'
+                      ? `Preloading question diagrams (${assetProgress.loaded}/${assetProgress.total})...`
+                      : `${assetProgress.total > 0 ? `${assetProgress.total} question diagrams cached & ready for instant 0ms viewing.` : 'No diagram images required for this paper.'}`}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                {assetStatus === 'checking' ? (
+                  <span className="text-xs font-semibold text-slate-400 animate-pulse">Preloading...</span>
+                ) : (
+                  <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Ready</span>
+                )}
+              </div>
+            </div>
+
             {/* Fullscreen check card */}
             <div className="bg-slate-950/60 border border-slate-850 p-4 rounded-xl flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -445,7 +500,7 @@ function TestWorkspacePageContent() {
           <div className="flex space-x-4 pt-4 border-t border-slate-800">
             <button
               onClick={runPreChecks}
-              disabled={internetStatus === 'checking' || extensionStatus === 'checking'}
+              disabled={internetStatus === 'checking' || extensionStatus === 'checking' || assetStatus === 'checking'}
               className="flex-1 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-300 font-semibold py-3 px-4 rounded-xl border border-slate-700 transition flex items-center justify-center space-x-2"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -456,12 +511,21 @@ function TestWorkspacePageContent() {
             
             <button
               onClick={startExamAndEnableFullscreen}
-              disabled={internetStatus === 'disconnected'}
+              disabled={internetStatus === 'disconnected' || countdown !== null}
               className="flex-[2] bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/20 transition flex items-center justify-center space-x-2"
             >
-              <span>Proceed &amp; Start Exam &rarr;</span>
+              <span>{countdown !== null ? `Starting in ${countdown}...` : 'Proceed & Start Exam \u2192'}</span>
             </button>
           </div>
+
+          {/* Countdown Overlay */}
+          {countdown !== null && (
+            <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center text-white">
+              <p className="text-sm font-bold text-indigo-400 uppercase tracking-widest mb-4">Starting Exam In</p>
+              <div className="text-8xl font-black font-mono text-indigo-500 animate-pulse">{countdown}</div>
+              <p className="text-xs text-slate-400 mt-6">All paper assets 100% preloaded &amp; cached. Securing workspace...</p>
+            </div>
+          )}
 
         </div>
       </div>
@@ -653,10 +717,12 @@ function TestWorkspacePageContent() {
 
                 {activeQuestion.imageUrl && (
                   <div className="mt-4 border border-slate-800 rounded-lg p-4 bg-slate-950 flex justify-center">
-                    <img 
-                      src={activeQuestion.imageUrl.startsWith('http') || activeQuestion.imageUrl.startsWith('/') ? activeQuestion.imageUrl : `/${activeQuestion.imageUrl}`} 
-                      alt="Question Diagram" 
-                      className="max-h-72 object-contain" 
+                    <QuestionImage
+                      imageUrl={activeQuestion.imageUrl}
+                      examName="Jee Mains"
+                      year={year}
+                      alt="Question Diagram"
+                      className="max-h-72 object-contain"
                     />
                   </div>
                 )}

@@ -73,6 +73,24 @@ export default function ProfilePage() {
       return;
     }
 
+    const cachedEmail = localStorage.getItem("userEmail") || "";
+    const cachedName = localStorage.getItem("displayName") || "Student";
+    
+    setProfile((prev) => prev || {
+      id: "",
+      email: cachedEmail,
+      fullName: cachedName,
+      targetExam: "JEE Mains",
+      age: null,
+      school: "",
+      avatarUrl: null,
+    });
+    setForm((prev) => ({
+      ...prev,
+      fullName: cachedName,
+    }));
+    setLoading(false);
+
     Promise.all([fetchProfile(), fetchTestPerformance()])
       .then(([profData, perfData]) => {
         setProfile(profData);
@@ -85,18 +103,9 @@ export default function ProfilePage() {
           targetExam: profData.targetExam || "JEE Mains",
         });
       })
-      .catch(() => {
-        setProfile({
-          id: "",
-          email: localStorage.getItem("userEmail") || "",
-          fullName: localStorage.getItem("displayName") || "Student",
-          targetExam: "JEE Mains",
-          age: null,
-          school: "",
-          avatarUrl: null,
-        });
-      })
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        console.warn("Error loading profile or performance data:", err);
+      });
   }, [router]);
 
   const handleLogout = () => {
