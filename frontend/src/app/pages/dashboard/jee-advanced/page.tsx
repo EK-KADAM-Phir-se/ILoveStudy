@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import NavBar from '../../../../components/NavBar';
 
 export default function JeeAdvancedDashboard() {
   const router = useRouter();
@@ -13,34 +14,37 @@ export default function JeeAdvancedDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-4xl mx-auto mb-4">
-        <button onClick={() => router.push('/pages/dashboard')} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">&larr; Back to Dashboard</button>
-      </div>
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-        <h1 className="text-3xl font-extrabold text-slate-900 mb-2">JEE Advanced Ultimate Portal</h1>
-        <p className="text-slate-500 mb-6">Select your paper challenge. Advanced testing requires rigorous analytical accuracy.</p>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors">
+      <NavBar />
+      <div className="p-6">
+        <div className="max-w-4xl mx-auto bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors mt-4">
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">JEE Advanced Ultimate Portal</h1>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">Select your paper challenge. Advanced testing requires rigorous analytical accuracy.</p>
 
-        <div className="space-y-3 mb-8">
-          {papers.map((paper) => (
-            <div
-              key={paper.id}
-              onClick={() => setSelectedPaper(paper.name)}
-              className={`p-5 border-2 rounded-xl cursor-pointer transition flex justify-between items-center ${selectedPaper === paper.name ? 'border-indigo-600 bg-indigo-50/50' : 'border-slate-200 bg-white hover:border-indigo-300'
+          <div className="space-y-3 mb-8">
+            {papers.map((paper) => (
+              <div
+                key={paper.id}
+                onClick={() => setSelectedPaper(paper.name)}
+                className={`p-5 border-2 rounded-xl cursor-pointer transition flex justify-between items-center ${
+                  selectedPaper === paper.name
+                    ? 'border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/40 dark:border-indigo-500'
+                    : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-300 dark:hover:border-indigo-700'
                 }`}
-            >
-              <div>
-                <p className="font-bold text-slate-800">{paper.name}</p>
-                <p className="text-xs text-slate-500 mt-1">{paper.questions} Advanced Tier Questions • <span className="text-indigo-600 font-semibold">{paper.status}</span></p>
+              >
+                <div>
+                  <p className="font-bold text-slate-800 dark:text-slate-100">{paper.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{paper.questions} Advanced Tier Questions • <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{paper.status}</span></p>
+                </div>
+                <input type="radio" checked={selectedPaper === paper.name} readOnly className="h-4 w-4 text-indigo-600" />
               </div>
-              <input type="radio" checked={selectedPaper === paper.name} readOnly className="h-4 w-4 text-indigo-600" />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <button disabled={!selectedPaper} className={`w-full py-3.5 rounded-xl font-bold text-white transition ${selectedPaper ? 'bg-indigo-600 hover:bg-indigo-700 shadow-md' : 'bg-slate-200 cursor-not-allowed'}`}>
-          Initialize Heavy Workspace
-        </button>
+          <button disabled={!selectedPaper} className={`w-full py-3.5 rounded-xl font-bold text-white transition ${selectedPaper ? 'bg-indigo-600 hover:bg-indigo-700 shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'}`}>
+            Initialize Heavy Workspace
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
+import NavBar from "../../../../components/NavBar";
 
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
@@ -98,53 +99,26 @@ function SscCglDashboardContent() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#f8fafc] text-slate-900">
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-emerald-100 bg-white/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-[72px] w-full max-w-[1500px] items-center justify-between px-6 lg:px-10">
-          <div className="flex items-center gap-5">
-            <button
-              onClick={() => router.push("/pages/dashboard")}
-              className="group flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-emerald-600"
-            >
-              <span className="text-xl transition group-hover:-translate-x-1">←</span>
-              <span>Dashboard</span>
-            </button>
-            <div className="h-6 w-px bg-slate-200" />
-            <div>
-              <h1 className="text-lg font-black tracking-tight text-slate-900 sm:text-xl">
-                SSC CGL <span className="ml-2 text-emerald-600">WORKSPACE</span>
-              </h1>
-            </div>
-          </div>
-
-          <div className="hidden items-center gap-3 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 sm:flex">
-            <span className="text-base">⚡</span>
-            <div className="leading-tight">
-              <p className="text-xs font-bold text-slate-800">Tier 1 Live Papers</p>
-              <p className="text-[10px] text-slate-500">Speed and accuracy matter.</p>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+      <NavBar />
 
       {/* Main Content */}
       <main className="mx-auto w-full max-w-[1500px] px-5 py-7 lg:px-10 lg:py-9">
         {/* Hero Section */}
-        <section className="relative mb-7 overflow-hidden rounded-[24px] border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-teal-50 px-6 py-7 shadow-sm sm:px-9">
+        <section className="relative mb-7 overflow-hidden rounded-[24px] border border-emerald-100 dark:border-emerald-900/50 bg-gradient-to-r from-emerald-50 via-white to-teal-50 dark:from-emerald-950/40 dark:via-slate-900 dark:to-teal-950/40 px-6 py-7 shadow-sm sm:px-9">
           <div className="relative flex flex-col justify-between gap-6 md:flex-row md:items-center">
             <div className="flex items-start gap-5">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-emerald-600 shadow-md ring-1 ring-emerald-100">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md ring-1 ring-emerald-100 dark:ring-emerald-900">
                 <DocumentIcon className="h-7 w-7" />
               </div>
               <div>
-                <p className="mb-1 text-xs font-bold uppercase tracking-[0.2em] text-emerald-600">
+                <p className="mb-1 text-xs font-bold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">
                   Staff Selection Commission
                 </p>
-                <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+                <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                   SSC CGL Tier-I Question Papers
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
                   Attempt official SSC CGL question papers with 100 questions (200 marks, +2 per correct, -0.5 per wrong, 60 minutes duration).
                 </p>
               </div>

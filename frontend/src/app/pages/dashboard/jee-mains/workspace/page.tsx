@@ -243,26 +243,31 @@ function TestWorkspacePageContent() {
     setShowViolationModal(false);
   };
 
+
   const startExamAndEnableFullscreen = () => {
     setCountdown(3);
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev === null || prev <= 1) {
           clearInterval(timer);
-          if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-              console.error("Error enabling full-screen:", err);
-            });
-            setIsFullscreen(true);
-          }
-          setIsExamActive(true);
-          setShowPreCheck(false);
+          // Schedule side-effects after this render cycle completes
+          setTimeout(() => {
+            if (!document.fullscreenElement) {
+              document.documentElement.requestFullscreen().catch(err => {
+                console.error("Error enabling full-screen:", err);
+              });
+              setIsFullscreen(true);
+            }
+            setIsExamActive(true);
+            setShowPreCheck(false);
+          }, 0);
           return null;
         }
         return prev - 1;
       });
     }, 1000);
   };
+
 
   // Exam stats calculations
   const totalQuestionsCount = questions.length;

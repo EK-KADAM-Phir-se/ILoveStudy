@@ -206,3 +206,341 @@ exports.submitTest = async (req, res) => {
     res.status(500).json({ error: "Failed to cleanly process exam submission." });
   }
 };
+
+// Helper to pause execution
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Helper to parse a single page/chunk of text with Groq AI API (includes auto-retry on 429 rate limit)
+async function parseSingleTextChunk(text, subject, imagesCount, apiKey, retryCount = 0) {
+  const systemPrompt = `You are a professional test creator and parser. Analyze the text chunk and return MCQs as JSON.
+Format math formulas strictly in KaTeX-compatible LaTeX using $ (inline) and $$ (block display).
+${imagesCount > 0 ? `If a question refers to a figure/diagram, set \`imageIndex\` to its 0-based index (0 to ${imagesCount - 1}). Otherwise set it to null.` : 'Set \`imageIndex\` to null.'}
+
+Output strictly JSON matching this structure:
+{
+  "questions": [
+    {
+      "subject": "Physics" | "Chemistry" | "Math" | "General",
+      "questionText": "...",
+      "optionA": "...",
+      "optionB": "...",
+      "optionC": "...",
+      "optionD": "...",
+      "correctOption": "A" | "B" | "C" | "D",
+      "positiveMarks": 4,
+      "negativeMarks": -1,
+      "imageIndex": null | number
+    }
+  ]
+}`;
+
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "llama-3.1-8b-instant",
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: text }
+      ],
+      temperature: 0.1
+    })
+  });
+
+  if (response.status === 429) {
+    const errText = await response.text();
+    console.warn(`Rate limit hit (429) on chunk. Details: ${errText}`);
+    
+    if (retryCount < 5) {
+      let waitMs = 15000;
+      try {
+        const parsed = JSON.parse(errText);
+        const msg = parsed.error?.message || "";
+        const match = msg.match(/try again in ([\d\.]+)s/i);
+        if (match && match[1]) {
+          waitMs = Math.ceil(parseFloat(match[1]) * 1000) + 1500; // Add 1.5s buffer
+        }
+      } catch (e) {}
+
+      console.log(`Rate limit backoff: Sleeping for ${Math.round(waitMs / 1000)}s before retry ${retryCount + 1}...`);
+      await sleep(waitMs);
+      return parseSingleTextChunk(text, subject, imagesCount, apiKey, retryCount + 1);
+    } else {
+      throw new Error("Rate limit exceeded. Too many retries.");
+    }
+  }
+
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error("Groq Chunk Parser Error:", errText);
+    try {
+      const parsedErr = JSON.parse(errText);
+      if (parsedErr.error && parsedErr.error.message) {
+        throw new Error(parsedErr.error.message);
+      }
+    } catch (e) {}
+    throw new Error("Failed to communicate with Groq AI API.");
+  }
+
+  const responseData = await response.json();
+  const content = responseData.choices?.[0]?.message?.content;
+  if (!content) return [];
+
+  const result = JSON.parse(content);
+  return result.questions || [];
+}
+
+// 4. Generate custom test using Groq LLM completions API or direct JSON parsing
+exports.generateTest = async (req, res) => {
+  try {
+    const { testName, subject, paperText, pages, images } = req.body;
+
+    if (!paperText && (!pages || !Array.isArray(pages) || pages.length === 0)) {
+      return res.status(400).json({ error: "Test name and paper content are required." });
+    }
+
+    if (!testName) {
+      return res.status(400).json({ error: "Test name is required." });
+    }
+
+    let parsedQuestions = [];
+
+    // Try parsing the input text as direct JSON first (bypasses LLM context length limits / rates)
+    let isDirectJson = false;
+    if (paperText) {
+      const attemptParse = (text) => {
+        const data = JSON.parse(text);
+        let questions = null;
+        if (data && Array.isArray(data.questions)) {
+          questions = data.questions;
+        } else if (Array.isArray(data)) {
+          questions = data;
+        }
+        return questions && questions.length > 0 ? questions : null;
+      };
+
+      // 1st attempt: strict JSON parse (works for all well-formed files)
+      try {
+        const questions = attemptParse(paperText);
+        if (questions) {
+          parsedQuestions = questions;
+          isDirectJson = true;
+          console.log(`Successfully parsed ${parsedQuestions.length} questions directly from JSON input.`);
+        }
+      } catch (e) {
+        // 2nd attempt: loose cleanup for JS-style object literals (unquoted keys / single quotes)
+        // Only runs when strict parse fails — avoids corrupting valid JSON string values
+        try {
+          const looseCleaned = paperText
+            .replace(/([{,]\s*)(\w+)\s*:/g, '$1"$2":')  // Quote unquoted object keys only
+            .replace(/'([^'\n]*)'/g, '"$1"');            // Single quotes → double quotes
+
+          const questions = attemptParse(looseCleaned);
+          if (questions) {
+            parsedQuestions = questions;
+            isDirectJson = true;
+            console.log(`Successfully parsed ${parsedQuestions.length} questions via loose JSON cleanup.`);
+          }
+        } catch (e2) {
+          console.log("Direct JSON parsing failed, will use Groq AI. Details:", e2.message);
+        }
+      }
+    }
+
+    if (!isDirectJson) {
+      const groqApiKey = process.env.GROQ_API_KEY;
+      if (!groqApiKey) {
+        console.error("GROQ_API_KEY is not set in backend environment variables.");
+        return res.status(500).json({ error: "AI test generation is not configured on this server." });
+      }
+
+      // Check if we have page-by-page array to avoid token limits
+      if (Array.isArray(pages) && pages.length > 0) {
+        console.log(`Processing page-by-page parsing for ${pages.length} pages.`);
+        for (const page of pages) {
+          const pageText = page.text;
+          const pageNum = page.pageNum;
+
+          if (!pageText || !pageText.trim()) continue;
+
+          // Filter images strictly to this page
+          const pageImages = Array.isArray(images)
+            ? images.filter(img => img.page === pageNum)
+            : [];
+
+          console.log(`Parsing Page ${pageNum} (${pageText.length} chars) with ${pageImages.length} images...`);
+
+          try {
+            const pageQuestions = await parseSingleTextChunk(pageText, subject, pageImages.length, groqApiKey);
+            
+            // Map the parsed questions on this page with page-specific images
+            const mappedQuestions = pageQuestions.map(q => {
+              let correct = q.correctOption || "A";
+              if (typeof correct === 'number') {
+                const mapping = { 1: "A", 2: "B", 3: "C", 4: "D" };
+                correct = mapping[correct] || "A";
+              } else if (typeof correct === 'string') {
+                correct = correct.trim().toUpperCase();
+                if (correct.startsWith("(") && correct.endsWith(")")) {
+                  correct = correct.substring(1, correct.length - 1);
+                }
+                if (correct.endsWith(".")) {
+                  correct = correct.slice(0, -1);
+                }
+                const numericMapping = { "1": "A", "2": "B", "3": "C", "4": "D" };
+                correct = numericMapping[correct] || correct;
+              }
+              if (!["A", "B", "C", "D"].includes(correct)) {
+                correct = "A";
+              }
+
+              let imageUrl = null;
+              let finalIdx = null;
+              if (q.imageIndex !== undefined && q.imageIndex !== null) {
+                const parsedIdx = parseInt(q.imageIndex, 10);
+                if (!isNaN(parsedIdx)) {
+                  finalIdx = parsedIdx;
+                }
+              }
+              if (finalIdx !== null && pageImages[finalIdx]) {
+                imageUrl = pageImages[finalIdx].base64;
+              }
+
+              return {
+                subject: q.subject || subject || "General",
+                questionText: q.questionText || "Question text missing",
+                optionA: q.optionA || q.option1 || "Option A",
+                optionB: q.optionB || q.option2 || "Option B",
+                optionC: q.optionC || q.option3 || "Option C",
+                optionD: q.optionD || q.option4 || "Option D",
+                correctOption: correct,
+                positiveMarks: typeof q.positiveMarks === 'number' ? q.positiveMarks : 4,
+                negativeMarks: typeof q.negativeMarks === 'number' ? q.negativeMarks : -1,
+                imageUrl: imageUrl
+              };
+            });
+
+            parsedQuestions = parsedQuestions.concat(mappedQuestions);
+          } catch (chunkErr) {
+            console.error(`Error parsing Page ${pageNum}:`, chunkErr);
+            return res.status(502).json({ error: `Failed on page ${pageNum}: ${chunkErr.message}` });
+          }
+
+          // Small delay between API calls to protect TPM rate limit boundaries
+          await sleep(1000);
+        }
+      } else {
+        // Fallback for single raw text pastes
+        console.log("Input is single raw text paste. Parsing as single chunk...");
+        try {
+          const rawImages = Array.isArray(images) ? images : [];
+          const singleQuestions = await parseSingleTextChunk(paperText, subject, rawImages.length, groqApiKey);
+          
+          parsedQuestions = singleQuestions.map(q => {
+            let correct = q.correctOption || "A";
+            if (typeof correct === 'number') {
+              const mapping = { 1: "A", 2: "B", 3: "C", 4: "D" };
+              correct = mapping[correct] || "A";
+            } else if (typeof correct === 'string') {
+              correct = correct.trim().toUpperCase();
+              if (correct.startsWith("(") && correct.endsWith(")")) {
+                correct = correct.substring(1, correct.length - 1);
+              }
+              if (correct.endsWith(".")) {
+                correct = correct.slice(0, -1);
+              }
+              const numericMapping = { "1": "A", "2": "B", "3": "C", "4": "D" };
+              correct = numericMapping[correct] || correct;
+            }
+            if (!["A", "B", "C", "D"].includes(correct)) {
+              correct = "A";
+            }
+
+            let imageUrl = null;
+            let finalIdx = null;
+            if (q.imageIndex !== undefined && q.imageIndex !== null) {
+              const parsedIdx = parseInt(q.imageIndex, 10);
+              if (!isNaN(parsedIdx)) {
+                finalIdx = parsedIdx;
+              }
+            }
+            if (finalIdx !== null && rawImages[finalIdx]) {
+              imageUrl = rawImages[finalIdx].base64;
+            }
+
+            return {
+              subject: q.subject || subject || "General",
+              questionText: q.questionText || "Question text missing",
+              optionA: q.optionA || q.option1 || "Option A",
+              optionB: q.optionB || q.option2 || "Option B",
+              optionC: q.optionC || q.option3 || "Option C",
+              optionD: q.optionD || q.option4 || "Option D",
+              correctOption: correct,
+              positiveMarks: typeof q.positiveMarks === 'number' ? q.positiveMarks : 4,
+              negativeMarks: typeof q.negativeMarks === 'number' ? q.negativeMarks : -1,
+              imageUrl: imageUrl
+            };
+          });
+        } catch (rawErr) {
+          console.error("Error parsing single chunk:", rawErr);
+          return res.status(502).json({ error: `Groq AI Error: ${rawErr.message}` });
+        }
+      }
+    }
+
+    if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) {
+      return res.status(422).json({ error: "Could not parse or extract any questions from the provided content." });
+    }
+
+    // Upsert the custom exam
+    let exam = await prisma.exam.findFirst({
+      where: { name: "Custom Tests" }
+    });
+    if (!exam) {
+      exam = await prisma.exam.create({
+        data: { name: "Custom Tests" }
+      });
+    }
+
+    // Create the test shift
+    const shift = await prisma.shift.create({
+      data: {
+        examId: exam.id,
+        name: testName,
+        date: new Date()
+      }
+    });
+
+    // Batch insert the questions
+    const questionsToInsert = parsedQuestions.map(q => ({
+      shiftId: shift.id,
+      subject: q.subject,
+      questionText: q.questionText,
+      optionA: q.optionA,
+      optionB: q.optionB,
+      optionC: q.optionC,
+      optionD: q.optionD,
+      correctOption: q.correctOption,
+      positiveMarks: q.positiveMarks,
+      negativeMarks: q.negativeMarks,
+      imageUrl: q.imageUrl
+    }));
+
+    await prisma.question.createMany({
+      data: questionsToInsert
+    });
+
+    return res.status(201).json({
+      message: "Custom test created successfully!",
+      shiftId: shift.id,
+      name: shift.name
+    });
+  } catch (error) {
+    console.error("Custom test generation error:", error);
+    return res.status(500).json({ error: "Internal server error during test generation." });
+  }
+};

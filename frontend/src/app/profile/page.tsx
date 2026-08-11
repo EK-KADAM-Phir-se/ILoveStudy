@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import NavBar from "../../components/NavBar";
 import {
   fetchProfile,
   updateProfile,
@@ -273,13 +274,15 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f8fc] px-4 py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f5f8fc] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+      <NavBar />
+      <div className="px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-[1450px] gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
 
         {/* =========================================================
             LEFT SIDEBAR
         ========================================================= */}
-        <aside className="relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white shadow-[0_10px_40px_rgba(15,23,42,0.06)]">
+        <aside className="relative overflow-hidden rounded-[28px] border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_10px_40px_rgba(15,23,42,0.06)]">
 
           {/* Top profile */}
           <div className="px-6 pb-6 pt-8 text-center">
@@ -302,24 +305,24 @@ export default function ProfilePage() {
               <span className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-[3px] border-white bg-emerald-500" />
             </div>
 
-            <h1 className="mt-5 text-[22px] font-bold tracking-tight text-slate-900">
+            <h1 className="mt-5 text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100">
               {profile?.fullName || "Student"}
             </h1>
 
-            <p className="mt-1 truncate text-sm text-slate-500">
+            <p className="mt-1 truncate text-sm text-slate-500 dark:text-slate-400">
               {profile?.email || "No email linked"}
             </p>
           </div>
 
           {/* Divider */}
-          <div className="mx-6 border-t border-slate-100" />
+          <div className="mx-6 border-t border-slate-100 dark:border-slate-800" />
 
           {/* Quick information */}
           <div className="space-y-3 px-6 py-6">
 
             {/* Exam */}
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-3.5 transition hover:bg-slate-50">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+            <div className="flex items-center gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 p-3.5 transition hover:bg-slate-50 dark:hover:bg-slate-800">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
                 <TargetIcon />
               </div>
 
@@ -327,15 +330,15 @@ export default function ProfilePage() {
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                   Exam Focus
                 </p>
-                <p className="mt-0.5 truncate text-sm font-semibold text-slate-800">
+                <p className="mt-0.5 truncate text-sm font-semibold text-slate-800 dark:text-slate-200">
                   {profile?.targetExam || "Not set"}
                 </p>
               </div>
             </div>
 
             {/* Age */}
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-3.5 transition hover:bg-slate-50">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+            <div className="flex items-center gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 p-3.5 transition hover:bg-slate-50 dark:hover:bg-slate-800">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">
                 <CalendarIcon />
               </div>
 
@@ -343,15 +346,15 @@ export default function ProfilePage() {
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                   Age
                 </p>
-                <p className="mt-0.5 text-sm font-semibold text-slate-800">
+                <p className="mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200">
                   {profile?.age ?? "Not set"}
                 </p>
               </div>
             </div>
 
             {/* School */}
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-3.5 transition hover:bg-slate-50">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+            <div className="flex items-center gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 p-3.5 transition hover:bg-slate-50 dark:hover:bg-slate-800">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-950 text-violet-600 dark:text-violet-400">
                 <SchoolIcon />
               </div>
 
@@ -404,28 +407,28 @@ export default function ProfilePage() {
         {/* =========================================================
             MAIN CONTENT
         ========================================================= */}
-        <main className="min-w-0 rounded-[28px] border border-slate-200/80 bg-white px-6 py-7 shadow-[0_10px_40px_rgba(15,23,42,0.06)] sm:px-8 lg:px-10 lg:py-9 space-y-8">
+        <main className="min-w-0 rounded-[28px] border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-7 shadow-[0_10px_40px_rgba(15,23,42,0.06)] sm:px-8 lg:px-10 lg:py-9 space-y-8 transition-colors">
 
           {/* Header */}
-          <div className="flex flex-col gap-5 border-b border-slate-100 pb-7 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-5 border-b border-slate-100 dark:border-slate-800 pb-7 sm:flex-row sm:items-center sm:justify-between">
 
             <div className="flex items-start gap-4">
 
               {/* Header icon */}
-              <div className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 sm:flex">
+              <div className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 sm:flex">
                 <UserIcon />
               </div>
 
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.25em] text-blue-500">
+                <p className="text-xs font-bold uppercase tracking-[0.25em] text-blue-500 dark:text-blue-400">
                   Profile & Performance Analytics
                 </p>
 
-                <h2 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
+                <h2 className="mt-1 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
                   {isEditing ? "Edit your profile" : "Student Dashboard & Test History"}
                 </h2>
 
-                <p className="mt-1.5 text-sm text-slate-500">
+                <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
                   {isEditing
                     ? "Update your personal and academic information."
                     : "Track your test results, maximum marks achieved, and performance progression graph."}
@@ -437,7 +440,7 @@ export default function ProfilePage() {
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-blue-200 bg-white px-5 py-3 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-blue-200 dark:border-blue-900 bg-white dark:bg-slate-800 px-5 py-3 text-sm font-semibold text-blue-600 dark:text-blue-400 transition hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer"
               >
                 <EditIcon />
                 Edit Profile
@@ -654,28 +657,28 @@ export default function ProfilePage() {
               {/* =========================================================
                   TEST PERFORMANCE & HIGHEST MARKS SECTION
               ========================================================= */}
-              <div className="space-y-6 pt-4 border-t border-slate-100">
+              <div className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                       <TrophyIcon className="text-amber-500" />
                       Test Performance & High Scores
                     </h3>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Historical results, peak score records, and exam-by-exam analytics.
                     </p>
                   </div>
 
                   {/* Filter Tabs */}
-                  <div className="flex flex-wrap items-center gap-1 rounded-2xl bg-slate-100/80 p-1.5 border border-slate-200/60">
+                  <div className="flex flex-wrap items-center gap-1 rounded-2xl bg-slate-100/80 dark:bg-slate-800 p-1.5 border border-slate-200/60 dark:border-slate-700">
                     {dynamicFilterTabs.map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setSelectedFilterExam(tab)}
-                        className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition ${selectedFilterExam === tab
-                            ? "bg-white text-blue-600 shadow-sm"
-                            : "text-slate-600 hover:text-slate-900"
+                        className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${selectedFilterExam === tab
+                            ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm"
+                            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                           }`}
                       >
                         {tab}
@@ -688,20 +691,20 @@ export default function ProfilePage() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
                   {/* 1. Maximum Score Card */}
-                  <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/80 via-white to-amber-50/40 p-5 shadow-sm">
+                  <div className="rounded-2xl border border-amber-200/80 dark:border-amber-900/50 bg-gradient-to-br from-amber-50/80 via-white to-amber-50/40 dark:from-amber-950/30 dark:via-slate-800 dark:to-amber-950/20 p-5 shadow-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
                         Max Score Achieved
                       </span>
-                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 text-amber-600 font-bold">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-600 font-bold">
                         🏆
                       </span>
                     </div>
-                    <p className="mt-3 text-2xl font-black text-slate-900">
+                    <p className="mt-3 text-2xl font-black text-slate-900 dark:text-slate-100">
                       {cardMaxScore}{" "}
                       <span className="text-xs font-semibold text-slate-400">/ {cardMaxMarks}</span>
                     </p>
-                    <p className="mt-1 text-xs text-amber-700 font-medium">
+                    <p className="mt-1 text-xs text-amber-700 dark:text-amber-400 font-medium">
                       {selectedFilterExam === "All"
                         ? (cardMaxScore > 0 ? "Highest score till now across attempts" : "No test records yet")
                         : (filteredAttempts.length > 0 ? `Highest score in ${selectedFilterExam}` : `No ${selectedFilterExam} records yet`)}
@@ -709,55 +712,55 @@ export default function ProfilePage() {
                   </div>
 
                   {/* 2. Total Tests Attended */}
-                  <div className="rounded-2xl border border-blue-200/80 bg-gradient-to-br from-blue-50/80 via-white to-blue-50/40 p-5 shadow-sm">
+                  <div className="rounded-2xl border border-blue-200/80 dark:border-blue-900/50 bg-gradient-to-br from-blue-50/80 via-white to-blue-50/40 dark:from-blue-950/30 dark:via-slate-800 dark:to-blue-950/20 p-5 shadow-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400">
                         Tests Attended
                       </span>
-                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 text-blue-600 font-bold">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 font-bold">
                         📝
                       </span>
                     </div>
-                    <p className="mt-3 text-2xl font-black text-slate-900">
+                    <p className="mt-3 text-2xl font-black text-slate-900 dark:text-slate-100">
                       {cardTotalTests}
                     </p>
-                    <p className="mt-1 text-xs text-blue-700 font-medium">
+                    <p className="mt-1 text-xs text-blue-700 dark:text-blue-400 font-medium">
                       {selectedFilterExam === "All" ? "Completed test attempts" : `Completed ${selectedFilterExam} attempts`}
                     </p>
                   </div>
 
                   {/* 3. Average Accuracy */}
-                  <div className="rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/80 via-white to-emerald-50/40 p-5 shadow-sm">
+                  <div className="rounded-2xl border border-emerald-200/80 dark:border-emerald-900/50 bg-gradient-to-br from-emerald-50/80 via-white to-emerald-50/40 dark:from-emerald-950/30 dark:via-slate-800 dark:to-emerald-950/20 p-5 shadow-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                         Average Accuracy
                       </span>
-                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 font-bold">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 font-bold">
                         🎯
                       </span>
                     </div>
-                    <p className="mt-3 text-2xl font-black text-slate-900">
+                    <p className="mt-3 text-2xl font-black text-slate-900 dark:text-slate-100">
                       {cardAverageAccuracy}%
                     </p>
-                    <p className="mt-1 text-xs text-emerald-700 font-medium">
+                    <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-400 font-medium">
                       {selectedFilterExam === "All" ? "Overall average score rate" : `${selectedFilterExam} average score rate`}
                     </p>
                   </div>
 
                   {/* 4. Exam Breakdown Record */}
-                  <div className="rounded-2xl border border-purple-200/80 bg-gradient-to-br from-purple-50/80 via-white to-purple-50/40 p-5 shadow-sm">
+                  <div className="rounded-2xl border border-purple-200/80 dark:border-purple-900/50 bg-gradient-to-br from-purple-50/80 via-white to-purple-50/40 dark:from-purple-950/30 dark:via-slate-800 dark:to-purple-950/20 p-5 shadow-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400">
                         {selectedFilterExam === "All" ? "Target Exam Peak" : `${selectedFilterExam} Peak`}
                       </span>
-                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-100 text-purple-600 font-bold">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-600 font-bold">
                         ⚡
                       </span>
                     </div>
-                    <p className="mt-3 text-lg font-bold text-slate-900 truncate">
+                    <p className="mt-3 text-lg font-bold text-slate-900 dark:text-slate-100 truncate">
                       {selectedFilterExam === "All" ? (profile?.targetExam || "JEE Mains") : selectedFilterExam}
                     </p>
-                    <p className="mt-1 text-xs text-purple-700 font-medium">
+                    <p className="mt-1 text-xs text-purple-700 dark:text-purple-400 font-medium">
                       Peak: {getExamPeakScore(selectedFilterExam === "All" ? (profile?.targetExam || "JEE Mains") : selectedFilterExam)} pts
                     </p>
                   </div>
@@ -1116,14 +1119,14 @@ export default function ProfilePage() {
                   )}
 
                   {/* DETAILED TEST ATTEMPTS HISTORY TABLE */}
-                  <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
-                    <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                      <h4 className="font-bold text-slate-900 text-sm">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/80 overflow-hidden shadow-sm">
+                    <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                      <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
                         Test Attendance History ({filteredAttempts.length})
                       </h4>
                       <button
                         onClick={() => router.push("/pages/dashboard/jee-mains")}
-                        className="text-xs font-bold text-blue-600 hover:text-blue-700 transition"
+                        className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition cursor-pointer"
                       >
                         + Attend New Test
                       </button>
@@ -1132,7 +1135,7 @@ export default function ProfilePage() {
                     {filteredAttempts.length > 0 ? (
                       <div className="overflow-x-auto">
                         <table className="w-full text-left text-xs">
-                          <thead className="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-100">
+                          <thead className="bg-slate-50 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
                             <tr>
                               <th className="px-6 py-3">Test Name / Shift</th>
                               <th className="px-6 py-3">Exam Type</th>
@@ -1142,25 +1145,25 @@ export default function ProfilePage() {
                               <th className="px-6 py-3 text-right">Action</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-100 text-slate-700">
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-200">
                             {filteredAttempts.map((item) => (
-                              <tr key={item.id} className="hover:bg-slate-50/80 transition">
-                                <td className="px-6 py-4 font-bold text-slate-900">
+                              <tr key={item.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition">
+                                <td className="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">
                                   {item.shiftName}
                                 </td>
                                 <td className="px-6 py-4">
-                                  <span className="rounded-lg bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-blue-600">
+                                  <span className="rounded-lg bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 text-[11px] font-bold text-blue-600 dark:text-blue-400">
                                     {item.examName}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 text-slate-500">
+                                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">
                                   {new Date(item.submittedAt).toLocaleDateString("en-IN", {
                                     day: "numeric",
                                     month: "short",
                                     year: "numeric",
                                   })}
                                 </td>
-                                <td className="px-6 py-4 font-extrabold text-slate-900">
+                                <td className="px-6 py-4 font-extrabold text-slate-900 dark:text-slate-100">
                                   {item.score} <span className="text-slate-400 font-normal">/ {item.maxMarks}</span>
                                 </td>
                                 <td className="px-6 py-4">
@@ -1222,6 +1225,7 @@ export default function ProfilePage() {
             </>
           )}
         </main>
+      </div>
       </div>
     </div>
   );

@@ -8,5 +8,6 @@ const verifyToken = require('../config/authMiddleware');
 router.post('/save-answer', verifyToken, testController.saveAnswerToCache);
 router.get('/snapshot/:shiftId', verifyToken, testController.getTestSnapshot);
 router.post('/submit', verifyToken, testController.submitTest);
+router.post('/generate', verifyToken, testController.generateTest);
 
 module.exports = router;

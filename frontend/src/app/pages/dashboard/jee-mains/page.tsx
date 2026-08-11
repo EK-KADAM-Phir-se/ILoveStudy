@@ -2,763 +2,299 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  FileText, Calendar, ArrowRight,
+  BookOpen, FlaskConical, Sigma, Atom, X, Play
+} from "lucide-react";
+import NavBar from "../../../../components/NavBar";
 
-// Real NTA schedule days for January
+/* ─────────────────────────── Static data ─────────────────────────── */
 const janExamDays = [22, 23, 24, 28, 29];
 
-const mainsPapersData: Record<
-  number,
-  { january: string[]; april: string[] }
-> = {
+const mainsPapersData: Record<number, { january: string[]; april: string[] }> = {
   2026: {
     january: Array.from({ length: 10 }, (_, i) => {
       const day = janExamDays[Math.floor(i / 2)];
-      const shift = i % 2 === 0 ? 1 : 2;
-      return `${day} Jan - Shift ${shift}`;
+      return `${day} Jan - Shift ${i % 2 === 0 ? 1 : 2}`;
     }),
-    april: Array.from(
-      { length: 8 },
-      (_, i) => `25 Apr - Shift ${i % 2 === 0 ? 1 : 2}`
-    ),
+    april: Array.from({ length: 8 }, (_, i) => `25 Apr - Shift ${i % 2 === 0 ? 1 : 2}`),
   },
 };
 
-function CalendarIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <rect x="3" y="4" width="18" height="17" rx="3" />
-      <path d="M16 2v4M8 2v4M3 10h18" />
-      <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
-    </svg>
-  );
-}
+const SUBJECT_TAGS = [
+  { label: "Physics",     icon: <Atom size={12} />,        color: "bg-blue-50   text-blue-600   border-blue-100"   },
+  { label: "Chemistry",   icon: <FlaskConical size={12} />, color: "bg-green-50  text-green-600  border-green-100"  },
+  { label: "Mathematics", icon: <Sigma size={12} />,        color: "bg-purple-50 text-purple-600 border-purple-100" },
+];
 
-function DocumentIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <path d="M14 2v6h6" />
-      <path d="M8 13h8M8 17h6" />
-    </svg>
-  );
-}
+/* year card accent colours */
+const YEAR_COLORS = [
+  { icon: "bg-indigo-600 text-white", ring: "group-hover:border-indigo-300" },
+  { icon: "bg-emerald-600 text-white", ring: "group-hover:border-emerald-300" },
+  { icon: "bg-rose-500   text-white", ring: "group-hover:border-rose-300"    },
+  { icon: "bg-amber-500  text-white", ring: "group-hover:border-amber-300"   },
+  { icon: "bg-sky-500    text-white", ring: "group-hover:border-sky-300"     },
+  { icon: "bg-violet-600 text-white", ring: "group-hover:border-violet-300"  },
+];
 
-function ArrowIcon() {
-  return (
-    <svg
-      className="w-4 h-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-    >
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-}
-
+/* ─────────────────────────── Main Content ─────────────────────────── */
 function JeeExamPageContent() {
-  const router = useRouter();
+  const router      = useRouter();
   const searchParams = useSearchParams();
 
-  const rawExamType = searchParams.get("type");
-  const examType = rawExamType || "mains";
-
+  const examType  = searchParams.get("type") || "mains";
   const isAdvanced = examType === "advanced";
-  const displayName = isAdvanced ? "JEE Advanced" : "JEE Mains";
 
-  const [expandedYear, setExpandedYear] = useState<number | null>(null);
-  const [dbShifts, setDbShifts] = useState<any[]>([]);
+  const [dbShifts,      setDbShifts]      = useState<any[]>([]);
+  const [selectedYear,  setSelectedYear]  = useState<number | null>(null);
+  const [activeAttempt, setActiveAttempt] = useState<"january" | "april">("january");
 
-  const years = Array.from({ length: 10 }, (_, index) => 2026 - index);
+  const years = Array.from({ length: 6 }, (_, i) => 2026 - i);
 
-  // ---------------------------------------------------------
-  // Fetch database shifts
-  // ---------------------------------------------------------
   useEffect(() => {
-    const fetchDbShifts = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/exams");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch exams");
-        }
-
-        const data = await response.json();
-
-        const jeeMain = data.find(
-          (e: any) => e.name === "JEE Main"
-        );
-
-        if (jeeMain && jeeMain.shifts) {
-          setDbShifts(jeeMain.shifts);
-        }
-      } catch (error) {
-        console.error(
-          "Error fetching exams from backend:",
-          error
-        );
-      }
-    };
-
-    fetchDbShifts();
+    fetch("http://localhost:5000/api/exams")
+      .then(r => r.json())
+      .then(data => {
+        const jee = data.find((e: any) => e.name === "JEE Main");
+        if (jee?.shifts) setDbShifts(jee.shifts);
+      })
+      .catch(() => {});
   }, []);
 
-  // ---------------------------------------------------------
-  // Start exam
-  // ---------------------------------------------------------
-  const handleStartExam = (
-    name: string,
-    year: number,
-    shiftId?: string
-  ) => {
-    if (shiftId) {
-      router.push(
-        `/pages/dashboard/jee-mains/workspace?shiftId=${shiftId}&name=${encodeURIComponent(
-          name
-        )}&year=${year}`
-      );
-    } else {
-      alert(
-        `Launching Exam Workspace...\nSeries: ${displayName}\nYear: ${year}\nTarget: ${name}\n\n(This is a static mock card.)`
-      );
-    }
-  };
-
-  // ---------------------------------------------------------
-  // Merge DB shifts + static shifts
-  // ---------------------------------------------------------
-  const getShiftsForAttempt = (
-    year: number,
-    attempt: "january" | "april"
-  ) => {
+  /* ── helpers ── */
+  const getShifts = (year: number, attempt: "january" | "april") => {
     const staticNames = mainsPapersData[year]?.[attempt] || [];
-
-    const matchingDbShifts = dbShifts.filter((shift: any) => {
-      const shiftDate = new Date(shift.date);
-
-      const shiftYear = shiftDate.getUTCFullYear();
-      const shiftMonth = shiftDate.getUTCMonth();
-
-      const matchesYear = shiftYear === year;
-
-      const matchesAttempt =
-        (attempt === "january" && shiftMonth === 0) ||
-        (attempt === "april" && shiftMonth === 3);
-
-      return matchesYear && matchesAttempt;
+    const dbMatched   = dbShifts.filter((s: any) => {
+      const d = new Date(s.date);
+      return d.getUTCFullYear() === year &&
+        ((attempt === "january" && d.getUTCMonth() === 0) ||
+         (attempt === "april"   && d.getUTCMonth() === 3));
     });
-
-    const combined: {
-      name: string;
-      id?: string;
-    }[] = [];
-
-    // Database shifts first
-    matchingDbShifts.forEach((shift: any) => {
-      combined.push({
-        name: shift.name,
-        id: shift.id,
-      });
-    });
-
-    // Static shifts
-    staticNames.forEach((name: string) => {
-      if (!combined.some((c) => c.name === name)) {
-        combined.push({ name });
-      }
-    });
-
-    // Sort by day
+    const combined: { name: string; id?: string }[] = [];
+    dbMatched.forEach((s: any)  => combined.push({ name: s.name, id: s.id }));
+    staticNames.forEach((n: string) => { if (!combined.some(c => c.name === n)) combined.push({ name: n }); });
     combined.sort((a, b) => {
-      const getDayNum = (name: string) => {
-        const match = name.match(/^(\d+)/);
-        return match ? parseInt(match[1], 10) : 999;
-      };
-
-      return getDayNum(a.name) - getDayNum(b.name);
+      const n = (s: string) => { const m = s.match(/^(\d+)/); return m ? +m[1] : 999; };
+      return n(a.name) - n(b.name);
     });
-
     return combined;
   };
 
+  const handleStart = (name: string, year: number, shiftId?: string) => {
+    if (shiftId) {
+      router.push(`/pages/dashboard/jee-mains/workspace?shiftId=${shiftId}&name=${encodeURIComponent(name)}&year=${year}`);
+    } else {
+      alert(`Mock paper: ${name} (${year})\n\nThis paper is not yet in the database.`);
+    }
+  };
+
+  /* ── open modal ── */
+  const openYear = (year: number) => {
+    setSelectedYear(year);
+    setActiveAttempt("january");
+  };
+
+  /* modal data */
+  const modalJan = selectedYear ? getShifts(selectedYear, "january") : [];
+  const modalApr = selectedYear ? getShifts(selectedYear, "april")   : [];
+  const modalShifts = activeAttempt === "january" ? modalJan : modalApr;
+
+  /* ───────────────────────────── RENDER ───────────────────────────── */
   return (
-    <div className="min-h-screen w-full bg-[#f7f9ff] text-slate-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors">
 
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
-      <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-[72px] w-full max-w-[1500px] items-center justify-between px-6 lg:px-10">
+      {/* ── Nav ── */}
+      <NavBar />
 
-          <div className="flex items-center gap-5">
+      {/* ── Hero ── */}
+      <div className="text-center pt-14 pb-10 px-4 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-colors">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-slate-100 leading-tight mb-4">
+          {isAdvanced ? "JEE Advanced" : "JEE Mains"} Question Papers
+        </h1>
+        <p className="text-gray-500 dark:text-slate-400 text-lg max-w-xl mx-auto leading-relaxed">
+          Browse year-wise shifted papers. Attempt real database exams or explore mock papers with full LaTeX and diagram support.
+        </p>
+        <div className="flex justify-center gap-2 mt-6 flex-wrap">
+          {SUBJECT_TAGS.map(tag => (
+            <span key={tag.label}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${tag.color}`}>
+              {tag.icon} {tag.label}
+            </span>
+          ))}
+        </div>
+      </div>
 
+      {/* ── Card Grid ── */}
+      <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {years.map((year, idx) => {
+          const col        = YEAR_COLORS[idx % YEAR_COLORS.length];
+          const janShifts  = getShifts(year, "january");
+          const aprShifts  = getShifts(year, "april");
+          const total      = isAdvanced ? 2 : janShifts.length + aprShifts.length;
+          const dbCount    = [...janShifts, ...aprShifts].filter(s => s.id).length;
+
+          return (
             <button
-              onClick={() =>
-                router.push("/pages/dashboard")
-              }
-              className="group flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-indigo-600"
+              key={year}
+              onClick={() => openYear(year)}
+              className={`group bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:shadow-md rounded-2xl p-5 text-left transition-all duration-200 cursor-pointer ${col.ring}`}
             >
-              <span className="text-xl transition group-hover:-translate-x-1">
-                ←
-              </span>
-
-              <span>Dashboard</span>
-            </button>
-
-            <div className="h-6 w-px bg-slate-200" />
-
-            <div>
-              <h1 className="text-lg font-black tracking-tight text-slate-900 sm:text-xl">
-                JEE MAINS
-                <span className="ml-2 text-indigo-600">
-                  WORKSPACE
-                </span>
-              </h1>
-            </div>
-
-          </div>
-
-          {/* Header status */}
-          <div className="hidden items-center gap-3 rounded-full border border-indigo-100 bg-indigo-50 px-4 py-2 sm:flex">
-            <span className="text-base">🔥</span>
-
-            <div className="leading-tight">
-              <p className="text-xs font-bold text-slate-800">
-                Keep going!
-              </p>
-
-              <p className="text-[10px] text-slate-500">
-                Your consistency is your superpower.
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </header>
-
-
-      {/* =====================================================
-          MAIN
-      ===================================================== */}
-      <main className="mx-auto w-full max-w-[1500px] px-5 py-7 lg:px-10 lg:py-9">
-
-        {/* ===================================================
-            HERO
-        =================================================== */}
-        <section className="relative mb-7 overflow-hidden rounded-[24px] border border-indigo-100 bg-gradient-to-r from-indigo-50 via-white to-purple-50 px-6 py-7 shadow-sm sm:px-9">
-
-          {/* Decorative blobs */}
-          <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-indigo-200/30 blur-3xl" />
-          <div className="absolute -bottom-20 right-48 h-40 w-40 rounded-full bg-purple-200/30 blur-3xl" />
-
-          <div className="relative flex flex-col justify-between gap-6 md:flex-row md:items-center">
-
-            <div className="flex items-start gap-5">
-
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-indigo-600 shadow-md ring-1 ring-indigo-100">
-                <DocumentIcon className="h-7 w-7" />
+              {/* Icon */}
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${col.icon} shadow-sm`}>
+                <Calendar size={22} />
               </div>
 
-              <div>
-                <p className="mb-1 text-xs font-bold uppercase tracking-[0.2em] text-indigo-500">
-                  Exam Preparation
-                </p>
-
-                <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
-                  Welcome to Your JEE Journey!
-                </h2>
-
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-                  Select a year to explore shifted papers,
-                  attempt real database exams, and practice
-                  with mock papers.
-                </p>
-              </div>
-
-            </div>
-
-            {/* Small illustration */}
-            <div className="hidden items-center gap-3 md:flex">
-
-              <div className="flex h-20 w-20 rotate-[-5deg] items-center justify-center rounded-2xl bg-indigo-100 text-4xl shadow-sm">
-                📚
-              </div>
-
-              <div className="flex h-16 w-16 rotate-[6deg] items-center justify-center rounded-2xl bg-purple-100 text-3xl shadow-sm">
-                🎓
-              </div>
-
-            </div>
-
-          </div>
-        </section>
-
-
-        {/* ===================================================
-            YEAR LIST
-        =================================================== */}
-        <div className="space-y-5">
-
-          {years.map((year) => {
-
-            const isExpanded = expandedYear === year;
-
-            const janShifts = getShiftsForAttempt(
-              year,
-              "january"
-            );
-
-            const aprShifts = getShiftsForAttempt(
-              year,
-              "april"
-            );
-
-            const totalPapersCount = isAdvanced
-              ? 2
-              : janShifts.length + aprShifts.length;
-
-            const totalAttempts =
-              (janShifts.length > 0 ? 1 : 0) +
-              (aprShifts.length > 0 ? 1 : 0);
-
-            return (
-              <section
-                key={year}
-                className={`overflow-hidden rounded-[22px] border bg-white transition-all duration-300 ${
-                  isExpanded
-                    ? "border-indigo-200 shadow-lg shadow-indigo-100/40"
-                    : "border-slate-200 shadow-sm hover:border-indigo-100 hover:shadow-md"
-                }`}
-              >
-
-                {/* =================================================
-                    YEAR HEADER
-                ================================================= */}
-                <button
-                  onClick={() =>
-                    setExpandedYear(
-                      isExpanded ? null : year
-                    )
-                  }
-                  className="flex w-full items-center justify-between px-5 py-5 text-left transition hover:bg-slate-50/70 sm:px-7"
-                >
-
-                  <div className="flex items-center gap-4">
-
-                    <div
-                      className={`flex h-12 w-12 items-center justify-center rounded-2xl transition ${
-                        isExpanded
-                          ? "bg-indigo-100 text-indigo-600"
-                          : "bg-slate-100 text-slate-500"
-                      }`}
-                    >
-                      <CalendarIcon className="h-6 w-6" />
-                    </div>
-
-                    <div>
-
-                      <h3 className="text-lg font-black text-slate-900 sm:text-xl">
-                        {year} Papers
-                      </h3>
-
-                      <div className="mt-1 flex items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm">
-
-                        <span>
-                          {totalPapersCount} Papers
-                        </span>
-
-                        <span className="text-slate-300">
-                          •
-                        </span>
-
-                        <span>
-                          {totalAttempts} Attempts
-                        </span>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-
-                  <div className="flex items-center gap-3">
-
-                    <span
-                      className={`hidden rounded-xl px-4 py-2 text-xs font-bold sm:block ${
-                        isExpanded
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "bg-indigo-50 text-indigo-600"
-                      }`}
-                    >
-                      {isExpanded
-                        ? "Hide Sheets"
-                        : `View ${totalPapersCount} Papers`}
-                    </span>
-
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full transition ${
-                        isExpanded
-                          ? "rotate-180 bg-emerald-50 text-emerald-600"
-                          : "bg-indigo-50 text-indigo-600"
-                      }`}
-                    >
-                      ↓
-                    </div>
-
-                  </div>
-
-                </button>
-
-
-                {/* =================================================
-                    EXPANDED CONTENT
-                ================================================= */}
-                {isExpanded && (
-                  <div className="border-t border-slate-100 bg-slate-50/60 p-4 sm:p-6">
-
-                    {isAdvanced ? (
-
-                      /* ==========================================
-                         JEE ADVANCED
-                      ========================================== */
-                      <div className="grid gap-4 md:grid-cols-2">
-
-                        {[
-                          {
-                            title: "JEE Advanced - Paper 1",
-                            subtitle:
-                              "Physics, Chemistry, Mathematics",
-                            paper: "Paper 1 (PCM)",
-                          },
-                          {
-                            title: "JEE Advanced - Paper 2",
-                            subtitle:
-                              "Physics, Chemistry, Mathematics",
-                            paper: "Paper 2 (PCM)",
-                          },
-                        ].map((paper) => (
-
-                          <div
-                            key={paper.paper}
-                            onClick={() =>
-                              handleStartExam(
-                                paper.paper,
-                                year
-                              )
-                            }
-                            className="group cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-lg"
-                          >
-
-                            <div className="flex items-center justify-between gap-4">
-
-                              <div className="flex items-center gap-4">
-
-                                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                                  <DocumentIcon className="h-5 w-5" />
-                                </div>
-
-                                <div>
-                                  <p className="font-bold text-slate-800">
-                                    {paper.title}
-                                  </p>
-
-                                  <p className="mt-1 text-xs text-slate-400">
-                                    {paper.subtitle}
-                                  </p>
-                                </div>
-
-                              </div>
-
-                              <span className="flex shrink-0 items-center gap-1 rounded-xl bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-600 transition group-hover:bg-indigo-600 group-hover:text-white">
-                                Start
-                                <ArrowIcon />
-                              </span>
-
-                            </div>
-
-                          </div>
-
-                        ))}
-
-                      </div>
-
-                    ) : (
-
-                      /* ==========================================
-                         JEE MAINS
-                      ========================================== */
-                      <div className="grid gap-5 lg:grid-cols-2">
-
-                        {/* =================================================
-                            JANUARY
-                        ================================================= */}
-                        <div className="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
-
-                          {/* January heading */}
-                          <div className="relative overflow-hidden border-b border-blue-100 bg-gradient-to-r from-blue-50 to-white px-5 py-5">
-
-                            <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-blue-100/50 to-transparent" />
-
-                            <div className="relative flex items-center gap-3">
-
-                              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-200">
-                                <CalendarIcon className="h-5 w-5" />
-                              </div>
-
-                              <div>
-                                <h3 className="font-black uppercase tracking-wide text-blue-700">
-                                  January Attempt
-                                </h3>
-
-                                <p className="mt-1 text-xs font-medium text-slate-500">
-                                  {janShifts.length} Papers
-                                </p>
-                              </div>
-
-                            </div>
-
-                          </div>
-
-
-                          {/* January papers */}
-                          <div className="space-y-2.5 p-3">
-
-                            {janShifts.length === 0 ? (
-
-                              <div className="rounded-xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-400">
-                                No January papers available
-                              </div>
-
-                            ) : (
-
-                              janShifts.map((shift, idx) => (
-
-                                <div
-                                  key={`${shift.name}-${idx}`}
-                                  onClick={() =>
-                                    handleStartExam(
-                                      shift.name,
-                                      year,
-                                      shift.id
-                                    )
-                                  }
-                                  className="group flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 transition-all duration-200 hover:-translate-y-[1px] hover:border-blue-300 hover:bg-blue-50/30 hover:shadow-sm"
-                                >
-
-                                  <div className="flex min-w-0 items-center gap-3">
-
-                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-500 transition group-hover:bg-blue-600 group-hover:text-white">
-                                      <DocumentIcon className="h-4 w-4" />
-                                    </div>
-
-                                    <span className="truncate text-sm font-semibold text-slate-700">
-                                      {shift.name}
-                                    </span>
-
-                                  </div>
-
-
-                                  <span
-                                    className={`flex shrink-0 items-center gap-1 rounded-lg px-3 py-2 text-[11px] font-bold transition ${
-                                      shift.id
-                                        ? "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white"
-                                        : "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white"
-                                    }`}
-                                  >
-                                    {shift.id
-                                      ? "Start DB Exam"
-                                      : "Start Mock"}
-
-                                    <ArrowIcon />
-                                  </span>
-
-                                </div>
-
-                              ))
-
-                            )}
-
-                          </div>
-
-                        </div>
-
-
-                        {/* =================================================
-                            APRIL
-                        ================================================= */}
-                        <div className="overflow-hidden rounded-2xl border border-orange-100 bg-white shadow-sm">
-
-                          {/* April heading */}
-                          <div className="relative overflow-hidden border-b border-orange-100 bg-gradient-to-r from-orange-50 to-white px-5 py-5">
-
-                            <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-orange-100/50 to-transparent" />
-
-                            <div className="relative flex items-center gap-3">
-
-                              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-500 text-white shadow-md shadow-orange-200">
-                                <CalendarIcon className="h-5 w-5" />
-                              </div>
-
-                              <div>
-                                <h3 className="font-black uppercase tracking-wide text-orange-600">
-                                  April Attempt
-                                </h3>
-
-                                <p className="mt-1 text-xs font-medium text-slate-500">
-                                  {aprShifts.length} Papers
-                                </p>
-                              </div>
-
-                            </div>
-
-                          </div>
-
-
-                          {/* April papers */}
-                          <div className="space-y-2.5 p-3">
-
-                            {aprShifts.length === 0 ? (
-
-                              <div className="rounded-xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-400">
-                                No April papers available
-                              </div>
-
-                            ) : (
-
-                              aprShifts.map((shift, idx) => (
-
-                                <div
-                                  key={`${shift.name}-${idx}`}
-                                  onClick={() =>
-                                    handleStartExam(
-                                      shift.name,
-                                      year,
-                                      shift.id
-                                    )
-                                  }
-                                  className="group flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 transition-all duration-200 hover:-translate-y-[1px] hover:border-orange-300 hover:bg-orange-50/30 hover:shadow-sm"
-                                >
-
-                                  <div className="flex min-w-0 items-center gap-3">
-
-                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-orange-500 transition group-hover:bg-orange-500 group-hover:text-white">
-                                      <DocumentIcon className="h-4 w-4" />
-                                    </div>
-
-                                    <span className="truncate text-sm font-semibold text-slate-700">
-                                      {shift.name}
-                                    </span>
-
-                                  </div>
-
-
-                                  <span
-                                    className={`flex shrink-0 items-center gap-1 rounded-lg px-3 py-2 text-[11px] font-bold transition ${
-                                      shift.id
-                                        ? "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white"
-                                        : "bg-orange-50 text-orange-600 group-hover:bg-orange-500 group-hover:text-white"
-                                    }`}
-                                  >
-                                    {shift.id
-                                      ? "Start DB Exam"
-                                      : "Start Mock"}
-
-                                    <ArrowIcon />
-                                  </span>
-
-                                </div>
-
-                              ))
-
-                            )}
-
-                          </div>
-
-                        </div>
-
-                      </div>
-                    )}
-
-                  </div>
+              {/* Title */}
+              <h3 className="font-bold text-gray-900 dark:text-slate-100 text-lg mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
+                {year} Papers
+              </h3>
+
+              {/* Meta */}
+              <p className="text-gray-400 dark:text-slate-400 text-sm leading-relaxed">
+                {total} papers
+                {dbCount > 0 && (
+                  <span className="text-emerald-500 font-semibold ml-1">· {dbCount} with answers</span>
                 )}
-
-              </section>
-            );
-          })}
-
-        </div>
-
-
-        {/* ===================================================
-            FOOTER MOTIVATION
-        =================================================== */}
-        <section className="relative mt-7 overflow-hidden rounded-[22px] border border-indigo-100 bg-gradient-to-r from-blue-50 via-white to-purple-50 px-6 py-6">
-
-          <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-purple-200/30 blur-2xl" />
-
-          <div className="relative flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-5">
-
-            <div className="text-3xl">
-              🚀
-            </div>
-
-            <div>
-              <p className="font-bold text-slate-800">
-                Small steps every day lead to big results.
               </p>
 
-              <p className="mt-1 text-xs font-medium text-slate-500">
-                Practice consistently. Improve every attempt.
-                💜 All the best!
-              </p>
-            </div>
+              {/* Arrow */}
+              <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-indigo-500 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition">
+                View Papers <ArrowRight size={13} />
+              </div>
+            </button>
+          );
+        })}
+      </div>
 
+      {/* ── Bottom CTA ── */}
+      <div className="max-w-5xl mx-auto px-6 pb-14">
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <p className="font-bold text-gray-900 dark:text-slate-100 text-base">Want to create a custom test?</p>
+            <p className="text-gray-400 dark:text-slate-400 text-sm mt-1">Upload your own PDF or JSON question paper and launch instantly.</p>
           </div>
+          <button
+            onClick={() => router.push("/pages/dashboard/create-test")}
+            className="shrink-0 bg-gray-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer">
+            Create Custom Test <ArrowRight size={15} />
+          </button>
+        </div>
+      </div>
 
-        </section>
+      {/* ── Modal ── */}
+      {selectedYear && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={e => { if (e.target === e.currentTarget) setSelectedYear(null); }}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto">
 
-      </main>
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center">
+                  <Calendar size={18} />
+                </div>
+                <div>
+                  <h2 className="font-bold text-gray-900 text-lg">{selectedYear} Papers</h2>
+                  <p className="text-xs text-gray-400">
+                    {isAdvanced ? "JEE Advanced" : "JEE Mains"} — Select a paper to start
+                  </p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedYear(null)} className="text-gray-400 hover:text-gray-700 transition cursor-pointer">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="px-6 py-5 space-y-4">
+              {isAdvanced ? (
+                /* Advanced papers */
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {["Paper 1 (PCM)", "Paper 2 (PCM)"].map(paper => (
+                    <button key={paper} onClick={() => handleStart(paper, selectedYear)}
+                      className="group bg-white border border-gray-200 hover:border-indigo-300 hover:shadow-md rounded-xl p-4 text-left flex items-center justify-between transition cursor-pointer">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
+                          <FileText size={16} />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-800 text-sm">JEE Advanced {selectedYear}</p>
+                          <p className="text-xs text-gray-400">{paper}</p>
+                        </div>
+                      </div>
+                      <Play size={14} className="text-gray-300 group-hover:text-indigo-600 transition" />
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  {/* Attempt tab pills */}
+                  <div className="flex gap-2">
+                    {(["january", "april"] as const).map(attempt => (
+                      <button key={attempt} onClick={() => setActiveAttempt(attempt)}
+                        className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition cursor-pointer capitalize ${
+                          activeAttempt === attempt
+                            ? "bg-gray-900 text-white border-gray-900"
+                            : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
+                        }`}>
+                        {attempt === "january" ? "🔵 January" : "🟠 April"}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Paper cards */}
+                  {modalShifts.length === 0 ? (
+                    <div className="border-2 border-dashed border-gray-200 rounded-xl py-10 text-center text-gray-400 text-sm">
+                      No {activeAttempt} papers available for {selectedYear}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {modalShifts.map((shift, idx) => (
+                        <button key={`${shift.name}-${idx}`}
+                          onClick={() => handleStart(shift.name, selectedYear, shift.id)}
+                          className="group bg-white border border-gray-200 hover:border-indigo-300 hover:shadow-md rounded-xl p-4 text-left flex items-center justify-between transition cursor-pointer">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className={`w-9 h-9 shrink-0 rounded-lg flex items-center justify-center transition ${
+                              shift.id
+                                ? "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white"
+                                : "bg-gray-100 text-gray-500 group-hover:bg-indigo-600 group-hover:text-white"
+                            }`}>
+                              <FileText size={15} />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-gray-800 text-sm truncate">{shift.name}</p>
+                              <p className={`text-xs mt-0.5 ${shift.id ? "text-emerald-500 font-medium" : "text-gray-400"}`}>
+                                {shift.id ? "✓ Full paper with answers" : "Mock paper"}
+                              </p>
+                            </div>
+                          </div>
+                          <Play size={14} className="text-gray-300 group-hover:text-indigo-600 transition shrink-0 ml-2" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-
-// =============================================================
-// PAGE EXPORT
-// =============================================================
-
+/* ─────────────────────────── Export ─────────────────────────── */
 export default function JeeExamPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#f7f9ff]">
-          <div className="text-center">
-
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-indigo-100 border-t-indigo-600" />
-
-            <p className="text-sm font-semibold text-slate-500">
-              Loading JEE Workspace...
-            </p>
-
-          </div>
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-indigo-100 border-t-indigo-600" />
+          <p className="text-sm font-semibold text-gray-400">Loading papers…</p>
         </div>
-      }
-    >
+      </div>
+    }>
       <JeeExamPageContent />
     </Suspense>
   );
