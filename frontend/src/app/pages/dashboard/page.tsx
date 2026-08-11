@@ -30,12 +30,7 @@ export default function GeneralDashboard() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [displayName, setDisplayName] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("displayName") || "Student";
-    }
-    return "Student";
-  });
+  const [displayName, setDisplayName] = useState("Student");
   const [darkMode, setDarkMode] = useState(false);
   const [showStreakModal, setShowStreakModal] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
@@ -49,6 +44,13 @@ export default function GeneralDashboard() {
   });
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedName = localStorage.getItem("displayName");
+      if (storedName) {
+        setDisplayName(storedName);
+      }
+    }
+
     const token = localStorage.getItem("token");
 
     if (!token) {
