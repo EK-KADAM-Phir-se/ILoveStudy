@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useTest } from '../../../../context/TestContext';
 import { LatexRenderer } from '../../../../components/LatexRenderer';
 import { QuestionImage } from '@/src/components/QuestionImage';
+import { ReportErrorButton } from '@/src/components/ReportErrorButton';
 
 function SscTestWorkspaceContent() {
   const router = useRouter();
@@ -562,9 +563,11 @@ function SscTestWorkspaceContent() {
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                   Question {currentQuestionIndex + 1} of {questions.length}
                 </span>
-                <span className="text-xs text-slate-500 font-medium">
-                  Marks: <span className="text-emerald-400 font-bold">+2.0</span> / <span className="text-rose-400 font-bold">-0.5</span>
-                </span>
+                <div className="flex items-center space-x-3 text-xs text-slate-500 font-medium">
+                  <span>Marks: <span className="text-emerald-400 font-bold">+2.0</span> / <span className="text-rose-400 font-bold">-0.5</span></span>
+                  <span>•</span>
+                  <ReportErrorButton questionId={currentQuestion.id} questionTextSnippet={currentQuestion.questionText} />
+                </div>
               </div>
 
               {/* Question Text */}

@@ -502,7 +502,7 @@
         },
         {
             "subject": "Chemistry",
-            "questionText": "Radius of the first excited state of Helium ion is given as : $r = \\text{_______} a_0 \\to$ radius of first stationary state of hydrogen atom.",
+            "questionText": "Radius of the first excited state of Helium ion is given as : $r = \\text{\\_\\_\\_} \\cdot a_0$ (where $a_0 \\to$ radius of first stationary state of hydrogen atom).",
             "imageUrl": null,
             "optionA": "(1) $4a_0$",
             "optionB": "(2) $2a_0$",

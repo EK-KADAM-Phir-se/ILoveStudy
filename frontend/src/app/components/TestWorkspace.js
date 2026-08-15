@@ -2,6 +2,7 @@
 
 import React from 'react';
 import useTestStore from '../store/useTestStore';
+import { ReportErrorButton } from '../../components/ReportErrorButton';
 
 const TestWorkspace = () => {
   // 1. Access state from the store
@@ -14,12 +15,17 @@ const TestWorkspace = () => {
     <div className="flex h-screen bg-gray-100">
       {/* Main Content Area */}
       <div className="flex-1 p-6 overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-4">
-          {activeQuestion ? `Question ${activeQuestion.id}` : "Loading..."}
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">
+            {activeQuestion ? `Question ${activeQuestion.id}` : "Loading..."}
+          </h2>
+          {activeQuestion && (
+            <ReportErrorButton questionId={activeQuestion.id} questionTextSnippet={activeQuestion.text || activeQuestion.questionText} />
+          )}
+        </div>
         <div className="bg-white p-6 rounded shadow">
           {/* Dynamic content rendering */}
-          <p>{activeQuestion ? activeQuestion.text : "Please wait while we load the questions."}</p>
+          <p>{activeQuestion ? activeQuestion.text || activeQuestion.questionText : "Please wait while we load the questions."}</p>
         </div>
       </div>
 

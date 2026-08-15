@@ -16,6 +16,7 @@ model User {
   updatedAt   DateTime      @updatedAt
   profiles    Profile?
   testAttempts TestAttempt[]
+  errorReports ErrorReport[]
 }
 
 model Profile {
@@ -64,6 +65,7 @@ model Question {
   correctOption String   // "A", "B", "C", or "D"
   positiveMarks Float    @default(4)
   negativeMarks Float    @default(-1)
+  errorReports  ErrorReport[]
 }
 
 // 3. Post-Exam Storage Models
@@ -76,4 +78,22 @@ model TestAttempt {
   score        Float
   submittedAt  DateTime @default(now())
   answersSaved Json     // Stores final chosen answers and per-question time array as JSON block
+}
+
+// 4. Error Reports Storage Model
+model ErrorReport {
+  id           String    @id @default(uuid())
+  status       String    @default("pending") // pending, reviewing, resolved, rejected
+  questionId   String    @map("question_id")
+  userId       String    @map("user_id")
+  errorType    String    @map("error_type")
+  description  String    @db.Text
+  adminComment String?   @map("admin_comment") @db.Text
+  createdAt    DateTime  @default(now()) @map("created_at")
+  resolvedAt   DateTime? @map("resolved_at")
+
+  question     Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("error_reports")
 }

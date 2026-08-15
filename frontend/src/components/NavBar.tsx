@@ -106,6 +106,18 @@ export default function NavBar({
             <ScanLine size={13} />
             Custom Test
           </button>
+
+          {/* Admin Reports link */}
+          <button
+            onClick={() => router.push("/admin/reports")}
+            className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold tracking-wide uppercase rounded-full transition cursor-pointer border ${
+              isActive("/admin/reports")
+                ? "bg-indigo-600 text-white border-indigo-600"
+                : "bg-slate-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
+            }`}
+          >
+            <span>🚩</span> Reports
+          </button>
         </div>
 
         {/* ── Spacer ── */}

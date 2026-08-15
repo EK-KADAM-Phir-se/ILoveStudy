@@ -11,12 +11,14 @@ const authRoutes = require('./routes/authRoutes');
 const examRoutes = require('./routes/examRoutes');
 const testRoutes = require('./routes/testRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 // 3. Mount the API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/test', testRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {

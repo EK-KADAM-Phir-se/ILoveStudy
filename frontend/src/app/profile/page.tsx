@@ -12,6 +12,7 @@ import {
   type PerformanceSummary,
   type TestAttemptItem,
 } from "../../lib/profileApi";
+import { MyErrorReports } from "../../components/MyErrorReports";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -653,6 +654,9 @@ export default function ProfilePage() {
               </div>
 
               
+
+              {/* Error Reports History Section */}
+              <MyErrorReports />
 
               {/* =========================================================
                   TEST PERFORMANCE & HIGHEST MARKS SECTION

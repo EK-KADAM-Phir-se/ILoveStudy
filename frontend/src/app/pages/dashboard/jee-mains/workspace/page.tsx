@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useTest } from '../../../../context/TestContext';
 import { LatexRenderer } from '../../../../components/LatexRenderer';
 import { QuestionImage, preloadExamImages } from '@/src/components/QuestionImage';
+import { ReportErrorButton } from '@/src/components/ReportErrorButton';
 
 function TestWorkspacePageContent() {
   const router = useRouter();
@@ -236,7 +237,7 @@ function TestWorkspacePageContent() {
   const handleResumeFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(err => {
-        console.error("Error enabling full-screen:", err);
+        console.warn("Fullscreen auto-enable suppressed by browser permissions:", err);
       });
       setIsFullscreen(true);
     }
@@ -556,7 +557,7 @@ function TestWorkspacePageContent() {
   const handleToggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(err => {
-        console.error("Error enabling full-screen:", err);
+        console.warn("Fullscreen auto-enable suppressed by browser permissions:", err);
       });
       setIsFullscreen(true);
     } else {
@@ -713,6 +714,8 @@ function TestWorkspacePageContent() {
                     <span>Marks: <strong className="text-emerald-400">+4</strong> / <strong className="text-red-400">-1</strong></span>
                     <span>•</span>
                     <span>Time Spent: <strong className="text-slate-200">{questionTimers[activeQuestion.id] || 0}s</strong></span>
+                    <span>•</span>
+                    <ReportErrorButton questionId={activeQuestion.id} questionTextSnippet={activeQuestion.questionText} />
                   </div>
                 </div>
 

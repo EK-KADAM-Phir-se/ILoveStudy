@@ -29,6 +29,7 @@ module.exports = async (req, res, next) => {
         });
       }
       req.user = { userId: mockUser.id };
+      req.userId = mockUser.id;
       return next();
     } catch (err) {
       console.error("Error in authMiddleware simulated token check:", err);
@@ -42,6 +43,7 @@ module.exports = async (req, res, next) => {
     
     // 3. Attach the decoded user payload to the request object
     req.user = decoded; 
+    req.userId = decoded.userId || decoded.id;
     
     // Pass control to the next handler
     next();
@@ -69,6 +71,7 @@ module.exports = async (req, res, next) => {
           });
         }
         req.user = { userId: user.id };
+        req.userId = user.id;
         return next();
       }
     } catch (e) {

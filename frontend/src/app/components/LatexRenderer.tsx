@@ -17,7 +17,8 @@ export const LatexRenderer: React.FC<LatexRendererProps> = ({ text }) => {
     <>
       {parts.map((part, index) => {
         if (part.startsWith("$$") && part.endsWith("$$")) {
-          const formula = part.slice(2, -2);
+          let formula = part.slice(2, -2);
+          formula = formula.replace(/\\text\{([_]+)\}/g, (_, underscores) => `\\text{${'\\_'.repeat(underscores.length)}}`);
           try {
             const html = katex.renderToString(formula, {
               displayMode: true,
@@ -40,7 +41,10 @@ export const LatexRenderer: React.FC<LatexRendererProps> = ({ text }) => {
             <span key={index}>
               {subParts.map((subPart, subIndex) => {
                 if (subPart.startsWith("$") && subPart.endsWith("$")) {
-                  const formula = subPart.slice(1, -1);
+                  let formula = subPart.slice(1, -1);
+                  // Sanitize unescaped underscores inside \text{___} to prevent KaTeX red error fallback
+                  formula = formula.replace(/\\text\{([_]+)\}/g, (_, underscores) => `\\text{${'\\_'.repeat(underscores.length)}}`);
+
                   try {
                     const html = katex.renderToString(formula, {
                       displayMode: false,
