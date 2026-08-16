@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fetchUserErrorReports, UserErrorReport, ErrorReportStatus } from "@/src/lib/reportApi";
+import { fetchUserErrorReports, getCachedUserReports, UserErrorReport, ErrorReportStatus } from "@/src/lib/reportApi";
 
 const STATUS_CONFIG: Record<
   ErrorReportStatus,
@@ -30,21 +30,32 @@ const STATUS_CONFIG: Record<
 };
 
 export const MyErrorReports: React.FC = () => {
-  const [reports, setReports] = useState<UserErrorReport[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const cachedData = getCachedUserReports();
+  const [reports, setReports] = useState<UserErrorReport[]>(cachedData || []);
+  const [loading, setLoading] = useState<boolean>(!cachedData);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   const loadReports = async () => {
-    setLoading(true);
+    // Only show full loading UI if we have no cached or displayed reports yet
+    if (!reports.length && !getCachedUserReports()) {
+      setLoading(true);
+    } else {
+      setIsRefreshing(true);
+    }
     setError("");
+
     try {
       const data = await fetchUserErrorReports();
       setReports(data);
     } catch (err: any) {
       console.warn("Failed to load user error reports:", err);
-      setError(err.message || "Failed to load report history.");
+      if (!reports.length && !getCachedUserReports()) {
+        setError(err.message || "Failed to load report history.");
+      }
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -80,11 +91,12 @@ export const MyErrorReports: React.FC = () => {
         </div>
 
         <button
-          onClick={loadReports}
-          disabled={loading}
-          className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
+          onClick={() => loadReports()}
+          disabled={loading || isRefreshing}
+          className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50"
         >
-          <span>↻ Refresh</span>
+          <span className={isRefreshing ? "animate-spin inline-block" : ""}>↻</span>
+          <span>Refresh</span>
         </button>
       </div>
 

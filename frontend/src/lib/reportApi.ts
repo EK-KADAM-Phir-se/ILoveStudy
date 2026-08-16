@@ -82,6 +82,16 @@ async function handleResponse(res: Response, fallbackError: string) {
   return data;
 }
 
+let cachedUserReports: UserErrorReport[] | null = null;
+
+export function getCachedUserReports(): UserErrorReport[] | null {
+  return cachedUserReports;
+}
+
+export function clearUserReportsCache(): void {
+  cachedUserReports = null;
+}
+
 // 1. Submit Question Error Report
 export async function submitErrorReport(params: {
   questionId: string;
@@ -99,7 +109,9 @@ export async function submitErrorReport(params: {
     body: JSON.stringify(params),
   });
 
-  return handleResponse(response, "Failed to submit error report");
+  const result = await handleResponse(response, "Failed to submit error report");
+  cachedUserReports = null; // Invalidate cache so fresh data is fetched on next load
+  return result;
 }
 
 // 2. Fetch User's Submitted Error Reports
@@ -113,7 +125,9 @@ export async function fetchUserErrorReports(): Promise<UserErrorReport[]> {
   });
 
   const result = await handleResponse(response, "Failed to fetch error reports");
-  return result.reports || [];
+  const list: UserErrorReport[] = result.reports || [];
+  cachedUserReports = list;
+  return list;
 }
 
 // 3. Fetch Admin Error Reports (Admin only)
