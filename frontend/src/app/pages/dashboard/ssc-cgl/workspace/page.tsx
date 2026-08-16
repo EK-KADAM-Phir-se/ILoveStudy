@@ -2,7 +2,12 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useTest } from '../../../../context/TestContext';
+
+const TestReviewModal = dynamic(() => import('@/src/components/TestReviewModal'), {
+  ssr: false,
+});
 import { LatexRenderer } from '../../../../components/LatexRenderer';
 import { QuestionImage } from '@/src/components/QuestionImage';
 import { ReportErrorButton } from '@/src/components/ReportErrorButton';
@@ -38,6 +43,7 @@ function SscTestWorkspaceContent() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
   const [submitResult, setSubmitResult] = useState<any>(null);
+  const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
 
   // Per-Section Timer State (25 Mins = 1500 Seconds per section, 60 Mins Total)
   const [sectionTimeLeft, setSectionTimeLeft] = useState<Record<string, number>>({
@@ -826,13 +832,22 @@ function SscTestWorkspaceContent() {
                   </div>
                 )}
 
-                <div className="pt-2">
+                <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                  {submitResult?.attemptId && (
+                    <button
+                      onClick={() => setReviewAttemptId(submitResult.attemptId)}
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-4 rounded-xl transition duration-150 shadow-lg shadow-indigo-600/10 flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <span>Review Answers</span>
+                      <span>→</span>
+                    </button>
+                  )}
                   <button
                     onClick={() => {
                       setShowSubmitModal(false);
                       router.push('/pages/dashboard/ssc-cgl');
                     }}
-                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition"
                   >
                     Back to SSC Dashboard
                   </button>
@@ -882,6 +897,14 @@ function SscTestWorkspaceContent() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Render lazy-loaded Review Modal when requested */}
+      {reviewAttemptId && (
+        <TestReviewModal
+          attemptId={reviewAttemptId}
+          onClose={() => setReviewAttemptId(null)}
+        />
       )}
     </div>
   );

@@ -2,7 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import NavBar from "../../components/NavBar";
+
+const TestReviewModal = dynamic(() => import("@/src/components/TestReviewModal"), {
+  ssr: false,
+});
 import {
   fetchProfile,
   updateProfile,
@@ -25,6 +30,7 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [selectedFilterExam, setSelectedFilterExam] = useState<string>("All");
   const [hoveredAttempt, setHoveredAttempt] = useState<TestAttemptItem | null>(null);
+  const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -1184,10 +1190,10 @@ export default function ProfilePage() {
                                 </td>
                                 <td className="px-6 py-4 text-right">
                                   <button
-                                    onClick={() => router.push("/pages/dashboard/jee-mains")}
-                                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition"
+                                    onClick={() => setReviewAttemptId(item.id)}
+                                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition cursor-pointer"
                                   >
-                                    Re-attempt &rarr;
+                                    Review &rarr;
                                   </button>
                                 </td>
                               </tr>
@@ -1231,6 +1237,13 @@ export default function ProfilePage() {
         </main>
       </div>
       </div>
+
+      {reviewAttemptId && (
+        <TestReviewModal
+          attemptId={reviewAttemptId}
+          onClose={() => setReviewAttemptId(null)}
+        />
+      )}
     </div>
   );
 }

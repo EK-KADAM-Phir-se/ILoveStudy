@@ -544,3 +544,128 @@ exports.generateTest = async (req, res) => {
     return res.status(500).json({ error: "Internal server error during test generation." });
   }
 };
+
+// 5. Get comprehensive review for a specific completed test attempt
+exports.getAttemptReview = async (req, res) => {
+  try {
+    const { attemptId } = req.params;
+
+    const attempt = await prisma.testAttempt.findUnique({
+      where: { id: attemptId },
+      include: {
+        shift: {
+          include: {
+            exam: true
+          }
+        }
+      }
+    });
+
+    if (!attempt) {
+      return res.status(404).json({ error: "Test attempt not found." });
+    }
+
+    const officialQuestions = await prisma.question.findMany({
+      where: { shiftId: attempt.shiftId }
+    });
+
+    let answersMap = {};
+    if (attempt.answersSaved) {
+      if (typeof attempt.answersSaved === 'string') {
+        try {
+          answersMap = JSON.parse(attempt.answersSaved);
+        } catch (e) {
+          answersMap = {};
+        }
+      } else {
+        answersMap = attempt.answersSaved;
+      }
+    }
+
+    const extractNumericValue = (str) => {
+      if (!str) return "";
+      const match = str.toString().match(/\(?[1-4]?\)?\s*(-?\d+(\.\d+)?)/);
+      return match ? match[1] : str.toString().trim();
+    };
+
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let unattemptedCount = 0;
+
+    const reviewedQuestions = officialQuestions.map((q) => {
+      const savedInfo = answersMap[q.id] || answersMap[q.id.toString()] || {};
+      const selectedOption = savedInfo.selected !== undefined && savedInfo.selected !== null
+        ? savedInfo.selected.toString().trim()
+        : null;
+
+      let status = "Unattempted";
+      if (selectedOption !== null && selectedOption !== "") {
+        if (savedInfo.isCorrect !== undefined) {
+          status = savedInfo.isCorrect ? "Correct" : "Wrong";
+        } else {
+          // Fallback evaluation if isCorrect is missing
+          const correctOptKey = q.correctOption ? q.correctOption.toString().trim() : "A";
+          const isNumerical = !q.optionA || !q.optionB || !q.optionC || !q.optionD || 
+                              (extractNumericValue(q.optionA) === extractNumericValue(q.optionB));
+          const targetOptionText = q[`option${correctOptKey}`] || q.optionA || "";
+          const targetNumeric = extractNumericValue(targetOptionText);
+
+          let isCorrect = false;
+          if (isNumerical) {
+            isCorrect = selectedOption === targetNumeric || parseFloat(selectedOption) === parseFloat(targetNumeric) || selectedOption === correctOptKey;
+          } else {
+            isCorrect = selectedOption.toUpperCase() === correctOptKey.toUpperCase() || selectedOption === targetNumeric;
+          }
+          status = isCorrect ? "Correct" : "Wrong";
+        }
+
+        if (status === "Correct") correctCount++;
+        else incorrectCount++;
+      } else {
+        unattemptedCount++;
+      }
+
+      return {
+        id: q.id,
+        subject: q.subject,
+        questionText: q.questionText,
+        imageUrl: q.imageUrl,
+        optionA: q.optionA,
+        optionB: q.optionB,
+        optionC: q.optionC,
+        optionD: q.optionD,
+        correctOption: q.correctOption,
+        positiveMarks: q.positiveMarks,
+        negativeMarks: q.negativeMarks,
+        explanation: q.explanation || q.solution || null,
+        userAnswer: selectedOption,
+        status,
+        timeSpentSeconds: savedInfo.timeSpentSeconds || 0
+      };
+    });
+
+    const questionCount = officialQuestions.length;
+    const maxMarks = questionCount > 0 ? questionCount * 4 : 300;
+    const percentage = Math.max(0, parseFloat(((attempt.score / maxMarks) * 100).toFixed(1)));
+
+    return res.status(200).json({
+      attempt: {
+        id: attempt.id,
+        submittedAt: attempt.submittedAt,
+        score: attempt.score,
+        maxMarks,
+        percentage,
+        shiftName: attempt.shift?.name || "Shift Paper",
+        examName: attempt.shift?.exam?.name || "JEE Main",
+        correctCount,
+        incorrectCount,
+        unattemptedCount,
+        totalQuestions: questionCount
+      },
+      questions: reviewedQuestions
+    });
+  } catch (error) {
+    console.error("Get Attempt Review Error:", error);
+    return res.status(500).json({ error: "Failed to fetch attempt review data." });
+  }
+};

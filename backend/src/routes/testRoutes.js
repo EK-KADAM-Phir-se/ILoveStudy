@@ -9,5 +9,6 @@ router.post('/save-answer', verifyToken, testController.saveAnswerToCache);
 router.get('/snapshot/:shiftId', verifyToken, testController.getTestSnapshot);
 router.post('/submit', verifyToken, testController.submitTest);
 router.post('/generate', verifyToken, testController.generateTest);
+router.get('/review/:attemptId', verifyToken, testController.getAttemptReview);
 
 module.exports = router;
