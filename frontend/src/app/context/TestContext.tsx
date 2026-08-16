@@ -25,7 +25,7 @@ interface TestContextType {
   setQuestionTimers: React.Dispatch<React.SetStateAction<Record<string, number>>>;
   isFullscreen: boolean;
   setIsFullscreen: (val: boolean) => void;
-  submitFinalExam: () => Promise<void>;
+  submitFinalExam: () => Promise<any>;
   activeShiftId: string;
   activeShiftName: string;
   activeShiftYear: number | null;
@@ -65,13 +65,50 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token') || 'SIMULATED_TOKEN';
-      const response = await axios.get(`http://localhost:5000/api/exams/shifts/${shiftId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      let response;
+      try {
+        response = await axios.get(`http://localhost:5000/api/exams/shifts/${shiftId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      } catch (authErr: any) {
+        if (authErr?.response?.status === 401 || authErr?.response?.status === 400) {
+          response = await axios.get(`http://localhost:5000/api/exams/shifts/${shiftId}`, {
+            headers: {
+              'Authorization': `Bearer SIMULATED_TOKEN`
+            }
+          });
+        } else {
+          throw authErr;
         }
-      });
+      }
       const shiftData = response.data;
-      setQuestions(shiftData.questions || []);
+      let rawQs = shiftData.questions || [];
+
+      const subjectOrder: Record<string, number> = {
+        physics: 1,
+        chemistry: 2,
+        biology: 3,
+        botany: 3,
+        zoology: 3,
+        mathematics: 4,
+        maths: 4,
+        math: 4,
+        "general intelligence & reasoning": 1,
+        "general awareness": 2,
+        "quantitative aptitude": 3,
+        "english comprehension": 4,
+      };
+
+      rawQs.sort((a: any, b: any) => {
+        const orderA = subjectOrder[(a.subject || "").toLowerCase()] || 99;
+        const orderB = subjectOrder[(b.subject || "").toLowerCase()] || 99;
+        if (orderA !== orderB) return orderA - orderB;
+        return 0;
+      });
+
+      setQuestions(rawQs);
       setActiveShiftId(shiftId);
       setActiveShiftName(name);
       setActiveShiftYear(year);

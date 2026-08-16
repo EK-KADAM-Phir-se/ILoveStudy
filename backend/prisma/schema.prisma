@@ -97,3 +97,85 @@ model ErrorReport {
 
   @@map("error_reports")
 }
+
+// 5. Organisation & Institutional Testing Models
+model Organization {
+  id           String    @id @default(uuid())
+  name         String
+  code         String    @unique // Unique short code / slug e.g. "DPS-DELHI"
+  contactEmail String?
+  contactPhone String?
+  address      String?
+  logoUrl      String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  tests        OrgTest[]
+}
+
+model OrgTest {
+  id              String           @id @default(uuid())
+  organizationId  String
+  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  title           String           // e.g. "Term 1 Physics Olympiad 2026"
+  accessCode      String           @unique // e.g. "DPS-PHY-8821" or "EXAM-4821"
+  description     String?          @db.Text
+  subject         String           @default("General")
+  durationMinutes Int              @default(60)
+  positiveMarks   Float            @default(4)
+  negativeMarks   Float            @default(-1)
+  startTime       DateTime?        // Optional window start
+  endTime         DateTime?        // Optional window end
+  status          String           @default("ACTIVE") // ACTIVE, DRAFT, CLOSED
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  questions       OrgQuestion[]
+  attempts        OrgTestAttempt[]
+}
+
+model OrgQuestion {
+  id            String    @id @default(uuid())
+  orgTestId     String
+  orgTest       OrgTest   @relation(fields: [orgTestId], references: [id], onDelete: Cascade)
+  subject       String    @default("General")
+  questionText  String    @db.Text
+  imageUrl      String?
+  optionA       String    @db.Text
+  optionB       String    @db.Text
+  optionC       String    @db.Text
+  optionD       String    @db.Text
+  correctOption String    // "A", "B", "C", "D"
+  explanation   String?   @db.Text
+  positiveMarks Float     @default(4)
+  negativeMarks Float     @default(-1)
+  orderIndex    Int       @default(0)
+  createdAt     DateTime  @default(now())
+}
+
+model OrgTestAttempt {
+  id                String    @id @default(uuid())
+  orgTestId         String
+  orgTest           OrgTest   @relation(fields: [orgTestId], references: [id], onDelete: Cascade)
+  studentName       String
+  studentEmail      String?
+  studentRollNumber String?
+  userId            String?
+  score             Float
+  maxScore          Float
+  percentage        Float
+  correctCount      Int
+  incorrectCount    Int
+  unattemptedCount  Int
+  answersSaved      Json      // Map of questionId -> { selected, isCorrect, timeSpentSeconds }
+  submittedAt       DateTime  @default(now())
+}
+
+// 6. Admin Email Whitelist Model
+model AdminEmail {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  role      String    @default("ADMIN") // SUPERADMIN, ADMIN, TEACHER
+  addedBy   String?
+  createdAt DateTime  @default(now())
+}

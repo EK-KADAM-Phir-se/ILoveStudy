@@ -107,6 +107,18 @@ export default function NavBar({
             Custom Test
           </button>
 
+          {/* Organisation Portal Link */}
+          <button
+            onClick={() => router.push("/pages/dashboard/organisation")}
+            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-extrabold tracking-wide uppercase rounded-full transition cursor-pointer border ${
+              isActive("/pages/dashboard/organisation")
+                ? "bg-blue-600 text-white border-blue-600"
+                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-500 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
+            }`}
+          >
+            <span>🏢</span> Organisation
+          </button>
+
           {/* Admin Reports link */}
           <button
             onClick={() => router.push("/admin/reports")}

@@ -13,6 +13,7 @@ const testRoutes = require('./routes/testRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
+const orgRoutes = require('./routes/orgRoutes');
 
 // 3. Mount the API routes
 app.use('/api/auth', authRoutes);
@@ -21,6 +22,7 @@ app.use('/api/test', testRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/org', orgRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {

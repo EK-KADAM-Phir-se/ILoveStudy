@@ -13,7 +13,7 @@ import Footer from "../../../components/Footer";
 import {
   GraduationCap, ArrowRight, BookOpen, Brain,
   Users, Landmark, Sparkles, Flame, Trophy,
-  CheckCircle2, Calendar, X, Zap,
+  CheckCircle2, Calendar, X, Zap, Building2, Dna,
 } from "lucide-react";
 
 export default function GeneralDashboard() {
@@ -108,6 +108,17 @@ export default function GeneralDashboard() {
 
   const exams = [
     {
+      id: "organisation",
+      name: "Organisation & School Tests",
+      description: "Join custom exams with a unique code provided by your school or college, or manage tests as an admin.",
+      route: "/pages/dashboard/organisation",
+      category: "Institutions",
+      icon: Building2,
+      iconBg: "bg-gradient-to-br from-cyan-500 to-blue-600",
+      shadow: "shadow-cyan-200",
+      hover: "group-hover:border-cyan-300",
+    },
+    {
       id: "custom-test",
       name: "AI Custom Test Generator",
       description: "Upload a PDF or JSON question paper. Groq AI extracts MCQs and builds an exam instantly.",
@@ -141,6 +152,17 @@ export default function GeneralDashboard() {
       hover: "group-hover:border-indigo-300",
     },
     {
+      id: "neet",
+      name: "NEET (UG)",
+      description: "National Eligibility Entrance Test with Physics, Chemistry, and Biology, 720 total marks, and 3 hours duration.",
+      route: "/pages/dashboard/neet",
+      category: "Medical",
+      icon: Dna,
+      iconBg: "bg-gradient-to-br from-rose-500 to-pink-600",
+      shadow: "shadow-rose-200",
+      hover: "group-hover:border-rose-300",
+    },
+    {
       id: "ssc-cgl",
       name: "SSC CGL",
       description: "Staff Selection Commission CGL papers with GK, Reasoning, and Quant sections.",
@@ -164,7 +186,7 @@ export default function GeneralDashboard() {
     },
   ];
 
-  const CATEGORIES = ["All", "AI", "Engineering", "Government"];
+  const CATEGORIES = ["All", "Institutions", "AI", "Engineering", "Medical", "Government"];
   const filtered   = activeCategory === "All" ? exams : exams.filter(e => e.category === activeCategory);
 
   if (loading) {

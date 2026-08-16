@@ -1,25 +1,13 @@
 const prisma = require("../lib/prisma");
 
-let cachedExams = null;
-let lastExamsFetchTime = 0;
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-
 // Get all exams along with their corresponding shifts
 const getExams = async (req, res) => {
   try {
-    const now = Date.now();
-    if (cachedExams && now - lastExamsFetchTime < CACHE_TTL_MS) {
-      return res.status(200).json(cachedExams);
-    }
-
     const exams = await prisma.exam.findMany({
       include: {
         shifts: true, // This automatically performs a SQL JOIN to pull in all shifts for each exam!
       },
     });
-    
-    cachedExams = exams;
-    lastExamsFetchTime = now;
     
     return res.status(200).json(exams);
   } catch (error) {
@@ -42,6 +30,34 @@ const getShiftDetails = async (req, res) => {
 
     if (!shift) {
       return res.status(404).json({ error: "Shift not found." });
+    }
+
+    // Sort questions strictly by standard subject section order:
+    // Section 1: Physics (1 - 50)
+    // Section 2: Chemistry (51 - 100)
+    // Section 3: Biology (101 - 200)
+    const subjectOrder = {
+      physics: 1,
+      chemistry: 2,
+      biology: 3,
+      botany: 3,
+      zoology: 3,
+      mathematics: 4,
+      maths: 4,
+      math: 4,
+      "general intelligence & reasoning": 1,
+      "general awareness": 2,
+      "quantitative aptitude": 3,
+      "english comprehension": 4
+    };
+
+    if (shift.questions && Array.isArray(shift.questions)) {
+      shift.questions.sort((a, b) => {
+        const orderA = subjectOrder[(a.subject || "").toLowerCase()] || 99;
+        const orderB = subjectOrder[(b.subject || "").toLowerCase()] || 99;
+        if (orderA !== orderB) return orderA - orderB;
+        return 0;
+      });
     }
 
     return res.status(200).json(shift);

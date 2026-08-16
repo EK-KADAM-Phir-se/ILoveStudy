@@ -1,0 +1,2298 @@
+const fs = require('fs');
+const path = require('path');
+const prisma = require('../../lib/prisma');
+
+const backendImgDir = path.join(__dirname, 'neetimages');
+const frontendImgDir = path.join(__dirname, '../../../../frontend/public/neetimages');
+
+[backendImgDir, frontendImgDir].forEach(dir => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+});
+
+function saveSvg(filename, svgContent) {
+  fs.writeFileSync(path.join(backendImgDir, filename), svgContent.trim());
+  fs.writeFileSync(path.join(frontendImgDir, filename), svgContent.trim());
+}
+
+// ---------------------------------------------------------------------
+// 1. Generate Crisp Vector SVGs for NEET 2021
+// ---------------------------------------------------------------------
+
+// Q3: Current wire and parallel moving electron
+saveSvg('neet_2021_q3.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 200" width="100%" height="170">
+  <rect width="380" height="200" fill="#0f172a" rx="16"/>
+  <!-- Conductor PQ with 5A current -->
+  <line x1="60" y1="140" x2="320" y2="140" stroke="#94a3b8" stroke-width="4"/>
+  <polygon points="325,140 310,133 310,147" fill="#94a3b8"/>
+  <text x="50" y="145" fill="#f8fafc" font-family="sans-serif" font-weight="bold" font-size="14">P</text>
+  <text x="335" y="145" fill="#f8fafc" font-family="sans-serif" font-weight="bold" font-size="14">Q</text>
+  <text x="190" y="165" fill="#f59e0b" font-family="sans-serif" font-weight="bold" font-size="13" text-anchor="middle">5 A</text>
+
+  <!-- Distance 20 cm -->
+  <line x1="190" y1="135" x2="190" y2="65" stroke="#64748b" stroke-dasharray="4 4" stroke-width="1.5"/>
+  <text x="215" y="105" fill="#94a3b8" font-family="sans-serif" font-size="12">20 cm</text>
+
+  <!-- Electron moving upwards -->
+  <circle cx="190" cy="65" r="7" fill="#ef4444"/>
+  <text x="190" y="69" fill="#ffffff" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">e⁻</text>
+  <line x1="190" y1="65" x2="190" y2="25" stroke="#38bdf8" stroke-width="3"/>
+  <polygon points="190,20 184,32 196,32" fill="#38bdf8"/>
+  <text x="240" y="35" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="13">v = 10⁵ m/s</text>
+</svg>`);
+
+// Q4: Dipole in electric field
+saveSvg('neet_2021_q4.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 180" width="100%" height="160">
+  <rect width="380" height="180" fill="#0f172a" rx="16"/>
+  <!-- Field lines converging to the right -->
+  <line x1="50" y1="90" x2="330" y2="30" stroke="#38bdf8" stroke-dasharray="3 3" stroke-width="1.5"/>
+  <line x1="50" y1="90" x2="330" y2="150" stroke="#38bdf8" stroke-dasharray="3 3" stroke-width="1.5"/>
+  <line x1="50" y1="90" x2="330" y2="90" stroke="#38bdf8" stroke-width="2"/>
+  <polygon points="335,90 320,84 320,96" fill="#38bdf8"/>
+  <text x="345" y="95" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="15">E</text>
+
+  <!-- Dipole -->
+  <line x1="100" y1="90" x2="220" y2="90" stroke="#94a3b8" stroke-width="4"/>
+  <circle cx="110" cy="90" r="14" fill="#10b981"/>
+  <text x="110" y="95" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="13" text-anchor="middle">+q</text>
+  <circle cx="210" cy="90" r="14" fill="#ef4444"/>
+  <text x="210" y="95" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="13" text-anchor="middle">-q</text>
+</svg>`);
+
+// Q9: Prism angle of emergence
+saveSvg('neet_2021_q9.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 220" width="100%" height="190">
+  <rect width="340" height="220" fill="#0f172a" rx="16"/>
+  <!-- Right angled prism -->
+  <polygon points="60,30 60,180 280,180" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+  <text x="230" y="175" fill="#f59e0b" font-family="sans-serif" font-weight="bold" font-size="13">60°</text>
+  <!-- Normal incidence ray -->
+  <line x1="20" y1="100" x2="60" y2="100" stroke="#ef4444" stroke-width="3"/>
+  <line x1="60" y1="100" x2="160" y2="100" stroke="#ef4444" stroke-width="3"/>
+  <!-- Emerging ray -->
+  <line x1="160" y1="100" x2="250" y2="50" stroke="#ef4444" stroke-width="3"/>
+  <polygon points="255,47 240,55 246,65" fill="#ef4444"/>
+  <text x="180" y="55" fill="#f8fafc" font-family="sans-serif" font-size="12">e = 60°</text>
+  <text x="90" y="150" fill="#38bdf8" font-family="sans-serif" font-size="12">μ = √3</text>
+</svg>`);
+
+// Q22: Capacitor network
+saveSvg('neet_2021_q22.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 180" width="100%" height="150">
+  <rect width="380" height="180" fill="#0f172a" rx="16"/>
+  <!-- Terminals -->
+  <line x1="30" y1="90" x2="80" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="80" y1="40" x2="80" y2="140" stroke="#94a3b8" stroke-width="2.5"/>
+
+  <!-- Top branch with C -->
+  <line x1="80" y1="40" x2="160" y2="40" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="160" y1="25" x2="160" y2="55" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="170" y1="25" x2="170" y2="55" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="170" y1="40" x2="250" y2="40" stroke="#94a3b8" stroke-width="2.5"/>
+  <text x="165" y="18" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">C</text>
+
+  <!-- Middle branch with C -->
+  <line x1="160" y1="75" x2="160" y2="105" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="170" y1="75" x2="170" y2="105" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="170" y1="90" x2="250" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+  <text x="200" y="85" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="12">C</text>
+
+  <!-- Bottom branch with C -->
+  <line x1="80" y1="140" x2="160" y2="140" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="160" y1="125" x2="160" y2="155" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="170" y1="125" x2="170" y2="155" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="170" y1="140" x2="250" y2="140" stroke="#94a3b8" stroke-width="2.5"/>
+  <text x="165" y="170" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">C</text>
+
+  <line x1="250" y1="40" x2="250" y2="140" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="250" y1="90" x2="350" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+</svg>`);
+
+// Q31: Series LCR Circuit
+saveSvg('neet_2021_q31.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 200" width="100%" height="170">
+  <rect width="420" height="200" fill="#0f172a" rx="16"/>
+  <!-- Wire loop -->
+  <line x1="40" y1="60" x2="80" y2="60" stroke="#94a3b8" stroke-width="2.5"/>
+  <!-- Inductor L -->
+  <path d="M80 60 Q95 40 110 60 Q125 40 140 60 Q155 40 170 60" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+  <!-- Capacitor C -->
+  <line x1="170" y1="60" x2="210" y2="60" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="210" y1="45" x2="210" y2="75" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="220" y1="45" x2="220" y2="75" stroke="#38bdf8" stroke-width="3"/>
+  <!-- Resistor R -->
+  <line x1="220" y1="60" x2="260" y2="60" stroke="#94a3b8" stroke-width="2.5"/>
+  <path d="M260 60 L270 50 L280 70 L290 50 L300 70 L310 50 L320 60" fill="none" stroke="#10b981" stroke-width="2.5"/>
+  <line x1="320" y1="60" x2="380" y2="60" stroke="#94a3b8" stroke-width="2.5"/>
+
+  <!-- Voltage labels -->
+  <text x="125" y="90" fill="#f59e0b" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">V_L = 40V</text>
+  <text x="215" y="90" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">V_C = 10V</text>
+  <text x="290" y="90" fill="#10b981" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">V_R = 40V</text>
+
+  <!-- AC Source at bottom -->
+  <line x1="40" y1="60" x2="40" y2="150" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="380" y1="60" x2="380" y2="150" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="40" y1="150" x2="190" y2="150" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="230" y1="150" x2="380" y2="150" stroke="#94a3b8" stroke-width="2.5"/>
+  <circle cx="210" cy="150" r="16" fill="#1e293b" stroke="#a855f7" stroke-width="2"/>
+  <text x="210" y="155" fill="#a855f7" font-family="sans-serif" font-weight="bold" font-size="14" text-anchor="middle">~</text>
+</svg>`);
+
+// Q38: Three resistors current divider
+saveSvg('neet_2021_q38.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 180" width="100%" height="150">
+  <rect width="400" height="180" fill="#0f172a" rx="16"/>
+  <!-- Terminal A -->
+  <text x="25" y="95" fill="#f8fafc" font-family="sans-serif" font-weight="bold" font-size="14">A</text>
+  <line x1="45" y1="90" x2="80" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+  <text x="60" y="80" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="12">i₁</text>
+  <!-- Resistor r1 -->
+  <path d="M80 90 L90 80 L100 100 L110 80 L120 100 L130 90" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+  <text x="105" y="70" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">r₁</text>
+
+  <!-- Split into r2 and r3 -->
+  <line x1="130" y1="90" x2="160" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="160" y1="50" x2="160" y2="130" stroke="#94a3b8" stroke-width="2.5"/>
+  
+  <!-- Branch r2 -->
+  <line x1="160" y1="50" x2="200" y2="50" stroke="#94a3b8" stroke-width="2.5"/>
+  <path d="M200 50 L210 40 L220 60 L230 40 L240 60 L250 50" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+  <text x="225" y="30" fill="#f59e0b" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">i₂, r₂</text>
+  <line x1="250" y1="50" x2="290" y2="50" stroke="#94a3b8" stroke-width="2.5"/>
+
+  <!-- Branch r3 -->
+  <line x1="160" y1="130" x2="200" y2="130" stroke="#94a3b8" stroke-width="2.5"/>
+  <path d="M200 130 L210 120 L220 140 L230 120 L240 140 L250 130" fill="none" stroke="#10b981" stroke-width="2.5"/>
+  <text x="225" y="160" fill="#10b981" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">i₃, r₃</text>
+  <line x1="250" y1="130" x2="290" y2="130" stroke="#94a3b8" stroke-width="2.5"/>
+
+  <line x1="290" y1="50" x2="290" y2="130" stroke="#94a3b8" stroke-width="2.5"/>
+  <line x1="290" y1="90" x2="350" y2="90" stroke="#94a3b8" stroke-width="2.5"/>
+  <text x="365" y="95" fill="#f8fafc" font-family="sans-serif" font-weight="bold" font-size="14">B</text>
+</svg>`);
+
+// Q48: Balanced rod on wedge
+saveSvg('neet_2021_q48.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 180" width="100%" height="150">
+  <rect width="460" height="180" fill="#0f172a" rx="16"/>
+  <!-- 200 cm rod -->
+  <rect x="40" y="60" width="380" height="16" fill="#334155" stroke="#94a3b8" stroke-width="2" rx="4"/>
+  <text x="40" y="45" fill="#94a3b8" font-family="sans-serif" font-size="11">0</text>
+  <text x="116" y="45" fill="#94a3b8" font-family="sans-serif" font-size="11">20 cm</text>
+  <text x="154" y="45" fill="#94a3b8" font-family="sans-serif" font-size="11">40 cm</text>
+  <text x="344" y="45" fill="#94a3b8" font-family="sans-serif" font-size="11">160 cm</text>
+
+  <!-- Wedge fulcrum at 40 cm (x = 154) -->
+  <polygon points="154,76 142,105 166,105" fill="#f59e0b"/>
+  
+  <!-- Mass 2 kg at 20 cm (x = 116) -->
+  <line x1="116" y1="76" x2="116" y2="115" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="101" y="115" width="30" height="24" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="4"/>
+  <text x="116" y="132" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle">2 kg</text>
+
+  <!-- Unknown Mass m at 160 cm (x = 344) -->
+  <line x1="344" y1="76" x2="344" y2="115" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="331" y="115" width="26" height="24" fill="#1e293b" stroke="#a855f7" stroke-width="2" rx="4"/>
+  <text x="344" y="132" fill="#a855f7" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">m</text>
+</svg>`);
+
+console.log("NEET 2021 SVGs generated!");
+
+// ---------------------------------------------------------------------
+// 2. Questions List for NEET 2021 (Exact 1..200 sequence & verified keys)
+// ---------------------------------------------------------------------
+const rawQuestions = [
+  // -------------------------------------------------------------
+  // PHYSICS (Q1 - Q50)
+  // -------------------------------------------------------------
+  {
+    subject: "Physics",
+    questionText: "Two charged spherical conductors of radius $R_1$ and $R_2$ are connected by a wire. Then the ratio of surface charge densities of the spheres $(\\sigma_1 / \\sigma_2)$ is:",
+    optionA: "$R_1 / R_2$",
+    optionB: "$R_2 / R_1$",
+    optionC: "$\\sqrt{R_1 / R_2}$",
+    optionD: "$R_1^2 / R_2^2$",
+    correctOption: "B",
+    explanation: "When connected, potentials equalize: $V_1 = V_2 \\implies \\frac{Q_1}{R_1} = \\frac{Q_2}{R_2}$. Since $\\sigma = \\frac{Q}{4\\pi R^2}$, ratio $\\frac{\\sigma_1}{\\sigma_2} = \\frac{Q_1 / R_1^2}{Q_2 / R_2^2} = \\frac{R_2}{R_1}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "The velocity of a small ball of mass $M$ and density $d$, when dropped in a container filled with glycerine becomes constant after some time. If density of glycerine is $d/2$, then the viscous force acting on the ball is:",
+    optionA: "$Mg / 2$",
+    optionB: "$Mg$",
+    optionC: "$3Mg / 2$",
+    optionD: "$2Mg$",
+    correctOption: "A",
+    explanation: "At terminal velocity, $F_v + F_B = Mg \\implies F_v + \\left(\\frac{d/2}{d}\\right)Mg = Mg \\implies F_v = \\frac{Mg}{2}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "An infinitely long straight conductor carries a current of $5\\text{ A}$. An electron is moving with speed $10^5\\text{ m/s}$ parallel to the conductor at a distance $20\\text{ cm}$. Magnitude of magnetic force on electron is:",
+    imageUrl: "/neetimages/neet_2021_q3.svg",
+    optionA: "$4 \\times 10^{-20}\\text{ N}$",
+    optionB: "$8\\pi \\times 10^{-20}\\text{ N}$",
+    optionC: "$4\\pi \\times 10^{-20}\\text{ N}$",
+    optionD: "$8 \\times 10^{-20}\\text{ N}$",
+    correctOption: "D",
+    explanation: "$B = \\frac{\\mu_0 I}{2\\pi r} = \\frac{4\\pi \\times 10^{-7} \\times 5}{2\\pi \\times 0.2} = 5 \\times 10^{-6}\\text{ T}$. Force $F = q v B = (1.6 \\times 10^{-19}) \\times 10^5 \\times (5 \\times 10^{-6}) = 8 \\times 10^{-20}\\text{ N}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A dipole is placed in a non-uniform electric field as shown. In which direction will it move?",
+    imageUrl: "/neetimages/neet_2021_q4.svg",
+    optionA: "Towards the left as its potential energy will increase",
+    optionB: "Towards the right as its potential energy will decrease",
+    optionC: "Towards the left as its potential energy will decrease",
+    optionD: "Towards the right as its potential energy will increase",
+    correctOption: "B",
+    explanation: "Field is stronger to the right (lines converge). Force on $+q$ to the right exceeds force on $-q$ to the left. Dipole moves right towards minimum potential energy."
+  },
+  {
+    subject: "Physics",
+    questionText: "A lens of large focal length and large aperture is best suited as an objective of an astronomical telescope since:",
+    optionA: "A large aperture contributes to the quality and visibility of images",
+    optionB: "A large area of objective ensures better light gathering power",
+    optionC: "A large aperture provides better resolution",
+    optionD: "All of the above",
+    correctOption: "D",
+    explanation: "Large aperture maximizes light gathering power, reduces diffraction for higher resolving power, and improves image clarity."
+  },
+  {
+    subject: "Physics",
+    questionText: "A screw gauge has main scale reading $0\\text{ mm}$ and circular scale reading 52 divisions. If $1\\text{ mm}$ on main scale corresponds to 100 circular divisions, diameter of wire is:",
+    optionA: "$0.52\\text{ cm}$",
+    optionB: "$0.026\\text{ cm}$",
+    optionC: "$0.26\\text{ cm}$",
+    optionD: "$0.052\\text{ cm}$",
+    correctOption: "D",
+    explanation: "Least Count $= \\frac{1\\text{ mm}}{100} = 0.01\\text{ mm} = 0.001\\text{ cm}$. Diameter $= 0 + 52 \\times 0.001\\text{ cm} = 0.052\\text{ cm}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A nucleus with mass number 240 (BE/A $= 7.6\\text{ MeV}$) breaks into two fragments of mass 120 each (BE/A $= 8.5\\text{ MeV}$). Total gain in Binding Energy is:",
+    optionA: "$0.9\\text{ MeV}$",
+    optionB: "$9.4\\text{ MeV}$",
+    optionC: "$804\\text{ MeV}$",
+    optionD: "$216\\text{ MeV}$",
+    correctOption: "D",
+    explanation: "Gain $= 240 \\times (8.5 - 7.6) = 240 \\times 0.9 = 216\\text{ MeV}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A small block slides down a smooth inclined plane from rest at $t=0$. If $S_n$ is distance travelled in interval $t=n-1$ to $t=n$, then ratio $S_n / S_{n+1}$ is:",
+    optionA: "$\\frac{2n-1}{2n}$",
+    optionB: "$\\frac{2n-1}{2n+1}$",
+    optionC: "$\\frac{2n+1}{2n-1}$",
+    optionD: "$\\frac{2n}{2n-1}$",
+    correctOption: "B",
+    explanation: "$S_n = \\frac{a}{2}(2n-1)$ and $S_{n+1} = \\frac{a}{2}(2(n+1)-1) = \\frac{a}{2}(2n+1) \\implies \\frac{S_n}{S_{n+1}} = \\frac{2n-1}{2n+1}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Find the angle of emergence from a prism of refractive index $\\sqrt{3}$ with incident ray perpendicular to first face ($A = 60^\\circ$):",
+    imageUrl: "/neetimages/neet_2021_q9.svg",
+    optionA: "$60^\\circ$",
+    optionB: "$30^\\circ$",
+    optionC: "$45^\\circ$",
+    optionD: "$90^\\circ$",
+    correctOption: "A",
+    explanation: "At first face, $r_1 = 0^\\circ \\implies r_2 = A - r_1 = 60^\\circ$. At second face, $\\sin e = \\mu \\sin r_2 = \\sqrt{3} \\sin 30^\\circ = \\frac{\\sqrt{3}}{2} \\implies e = 60^\\circ$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A spring is stretched by $5\\text{ cm}$ by force $10\\text{ N}$. Time period of oscillations when mass of $2\\text{ kg}$ is suspended is:",
+    optionA: "$0.0628\\text{ s}$",
+    optionB: "$6.28\\text{ s}$",
+    optionC: "$3.14\\text{ s}$",
+    optionD: "$0.628\\text{ s}$",
+    correctOption: "D",
+    explanation: "$k = \\frac{F}{x} = \\frac{10}{0.05} = 200\\text{ N/m}$. $T = 2\\pi \\sqrt{\\frac{m}{k}} = 2\\pi \\sqrt{\\frac{2}{200}} = \\frac{2\\pi}{10} = 0.628\\text{ s}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Convex lens A ($f=20\\text{ cm}$) and concave lens B ($f=5\\text{ cm}$) are coaxial separated by distance $d$. If parallel beam leaves B parallel, distance $d$ is:",
+    optionA: "$25\\text{ cm}$",
+    optionB: "$15\\text{ cm}$",
+    optionC: "$50\\text{ cm}$",
+    optionD: "$30\\text{ cm}$",
+    correctOption: "B",
+    explanation: "$d = f_A - f_B = 20 - 5 = 15\\text{ cm}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Match Column-I with Column-II:\nColumn-I: (A) Drift Velocity, (B) Electrical Resistivity, (C) Relaxation Period, (D) Current Density\nColumn-II: (P) $m / (n e^2 \\rho)$, (Q) $n e v_d$, (R) $e E \\tau / m$, (S) $E / J$\nChoose the correct option:",
+    optionA: "(A)-(R), (B)-(S), (C)-(P), (D)-(Q)",
+    optionB: "(A)-(R), (B)-(S), (C)-(Q), (D)-(P)",
+    optionC: "(A)-(R), (B)-(P), (C)-(S), (D)-(Q)",
+    optionD: "(A)-(R), (B)-(Q), (C)-(S), (D)-(P)",
+    correctOption: "A",
+    explanation: "Drift velocity $v_d = eE\\tau/m$, Resistivity $\\rho = E/J$, Relaxation time $\\tau = m/(ne^2\\rho)$, Current density $J = nev_d$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Electron concentration in n-type equals hole concentration in p-type. When equal electric field is applied, current comparison is:",
+    optionA: "Current in n-type = current in p-type",
+    optionB: "Current in p-type > current in n-type",
+    optionC: "Current in n-type > current in p-type",
+    optionD: "No current in p-type",
+    correctOption: "C",
+    explanation: "Electron mobility $\\mu_e$ is higher than hole mobility $\\mu_h \\implies I_n > I_p$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A radioactive nucleus undergoes decay: $^A_Z X \\to _{Z-1} B \\to _{Z-3} C \\to _{Z-2} D$. The decay particles in sequence are:",
+    optionA: "$\\alpha, \\beta^-, \\beta^+$",
+    optionB: "$\\alpha, \\beta^+, \\beta^-$",
+    optionC: "$\\beta^+, \\alpha, \\beta^-$",
+    optionD: "$\\beta^-, \\alpha, \\beta^+$",
+    correctOption: "C",
+    explanation: "$Z \\to Z-1$ ($\beta^+$ emission), $Z-1 \\to Z-3$ ($\alpha$ emission), $Z-3 \\to Z-2$ ($\beta^-$ emission)."
+  },
+  {
+    subject: "Physics",
+    questionText: "Water falls from height $60\\text{ m}$ at rate $15\\text{ kg/s}$ on a turbine. If frictional losses are $10\\%$, power generated is ($g=10\\text{ m/s}^2$):",
+    optionA: "$10.2\\text{ kW}$",
+    optionB: "$8.1\\text{ kW}$",
+    optionC: "$12.3\\text{ kW}$",
+    optionD: "$7.0\\text{ kW}$",
+    correctOption: "B",
+    explanation: "$P_{\\text{in}} = \\frac{mgh}{t} = 15 \\times 10 \\times 60 = 9000\\text{ W} = 9\\text{ kW}$. Efficiency $= 90\\% \\implies P = 0.9 \\times 9 = 8.1\\text{ kW}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Number of photons per second emitted by monochromatic source ($600\\text{ nm}$) delivering power $3.3 \\times 10^{-3}\\text{ W}$ is:",
+    optionA: "$10^{18}$",
+    optionB: "$10^{17}$",
+    optionC: "$10^{16}$",
+    optionD: "$10^{15}$",
+    correctOption: "C",
+    explanation: "$n = \\frac{P \\lambda}{hc} = \\frac{(3.3 \\times 10^{-3}) \\times (600 \\times 10^{-9})}{(6.6 \\times 10^{-34}) \\times (3 \\times 10^8)} = 10^{16}\\text{ photons/s}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "For a plane EM wave propagating in $+x$-direction, possible directions for $\\vec{E}$ and $\\vec{B}$ are:",
+    optionA: "$\\hat{j}+\\hat{k}, \\hat{j}+\\hat{k}$",
+    optionB: "$-\\hat{j}+\\hat{k}, -\\hat{j}-\\hat{k}$",
+    optionC: "$\\hat{j}+\\hat{k}, -\\hat{j}-\\hat{k}$",
+    optionD: "$-\\hat{j}+\\hat{k}, -\\hat{j}+\\hat{k}$",
+    correctOption: "B",
+    explanation: "$\\vec{E} \\times \\vec{B}$ must point along $+\\hat{i}$. $(-\\hat{j}+\\hat{k}) \\times (-\\hat{j}-\\hat{k}) = 2\\hat{i}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Parallel combination of 4 identical wires has resistance $0.25\\,\\Omega$. If connected in series, effective resistance is:",
+    optionA: "$0.25\\,\\Omega$",
+    optionB: "$0.5\\,\\Omega$",
+    optionC: "$1\\,\\Omega$",
+    optionD: "$4\\,\\Omega$",
+    correctOption: "D",
+    explanation: "$R_p = R/4 = 0.25 \\implies R = 1\\,\\Omega$. In series: $R_s = 4R = 4\\,\\Omega$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A cell of EMF $1.5\\text{ V}$ gives balance point at $36\\text{ cm}$. Another cell of EMF $2.5\\text{ V}$ gives balance point at:",
+    optionA: "$60\\text{ cm}$",
+    optionB: "$21.6\\text{ cm}$",
+    optionC: "$64\\text{ cm}$",
+    optionD: "$62\\text{ cm}$",
+    correctOption: "A",
+    explanation: "$\\frac{E_1}{E_2} = \\frac{l_1}{l_2} \\implies \\frac{1.5}{2.5} = \\frac{36}{l_2} \\implies l_2 = 60\\text{ cm}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Polar molecules are the molecules:",
+    optionA: "Having zero dipole moment",
+    optionB: "Acquiring dipole moment only in electric field",
+    optionC: "Acquiring dipole moment only in absence of magnetic field",
+    optionD: "Having a permanent electric dipole moment",
+    correctOption: "D",
+    explanation: "In polar molecules, centers of positive and negative charges do not coincide, giving permanent dipole moments."
+  },
+  {
+    subject: "Physics",
+    questionText: "A parallel plate capacitor has electric field $E$, plate separation $d$, and area $A$. Energy stored in capacitor is:",
+    optionA: "$\\frac{1}{2} \\varepsilon_0 E^2$",
+    optionB: "$\\varepsilon_0 E A d$",
+    optionC: "$\\frac{1}{2} \\varepsilon_0 E^2 A d$",
+    optionD: "$\\frac{E^2 A d}{\\varepsilon_0}$",
+    correctOption: "C",
+    explanation: "$U = u \\times \\text{Volume} = \\frac{1}{2} \\varepsilon_0 E^2 (A d)$."
+  },
+  {
+    subject: "Physics",
+    questionText: "The equivalent capacitance of the combination of 3 capacitors of capacitance $C$ shown in figure is:",
+    imageUrl: "/neetimages/neet_2021_q22.svg",
+    optionA: "$3C$",
+    optionB: "$2C$",
+    optionC: "$C/2$",
+    optionD: "$3C/2$",
+    correctOption: "B",
+    explanation: "Middle capacitor is shorted; top and bottom capacitors are in parallel $\\implies C_{\\text{eq}} = 2C$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Consider statements:\n(A) A zener diode is connected in reverse bias as voltage regulator.\n(B) Potential barrier of p-n junction lies between $0.1\\text{ V}$ to $0.3\\text{ V}$.\nChoose correct answer:",
+    optionA: "(A) and (B) both are correct",
+    optionB: "(A) and (B) both are incorrect",
+    optionC: "(A) is correct and (B) is incorrect",
+    optionD: "(A) is incorrect but (B) is correct",
+    correctOption: "C",
+    explanation: "(A) is correct. (B) is incorrect because potential barrier for Si is $\\sim 0.7\\text{ V}$ and Ge is $\\sim 0.3\\text{ V}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A particle is dropped from height $S$. At a certain height, $\\text{KE} = 3\\,\\text{PE}$. The height from ground and speed at that instant are:",
+    optionA: "$\\frac{S}{4}, \\frac{3gS}{2}$",
+    optionB: "$\\frac{S}{4}, \\frac{\\sqrt{3gS}}{2}$",
+    optionC: "$\\frac{S}{2}, \\frac{\\sqrt{3gS}}{2}$",
+    optionD: "$\\frac{S}{4}, \\sqrt{\\frac{3gS}{2}}$",
+    correctOption: "D",
+    explanation: "$\\text{PE} = mg h$, $\\text{KE} = mg(S-h) = 3mgh \\implies h = S/4$. Speed $v = \\sqrt{2g(3S/4)} = \\sqrt{\\frac{3gS}{2}}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "If $E$ and $G$ denote energy and gravitational constant, dimensions of $E/G$ are:",
+    optionA: "$[\\text{M}^2\\text{L}^{-1}\\text{T}^0]$",
+    optionB: "$[\\text{M}\\text{L}^{-1}\\text{T}^{-1}]$",
+    optionC: "$[\\text{M}\\text{L}^0\\text{T}^0]$",
+    optionD: "$[\\text{M}^2\\text{L}^{-2}\\text{T}^{-1}]$",
+    correctOption: "A",
+    explanation: "$\\frac{[E]}{[G]} = \\frac{[\\text{ML}^2\\text{T}^{-2}]}{[\\text{M}^{-1}\\text{L}^3\\text{T}^{-2}]} = [\\text{M}^2\\text{L}^{-1}\\text{T}^0]$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Match Column-I with Column-II (Kinetic Theory):\n(A) RMS speed, (B) Pressure of ideal gas, (C) Average KE of a molecule, (D) Total internal energy of 1 mole diatomic gas\n(P) $\\frac{1}{3} n m \\bar{v}^2$, (Q) $\\sqrt{\\frac{3RT}{M}}$, (R) $\\frac{5}{2} RT$, (S) $\\frac{3}{2} k_B T$\nChoose the correct option:",
+    optionA: "(A)-(R), (B)-(P), (C)-(S), (D)-(Q)",
+    optionB: "(A)-(Q), (B)-(R), (C)-(S), (D)-(P)",
+    optionC: "(A)-(Q), (B)-(P), (C)-(S), (D)-(R)",
+    optionD: "(A)-(R), (B)-(Q), (C)-(P), (D)-(S)",
+    correctOption: "C",
+    explanation: "$v_{\\text{rms}} = \\sqrt{3RT/M}$ (Q), $P = \\frac{1}{3}nm\\bar{v}^2$ (P), $KE_{\\text{molecule}} = \\frac{3}{2}k_B T$ (S), $U_{\\text{diatomic}} = \\frac{5}{2}RT$ (R)."
+  },
+  {
+    subject: "Physics",
+    questionText: "A body executes SHM with frequency $n$. The frequency of its potential energy oscillations is:",
+    optionA: "$n$",
+    optionB: "$2n$",
+    optionC: "$3n$",
+    optionD: "$4n$",
+    correctOption: "B",
+    explanation: "$U = \\frac{1}{2} k A^2 \\sin^2(\\omega t) = \\frac{1}{4} k A^2 (1 - \\cos 2\\omega t) \\implies$ frequency is $2n$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Coffee cools from $90^\\circ\\text{C}$ to $80^\\circ\\text{C}$ in $t\\text{ min}$ (room temp $20^\\circ\\text{C}$). Time taken to cool from $80^\\circ\\text{C}$ to $60^\\circ\\text{C}$ is:",
+    optionA: "$\\frac{13}{10} t$",
+    optionB: "$\\frac{13}{5} t$",
+    optionC: "$\\frac{10}{13} t$",
+    optionD: "$\\frac{5}{13} t$",
+    correctOption: "B",
+    explanation: "Newton's law: $\\frac{10}{t} = K(65) \\implies K = \\frac{2}{13t}$. For second cooling: $\\frac{20}{t'} = K(50) = \\frac{2}{13t}(50) \\implies t' = \\frac{13}{5}t$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A capacitor $C$ is connected across $V = V_0 \\sin\\omega t$. Displacement current $I_d$ is:",
+    optionA: "$I_d = V_0 \\omega C \\cos\\omega t$",
+    optionB: "$I_d = \\frac{V_0}{\\omega C} \\cos\\omega t$",
+    optionC: "$I_d = \\frac{V_0}{\\omega C} \\sin\\omega t$",
+    optionD: "$I_d = V_0 \\omega C \\sin\\omega t$",
+    correctOption: "A",
+    explanation: "$q = C V_0 \\sin\\omega t \\implies I_d = \\frac{dq}{dt} = V_0 \\omega C \\cos\\omega t$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Half-life of nuclide is $100\\text{ hours}$. Fraction of original activity remaining after $150\\text{ hours}$ is:",
+    optionA: "$1/2$",
+    optionB: "$\\frac{1}{2\\sqrt{2}}$",
+    optionC: "$2/3$",
+    optionD: "$\\frac{2}{3\\sqrt{2}}$",
+    correctOption: "B",
+    explanation: "$n = 150/100 = 1.5$. Fraction remaining $= (1/2)^{1.5} = \\frac{1}{2\\sqrt{2}}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Series LCR circuit has $V_L = 40\\text{ V}, V_C = 10\\text{ V}, V_R = 40\\text{ V}$. Amplitude of current is $10\\sqrt{2}\\text{ A}$. Impedance $Z$ is:",
+    imageUrl: "/neetimages/neet_2021_q31.svg",
+    optionA: "$4\\sqrt{2}\\,\\Omega$",
+    optionB: "$5\\sqrt{2}\\,\\Omega$",
+    optionC: "$4\\,\\Omega$",
+    optionD: "$5\\,\\Omega$",
+    correctOption: "D",
+    explanation: "$V_{\\text{rms}} = \\sqrt{V_R^2 + (V_L - V_C)^2} = \\sqrt{40^2 + 30^2} = 50\\text{ V}$. $I_{\\text{rms}} = \\frac{10\\sqrt{2}}{\\sqrt{2}} = 10\\text{ A} \\implies Z = \\frac{50}{10} = 5\\,\\Omega$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Thick cable of radius $R$ carries current $I$ uniformly distributed. The variation of $B(r)$ with distance $r$ from axis is:",
+    optionA: "Quadratic curve",
+    optionB: "Linear throughout",
+    optionC: "Linearly increasing for $r \\le R$, then decreasing as $1/r$ for $r > R$",
+    optionD: "Decreasing throughout",
+    correctOption: "C",
+    explanation: "$B = \\frac{\\mu_0 I r}{2\\pi R^2}$ inside ($r \\le R$) and $B = \\frac{\\mu_0 I}{2\\pi r}$ outside ($r > R$)."
+  },
+  {
+    subject: "Physics",
+    questionText: "Electromagnetic wave of wavelength $\\lambda$ emits photoelectrons of de-Broglie wavelength $\\lambda_d$. Neglecting work function, $\\lambda$ is:",
+    optionA: "$\\left(\\frac{2m}{hc}\\right) \\lambda_d^2$",
+    optionB: "$\\left(\\frac{2mc}{h}\\right) \\lambda_d$",
+    optionC: "$\\left(\\frac{2mc}{h}\\right) \\lambda_d^2$",
+    optionD: "$\\left(\\frac{2h}{mc}\\right) \\lambda_d^2$",
+    correctOption: "C",
+    explanation: "$E = \\frac{hc}{\\lambda} = \\frac{p^2}{2m} = \\frac{h^2}{2m \\lambda_d^2} \\implies \\lambda = \\left(\\frac{2mc}{h}\\right) \\lambda_d^2$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Escape velocity from Earth is $v$. Escape velocity from planet with radius $4R$ and same density is:",
+    optionA: "$v$",
+    optionB: "$2v$",
+    optionC: "$3v$",
+    optionD: "$4v$",
+    correctOption: "D",
+    explanation: "$v_e = R \\sqrt{\\frac{8\\pi G \\rho}{3}} \\propto R \\implies v' = 4v$."
+  },
+  {
+    subject: "Physics",
+    questionText: "If Force $[F]$, acceleration $[A]$ and time $[T]$ are fundamental quantities, dimensions of Energy are:",
+    optionA: "$[F][A][T]$",
+    optionB: "$[F][A][T^2]$",
+    optionC: "$[F][A][T^{-1}]$",
+    optionD: "$[F][A^{-1}][T]$",
+    correctOption: "B",
+    explanation: "$\\text{Energy} = \\text{Force} \\times \\text{Displacement} = [F] \\times [\\frac{1}{2} A T^2] = [F][A][T^2]$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Two concentric coplanar circular loops have radii $R_1 \\gg R_2$. Mutual inductance $M$ is directly proportional to:",
+    optionA: "$R_1 / R_2$",
+    optionB: "$R_2 / R_1$",
+    optionC: "$R_1^2 / R_2$",
+    optionD: "$R_2^2 / R_1$",
+    correctOption: "D",
+    explanation: "$M = \\frac{\\mu_0 \\pi R_2^2}{2 R_1} \\propto \\frac{R_2^2}{R_1}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Point object is $60\\text{ cm}$ from convex lens ($f=30\\text{ cm}$). A plane mirror is placed $40\\text{ cm}$ behind lens. Final image is at:",
+    optionA: "$20\\text{ cm}$ from lens, real",
+    optionB: "$30\\text{ cm}$ from lens, real",
+    optionC: "$30\\text{ cm}$ from mirror, virtual",
+    optionD: "$20\\text{ cm}$ from plane mirror, virtual",
+    correctOption: "D",
+    explanation: "Lens forms real image at $60\\text{ cm}$ behind lens ($20\\text{ cm}$ behind mirror). Mirror reflects light to form real image $20\\text{ cm}$ in front of mirror."
+  },
+  {
+    subject: "Physics",
+    questionText: "Three resistors $r_1, r_2, r_3$ are connected with $r_2, r_3$ in parallel. The ratio $i_3 / i_1$ is:",
+    imageUrl: "/neetimages/neet_2021_q38.svg",
+    optionA: "$\\frac{r_1}{r_2+r_3}$",
+    optionB: "$\\frac{r_2}{r_2+r_3}$",
+    optionC: "$\\frac{r_1}{r_1+r_2}$",
+    optionD: "$\\frac{r_2}{r_1+r_3}$",
+    correctOption: "B",
+    explanation: "By current division in parallel branches: $i_3 = i_1 \\left(\\frac{r_2}{r_2 + r_3}\\right) \\implies \\frac{i_3}{i_1} = \\frac{r_2}{r_2+r_3}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "For digital inputs A, B, C applied to logic circuit (AND gates fed into OR gate), output $y$ is:",
+    optionA: "Waveform 1",
+    optionB: "Waveform 2",
+    optionC: "Waveform 3",
+    optionD: "Waveform 4",
+    correctOption: "C",
+    explanation: "Circuit implements $y = (A \\cdot B) + (B \\cdot C)$. Evaluation of interval logic levels matches waveform (3)."
+  },
+  {
+    subject: "Physics",
+    questionText: "Series LCR has $L=5.0\\text{ H}, C=80\\,\\mu\\text{F}, R=40\\,\\Omega$. Frequencies where power is half maximum (half-power frequencies) are:",
+    optionA: "$25\\text{ rad/s}$ and $75\\text{ rad/s}$",
+    optionB: "$50\\text{ rad/s}$ and $25\\text{ rad/s}$",
+    optionC: "$46\\text{ rad/s}$ and $54\\text{ rad/s}$",
+    optionD: "$42\\text{ rad/s}$ and $58\\text{ rad/s}$",
+    correctOption: "C",
+    explanation: "$\\omega_0 = \\frac{1}{\\sqrt{LC}} = 50\\text{ rad/s}$. $\\Delta\\omega = \\frac{R}{2L} = \\frac{40}{10} = 4\\text{ rad/s} \\implies \\omega = 50 \\pm 4 = 46\\text{ rad/s}$ and $54\\text{ rad/s}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Car accelerates at $5\\text{ m/s}^2$. At $t=4\\text{ s}$, ball is dropped. Velocity and acceleration of ball at $t=6\\text{ s}$ are:",
+    optionA: "$20\\text{ m/s}, 5\\text{ m/s}^2$",
+    optionB: "$20\\text{ m/s}, 0$",
+    optionC: "$20\\sqrt{2}\\text{ m/s}, 0$",
+    optionD: "$20\\sqrt{2}\\text{ m/s}, 10\\text{ m/s}^2$",
+    correctOption: "D",
+    explanation: "$v_x = 5(4) = 20\\text{ m/s}$. At $t=6\\text{ s}$ ($2\\text{ s}$ in air), $v_y = 10(2) = 20\\text{ m/s}$. $v = \\sqrt{20^2 + 20^2} = 20\\sqrt{2}\\text{ m/s}, a = g = 10\\text{ m/s}^2$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Particle projected with velocity $v = k V_e$ ($k < 1$). Maximum height reached above Earth surface is:",
+    optionA: "$R\\left(\\frac{k}{1-k}\\right)^2$",
+    optionB: "$R\\left(\\frac{k}{1+k}\\right)^2$",
+    optionC: "$\\frac{R^2 k}{1+k}$",
+    optionD: "$\\frac{R k^2}{1-k^2}$",
+    correctOption: "D",
+    explanation: "Conservation of energy: $-\\frac{GMm}{R} + \\frac{1}{2} m (k^2 \\frac{2GM}{R}) = -\\frac{GMm}{R+h} \\implies h = \\frac{R k^2}{1 - k^2}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Particle in circle radius $R$ takes period $T$. If projected at angle $\\theta$, maximum height is $4R$. Angle $\\theta$ is:",
+    optionA: "$\\cos^{-1}\\left(\\frac{gT^2}{\\pi^2 R}\\right)^{1/2}$",
+    optionB: "$\\cos^{-1}\\left(\\frac{\\pi^2 R}{gT^2}\\right)^{1/2}$",
+    optionC: "$\\sin^{-1}\\left(\\frac{\\pi^2 R}{gT^2}\\right)^{1/2}$",
+    optionD: "$\\sin^{-1}\\left(\\frac{2gT^2}{\\pi^2 R}\\right)^{1/2}$",
+    correctOption: "D",
+    explanation: "$v = \\frac{2\\pi R}{T}$. $H = \\frac{v^2 \\sin^2\\theta}{2g} = 4R \\implies \\sin\\theta = \\left(\\frac{2gT^2}{\\pi^2 R}\\right)^{1/2}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Given $\\vec{F} = q(\\vec{v} \\times \\vec{B})$ where $q=1, \\vec{v} = 2\\hat{i}+4\\hat{j}+6\\hat{k}$ and $\\vec{F} = 4\\hat{i}-20\\hat{j}+12\\hat{k}$. Vector $\\vec{B}$ is:",
+    optionA: "$-8\\hat{i}-8\\hat{j}-6\\hat{k}$",
+    optionB: "$-6\\hat{i}-6\\hat{j}-8\\hat{k}$",
+    optionC: "$8\\hat{i}+8\\hat{j}-6\\hat{k}$",
+    optionD: "$6\\hat{i}+6\\hat{j}-8\\hat{k}$",
+    correctOption: "B",
+    explanation: "Cross product of $(2\\hat{i}+4\\hat{j}+6\\hat{k}) \\times (-6\\hat{i}-6\\hat{j}-8\\hat{k})$ gives $4\\hat{i}-20\\hat{j}+12\\hat{k}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A ball of mass $0.15\\text{ kg}$ is dropped from $10\\text{ m}$ and rebounds to same height. Magnitude of impulse is ($g=10\\text{ m/s}^2$):",
+    optionA: "$0\\text{ kg m/s}$",
+    optionB: "$4.2\\text{ kg m/s}$",
+    optionC: "$2.1\\text{ kg m/s}$",
+    optionD: "$1.4\\text{ kg m/s}$",
+    correctOption: "B",
+    explanation: "$v = \\sqrt{2gh} = \\sqrt{200} = 14.14\\text{ m/s}$. Impulse $= m(v - (-v)) = 2 m v = 2(0.15)(14.14) \\approx 4.2\\text{ N s}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Wire of length $12a$ wound into (i) equilateral triangle of side $a$ (4 turns), (ii) square of side $a$ (3 turns). Ratio of magnetic moments is:",
+    optionA: "$\\sqrt{3} I a^2$ and $3 I a^2$",
+    optionB: "$3 I a^2$ and $I a^2$",
+    optionC: "$3 I a^2$ and $4 I a^2$",
+    optionD: "$4 I a^2$ and $3 I a^2$",
+    correctOption: "A",
+    explanation: "$M_1 = 4 \\times I \\times (\\frac{\\sqrt{3}}{4} a^2) = \\sqrt{3} I a^2$. $M_2 = 3 \\times I \\times a^2 = 3 I a^2$."
+  },
+  {
+    subject: "Physics",
+    questionText: "Twenty seven drops charged to $220\\text{ V}$ each combine to form bigger drop. Potential of bigger drop is:",
+    optionA: "$660\\text{ V}$",
+    optionB: "$1320\\text{ V}$",
+    optionC: "$1520\\text{ V}$",
+    optionD: "$1980\\text{ V}$",
+    correctOption: "D",
+    explanation: "$V' = n^{2/3} V = (27)^{2/3} \\times 220 = 9 \\times 220 = 1980\\text{ V}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A uniform rod of length $200\\text{ cm}$, mass $500\\text{ g}$ balanced on wedge at $40\\text{ cm}$. Mass $2\\text{ kg}$ suspended at $20\\text{ cm}$ and unknown $m$ at $160\\text{ cm}$. Mass $m$ is:",
+    imageUrl: "/neetimages/neet_2021_q48.svg",
+    optionA: "$1/2\\text{ kg}$",
+    optionB: "$1/3\\text{ kg}$",
+    optionC: "$1/6\\text{ kg}$",
+    optionD: "$1/12\\text{ kg}$",
+    correctOption: "D",
+    explanation: "Torque about wedge: $2(20) = 0.5(60) + m(120) \\implies 40 = 30 + 120m \\implies m = 10/120 = 1/12\\text{ kg}$."
+  },
+  {
+    subject: "Physics",
+    questionText: "From a circular ring of mass $M$, radius $R$, an arc of $90^\\circ$ is removed. Moment of inertia of remaining part is $K M R^2$. Value of $K$ is:",
+    optionA: "$3/4$",
+    optionB: "$7/8$",
+    optionC: "$1/4$",
+    optionD: "$1/8$",
+    correctOption: "A",
+    explanation: "Mass remaining $= \\frac{3}{4}M$. Distance of all points is $R \\implies I = (3/4 M) R^2 \\implies K = 3/4$."
+  },
+  {
+    subject: "Physics",
+    questionText: "A step-down transformer on $220\\text{ V}$ operates an $11\\text{ V}, 44\\text{ W}$ lamp. Current in primary circuit is:",
+    optionA: "$0.2\\text{ A}$",
+    optionB: "$0.4\\text{ A}$",
+    optionC: "$2\\text{ A}$",
+    optionD: "$4\\text{ A}$",
+    correctOption: "A",
+    explanation: "$I_p = \\frac{P}{V_p} = \\frac{44}{220} = 0.2\\text{ A}$."
+  },
+
+  // -------------------------------------------------------------
+  // CHEMISTRY (Q51 - Q100)
+  // -------------------------------------------------------------
+  {
+    subject: "Chemistry",
+    questionText: "Dihedral angle of least stable conformer (eclipsed) of ethane is:",
+    optionA: "$120^\\circ$",
+    optionB: "$180^\\circ$",
+    optionC: "$60^\\circ$",
+    optionD: "$0^\\circ$",
+    correctOption: "D",
+    explanation: "In eclipsed conformation of ethane, dihedral angle between C-H bonds is $0^\\circ$, causing maximum torsional strain."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Noble gases are inert. Identify an INCORRECT statement about them:",
+    optionA: "Noble gases are sparingly soluble in water",
+    optionB: "Noble gases have very high melting and boiling points",
+    optionC: "Noble gases have weak dispersion forces",
+    optionD: "Noble gases have large positive values of electron gain enthalpy",
+    correctOption: "B",
+    explanation: "Due to weak London dispersion forces, noble gases have extremely low melting and boiling points (Helium has lowest b.p. of $4.2\\text{ K}$)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Major product of reaction: $\\text{CH}_3-\\text{CH}(\\text{CH}_3)-\\text{CH}=\\text{CH}_2 + \\text{HBr} \\xrightarrow{(\\text{C}_6\\text{H}_5\\text{CO})_2\\text{O}_2} \\text{Product}$ is:",
+    optionA: "$\\text{CH}_3-\\text{CH}(\\text{CH}_3)-\\text{CH}_2-\\text{CH}_2-\\text{Br}$",
+    optionB: "$\\text{CH}_3-\\text{CH}(\\text{CH}_3)-\\text{CH}_2-\\text{CH}_2-\\text{O}-\\text{COC}_6\\text{H}_5$",
+    optionC: "$\\text{CH}_3-\\text{CH}(\\text{CH}_3)-\\text{CH}(\\text{Br})-\\text{CH}_3$",
+    optionD: "$\\text{CH}_3-\\text{C}(\\text{Br})(\\text{CH}_3)-\\text{CH}_2-\\text{CH}_3$",
+    correctOption: "A",
+    explanation: "Anti-Markovnikov addition via peroxide effect adds Br radical to terminal carbon, giving 1-bromo-3-methylbutane."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "A radio station broadcasts on frequency $1368\\text{ kHz}$. Wavelength of EM radiation is ($c = 3.0 \\times 10^8\\text{ m/s}$):",
+    optionA: "$219.3\\text{ m}$",
+    optionB: "$219.2\\text{ m}$",
+    optionC: "$2192\\text{ m}$",
+    optionD: "$21.92\\text{ cm}$",
+    correctOption: "A",
+    explanation: "$\\lambda = \\frac{c}{\\nu} = \\frac{3.0 \\times 10^8}{1368 \\times 10^3} = 219.3\\text{ m}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The INCORRECT statement among the following is:",
+    optionA: "Actinoid contraction is greater than lanthanoid contraction",
+    optionB: "Most of the trivalent Lanthanoid ions are colorless in solid state",
+    optionC: "Lanthanoids are good conductors of heat and electricity",
+    optionD: "Actinoids are highly reactive metals, especially when finely divided",
+    correctOption: "B",
+    explanation: "Many trivalent lanthanoid ions are coloured due to $f$-$f$ electronic transitions (e.g. $\\text{Pr}^{3+}$ green, $\\text{Nd}^{3+}$ pink)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Number of tetrahedral and octahedral voids in hexagonal primitive unit cell (hcp) are:",
+    optionA: "8, 4",
+    optionB: "6, 12",
+    optionC: "2, 1",
+    optionD: "12, 6",
+    correctOption: "D",
+    explanation: "For hcp ($Z = 6$), number of octahedral voids $= Z = 6$ and tetrahedral voids $= 2Z = 12$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Identify the compound that reacts with Hinsberg's reagent to give a solid which dissolves in alkali:",
+    optionA: "$\\text{CH}_3\\text{CH}_2\\text{NO}_2$",
+    optionB: "$\\text{CH}_3\\text{CH}_2\\text{NHCH}_3$ ($2^\\circ$ amine)",
+    optionC: "$\\text{CH}_3\\text{CH}_2\\text{NH}_2$ ($1^\\circ$ amine)",
+    optionD: "$\\text{CH}_3\\text{CH}_2\\text{N}(\\text{CH}_3)_2$ ($3^\\circ$ amine)",
+    correctOption: "C",
+    explanation: "Primary amines form N-alkylbenzenesulphonamide containing an acidic hydrogen on nitrogen, dissolving in alkali."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Which of the following is a metal displacement redox reaction?",
+    optionA: "$2\\text{KClO}_3 \\to 2\\text{KCl} + 3\\text{O}_2$",
+    optionB: "$\\text{Cr}_2\\text{O}_3 + 2\\text{Al} \\xrightarrow{\\Delta} \\text{Al}_2\\text{O}_3 + 2\\text{Cr}$",
+    optionC: "$\\text{Fe} + 2\\text{HCl} \\to \\text{FeCl}_2 + \\text{H}_2$",
+    optionD: "$2\\text{Pb}(\\text{NO}_3)_2 \\to 2\\text{PbO} + 4\\text{NO}_2 + \\text{O}_2$",
+    correctOption: "B",
+    explanation: "Aluminium displaces chromium from its oxide (Thermite reduction)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Statement I: Aspirin and Paracetamol belong to narcotic analgesics.\nStatement II: Morphine and Heroin are non-narcotic analgesics.\nChoose correct option:",
+    optionA: "Both Statement I and Statement II are true",
+    optionB: "Both Statement I and Statement II are false",
+    optionC: "Statement I is correct but Statement II is false",
+    optionD: "Statement I is incorrect but Statement II is true",
+    correctOption: "B",
+    explanation: "Aspirin and paracetamol are non-narcotic; morphine and heroin are habit-forming narcotic analgesics."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "IUPAC name of product formed in reaction: $\\text{Acetone} + \\text{C}_2\\text{H}_5\\text{MgBr} \\xrightarrow{\\text{dry ether}} \\xrightarrow{\\text{H}_3\\text{O}^+} \\text{Product}$ is:",
+    optionA: "2-Methylpropan-2-ol",
+    optionB: "Pentan-2-ol",
+    optionC: "Pentan-3-ol",
+    optionD: "2-Methylbutan-2-ol",
+    correctOption: "D",
+    explanation: "Addition of ethyl Grignard to acetone gives 2-methylbutan-2-ol ($3^\\circ$ alcohol)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Statement I: Acid strength increases as $\\text{HF} \\ll \\text{HCl} \\ll \\text{HBr} \\ll \\text{HI}$.\nStatement II: As halogen size increases down the group, $\\text{H-X}$ bond strength decreases and acid strength increases.\nChoose correct option:",
+    optionA: "Both Statement I and Statement II are true",
+    optionB: "Both Statement I and Statement II are false",
+    optionC: "Statement I is correct but Statement II is false",
+    optionD: "Statement I is incorrect but Statement II is true",
+    correctOption: "A",
+    explanation: "Both statements are correct; decreasing H-X bond dissociation enthalpy down the group dictates acidity."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Right relationship between $C_P$ and $C_V$ for one mole of ideal gas is:",
+    optionA: "$C_P + C_V = R$",
+    optionB: "$C_P - C_V = R$ (Mayer's relation)",
+    optionC: "$C_P = R C_V$",
+    optionD: "$C_V = R C_P$",
+    correctOption: "B",
+    explanation: "Mayer's formula: $C_P - C_V = R$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Match List-I with List-II (Molecular Geometry):\nList-I: (a) $\\text{PCl}_5$, (b) $\\text{SF}_6$, (c) $\\text{BrF}_5$, (d) $\\text{BF}_3$\nList-II: (i) Square pyramidal, (ii) Trigonal planar, (iii) Octahedral, (iv) Trigonal bipyramidal\nChoose the correct option:",
+    optionA: "(a)-(iv), (b)-(iii), (c)-(i), (d)-(ii)",
+    optionB: "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
+    optionC: "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
+    optionD: "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
+    correctOption: "A",
+    explanation: "$\\text{PCl}_5$ = TBP (iv), $\\text{SF}_6$ = Octahedral (iii), $\\text{BrF}_5$ = Square pyramidal (i), $\\text{BF}_3$ = Trigonal planar (ii)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Solutions of $10\\text{ g}$ glucose in $250\\text{ mL}$ ($P_1$), $10\\text{ g}$ urea in $250\\text{ mL}$ ($P_2$), and $10\\text{ g}$ sucrose in $250\\text{ mL}$ ($P_3$). Decreasing order of osmotic pressure is:",
+    optionA: "$P_2 > P_1 > P_3$",
+    optionB: "$P_1 > P_2 > P_3$",
+    optionC: "$P_2 > P_3 > P_1$",
+    optionD: "$P_3 > P_1 > P_2$",
+    correctOption: "A",
+    explanation: "Osmotic pressure $\\pi \\propto n = w/M$. Molar masses: Urea (60) < Glucose (180) < Sucrose (342) $\\implies P_2 > P_1 > P_3$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Which method is used to obtain highly pure metal which is liquid at room temperature (Mercury)?",
+    optionA: "Electrolysis",
+    optionB: "Chromatography",
+    optionC: "Distillation",
+    optionD: "Zone refining",
+    correctOption: "C",
+    explanation: "Low boiling metals like Mercury and Zinc are refined by fractional distillation."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Tritium, a radioactive isotope of hydrogen, emits which of the following particles?",
+    optionA: "Beta ($\\beta^-$) particle",
+    optionB: "Alpha ($\\alpha$) particle",
+    optionC: "Gamma ($\\gamma$) radiation",
+    optionD: "Neutron",
+    correctOption: "A",
+    explanation: "$^3_1\\text{H} \\to ^3_2\\text{He} + \\beta^- + \\bar{\\nu}$ (low energy $\\beta^-$ emission, $t_{1/2} = 12.33\\text{ years}$)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Number of body-centred unit cells among all 14 Bravais lattices is:",
+    optionA: "7",
+    optionB: "5",
+    optionC: "2",
+    optionD: "3 (Cubic, Tetragonal, Orthorhombic)",
+    correctOption: "D",
+    explanation: "Body-centred lattices exist in 3 crystal systems: Cubic, Tetragonal, and Orthorhombic."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The major product formed in dehydrohalogenation of 2-bromopentane is pent-2-ene based on:",
+    optionA: "Saytzeff’s Rule",
+    optionB: "Hund’s Rule",
+    optionC: "Hofmann Rule",
+    optionD: "Hückel's Rule",
+    correctOption: "A",
+    explanation: "Saytzeff's rule states that the more substituted, more stable alkene is the major elimination product."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The maximum temperature achieved in the combustion zone of a blast furnace is:",
+    optionA: "Upto $1200\\text{ K}$",
+    optionB: "Upto $2200\\text{ K}$",
+    optionC: "Upto $1900\\text{ K}$",
+    optionD: "Upto $5000\\text{ K}$",
+    correctOption: "B",
+    explanation: "In combustion zone near the tuyeres, coke combustion achieves temperatures up to $2200\\text{ K}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Molar conductivities at infinite dilution: $\\Lambda^\\circ_{\\text{NaCl}} = 126.45$, $\\Lambda^\\circ_{\\text{HCl}} = 426.16$, $\\Lambda^\\circ_{\\text{CH}_3\\text{COONa}} = 91.0\\text{ S cm}^2\\text{mol}^{-1}$. $\\Lambda^\\circ_{\\text{CH}_3\\text{COOH}}$ is:",
+    optionA: "$201.28\\text{ S cm}^2\\text{mol}^{-1}$",
+    optionB: "$390.71\\text{ S cm}^2\\text{mol}^{-1}$",
+    optionC: "$698.28\\text{ S cm}^2\\text{mol}^{-1}$",
+    optionD: "$540.48\\text{ S cm}^2\\text{mol}^{-1}$",
+    correctOption: "B",
+    explanation: "Kohlrausch Law: $\\Lambda^\\circ = 426.16 + 91.0 - 126.45 = 390.71\\text{ S cm}^2\\text{mol}^{-1}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Ethylenediaminetetraacetate $(\\text{EDTA})^{4-}$ ion is a:",
+    optionA: "Hexadentate ligand with four 'O' and two 'N' donor atoms",
+    optionB: "Unidentate ligand",
+    optionC: "Bidentate ligand with two 'N' donor atoms",
+    optionD: "Tridentate ligand",
+    correctOption: "A",
+    explanation: "EDTA is a hexadentate chelating ligand donating via 2 amino nitrogens and 4 carboxylate oxygens."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The structures of beryllium chloride ($\\text{BeCl}_2$) in solid state and vapour phase are:",
+    optionA: "Chain and dimer, respectively",
+    optionB: "Linear in both",
+    optionC: "Dimer and Linear, respectively",
+    optionD: "Chain in both",
+    correctOption: "A",
+    explanation: "In solid state, $\\text{BeCl}_2$ forms polymeric chains with chloride bridges. In vapour at $<1200\\text{ K}$, it is dimeric $(\\text{BeCl}_2)_2$, becoming linear monomer at $>1200\\text{ K}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The correct structure of 2,6-dimethyldec-4-ene has 10 carbons in principal chain with double bond at C4:",
+    optionA: "10-carbon chain with methyls at C2 and C6 and trans double bond at C4",
+    optionB: "8-carbon chain with double bond at C2",
+    optionC: "9-carbon chain with methyl at C3",
+    optionD: "11-carbon chain",
+    correctOption: "A",
+    explanation: "2,6-dimethyldec-4-ene has a 10-carbon main chain with double bond between carbons 4 and 5 and methyls at C2 and C6."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Tyndall effect is exhibited by which of the following?",
+    optionA: "$\\text{NaCl}$ true solution",
+    optionB: "Glucose solution",
+    optionC: "Starch colloidal sol",
+    optionD: "Urea solution",
+    correctOption: "C",
+    explanation: "Tyndall scattering is shown by colloidal solutions (starch sol) where particle size matches light wavelength."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Which one of the following polymers is prepared by addition polymerisation?",
+    optionA: "Teflon (PTFE)",
+    optionB: "Nylon-6,6",
+    optionC: "Novolac",
+    optionD: "Dacron (Terylene)",
+    correctOption: "A",
+    explanation: "Teflon is synthesized by chain-growth addition polymerisation of tetrafluoroethene ($n\\,\\text{CF}_2=\\text{CF}_2$)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "RBC deficiency (Pernicious Anaemia) is caused by deficiency of:",
+    optionA: "Vitamin $\\text{B}_{12}$ (Cyanocobalamin)",
+    optionB: "Vitamin $\\text{B}_6$",
+    optionC: "Vitamin $\\text{B}_1$",
+    optionD: "Vitamin $\\text{B}_2$",
+    correctOption: "A",
+    explanation: "Vitamin $\\text{B}_{12}$ deficiency impairs RBC maturation and leads to pernicious anaemia."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The correct decreasing sequence of bond enthalpy of 'C-X' bond is:",
+    optionA: "$\\text{CH}_3-\\text{F} < \\text{CH}_3-\\text{Cl} < \\text{CH}_3-\\text{Br} < \\text{CH}_3-\\text{I}$",
+    optionB: "$\\text{CH}_3-\\text{F} > \\text{CH}_3-\\text{Cl} > \\text{CH}_3-\\text{Br} > \\text{CH}_3-\\text{I}$",
+    optionC: "$\\text{CH}_3-\\text{Cl} > \\text{CH}_3-\\text{F} > \\text{CH}_3-\\text{Br} > \\text{CH}_3-\\text{I}$",
+    optionD: "$\\text{CH}_3-\\text{I} > \\text{CH}_3-\\text{Br} > \\text{CH}_3-\\text{Cl} > \\text{CH}_3-\\text{F}$",
+    correctOption: "B",
+    explanation: "As halogen size increases, orbital overlap decreases and bond enthalpy decreases: $\\text{C-F} (452) > \\text{C-Cl} (351) > \\text{C-Br} (293) > \\text{C-I} (234\\text{ kJ/mol})$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "An organic compound contains $78\\%$ carbon and $22\\%$ hydrogen by weight. Empirical formula is:",
+    optionA: "$\\text{CH}$",
+    optionB: "$\\text{CH}_2$",
+    optionC: "$\\text{CH}_3$",
+    optionD: "$\\text{CH}_4$",
+    correctOption: "C",
+    explanation: "Moles of C $= 78/12 = 6.5$. Moles of H $= 22/1 = 22$. Ratio $= 6.5/6.5 : 22/6.5 = 1 : 3.38 \\approx \\text{CH}_3$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Among the following alkaline earth metal halides, the one which is covalent and soluble in organic solvents is:",
+    optionA: "Calcium chloride",
+    optionB: "Strontium chloride",
+    optionC: "Magnesium chloride",
+    optionD: "Beryllium chloride ($\\text{BeCl}_2$)",
+    correctOption: "D",
+    explanation: "Due to small size and high polarizing power of $\\text{Be}^{2+}$ (Fajan's rule), $\\text{BeCl}_2$ is predominantly covalent."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "$\\text{BF}_3$ is planar and electron deficient. Hybridization and valence electrons around boron are:",
+    optionA: "$sp^3$ and 4",
+    optionB: "$sp^3$ and 6",
+    optionC: "$sp^2$ and 6",
+    optionD: "$sp^2$ and 8",
+    correctOption: "C",
+    explanation: "Boron forms 3 sigma bonds with $sp^2$ trigonal planar geometry and has an incomplete octet (6 valence electrons)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "$pK_b$ of dimethylamine is 3.27 and $pK_a$ of acetic acid is 4.77. pH of dimethylammonium acetate solution is:",
+    optionA: "8.50",
+    optionB: "5.50",
+    optionC: "7.75",
+    optionD: "6.25",
+    correctOption: "C",
+    explanation: "$\\text{pH} = 7 + \\frac{1}{2}(pK_a - pK_b) = 7 + \\frac{1}{2}(4.77 - 3.27) = 7 + 0.75 = 7.75$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Boyle's law isotherms ($P$ vs $V$) at different temperatures show:",
+    optionA: "Higher temperature isotherms lie higher up (further from origin)",
+    optionB: "Lines passing through origin",
+    optionC: "Horizontal straight lines",
+    optionD: "Lower temperature isotherms lie highest",
+    correctOption: "D",
+    explanation: "At a given volume, $P \\propto T$. The isotherm for higher temperature ($600\\text{ K}$) lies above $400\\text{ K}$ and $200\\text{ K}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "For reaction $\\text{A} \\to \\text{B}$, $\\Delta H = -4.2\\text{ kJ/mol}$ and $E_a = 9.6\\text{ kJ/mol}$. Potential energy profile shows:",
+    optionA: "Exothermic profile with product energy lower than reactant by $4.2\\text{ kJ/mol}$ and barrier of $9.6\\text{ kJ/mol}$",
+    optionB: "Endothermic profile",
+    optionC: "Zero activation energy barrier",
+    optionD: "Barrier lower than reactant",
+    correctOption: "B",
+    explanation: "Exothermic reaction has products at lower potential energy than reactants with forward activation barrier $E_a$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Which of the following molecular formulas can exhibit metamerism?",
+    optionA: "$\\text{C}_5\\text{H}_{12}$",
+    optionB: "$\\text{C}_3\\text{H}_8\\text{O}$",
+    optionC: "$\\text{C}_3\\text{H}_6\\text{O}$",
+    optionD: "$\\text{C}_4\\text{H}_{10}\\text{O}$ (Ethers: ethoxyethane and methoxypropane)",
+    correctOption: "D",
+    explanation: "$\\text{C}_4\\text{H}_{10}\\text{O}$ forms metamers: $\\text{C}_2\\text{H}_5-\\text{O}-\\text{C}_2\\text{H}_5$ (diethyl ether) and $\\text{CH}_3-\\text{O}-\\text{C}_3\\text{H}_7$ (methyl propyl ether)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "$\\text{Zr}$ ($Z=40$) and $\\text{Hf}$ ($Z=72$) have almost identical atomic and ionic radii because of:",
+    optionA: "Belonging to same group",
+    optionB: "Diagonal relationship",
+    optionC: "Lanthanoid contraction",
+    optionD: "Similar chemical properties",
+    correctOption: "C",
+    explanation: "Lanthanoid contraction fills 14 electrons in poorly shielding $4f$ subshell, neutralizing the expected size increase."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Match List-I with List-II (Spin-only Magnetic Moments):\n(a) $[\\text{Fe}(\\text{CN})_6]^{3-}$, (b) $[\\text{Fe}(\\text{H}_2\\text{O})_6]^{3+}$, (c) $[\\text{Fe}(\\text{CN})_6]^{4-}$, (d) $[\\text{Fe}(\\text{H}_2\\text{O})_6]^{2+}$\n(i) $5.92\\text{ BM}$, (ii) $0\\text{ BM}$, (iii) $4.90\\text{ BM}$, (iv) $1.73\\text{ BM}$\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(ii), (c)-(i), (d)-(iii)",
+    optionB: "(a)-(ii), (b)-(iv), (c)-(iii), (d)-(i)",
+    optionC: "(a)-(i), (b)-(iii), (c)-(iv), (d)-(ii)",
+    optionD: "(a)-(iv), (b)-(i), (c)-(ii), (d)-(iii)",
+    correctOption: "D",
+    explanation: "(a) 1 unpaired $= 1.73\\text{ BM}$, (b) 5 unpaired $= 5.92\\text{ BM}$, (c) 0 unpaired $= 0\\text{ BM}$, (d) 4 unpaired $= 4.90\\text{ BM}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "In reduction of $2,4,6$-tribromobenzenediazonium salt to $1,3,5$-tribromobenzene, reagent R is:",
+    optionA: "$\\text{H}_2\\text{O}$",
+    optionB: "$\\text{CH}_3\\text{CH}_2\\text{OH}$ (Ethanol) or $\\text{H}_3\\text{PO}_2$",
+    optionC: "$\\text{HI}$",
+    optionD: "$\\text{CuCN}/\\text{KCN}$",
+    correctOption: "B",
+    explanation: "Ethanol ($\\text{CH}_3\\text{CH}_2\\text{OH}$) or hypophosphorous acid ($\\text{H}_3\\text{PO}_2$) reduces diazonium group $-\\text{N}_2^+\\text{Cl}^-$ to $-\\text{H}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "From the following pairs of ions, which one is NOT an iso-electronic pair?",
+    optionA: "$\\text{O}^{2-}, \\text{F}^-$",
+    optionB: "$\\text{Na}^+, \\text{Mg}^{2+}$",
+    optionC: "$\\text{Mn}^{2+}, \\text{Fe}^{3+}$",
+    optionD: "$\\text{Fe}^{2+}, \\text{Mn}^{2+}$",
+    correctOption: "D",
+    explanation: "$\\text{Fe}^{2+}$ has 24 electrons ($d^6$) while $\\text{Mn}^{2+}$ has 23 electrons ($d^5$)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Slope of Arrhenius plot ($\\ln k$ vs $1/T$) is $-5 \\times 10^3\\text{ K}$. Activation energy $E_a$ is ($R = 8.314\\text{ J K}^{-1}\\text{mol}^{-1}$):",
+    optionA: "$41.5\\text{ kJ/mol}$",
+    optionB: "$83.0\\text{ kJ/mol}$",
+    optionC: "$166\\text{ kJ/mol}$",
+    optionD: "$-83\\text{ kJ/mol}$",
+    correctOption: "A",
+    explanation: "$\\text{Slope} = -\\frac{E_a}{R} = -5000 \\implies E_a = 5000 \\times 8.314 = 41.57\\text{ kJ/mol}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "For irreversible isothermal expansion of an ideal gas, the correct thermodynamic conditions are:",
+    optionA: "$\\Delta U = 0, \\Delta S_{\\text{total}} = 0$",
+    optionB: "$\\Delta U \\ne 0, \\Delta S_{\\text{total}} \\ne 0$",
+    optionC: "$\\Delta U = 0, \\Delta S_{\\text{total}} \\ne 0$ ($> 0$)",
+    optionD: "$\\Delta U \\ne 0, \\Delta S_{\\text{total}} = 0$",
+    correctOption: "C",
+    explanation: "For isothermal process of ideal gas, $\\Delta U = 0$. For any spontaneous irreversible process, $\\Delta S_{\\text{total}} > 0$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "In which arrangement is the given sequence NOT strictly according to indicated property?",
+    optionA: "$\\text{HF} < \\text{HCl} < \\text{HBr} < \\text{HI}$ : Increasing acidic strength",
+    optionB: "$\\text{H}_2\\text{O} < \\text{H}_2\\text{S} < \\text{H}_2\\text{Se} < \\text{H}_2\\text{Te}$ : Increasing $pK_a$ values",
+    optionC: "$\\text{NH}_3 < \\text{PH}_3 < \\text{AsH}_3 < \\text{SbH}_3$ : Increasing acidic character",
+    optionD: "$\\text{CO}_2 < \\text{SiO}_2 < \\text{SnO}_2 < \\text{PbO}_2$ : Increasing oxidizing power",
+    correctOption: "B",
+    explanation: "Acidity increases down group 16 $\\implies K_a$ increases $\\implies pK_a$ decreases ($pK_a$ order is reversed)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "In Étard reaction: $\\text{Toluene} + \\text{CrO}_2\\text{Cl}_2 \\xrightarrow{\\text{CS}_2} X \\xrightarrow{\\text{H}_3\\text{O}^+} \\text{PhCHO}$, intermediate $X$ is:",
+    optionA: "$\\text{C}_6\\text{H}_5\\text{CH}(\\text{OCrOHCl}_2)_2$ (Brown chromium complex)",
+    optionB: "$\\text{C}_6\\text{H}_5\\text{CH}(\\text{OCOCH}_3)_2$",
+    optionC: "$\\text{C}_6\\text{H}_5\\text{CHCl}_2$",
+    optionD: "$\\text{C}_6\\text{H}_5\\text{CH}_2\\text{Cl}$",
+    correctOption: "A",
+    explanation: "Chromyl chloride in $\\text{CS}_2$ oxidizes methyl group to brown chromium complex $\\text{PhCH}(\\text{OCrOHCl}_2)_2$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Vapour pressure of solution of benzene ($P^\\circ = 280\\text{ mm Hg}$) and octane ($P^\\circ = 420\\text{ mm Hg}$) in molar ratio $3:2$ is:",
+    optionA: "$160\\text{ mm Hg}$",
+    optionB: "$168\\text{ mm Hg}$",
+    optionC: "$336\\text{ mm Hg}$",
+    optionD: "$350\\text{ mm Hg}$",
+    correctOption: "C",
+    explanation: "$P_{\\text{total}} = x_B P_B^\\circ + x_O P_O^\\circ = (0.6 \\times 280) + (0.4 \\times 420) = 168 + 168 = 336\\text{ mm Hg}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Molar conductivity of $0.007\\text{ M}$ acetic acid is $20\\text{ S cm}^2\\text{mol}^{-1}$ ($\\Lambda^\\circ_m = 400\\text{ S cm}^2\\text{mol}^{-1}$). Dissociation constant $K_a$ is:",
+    optionA: "$1.75 \\times 10^{-4}\\text{ mol/L}$",
+    optionB: "$2.50 \\times 10^{-4}\\text{ mol/L}$",
+    optionC: "$1.75 \\times 10^{-5}\\text{ mol/L}$",
+    optionD: "$2.50 \\times 10^{-5}\\text{ mol/L}$",
+    correctOption: "C",
+    explanation: "$\\alpha = 20/400 = 0.05$. $K_a = C\\alpha^2 = 0.007 \\times (0.05)^2 = 1.75 \\times 10^{-5}\\text{ mol/L}$."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "In decarboxylation: $\\text{CH}_3\\text{CH}_2\\text{COO}^-\\text{Na}^+ \\xrightarrow{\\text{NaOH}, ?, \\Delta} \\text{CH}_3\\text{CH}_3 + \\text{Na}_2\\text{CO}_3$, missing reagent is:",
+    optionA: "$\\text{B}_2\\text{H}_6$",
+    optionB: "Red Phosphorus",
+    optionC: "$\\text{CaO}$ (Soda lime)",
+    optionD: "DIBAL-H",
+    correctOption: "C",
+    explanation: "Soda lime is a mixture of $\\text{NaOH}$ and $\\text{CaO}$ in $3:1$ ratio."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Match Name Reactions:\n(a) Benzene $+ \\text{CO}, \\text{HCl} \\xrightarrow{\\text{AlCl}_3/\\text{CuCl}} \\text{PhCHO}$, (b) $\\text{RCOCH}_3 + \\text{NaOX} \\to \\text{RCOONa} + \\text{CHX}_3$, (c) $\\text{RCH}_2\\text{OH} + \\text{R'COOH} \\xrightarrow{\\text{H}^+} \\text{Ester}$, (d) $\\text{RCH}_2\\text{COOH} \\xrightarrow{\\text{X}_2/\\text{Red P}} \\alpha\\text{-halo acid}$\n(i) HVZ, (ii) Gattermann-Koch, (iii) Haloform, (iv) Esterification\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(i), (c)-(ii), (d)-(iii)",
+    optionB: "(a)-(iii), (b)-(ii), (c)-(i), (d)-(iv)",
+    optionC: "(a)-(i), (b)-(iv), (c)-(iii), (d)-(ii)",
+    optionD: "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
+    correctOption: "D",
+    explanation: "Gattermann-Koch = (ii), Haloform = (iii), Esterification = (iv), Hell-Volhard-Zelinsky = (i)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Reduction of ethyl 2-(3-oxocyclohexyl)acetate with $\\text{NaBH}_4$ in ethanol selectively reduces:",
+    optionA: "Ketone to secondary alcohol while leaving ester intact",
+    optionB: "Ester to primary alcohol",
+    optionC: "Both ketone and ester",
+    optionD: "Cleaves ring",
+    correctOption: "A",
+    explanation: "$\\text{NaBH}_4$ selectively reduces aldehydes/ketones to alcohols without reducing esters."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Which of the following molecules is NON-POLAR in nature?",
+    optionA: "$\\text{POCl}_3$",
+    optionB: "$\\text{CH}_2\\text{O}$",
+    optionC: "$\\text{SbCl}_5$ (Symmetrical trigonal bipyramidal)",
+    optionD: "$\\text{NO}_2$",
+    correctOption: "C",
+    explanation: "$\\text{SbCl}_5$ has symmetrical trigonal bipyramidal geometry with zero net dipole moment ($\\mu = 0$)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Match Environmental Chemistry reactions:\n(a) $2\\text{SO}_2 + \\text{O}_2 \\to 2\\text{SO}_3$, (b) $\\text{HOCl} \\xrightarrow{h\\nu} \\text{OH} + \\text{Cl}$, (c) $\\text{CaCO}_3 + \\text{H}_2\\text{SO}_4 \\to \\text{CaSO}_4 + \\text{H}_2\\text{O} + \\text{CO}_2$, (d) $\\text{NO}_2 \\xrightarrow{h\\nu} \\text{NO} + \\text{O}$\n(i) Acid rain, (ii) Photochemical smog, (iii) Ozone depletion, (iv) Tropospheric oxidation\nChoose correct option:",
+    optionA: "(a)-(i), (b)-(ii), (c)-(iii), (d)-(iv)",
+    optionB: "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
+    optionC: "(a)-(iv), (b)-(iii), (c)-(i), (d)-(ii)",
+    optionD: "(a)-(iii), (b)-(ii), (c)-(iv), (d)-(i)",
+    correctOption: "C",
+    explanation: "(a) Tropospheric pollution (iv), (b) Ozone depletion (iii), (c) Acid rain (i), (d) Photochemical smog (ii)."
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Total pressure in $1\\text{ L}$ flask at $0^\\circ\\text{C}$ containing $4\\text{ g } \\text{O}_2$ and $2\\text{ g } \\text{H}_2$ is ($R = 0.082\\text{ L atm K}^{-1}\\text{mol}^{-1}$):",
+    optionA: "$2.518\\text{ atm}$",
+    optionB: "$2.602\\text{ atm}$",
+    optionC: "$25.18\\text{ atm}$",
+    optionD: "$26.02\\text{ atm}$",
+    correctOption: "C",
+    explanation: "$n_{\\text{total}} = \\frac{4}{32} + \\frac{2}{2} = 0.125 + 1.0 = 1.125\\text{ moles}$. $P = \\frac{nRT}{V} = \\frac{1.125 \\times 0.082 \\times 273}{1} = 25.18\\text{ atm}$."
+  },
+
+  // -------------------------------------------------------------
+  // BIOLOGY (Q101 - Q200)
+  // -------------------------------------------------------------
+  {
+    subject: "Biology",
+    questionText: "Which of the following plants is MONOECIOUS?",
+    optionA: "Carica papaya",
+    optionB: "Chara (Green alga)",
+    optionC: "Marchantia polymorpha",
+    optionD: "Cycas circinalis",
+    correctOption: "B",
+    explanation: "Chara is monoecious, bearing both globule (antheridium) and nucule (oogonium) on the same plant."
+  },
+  {
+    subject: "Biology",
+    questionText: "A typical angiosperm embryo sac at maturity is:",
+    optionA: "8-nucleate and 7-celled",
+    optionB: "7-nucleate and 8-celled",
+    optionC: "7-nucleate and 7-celled",
+    optionD: "8-nucleate and 8-celled",
+    correctOption: "A",
+    explanation: "Polygonum type female gametophyte consists of 3 antipodals, 2 synergids, 1 egg cell, and 1 central cell with 2 polar nuclei (7 cells, 8 nuclei)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Gemmae (asexual reproductive buds) are present in:",
+    optionA: "Mosses",
+    optionB: "Pteridophytes",
+    optionC: "Gymnosperms",
+    optionD: "Some Liverworts (Marchantia)",
+    correctOption: "D",
+    explanation: "Gemmae are green, multicellular, asexual buds produced in gemma cups on thalli of liverworts like Marchantia."
+  },
+  {
+    subject: "Biology",
+    questionText: "When centromere is situated in middle of two equal arms of chromosome, it is called:",
+    optionA: "Metacentric",
+    optionB: "Telocentric",
+    optionC: "Sub-metacentric",
+    optionD: "Acrocentric",
+    correctOption: "A",
+    explanation: "Metacentric chromosomes have median centromere forming two equal arms (V-shaped during anaphase)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following stages of meiosis involves division/splitting of centromeres?",
+    optionA: "Metaphase I",
+    optionB: "Metaphase II",
+    optionC: "Anaphase II",
+    optionD: "Telophase II",
+    correctOption: "C",
+    explanation: "Centromeres split during Anaphase II of Meiosis II (analogous to mitotic anaphase), allowing sister chromatids to separate."
+  },
+  {
+    subject: "Biology",
+    questionText: "The first stable product of $\\text{CO}_2$ fixation in sorghum ($\\text{C}_4$ plant) is:",
+    optionA: "Pyruvic acid",
+    optionB: "Oxaloacetic acid (OAA)",
+    optionC: "Succinic acid",
+    optionD: "3-Phosphoglyceric acid (PGA)",
+    correctOption: "B",
+    explanation: "In $\\text{C}_4$ plants like sorghum, $\\text{CO}_2$ is fixed by PEP carboxylase to form 4-carbon oxaloacetic acid."
+  },
+  {
+    subject: "Biology",
+    questionText: "The evolutionary factor that leads to Founder effect in a population is:",
+    optionA: "Natural selection",
+    optionB: "Genetic recombination",
+    optionC: "Mutation",
+    optionD: "Genetic drift (Sewall Wright effect)",
+    correctOption: "D",
+    explanation: "Founder effect is an extreme form of genetic drift when a small founding colony establishes a new population with different allele frequencies."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following is an INCORRECT statement?",
+    optionA: "Mature sieve tube elements possess a conspicuous nucleus and organelles",
+    optionB: "Microbodies are present in both plant and animal cells",
+    optionC: "Perinuclear space forms barrier between nucleus and cytoplasm",
+    optionD: "Nuclear pores act as bidirectional passages for proteins and RNA",
+    correctOption: "A",
+    explanation: "Mature sieve tube elements lack a nucleus and depend on companion cells for metabolic functions."
+  },
+  {
+    subject: "Biology",
+    questionText: "Amensalism population interaction is represented as:",
+    optionA: "Species A $(-)$ ; Species B $(0)$",
+    optionB: "Species A $(+)$ ; Species B $(+)$",
+    optionC: "Species A $(-)$ ; Species B $(-)$",
+    optionD: "Species A $(+)$ ; Species B $(0)$",
+    correctOption: "A",
+    explanation: "In amensalism, one species is harmed $(-)$ while other is unaffected $(0)$ (e.g. Penicillium inhibiting bacteria)."
+  },
+  {
+    subject: "Biology",
+    questionText: "The amount of inorganic nutrients (C, N, P, Ca) present in soil at any given time is referred as:",
+    optionA: "Climax",
+    optionB: "Climax community",
+    optionC: "Standing state",
+    optionD: "Standing crop",
+    correctOption: "C",
+    explanation: "Standing state is amount of inorganic nutrients in soil; standing crop is biomass of living organisms."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following algae contains mannitol as reserve food material?",
+    optionA: "Ectocarpus (Brown alga)",
+    optionB: "Gracilaria",
+    optionC: "Volvox",
+    optionD: "Ulothrix",
+    correctOption: "A",
+    explanation: "Brown algae (Phaeophyceae) store complex carbohydrates as laminarin or mannitol."
+  },
+  {
+    subject: "Biology",
+    questionText: "In spite of interspecific competition, competing species evolve which survival mechanism?",
+    optionA: "Resource partitioning",
+    optionB: "Competitive release",
+    optionC: "Mutualism",
+    optionD: "Predation",
+    correctOption: "A",
+    explanation: "MacArthur showed warblers avoid competition by resource partitioning (different feeding times and foraging niches)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Genera like Selaginella and Salvinia produce two kinds of spores. Such plants are:",
+    optionA: "Homosorus",
+    optionB: "Heterosorus",
+    optionC: "Homosporous",
+    optionD: "Heterosporous",
+    correctOption: "D",
+    explanation: "Heterosporous pteridophytes produce distinct microspores and megaspores."
+  },
+  {
+    subject: "Biology",
+    questionText: "The site of perception of light/dark duration in plants during photoperiodism is:",
+    optionA: "Shoot apex",
+    optionB: "Stem",
+    optionC: "Axillary bud",
+    optionD: "Leaf",
+    correctOption: "D",
+    explanation: "Leaves perceive photoperiodic stimuli via phytochrome pigments to synthesize florigen."
+  },
+  {
+    subject: "Biology",
+    questionText: "Plants follow different pathways in response to environment or phases of life. This ability is:",
+    optionA: "Elasticity",
+    optionB: "Flexibility",
+    optionC: "Plasticity (Heterophylly)",
+    optionD: "Maturity",
+    correctOption: "C",
+    explanation: "Plasticity is capacity of plants to alter morphology in response to environment (e.g. juvenile vs adult leaves in larkspur/cotton)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match List-I with List-II (Cell Organelles):\n(a) Cristae, (b) Thylakoids, (c) Centromere, (d) Cisternae\n(i) Primary constriction, (ii) Golgi disc-shaped sacs, (iii) Mitochondrial infoldings, (iv) Stroma membranous sacs\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
+    optionB: "(a)-(i), (b)-(iv), (c)-(iii), (d)-(ii)",
+    optionC: "(a)-(iii), (b)-(iv), (c)-(i), (d)-(ii)",
+    optionD: "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
+    correctOption: "C",
+    explanation: "Cristae = Mitochondria (iii), Thylakoids = Plastids (iv), Centromere = Chromosome (i), Cisternae = Golgi (ii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Water Transport Properties:\n(a) Cohesion, (b) Adhesion, (c) Surface tension, (d) Guttation\n(i) Attraction in liquid phase, (ii) Attraction among water molecules, (iii) Water loss in liquid phase, (iv) Attraction to polar surfaces\nChoose correct option:",
+    optionA: "(a)-(ii), (b)-(iv), (c)-(i), (d)-(iii)",
+    optionB: "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
+    optionC: "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
+    optionD: "(a)-(ii), (b)-(i), (c)-(iv), (d)-(iii)",
+    correctOption: "A",
+    explanation: "Cohesion = water-water (ii), Adhesion = water-tracheid wall (iv), Surface tension = liquid phase (i), Guttation = hydathode loss (iii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "DNA strands stained with Ethidium Bromide appear under UV radiation as:",
+    optionA: "Yellow bands",
+    optionB: "Bright orange bands",
+    optionC: "Dark red bands",
+    optionD: "Bright blue bands",
+    correctOption: "B",
+    explanation: "EtBr intercalates in DNA base pairs and fluoresces bright orange under UV illumination."
+  },
+  {
+    subject: "Biology",
+    questionText: "Transfer of pollen from anther to stigma of genetically different plant is:",
+    optionA: "Xenogamy (Cross-pollination)",
+    optionB: "Geitonogamy",
+    optionC: "Chasmogamy",
+    optionD: "Cleistogamy",
+    correctOption: "A",
+    explanation: "Xenogamy brings genetically distinct pollen to stigma, promoting genetic diversity."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following algae produce the hydrocolloid Carrageen?",
+    optionA: "Green algae",
+    optionB: "Brown algae",
+    optionC: "Red algae (Rhodophyceae)",
+    optionD: "Blue-green algae",
+    correctOption: "C",
+    explanation: "Carrageen is extracted from red algae (e.g. Chondrus crispus)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following statements is NOT correct about ecological pyramids?",
+    optionA: "Pyramid of biomass in sea is generally inverted",
+    optionB: "Pyramid of biomass in sea is generally upright",
+    optionC: "Pyramid of energy is always upright",
+    optionD: "Pyramid of numbers in a grassland ecosystem is upright",
+    correctOption: "B",
+    explanation: "In oceans, phytoplankton turnover is high and standing biomass of fish exceeds phytoplankton, making biomass pyramid inverted."
+  },
+  {
+    subject: "Biology",
+    questionText: "In the ecological productivity equation $\\text{GPP} - R = \\text{NPP}$, $R$ represents:",
+    optionA: "Radiant energy",
+    optionB: "Retardation factor",
+    optionC: "Environment factor",
+    optionD: "Respiration losses",
+    correctOption: "D",
+    explanation: "Gross Primary Productivity minus Respiratory losses ($R$) equals Net Primary Productivity ($\text{NPP}$)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Diadelphous condition of stamens ($9 + 1$ arrangement) is found in:",
+    optionA: "China rose (Monadelphous)",
+    optionB: "Citrus (Polyadelphous)",
+    optionC: "Pea (Fabaceae)",
+    optionD: "China rose and citrus",
+    correctOption: "C",
+    explanation: "In Fabaceae (Pea), 10 stamens are united into two bundles: $(9) + 1$."
+  },
+  {
+    subject: "Biology",
+    questionText: "Gene targeting involving corrective gene insertion/amplification in patient's tissues is:",
+    optionA: "Biopiracy",
+    optionB: "Gene therapy",
+    optionC: "Molecular diagnosis",
+    optionD: "Safety testing",
+    correctOption: "B",
+    explanation: "Gene therapy corrects defective hereditary genes by delivering functional copies into patient tissues."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Secondary Growth Structures:\n(a) Lenticels, (b) Cork cambium, (c) Secondary cortex, (d) Cork\n(i) Phellogen, (ii) Suberin deposition (Phellem), (iii) Gaseous exchange, (iv) Phelloderm\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(i), (c)-(iii), (d)-(ii)",
+    optionB: "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
+    optionC: "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
+    optionD: "(a)-(iv), (b)-(ii), (c)-(i), (d)-(iii)",
+    correctOption: "B",
+    explanation: "Lenticels = Gas exchange (iii), Cork cambium = Phellogen (i), Secondary cortex = Phelloderm (iv), Cork = Phellem (ii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Production of gametes and genetic crosses ($F_1, F_2$) can be graphically understood by:",
+    optionA: "Bullet square",
+    optionB: "Punch square",
+    optionC: "Punnett square",
+    optionD: "Net square",
+    correctOption: "C",
+    explanation: "British geneticist Reginald Punnett developed the Punnett square grid."
+  },
+  {
+    subject: "Biology",
+    questionText: "The correct sequence of steps in Polymerase Chain Reaction (PCR) is:",
+    optionA: "Denaturation, Annealing, Extension",
+    optionB: "Denaturation, Extension, Annealing",
+    optionC: "Extension, Denaturation, Annealing",
+    optionD: "Annealing, Denaturation, Extension",
+    correctOption: "A",
+    explanation: "Step 1: Denaturation ($94^\\circ\\text{C}$), Step 2: Annealing ($54^\\circ\\text{C}$), Step 3: Extension ($72^\\circ\\text{C}$ with Taq polymerase)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Mutations in plant cells for plant breeding can be artificially induced by:",
+    optionA: "Kinetin",
+    optionB: "Infrared rays",
+    optionC: "Gamma rays",
+    optionD: "Zeatin",
+    correctOption: "C",
+    explanation: "Ionizing radiation like Gamma rays induces chromosomal and gene mutations (e.g. mung bean resistance to yellow mosaic virus)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Biotechnology Terms:\n(a) Protoplast fusion, (b) Plant tissue culture, (c) Meristem culture, (d) Micropropagation\n(i) Totipotency, (ii) Pomato, (iii) Somaclones, (iv) Virus-free plants\nChoose correct option:",
+    optionA: "(a)-(iii), (b)-(iv), (c)-(ii), (d)-(i)",
+    optionB: "(a)-(ii), (b)-(i), (c)-(iv), (d)-(iii)",
+    optionC: "(a)-(iii), (b)-(iv), (c)-(i), (d)-(ii)",
+    optionD: "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
+    correctOption: "B",
+    explanation: "Protoplast fusion = Pomato (ii), Tissue culture = Totipotency (i), Meristem culture = Virus-free (iv), Micropropagation = Somaclones (iii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "During recombinant DNA extraction, addition of chilled ethanol precipitates out:",
+    optionA: "RNA",
+    optionB: "DNA (as fine threads)",
+    optionC: "Histones",
+    optionD: "Polysaccharides",
+    correctOption: "B",
+    explanation: "Chilled ethanol lowers DNA solubility, precipitating pure DNA fibres (spooling)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Complete Central Dogma flow chart: $\\text{DNA} \\xrightarrow{(a)} \\text{DNA} \\xrightarrow{(b)} \\text{mRNA} \\xrightarrow{(c)} \\text{Protein} (d)$:",
+    optionA: "(a)-Replication; (b)-Transcription; (c)-Transduction; (d)-Protein",
+    optionB: "(a)-Translation; (b)-Replication; (c)-Transcription; (d)-Transduction",
+    optionC: "(a)-Replication; (b)-Transcription; (c)-Translation; (d)-Protein",
+    optionD: "(a)-Transduction; (b)-Translation; (c)-Replication; (d)-Protein",
+    correctOption: "C",
+    explanation: "Francis Crick proposed: DNA Replication $\\to$ Transcription to mRNA $\\to$ Translation to Protein."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following is NOT an application of PCR?",
+    optionA: "Molecular diagnosis of pathogens",
+    optionB: "Gene amplification",
+    optionC: "Purification of isolated protein",
+    optionD: "Detection of gene mutations",
+    correctOption: "C",
+    explanation: "PCR amplifies nucleic acids (DNA/RNA), not proteins."
+  },
+  {
+    subject: "Biology",
+    questionText: "Synthetic auxin herbicide used widely to kill broad-leaved dicot weeds is:",
+    optionA: "IAA",
+    optionB: "NAA",
+    optionC: "2,4-D (2,4-Dichlorophenoxyacetic acid)",
+    optionD: "IBA",
+    correctOption: "C",
+    explanation: "2,4-D selectively eradicates dicot weeds without harming mature monocot crop plants."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Plant Tissues:\n(a) Actively dividing cells, (b) Similar structure and function cells, (c) Different types of cells, (d) Dead cells with thick walls and narrow lumen\n(i) Vascular tissue, (ii) Meristematic tissue, (iii) Sclereids, (iv) Simple tissue\nChoose correct option:",
+    optionA: "(a)-(ii), (b)-(iv), (c)-(i), (d)-(iii)",
+    optionB: "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
+    optionC: "(a)-(i), (b)-(ii), (c)-(iii), (d)-(iv)",
+    optionD: "(a)-(iii), (b)-(ii), (c)-(iv), (d)-(i)",
+    correctOption: "A",
+    explanation: "Dividing = Meristem (ii), Uniform = Simple (iv), Complex = Vascular (i), Sclerenchyma = Sclereids (iii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following are primary metabolites (NOT secondary metabolites)?",
+    optionA: "Morphine, codeine",
+    optionB: "Amino acids, glucose",
+    optionC: "Vinblastin, curcumin",
+    optionD: "Rubber, gums",
+    correctOption: "B",
+    explanation: "Amino acids, sugars, and organic acids have identifiable functions in primary physiology."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following statements about respiration is INCORRECT?",
+    optionA: "During aerobic respiration, role of oxygen is limited to terminal stage",
+    optionB: "In ETC, $1\\,\\text{NADH}+\\text{H}^+$ gives 2 ATP and $1\\,\\text{FADH}_2$ gives 3 ATP",
+    optionC: "ATP is synthesized through Complex V (ATP Synthase)",
+    optionD: "Redox reactions create proton gradient across inner membrane",
+    correctOption: "B",
+    explanation: "In ETC, $1\\,\\text{NADH}$ produces 3 ATP molecules and $1\\,\\text{FADH}_2$ produces 2 ATP molecules."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Nitrogen Cycle Microbes:\n(a) Nitrococcus, (b) Rhizobium, (c) Thiobacillus, (d) Nitrobacter\n(i) Denitrification, (ii) Ammonia to nitrite, (iii) Nitrite to nitrate, (iv) Atmospheric $\\text{N}_2$ to ammonia\nChoose correct option:",
+    optionA: "(a)-(ii), (b)-(iv), (c)-(i), (d)-(iii)",
+    optionB: "(a)-(i), (b)-(ii), (c)-(iii), (d)-(iv)",
+    optionC: "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
+    optionD: "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
+    correctOption: "A",
+    explanation: "Nitrococcus = $\\text{NH}_3 \\to \\text{NO}_2^-$ (ii), Rhizobium = $\\text{N}_2$ fixation (iv), Thiobacillus = Denitrification (i), Nitrobacter = $\\text{NO}_2^- \\to \\text{NO}_3^-$ (iii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Floral Formulas with Families:\n(a) $\% \\,\\text{K}_{(5)}\\,\\text{C}_{1+2+(2)}\\,\\text{A}_{(9)+1}\\,\\underline{\\text{G}}_1$, (b) $\\oplus \\,\\text{K}_{(5)}\\,\\widehat{\\text{C}_{(5)}\\,\\text{A}_5}\\,\\underline{\\text{G}}_{(2)}$, (c) $\\oplus \\,\\widehat{\\text{P}_{(3+3)}\\,\\text{A}_{3+3}}\\,\\underline{\\text{G}}_{(3)}$, (d) $\\oplus \\,\\text{K}_{2+2}\\,\\text{C}_4\\,\\text{A}_{2+4}\\,\\underline{\\text{G}}_{(2)}$\n(i) Brassicaceae, (ii) Liliaceae, (iii) Fabaceae, (iv) Solanaceae\nChoose correct option:",
+    optionA: "(a)-(iii), (b)-(iv), (c)-(ii), (d)-(i)",
+    optionB: "(a)-(i), (b)-(ii), (c)-(iii), (d)-(iv)",
+    optionC: "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
+    optionD: "(a)-(iv), (b)-(ii), (c)-(i), (d)-(iii)",
+    correctOption: "A",
+    explanation: "(a) Fabaceae (iii), (b) Solanaceae (iv), (c) Liliaceae (ii), (d) Brassicaceae (i)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Identify the CORRECT statement regarding transcription:",
+    optionA: "In capping, methylguanosine triphosphate is added to 3' end",
+    optionB: "RNA polymerase binds with Rho ($\\rho$) factor to terminate transcription in bacteria",
+    optionC: "The coding strand is transcribed into mRNA",
+    optionD: "Split gene arrangement is characteristic of prokaryotes",
+    correctOption: "B",
+    explanation: "Rho factor binds to RNA polymerase to terminate bacterial transcription."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following statements is CORRECT?",
+    optionA: "Fusion of two cells is karyogamy",
+    optionB: "Fusion of protoplasms between two gametes is called plasmogamy",
+    optionC: "Organisms depending on living plants are saprophytes",
+    optionD: "Nitrogen fixation occurs in sheath cells",
+    correctOption: "B",
+    explanation: "Plasmogamy is the fusion of vegetative/gametic protoplasm prior to karyogamy."
+  },
+  {
+    subject: "Biology",
+    questionText: "Select the CORRECT anatomical pair:",
+    optionA: "Large colourless empty cells in grass epidermis - Subsidiary cells",
+    optionB: "Vascular bundle sheath in dicots - Conjunctive tissue",
+    optionC: "Medullary ray cells forming cambial ring - Interfascicular cambium",
+    optionD: "Loose cells forming lenticels - Spongy parenchyma",
+    correctOption: "C",
+    explanation: "Cells of medullary rays adjoining intrafascicular cambium dedifferentiate into interfascicular cambium."
+  },
+  {
+    subject: "Biology",
+    questionText: "DNA fingerprinting involves identifying differences in specific non-coding regions called:",
+    optionA: "Satellite DNA",
+    optionB: "Repetitive DNA (VNTRs)",
+    optionC: "Single nucleotides",
+    optionD: "Polymorphic DNA",
+    correctOption: "B",
+    explanation: "DNA fingerprinting detects variations in tandem repetitive DNA sequences (VNTRs/mini-satellites)."
+  },
+  {
+    subject: "Biology",
+    questionText: "In members of which families do pollen grains retain viability for several months?",
+    optionA: "Poaceae ; Rosaceae",
+    optionB: "Poaceae ; Leguminosae",
+    optionC: "Poaceae ; Solanaceae",
+    optionD: "Rosaceae, Leguminosae, and Solanaceae",
+    correctOption: "D",
+    explanation: "Cereals (Poaceae) lose pollen viability in 30 minutes; Rosaceae, Leguminosae, and Solanaceae retain viability for months."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following statements about photosynthesis is INCORRECT?",
+    optionA: "Both ATP and NADPH are synthesized during non-cyclic photophosphorylation",
+    optionB: "Stroma lamellae possess PS I only and lack NADP reductase",
+    optionC: "Grana lamellae possess both PS I and PS II",
+    optionD: "Cyclic photophosphorylation involves both PS I and PS II",
+    correctOption: "D",
+    explanation: "Cyclic photophosphorylation involves only Photosystem I (PS I)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Role of RNA polymerase III in eukaryotic transcription is to synthesize:",
+    optionA: "rRNAs (28S, 18S, 5.8S)",
+    optionB: "tRNA, 5S rRNA and snRNA",
+    optionC: "hnRNA / mRNA precursor",
+    optionD: "Only snRNAs",
+    correctOption: "B",
+    explanation: "RNA Pol I transcribes 28S, 18S, 5.8S rRNAs; RNA Pol II transcribes hnRNA; RNA Pol III transcribes tRNA, 5S rRNA, and snRNAs."
+  },
+  {
+    subject: "Biology",
+    questionText: "In the exponential population growth equation $N_t = N_0 e^{rt}$, '$e$' represents:",
+    optionA: "The base of number logarithms",
+    optionB: "The base of exponential logarithms",
+    optionC: "The base of natural logarithms ($2.71828$)",
+    optionD: "The base of geometric logarithms",
+    correctOption: "C",
+    explanation: "In continuous growth models, $e$ is base of natural logarithm ($e \\approx 2.718$)."
+  },
+  {
+    subject: "Biology",
+    questionText: "A mutated cancer gene does NOT appear on photographic film during autoradiography because:",
+    optionA: "Mutated gene partially appears",
+    optionB: "Mutated gene completely appears",
+    optionC: "Mutated gene does not bind the radioactive probe due to lack of base complementarity",
+    optionD: "Probe has complementarity with it",
+    correctOption: "C",
+    explanation: "Single-stranded radiolabeled probe fails to hybridize with the mutated sequence, leaving no signal on autoradiogram."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Biomolecules with Chemical Bonds:\n(a) Protein, (b) Unsaturated fatty acid, (c) Nucleic acid, (d) Polysaccharide\n(i) $\\text{C}=\\text{C}$ double bonds, (ii) Phosphodiester bonds, (iii) Glycosidic bonds, (iv) Peptide bonds\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(i), (c)-(ii), (d)-(iii)",
+    optionB: "(a)-(i), (b)-(iv), (c)-(iii), (d)-(ii)",
+    optionC: "(a)-(ii), (b)-(i), (c)-(iv), (d)-(iii)",
+    optionD: "(a)-(iv), (b)-(iii), (c)-(i), (d)-(ii)",
+    correctOption: "A",
+    explanation: "Protein = Peptide (iv), Unsaturated lipid = C=C (i), Nucleic acid = Phosphodiester (ii), Polysaccharide = Glycosidic (iii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Cell Cycle Stages:\n(a) S phase, (b) G2 phase, (c) Quiescent ($G_0$), (d) G1 phase\n(i) Protein synthesis, (ii) Metabolically active inactive-division stage, (iii) Interval between mitosis and replication, (iv) DNA replication\nChoose correct option:",
+    optionA: "(a)-(iii), (b)-(ii), (c)-(i), (d)-(iv)",
+    optionB: "(a)-(iv), (b)-(ii), (c)-(iii), (d)-(i)",
+    optionC: "(a)-(iv), (b)-(i), (c)-(ii), (d)-(iii)",
+    optionD: "(a)-(ii), (b)-(iv), (c)-(iii), (d)-(i)",
+    correctOption: "C",
+    explanation: "S = DNA synthesis (iv), G2 = Tubulin/protein synthesis (i), G0 = Quiescent state (ii), G1 = Post-mitotic gap (iii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Inserting $\\beta$-galactosidase gene into PstI site of $amp^R$ in pBR322 leads to:",
+    optionA: "Insertional inactivation: host cells lose ampicillin resistance",
+    optionB: "Transformed cells resist ampicillin and produce $\\beta$-galactosidase",
+    optionC: "Lysis of host cell",
+    optionD: "Dual resistance",
+    correctOption: "A",
+    explanation: "Disruption of $amp^R$ coding sequence by foreign insert destroys ampicillin resistance (insertional inactivation)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Identify the INCORRECT secondary metabolite pair:",
+    optionA: "Alkaloids - Codeine",
+    optionB: "Toxin - Abrin",
+    optionC: "Lectins - Concanavalin A",
+    optionD: "Drugs - Ricin (Ricin is a toxin, not drug)",
+    correctOption: "D",
+    explanation: "Ricin and Abrin are poisonous toxins; Vinblastin and Curcumin are drugs."
+  },
+  {
+    subject: "Biology",
+    questionText: "Fruit fly has 8 chromosomes ($2n=8$). If chromosome number at $G_1$ is 8, chromosome number after S phase is:",
+    optionA: "8",
+    optionB: "16",
+    optionC: "4",
+    optionD: "32",
+    correctOption: "A",
+    explanation: "During S phase, DNA content doubles ($2C \\to 4C$) but chromosome number remains identical ($2n = 8$)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Animal Kingdom Features:\n(a) Metamerism, (b) Water canal system, (c) Comb plates, (d) Cnidoblasts\n(i) Coelenterata, (ii) Ctenophora, (iii) Annelida, (iv) Porifera\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(iii), (c)-(i), (d)-(ii)",
+    optionB: "(a)-(iii), (b)-(iv), (c)-(i), (d)-(ii)",
+    optionC: "(a)-(iii), (b)-(iv), (c)-(ii), (d)-(i)",
+    optionD: "(a)-(iv), (b)-(i), (c)-(ii), (d)-(iii)",
+    correctOption: "C",
+    explanation: "Metamerism = Annelida (iii), Canal system = Sponges (iv), Ciliated plates = Ctenophora (ii), Cnidocytes = Coelenterates (i)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Contraceptive Methods:\n(a) Vaults, (b) IUDs, (c) Vasectomy, (d) Tubectomy\n(i) Block sperm entry at cervix, (ii) Cut/ligate vas deferens, (iii) Phagocytosis of sperms in uterus, (iv) Cut/ligate fallopian tube\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(ii), (c)-(i), (d)-(iii)",
+    optionB: "(a)-(i), (b)-(iii), (c)-(ii), (d)-(iv)",
+    optionC: "(a)-(ii), (b)-(iv), (c)-(iii), (d)-(i)",
+    optionD: "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
+    correctOption: "B",
+    explanation: "Vaults = Cervical barrier (i), IUDs = Phagocytosis (iii), Vasectomy = Vas deferens (ii), Tubectomy = Fallopian tube (iv)."
+  },
+  {
+    subject: "Biology",
+    questionText: "If Adenine makes $30\\%$ of DNA bases, percentages of T, G, and C are:",
+    optionA: "T: 20%, G: 30%, C: 20%",
+    optionB: "T: 20%, G: 20%, C: 30%",
+    optionC: "T: 30%, G: 20%, C: 20%",
+    optionD: "T: 20%, G: 25%, C: 25%",
+    correctOption: "C",
+    explanation: "Chargaff's rules: $\\%A = \\%T = 30\\%$. Remaining $40\\%$ is split equally: $\\%G = \\%C = 20\\%$."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following RNAs is NOT required for mRNA translation into protein?",
+    optionA: "mRNA",
+    optionB: "tRNA",
+    optionC: "rRNA",
+    optionD: "siRNA (involved in RNA interference, not translation)",
+    correctOption: "D",
+    explanation: "Translation machinery uses mRNA, tRNA, and rRNA; siRNA is an RNA silencing agent."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following is a hormone-releasing intrauterine device (IUD)?",
+    optionA: "CuT",
+    optionB: "LNG-20 (Levonorgestrel)",
+    optionC: "Cu7",
+    optionD: "Multiload 375",
+    correctOption: "B",
+    explanation: "LNG-20 and Progestasert are hormone-releasing IUDs."
+  },
+  {
+    subject: "Biology",
+    questionText: "Succus entericus is another name for:",
+    optionA: "Pancreatic juice",
+    optionB: "Intestinal juice",
+    optionC: "Gastric juice",
+    optionD: "Chyme",
+    correctOption: "B",
+    explanation: "Secretions of crypts of Lieberkühn and Brunner's glands constitute intestinal juice (succus entericus)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Chronic autoimmune disorder affecting neuromuscular junction causing muscle weakness and paralysis is:",
+    optionA: "Arthritis",
+    optionB: "Muscular dystrophy",
+    optionC: "Myasthenia gravis",
+    optionD: "Gout",
+    correctOption: "C",
+    explanation: "Myasthenia gravis is an autoimmune disease where autoantibodies block acetylcholine receptors at neuromuscular junctions."
+  },
+  {
+    subject: "Biology",
+    questionText: "Choose correct statements regarding human insulin:\n(a) C-peptide is absent in mature insulin\n(b) rDNA insulin contains C-peptide\n(c) Pro-insulin contains C-peptide\n(d) A and B chains are connected by disulfide bridges\nChoose correct option:",
+    optionA: "(b) and (d) only",
+    optionB: "(b) and (c) only",
+    optionC: "(a), (c) and (d) only",
+    optionD: "(a) and (d) only",
+    correctOption: "C",
+    explanation: "Statements (a), (c), (d) are true. Humulin produced by rDNA lacks C-peptide."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following insects belongs to the family Muscidae?",
+    optionA: "Firefly",
+    optionB: "Grasshopper",
+    optionC: "Cockroach",
+    optionD: "Housefly (Musca domestica)",
+    correctOption: "D",
+    explanation: "Housefly (Musca domestica) belongs to Order Diptera, Family Muscidae."
+  },
+  {
+    subject: "Biology",
+    questionText: "The single enzyme capable of initiating, elongating and terminating transcription in prokaryotes is:",
+    optionA: "DNA-dependent DNA polymerase",
+    optionB: "DNA-dependent RNA polymerase",
+    optionC: "DNA Ligase",
+    optionD: "DNase",
+    correctOption: "B",
+    explanation: "Bacterial RNA polymerase holoenzyme associates with $\\sigma$ factor for initiation and $\\rho$ factor for termination."
+  },
+  {
+    subject: "Biology",
+    questionText: "Primary glycoprotein receptors (ZP3) for sperm binding in mammalian fertilization are on:",
+    optionA: "Corona radiata",
+    optionB: "Vitelline membrane",
+    optionC: "Perivitelline space",
+    optionD: "Zona pellucida",
+    correctOption: "D",
+    explanation: "Capacitated sperm binds to ZP3 receptors on the zona pellucida, inducing acrosome reaction."
+  },
+  {
+    subject: "Biology",
+    questionText: "Centriole duplication in animal cells occurs during which cell cycle phase?",
+    optionA: "S-phase (in cytoplasm)",
+    optionB: "Prophase",
+    optionC: "Metaphase",
+    optionD: "G2 phase",
+    correctOption: "A",
+    explanation: "While DNA replicates in the nucleus during S-phase, centrioles duplicate in the cytoplasm."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which organism possesses hollow pneumatic bones to reduce weight for flight?",
+    optionA: "Neophron (Vulture / Class Aves)",
+    optionB: "Hemidactylus",
+    optionC: "Macropus",
+    optionD: "Ornithorhynchus",
+    correctOption: "A",
+    explanation: "Birds (Neophron) possess air-filled pneumatic long bones for flight adaptation."
+  },
+  {
+    subject: "Biology",
+    questionText: "Erythropoietin (EPO) hormone that stimulates erythropoiesis is secreted by:",
+    optionA: "Alpha cells of pancreas",
+    optionB: "Rostral adenohypophysis",
+    optionC: "Bone marrow cells",
+    optionD: "Juxtaglomerular (JG) cells of kidney",
+    correctOption: "D",
+    explanation: "Renal JG cells release erythropoietin in response to hypoxia."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Animals with Common Names:\n(a) Physalia, (b) Limulus, (c) Ancylostoma, (d) Pinctada\n(i) Pearl oyster, (ii) Portuguese Man-of-War, (iii) Living fossil king crab, (iv) Hookworm\nChoose correct option:",
+    optionA: "(a)-(ii), (b)-(iii), (c)-(i), (d)-(iv)",
+    optionB: "(a)-(iv), (b)-(i), (c)-(iii), (d)-(ii)",
+    optionC: "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
+    optionD: "(a)-(i), (b)-(iv), (c)-(iii), (d)-(ii)",
+    correctOption: "C",
+    explanation: "Physalia = Portuguese Man-of-War (ii), Limulus = Living fossil (iii), Ancylostoma = Hookworm (iv), Pinctada = Pearl oyster (i)."
+  },
+  {
+    subject: "Biology",
+    questionText: "If high temperature ($94^\\circ\\text{C}$) is not maintained initially in PCR, which step is affected first?",
+    optionA: "Annealing",
+    optionB: "Extension",
+    optionC: "Denaturation",
+    optionD: "Ligation",
+    correctOption: "C",
+    explanation: "High temperature disrupts hydrogen bonds to separate template double helix during denaturation."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which statement WRONGLY represents smooth muscle tissue?",
+    optionA: "Smooth muscle fibres lack striations",
+    optionB: "They are involuntary muscles",
+    optionC: "Intercellular communication occurs via intercalated discs (Intercalated discs are in cardiac muscle)",
+    optionD: "They are present in walls of blood vessels and hollow organs",
+    correctOption: "C",
+    explanation: "Intercalated discs with gap junctions are unique to cardiac muscle."
+  },
+  {
+    subject: "Biology",
+    questionText: "Organelles included in the endomembrane system are:",
+    optionA: "ER, Mitochondria, Ribosomes, Lysosomes",
+    optionB: "Endoplasmic reticulum, Golgi apparatus, Lysosomes, and Vacuoles",
+    optionC: "Golgi, Mitochondria, Ribosomes, Lysosomes",
+    optionD: "Golgi, ER, Mitochondria, Lysosomes",
+    correctOption: "B",
+    explanation: "The endomembrane system consists of coordinated ER, Golgi complex, Lysosomes, and Vacuoles."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Microbes with Organic Acids:\n(a) Aspergillus niger, (b) Acetobacter aceti, (c) Clostridium butylicum, (d) Lactobacillus\n(i) Acetic acid, (ii) Lactic acid, (iii) Citric acid, (iv) Butyric acid\nChoose correct option:",
+    optionA: "(a)-(iii), (b)-(i), (c)-(iv), (d)-(ii)",
+    optionB: "(a)-(i), (b)-(ii), (c)-(iii), (d)-(iv)",
+    optionC: "(a)-(ii), (b)-(iii), (c)-(i), (d)-(iv)",
+    optionD: "(a)-(iv), (b)-(ii), (c)-(i), (d)-(iii)",
+    correctOption: "A",
+    explanation: "Aspergillus = Citric (iii), Acetobacter = Acetic (i), Clostridium = Butyric (iv), Lactobacillus = Lactic (ii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which molecular diagnostic technique is widely used for early detection of HIV/antigens?",
+    optionA: "Western Blotting",
+    optionB: "Southern Blotting",
+    optionC: "ELISA Technique (Enzyme-Linked Immunosorbent Assay)",
+    optionD: "Hybridization",
+    correctOption: "C",
+    explanation: "ELISA detects low titers of viral antigens or antibodies based on antigen-antibody interactions."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which characteristic is INCORRECT with respect to Cockroach (Periplaneta americana)?",
+    optionA: "Ring of 6-8 hepatic caeca is present at junction of foregut and midgut (NOT midgut and hindgut)",
+    optionB: "Hypopharynx acts as tongue within mouthparts cavity",
+    optionC: "In females, 7th-9th sterna form brood/genital pouch",
+    optionD: "10th abdominal segment in both sexes bears anal cerci",
+    correctOption: "A",
+    explanation: "Gastric/hepatic caeca are at the gizzard-midgut junction; Malpighian tubules are at midgut-hindgut junction."
+  },
+  {
+    subject: "Biology",
+    questionText: "Persons with AB blood group are universal recipients due to:",
+    optionA: "Absence of antigens A and B on RBCs",
+    optionB: "Absence of antigens A and B in plasma",
+    optionC: "Presence of antibodies anti-A and anti-B on RBCs",
+    optionD: "Absence of antibodies anti-A and anti-B in plasma",
+    correctOption: "D",
+    explanation: "AB individuals possess both A and B antigens on RBCs and lack anti-A and anti-B antibodies in plasma."
+  },
+  {
+    subject: "Biology",
+    questionText: "Dobson Units (DU) are standard units used to measure the thickness of:",
+    optionA: "CFCs",
+    optionB: "Stratosphere",
+    optionC: "Ozone layer in stratosphere",
+    optionD: "Troposphere",
+    correctOption: "C",
+    explanation: "Ozone column thickness is measured in Dobson Units ($1\\text{ DU} = 0.01\\text{ mm}$ at STP)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Choose the correct statements regarding animal phyla:\n(a) Metagenesis in Helminths\n(b) Echinoderms are triploblastic and coelomate\n(c) Roundworms have organ-system level organization\n(d) Comb plates help in digestion\n(e) Water vascular system in Echinoderms\nChoose correct option:",
+    optionA: "(c), (d) and (e) are correct",
+    optionB: "(a), (b) and (c) are correct",
+    optionC: "(a), (d) and (e) are correct",
+    optionD: "(b), (c) and (e) are correct",
+    correctOption: "D",
+    explanation: "Metagenesis occurs in Cnidarians (Obelia). Comb plates are for locomotion. Statements (b), (c), (e) are correct."
+  },
+  {
+    subject: "Biology",
+    questionText: "In a cross between two carriers ($Hb^A Hb^S$) for sickle cell anaemia, percentage of diseased progeny ($Hb^S Hb^S$) is:",
+    optionA: "$50\\%$",
+    optionB: "$75\\%$",
+    optionC: "$25\\%$",
+    optionD: "$100\\%$",
+    correctOption: "C",
+    explanation: "$Hb^A Hb^S \\times Hb^A Hb^S \\to 1\\,Hb^A Hb^A : 2\\,Hb^A Hb^S : 1\\,Hb^S Hb^S \\implies 25\\%$ affected."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which enzyme catalyzes conversion of inactive soluble fibrinogen to insoluble fibrin threads in blood clotting?",
+    optionA: "Thrombin",
+    optionB: "Renin",
+    optionC: "Epinephrine",
+    optionD: "Thrombokinase",
+    correctOption: "A",
+    explanation: "Thrombin converts fibrinogen to fibrin monomers that polymerize to form the clot."
+  },
+  {
+    subject: "Biology",
+    questionText: "Favourable physiological conditions for oxyhaemoglobin formation in lung alveoli are:",
+    optionA: "High $pO_2$, low $pCO_2$, low $H^+$ (higher pH), and lower temperature",
+    optionB: "Low $pO_2$, high $pCO_2$, more $H^+$, higher temperature",
+    optionC: "High $pO_2$, high $pCO_2$, less $H^+$, higher temperature",
+    optionD: "Low $pO_2$, low $pCO_2$, more $H^+$, higher temperature",
+    correctOption: "A",
+    explanation: "High $pO_2$, low $pCO_2$, low acidity ($H^+$), and lower temperature shift the oxygen dissociation curve to the left, favoring binding."
+  },
+  {
+    subject: "Biology",
+    questionText: "Sphincter of Oddi guards the opening of:",
+    optionA: "Ileo-caecal junction",
+    optionB: "Junction of common hepato-pancreatic duct into duodenum",
+    optionC: "Gastro-oesophageal junction",
+    optionD: "Jejunum-duodenum junction",
+    correctOption: "B",
+    explanation: "Hepato-pancreatic ampulla opens into the descending duodenum guarded by the Sphincter of Oddi."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which stage of prophase I of meiosis is marked by terminalisation of chiasmata?",
+    optionA: "Leptotene",
+    optionB: "Zygotene",
+    optionC: "Diakinesis",
+    optionD: "Pachytene",
+    correctOption: "C",
+    explanation: "Final stage of prophase I is Diakinesis, characterized by complete terminalisation of chiasmata and nuclear envelope breakdown."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which of the following is NOT a primary breeding objective of Biofortification?",
+    optionA: "Improve protein content and quality",
+    optionB: "Improve resistance to plant pathogens/diseases",
+    optionC: "Improve vitamin content",
+    optionD: "Improve micronutrient and mineral content",
+    correctOption: "B",
+    explanation: "Biofortification focuses specifically on nutritional enrichment (vitamins, proteins, micronutrients), not disease resistance."
+  },
+  {
+    subject: "Biology",
+    questionText: "Partial pressures (in mm Hg) of oxygen ($pO_2$) and carbon dioxide ($pCO_2$) in alveolar air are:",
+    optionA: "$pO_2 = 104\\text{ mm Hg}$ and $pCO_2 = 40\\text{ mm Hg}$",
+    optionB: "$pO_2 = 40\\text{ mm Hg}$ and $pCO_2 = 45\\text{ mm Hg}$",
+    optionC: "$pO_2 = 95\\text{ mm Hg}$ and $pCO_2 = 40\\text{ mm Hg}$",
+    optionD: "$pO_2 = 159\\text{ mm Hg}$ and $pCO_2 = 0.3\\text{ mm Hg}$",
+    correctOption: "A",
+    explanation: "Alveolar gas composition: $pO_2 = 104\\text{ mm Hg}$ and $pCO_2 = 40\\text{ mm Hg}$."
+  },
+  {
+    subject: "Biology",
+    questionText: "Venereal diseases (STDs like Hepatitis-B and HIV) can spread through:\n(a) Sterile needles\n(b) Transfusion of infected blood\n(c) Infected mother to fetus\n(d) Kissing\n(e) Genetic inheritance\nChoose correct option:",
+    optionA: "(a), (b) and (c) only",
+    optionB: "(b), (c) and (d) only",
+    optionC: "(b) and (c) only",
+    optionD: "(a) and (c) only",
+    correctOption: "C",
+    explanation: "Blood transfusion from infected donor and vertical transmission from mother to fetus transmit Hepatitis-B and HIV."
+  },
+  {
+    subject: "Biology",
+    questionText: "Specific symmetrical DNA recognition sequences cleaved by restriction endonucleases are:",
+    optionA: "Degenerate primer sequences",
+    optionB: "Okazaki sequences",
+    optionC: "Palindromic nucleotide sequences",
+    optionD: "Poly(A) tail sequences",
+    correctOption: "C",
+    explanation: "Restriction enzymes recognize 4-8 bp palindromic sequences reading identical in $5' \\to 3'$ direction on both strands."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which statement about basic Histone proteins is WRONG?",
+    optionA: "Histones organize into an octamer core of 8 molecules",
+    optionB: "The pH of histones is slightly acidic",
+    optionC: "Histones are rich in basic amino acids Lysine and Arginine",
+    optionD: "Histones carry positive charges on basic side chains",
+    correctOption: "B",
+    explanation: "Histones are basic proteins with alkaline pH due to positively charged basic amino acids."
+  },
+  {
+    subject: "Biology",
+    questionText: "During skeletal muscle contraction, which events occur?\n(a) H-zone disappears\n(b) A-band widens\n(c) I-band shortens\n(d) Myosin hydrolyzes ATP\n(e) Z-lines are pulled inward\nChoose correct option:",
+    optionA: "(a), (c), (d), (e) only",
+    optionB: "(a), (b), (c), (d) only",
+    optionC: "(b), (c), (d), (e) only",
+    optionD: "(b), (d), (e), (a) only",
+    correctOption: "A",
+    explanation: "A-band length remains constant during contraction (statement b is false)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Skeletal System Bones:\n(a) Scapula, (b) Cranium, (c) Sternum, (d) Vertebral column\n(i) Cartilaginous joints, (ii) Flat bone, (iii) Fibrous/sutural joints, (iv) Triangular flat bone\nChoose correct option:",
+    optionA: "(a)-(i), (b)-(iii), (c)-(ii), (d)-(iv)",
+    optionB: "(a)-(ii), (b)-(iii), (c)-(iv), (d)-(i)",
+    optionC: "(a)-(iv), (b)-(ii), (c)-(iii), (d)-(i)",
+    optionD: "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
+    correctOption: "D",
+    explanation: "Scapula = Triangular flat bone (iv), Cranium = Fibrous sutures (iii), Sternum = Flat bone (ii), Vertebrae = Cartilaginous joints (i)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which hormone is NOT directly involved in the initiation of parturition in humans?",
+    optionA: "Increase in estrogen/progesterone ratio",
+    optionB: "Prostaglandins synthesis",
+    optionC: "Oxytocin release from maternal pituitary",
+    optionD: "Prolactin release (responsible for lactation/milk secretion post-birth)",
+    correctOption: "D",
+    explanation: "Prolactin stimulates milk synthesis post-partum, not fetal expulsion/parturition."
+  },
+  {
+    subject: "Biology",
+    questionText: "Assertion (A): High altitude sickness causes breathlessness and heart palpitations.\nReason (R): Low atmospheric pressure decreases oxygen binding to haemoglobin.\nChoose correct option:",
+    optionA: "Both (A) and (R) are true and (R) is correct explanation of (A)",
+    optionB: "Both (A) and (R) are true but (R) is not correct explanation of (A)",
+    optionC: "(A) is true but (R) is false",
+    optionD: "(A) is false but (R) is true",
+    correctOption: "A",
+    explanation: "At high altitudes, lower ambient $pO_2$ causes hypoxia, triggering compensatory hyperventilation and tachycardia."
+  },
+  {
+    subject: "Biology",
+    questionText: "Choose the correct statements regarding lipids:\n(a) Lipids with only single bonds are unsaturated\n(b) Lecithin is a phospholipid\n(c) Trihydroxypropane is glycerol\n(d) Palmitic acid has 20 carbons\n(e) Arachidonic acid has 16 carbons\nChoose correct option:",
+    optionA: "(a) and (b) only",
+    optionB: "(c) and (d) only",
+    optionC: "(b) and (c) only",
+    optionD: "(b) and (e) only",
+    correctOption: "C",
+    explanation: "Lecithin is a phospholipid (b); Glycerol is propane-1,2,3-triol (c). Palmitic acid has 16 carbons; arachidonic has 20."
+  },
+  {
+    subject: "Biology",
+    questionText: "Adenosine Deaminase (ADA) deficiency causes:",
+    optionA: "Severe Combined Immunodeficiency (SCID) / Immune dysfunction",
+    optionB: "Parkinson’s disease",
+    optionC: "Digestive disorder",
+    optionD: "Addison’s disease",
+    correctOption: "A",
+    explanation: "ADA deficiency causes toxic accumulation of dATP, destroying B and T lymphocytes and causing SCID."
+  },
+  {
+    subject: "Biology",
+    questionText: "The hormone Relaxin is secreted during the later phase of pregnancy by:",
+    optionA: "Graafian follicle",
+    optionB: "Corpus luteum (and Placenta)",
+    optionC: "Fetus",
+    optionD: "Uterine myometrium",
+    correctOption: "B",
+    explanation: "Corpus luteum of ovary (and placenta) secretes relaxin to soften pelvic ligaments for childbirth."
+  },
+  {
+    subject: "Biology",
+    questionText: "Junctions that stop substance leakage and facilitate rapid ion/metabolite communication are:",
+    optionA: "Gap junctions and Adhering junctions",
+    optionB: "Tight junctions and Gap junctions, respectively",
+    optionC: "Adhering junctions and Tight junctions",
+    optionD: "Desmosomes and Gap junctions",
+    correctOption: "B",
+    explanation: "Tight junctions prevent extracellular leakage; Gap junctions permit rapid intercellular ionic communication."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which is NOT a step in Multiple Ovulation Embryo Transfer (MOET)?",
+    optionA: "Cow is administered hormone with LH-like activity (FSH-like activity is administered)",
+    optionB: "Cow super-ovulates 6-8 eggs per cycle",
+    optionC: "Cow is inseminated artificially",
+    optionD: "Embryos are recovered non-surgically at 8-32 cell stage into surrogates",
+    correctOption: "A",
+    explanation: "FSH-like hormones are administered to induce superovulation (not LH)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Pathogens with Diseases:\n(a) Filariasis, (b) Amoebiasis, (c) Pneumonia, (d) Ringworm\n(i) Haemophilus influenzae, (ii) Trichophyton, (iii) Wuchereria bancrofti, (iv) Entamoeba histolytica\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(i), (c)-(iii), (d)-(ii)",
+    optionB: "(a)-(iii), (b)-(iv), (c)-(i), (d)-(ii)",
+    optionC: "(a)-(i), (b)-(ii), (c)-(iv), (d)-(iii)",
+    optionD: "(a)-(ii), (b)-(iii), (c)-(i), (d)-(iv)",
+    correctOption: "B",
+    explanation: "Filariasis = Wuchereria (iii), Amoebiasis = Entamoeba (iv), Pneumonia = Haemophilus (i), Ringworm = Trichophyton (ii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Adaptations:\n(a) Allen's Rule, (b) Physiological adaptation, (c) Behavioural adaptation, (d) Biochemical adaptation\n(i) Kangaroo rat, (ii) Desert lizard, (iii) Marine fish at high pressure, (iv) Polar seal (blubber / short extremities)\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(ii), (c)-(iii), (d)-(i)",
+    optionB: "(a)-(iv), (b)-(i), (c)-(iii), (d)-(ii)",
+    optionC: "(a)-(iv), (b)-(i), (c)-(ii), (d)-(iii)",
+    optionD: "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
+    correctOption: "C",
+    explanation: "Allen's Rule = Polar seal (iv), Physiological = Kangaroo rat water conservation (i), Behavioural = Desert lizard basking (ii), Biochemical = Deep-sea barophiles (iii)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Match Evolutionary Patterns:\n(a) Adaptive radiation, (b) Convergent evolution, (c) Divergent evolution, (d) Anthropogenic action\n(i) Herbicide/pesticide resistance, (ii) Forelimbs of Man and Whale, (iii) Wings of Butterfly and Bird, (iv) Darwin’s Finches\nChoose correct option:",
+    optionA: "(a)-(iv), (b)-(iii), (c)-(ii), (d)-(i)",
+    optionB: "(a)-(iii), (b)-(ii), (c)-(i), (d)-(iv)",
+    optionC: "(a)-(ii), (b)-(i), (c)-(iv), (d)-(iii)",
+    optionD: "(a)-(i), (b)-(iv), (c)-(iii), (d)-(ii)",
+    correctOption: "A",
+    explanation: "Adaptive radiation = Galapagos finches (iv), Convergent = Wings of butterfly & bird (iii), Divergent = Mammalian forelimbs (ii), Anthropogenic = Pesticide resistance (i)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Statement I: Codon 'AUG' codes for methionine and phenylalanine.\nStatement II: 'AAA' and 'AAG' both code for lysine.\nChoose correct option:",
+    optionA: "Both Statement I and Statement II are true",
+    optionB: "Both Statement I and Statement II are false",
+    optionC: "Statement I is correct but Statement II is false",
+    optionD: "Statement I is incorrect but Statement II is true",
+    correctOption: "D",
+    explanation: "AUG codes exclusively for Methionine (initiator codon), not phenylalanine (Statement I false). AAA and AAG code for Lysine (Statement II true)."
+  },
+  {
+    subject: "Biology",
+    questionText: "Which statements are correct about prostomium of Earthworm (Pheretima)?\n(a) Serves as wedge covering mouth\n(b) Helps open cracks in soil for burrowing\n(c) Acts as a sensory structure\n(d) It is the first body segment (Peristomium is first segment)\nChoose correct option:",
+    optionA: "(a), (b) and (c) are correct",
+    optionB: "(a), (b) and (d) are correct",
+    optionC: "(a), (b), (c) and (d) are correct",
+    optionD: "(b) and (c) are correct",
+    correctOption: "A",
+    explanation: "Prostomium is an anterior sensory lobe overhang (not a body segment); peristomium (buccal segment) is the first segment."
+  }
+];
+
+async function seedNeet2021Paper() {
+  console.log(`🚀 Compiling NEET 2021 Paper JSON with ${rawQuestions.length} complete questions...`);
+
+  const paperData = {
+    examName: "NEET",
+    year: 2021,
+    shiftName: "NEET 2021",
+    examDate: "2021-09-12T14:00:00Z",
+    totalMarks: 720,
+    totalQuestions: 180,
+    durationMinutes: 180,
+    positiveMarks: 4,
+    negativeMarks: -1,
+    questions: rawQuestions
+  };
+
+  const jsonOutputPath = path.join(__dirname, 'NEET 2021.json');
+  fs.writeFileSync(jsonOutputPath, JSON.stringify(paperData, null, 2));
+  console.log(`✅ Saved NEET 2021 JSON to: ${jsonOutputPath}`);
+
+  console.log(`🌱 Seeding NEET 2021 Shift into Database via Prisma...`);
+  
+  let exam = await prisma.exam.findFirst({
+    where: { name: "NEET" }
+  });
+
+  if (!exam) {
+    exam = await prisma.exam.create({
+      data: { name: "NEET" }
+    });
+  }
+
+  const existingShift = await prisma.shift.findFirst({
+    where: {
+      examId: exam.id,
+      name: "NEET 2021"
+    }
+  });
+
+  if (existingShift) {
+    console.log(`Removing old shift ${existingShift.id}...`);
+    await prisma.shift.delete({ where: { id: existingShift.id } });
+  }
+
+  const shift = await prisma.shift.create({
+    data: {
+      examId: exam.id,
+      name: "NEET 2021",
+      date: new Date("2021-09-12T14:00:00Z")
+    }
+  });
+  console.log(`Created Shift "NEET 2021" (ID: ${shift.id})`);
+
+  console.log(`Inserting ${rawQuestions.length} questions in exact 1..200 sequence...`);
+  for (let i = 0; i < rawQuestions.length; i++) {
+    const q = rawQuestions[i];
+    await prisma.question.create({
+      data: {
+        shiftId: shift.id,
+        subject: q.subject,
+        questionText: q.questionText,
+        imageUrl: q.imageUrl || null,
+        optionA: q.optionA,
+        optionB: q.optionB,
+        optionC: q.optionC,
+        optionD: q.optionD,
+        correctOption: q.correctOption,
+        positiveMarks: 4,
+        negativeMarks: -1
+      }
+    });
+  }
+
+  console.log(`🎉 Successfully seeded ${rawQuestions.length} questions for NEET 2021 in PostgreSQL!`);
+}
+
+seedNeet2021Paper()
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());
