@@ -78,7 +78,8 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
       setCurrentQuestionIndex(0);
       setAnswers({});
       setQuestionTimers({});
-      setExamTimeLeft(10800); // Reset countdown to 3 hours
+      const isSsc = name.toUpperCase().includes("SSC") || name.toUpperCase().includes("CGL") || (typeof window !== 'undefined' && window.location.href.includes("ssc-cgl"));
+      setExamTimeLeft(isSsc ? 3600 : 10800); // Reset countdown: 1 hour for SSC CGL, 3 hours for others
       setIsExamActive(false); // Reset to false on reload
     } catch (err) {
       console.error("Failed to load shift questions:", err);
