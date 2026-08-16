@@ -7,6 +7,7 @@ import {
   BookOpen, FlaskConical, Sigma, Atom, X, Play
 } from "lucide-react";
 import NavBar from "../../../../components/NavBar";
+import Footer from "../../../../components/Footer";
 
 /* ─────────────────────────── Static data ─────────────────────────── */
 const janExamDays = [22, 23, 24, 28, 29];
@@ -280,6 +281,7 @@ function JeeExamPageContent() {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 }

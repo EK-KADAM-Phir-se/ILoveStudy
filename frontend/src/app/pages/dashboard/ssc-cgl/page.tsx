@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "../../../../components/NavBar";
+import Footer from "../../../../components/Footer";
 
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
@@ -237,6 +238,7 @@ function SscCglDashboardContent() {
           })}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

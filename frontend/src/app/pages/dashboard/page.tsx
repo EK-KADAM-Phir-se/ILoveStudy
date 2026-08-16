@@ -8,6 +8,7 @@ import {
   type StreakData,
 } from "../../../lib/profileApi";
 import NavBar from "../../../components/NavBar";
+import Footer from "../../../components/Footer";
 
 import {
   GraduationCap, ArrowRight, BookOpen, Brain,
@@ -310,6 +311,8 @@ export default function GeneralDashboard() {
           </button>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
