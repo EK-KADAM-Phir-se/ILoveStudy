@@ -233,6 +233,34 @@ function TestWorkspacePageContent() {
     };
   }, [isExamActive, violationsCount, isSubmitting, submitSuccess]);
 
+  // Browser Back Button & Swipe-Back Gesture Proctoring Protection
+  useEffect(() => {
+    if (!isExamActive || showSubmitModal || submitSuccess) return;
+
+    window.history.pushState({ examActive: true }, '', window.location.href);
+
+    const handlePopState = () => {
+      window.history.pushState({ examActive: true }, '', window.location.href);
+      setViolationsCount((prev) => prev + 1);
+      setViolationReason("Attempted back navigation / swipe-back gesture during active exam session");
+      setShowViolationModal(true);
+    };
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "Warning: Refreshing or leaving this page will forfeit your active exam session!";
+      return e.returnValue;
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isExamActive, showSubmitModal, submitSuccess]);
+
   useEffect(() => {
     if (isExamActive && violationsCount >= 5 && !showAutoSubmitModal) {
       setShowAutoSubmitModal(true);

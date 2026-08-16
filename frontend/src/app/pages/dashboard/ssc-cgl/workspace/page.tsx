@@ -66,6 +66,10 @@ function SscTestWorkspaceContent() {
   const [assetStatus, setAssetStatus] = useState<'checking' | 'ready'>('checking');
   const [assetProgress, setAssetProgress] = useState<{ loaded: number; total: number }>({ loaded: 0, total: 0 });
   const [detectedExts, setDetectedExts] = useState<string[]>([]);
+  const [toastNotice, setToastNotice] = useState<string | null>(null);
+
+  // Overall time left dynamically calculated from all section timers (prevents timer mismatch/drift)
+  const overallTimeLeft = Object.values(sectionTimeLeft).reduce((acc, curr) => acc + curr, 0);
 
   // Unique list of subjects in questions
   const availableSubjects = Array.from(new Set(questions.map(q => q.subject)));
@@ -242,6 +246,38 @@ function SscTestWorkspaceContent() {
     };
   }, [isExamActive, violationsCount, showSubmitModal, submitSuccess]);
 
+  // Browser Back Button & Swipe-Back Gesture Proctoring Protection
+  useEffect(() => {
+    if (!isExamActive || showSubmitModal || submitSuccess) return;
+
+    // Push dummy history entry so back swipe/button can be intercepted
+    window.history.pushState({ examActive: true }, '', window.location.href);
+
+    const handlePopState = () => {
+      // Keep user on the workspace page
+      window.history.pushState({ examActive: true }, '', window.location.href);
+
+      // Increment violation count and show security violation warning modal
+      setViolationsCount((prev) => prev + 1);
+      setViolationReason("Attempted back navigation / swipe-back gesture during active exam session");
+      setShowViolationModal(true);
+    };
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "Warning: Refreshing or leaving this page will forfeit your active exam session!";
+      return e.returnValue;
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isExamActive, showSubmitModal, submitSuccess]);
+
   useEffect(() => {
     if (shiftId) {
       loadShift(shiftId, name, year);
@@ -280,7 +316,7 @@ function SscTestWorkspaceContent() {
     return () => clearInterval(timer);
   }, [currentQuestionIndex, isExamActive, questions, selectedSubject, showSubmitModal, submitSuccess]);
 
-  // Auto-advance to next section when current section timer hits 0
+  // Auto-advance to next section when current section timer hits 0 (non-blocking toast to avoid proctoring violations)
   useEffect(() => {
     if (!isExamActive || questions.length === 0 || showSubmitModal || submitSuccess) return;
     const currentRem = sectionTimeLeft[selectedSubject];
@@ -294,14 +330,15 @@ function SscTestWorkspaceContent() {
       const currentIndex = SECTION_ORDER.indexOf(selectedSubject);
       if (currentIndex < SECTION_ORDER.length - 1) {
         const nextSubject = SECTION_ORDER[currentIndex + 1];
-        alert(`Time's up for ${selectedSubject}! Switching to ${nextSubject}.`);
+        setToastNotice(`⏰ Time's up for ${selectedSubject}! Automatically switched to ${nextSubject}.`);
+        setTimeout(() => setToastNotice(null), 5000);
         const firstQIdx = questions.findIndex(q => q.subject === nextSubject);
         if (firstQIdx !== -1) {
           setCurrentQuestionIndex(firstQIdx);
         }
         setSelectedSubject(nextSubject);
       } else {
-        alert("Time's up for the final section! Your exam will be submitted automatically.");
+        setToastNotice("⏰ Time's up for the final section! Submitting exam automatically...");
         handleFinalSubmit();
       }
     }
@@ -309,11 +346,10 @@ function SscTestWorkspaceContent() {
 
   // Master Overall Exam Timer End
   useEffect(() => {
-    if (isExamActive && examTimeLeft <= 0 && !showSubmitModal && !submitSuccess) {
-      alert("Time is up! Your exam will be submitted automatically.");
+    if (isExamActive && overallTimeLeft <= 0 && !showSubmitModal && !submitSuccess && !isSubmitting) {
       handleFinalSubmit();
     }
-  }, [examTimeLeft, isExamActive]);
+  }, [overallTimeLeft, isExamActive, showSubmitModal, submitSuccess, isSubmitting]);
 
   // Violations Max Limit (5) Auto-Submit
   useEffect(() => {
@@ -428,7 +464,16 @@ function SscTestWorkspaceContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col select-none overflow-hidden h-screen">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col select-none overflow-hidden h-screen relative">
+      {/* Toast Notification Banner for Section Transitions & Warnings (Non-blocking to avoid proctoring blur) */}
+      {toastNotice && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 border border-emerald-500/50 text-emerald-400 font-bold px-6 py-3 rounded-xl shadow-2xl flex items-center space-x-3 backdrop-blur-md animate-bounce">
+          <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="text-sm">{toastNotice}</span>
+        </div>
+      )}
       {/* System Hardware & Security Check Dialog */}
       {showPreCheck && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-955 bg-opacity-90 backdrop-blur-md">
@@ -577,7 +622,7 @@ function SscTestWorkspaceContent() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="font-mono text-base font-extrabold text-emerald-400 tracking-wider">
-              {formatTime(examTimeLeft)}
+              {formatTime(overallTimeLeft)}
             </span>
           </div>
 
