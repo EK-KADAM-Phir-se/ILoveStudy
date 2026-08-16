@@ -111,6 +111,9 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
   }, [selectedSubject, selectedStatusFilter]);
 
   const activeQuestion = filteredQuestions[currentIndex] || null;
+  const isSsc = attempt?.examName?.toUpperCase().includes("SSC") || attempt?.shiftName?.toUpperCase().includes("SSC");
+  const positiveMultiplier = isSsc ? 2 : 4;
+  const negativeMultiplier = isSsc ? 0.5 : 1;
 
   // Helper to extract numeric values from option strings
   const getNumericVal = (str: string) => {
@@ -214,11 +217,11 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                 </div>
                 <div className="flex flex-col">
                   <span className="text-slate-400">Correct ({attempt.correctCount})</span>
-                  <span className="text-base font-extrabold text-emerald-400">+{attempt.correctCount * 4} pts</span>
+                  <span className="text-base font-extrabold text-emerald-400">+{attempt.correctCount * positiveMultiplier} pts</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-slate-400">Incorrect ({attempt.incorrectCount})</span>
-                  <span className="text-base font-extrabold text-rose-400">-{attempt.incorrectCount} pts</span>
+                  <span className="text-base font-extrabold text-rose-400">-{attempt.incorrectCount * negativeMultiplier} pts</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-slate-400">Unattempted</span>

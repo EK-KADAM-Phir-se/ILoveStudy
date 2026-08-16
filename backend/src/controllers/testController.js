@@ -645,7 +645,9 @@ exports.getAttemptReview = async (req, res) => {
     });
 
     const questionCount = officialQuestions.length;
-    const maxMarks = questionCount > 0 ? questionCount * 4 : 300;
+    const isSsc = (attempt.shift?.exam?.name || "").toUpperCase().includes("SSC") || (attempt.shift?.name || "").toUpperCase().includes("SSC");
+    const perQuestionMarks = isSsc ? 2 : 4;
+    const maxMarks = questionCount > 0 ? questionCount * perQuestionMarks : 300;
     const percentage = Math.max(0, parseFloat(((attempt.score / maxMarks) * 100).toFixed(1)));
 
     return res.status(200).json({

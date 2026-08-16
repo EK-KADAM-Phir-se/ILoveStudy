@@ -35,11 +35,11 @@ function ArrowIcon() {
 
 function SscCglDashboardContent() {
   const router = useRouter();
-  const [expandedYear, setExpandedYear] = useState<number | null>(2024);
+  const [expandedYear, setExpandedYear] = useState<number | null>(2025);
   const [dbShifts, setDbShifts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const years = [2024, 2023, 2022];
+  const years = [2025, 2024, 2023, 2022];
 
   useEffect(() => {
     const fetchDbShifts = async () => {
@@ -74,8 +74,12 @@ function SscCglDashboardContent() {
 
   const getShiftsForYear = (year: number) => {
     const matchingDbShifts = dbShifts.filter((shift: any) => {
+      const nameMatch = shift.name.match(/\b(20\d{2})\b/);
+      if (nameMatch) {
+        return parseInt(nameMatch[1], 10) === year;
+      }
       const shiftDate = new Date(shift.date);
-      return shiftDate.getUTCFullYear() === year || shift.name.includes(year.toString());
+      return shiftDate.getUTCFullYear() === year;
     });
 
     const combined: { name: string; id?: string; isDb?: boolean }[] = [];
