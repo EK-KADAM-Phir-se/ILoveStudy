@@ -9,7 +9,7 @@ const TestReviewModal = dynamic(() => import('@/src/components/TestReviewModal')
   ssr: false,
 });
 import { LatexRenderer } from '../../../../components/LatexRenderer';
-import { QuestionImage } from '@/src/components/QuestionImage';
+import { QuestionImage, preloadExamImages } from '@/src/components/QuestionImage';
 import { ReportErrorButton } from '@/src/components/ReportErrorButton';
 
 function SscTestWorkspaceContent() {
@@ -63,6 +63,8 @@ function SscTestWorkspaceContent() {
   const [showPreCheck, setShowPreCheck] = useState<boolean>(true);
   const [internetStatus, setInternetStatus] = useState<'checking' | 'connected' | 'limited' | 'disconnected'>('checking');
   const [extensionStatus, setExtensionStatus] = useState<'checking' | 'clean' | 'warning'>('checking');
+  const [assetStatus, setAssetStatus] = useState<'checking' | 'ready'>('checking');
+  const [assetProgress, setAssetProgress] = useState<{ loaded: number; total: number }>({ loaded: 0, total: 0 });
   const [detectedExts, setDetectedExts] = useState<string[]>([]);
 
   // Unique list of subjects in questions
@@ -131,6 +133,19 @@ function SscTestWorkspaceContent() {
 
     setDetectedExts(detectedExtensions);
     setExtensionStatus(detectedExtensions.length > 0 ? 'warning' : 'clean');
+
+    // Preload all question diagram images from Supabase Storage
+    setAssetStatus('checking');
+    try {
+      const res = await preloadExamImages(questions, "SSC CGL", year, (loaded, total) => {
+        setAssetProgress({ loaded, total });
+      });
+      setAssetProgress(res);
+      setAssetStatus('ready');
+    } catch (err) {
+      console.warn("Asset preloading encountered an error:", err);
+      setAssetStatus('ready');
+    }
   };
 
   useEffect(() => {
@@ -472,6 +487,34 @@ function SscTestWorkspaceContent() {
                   PASSED
                 </span>
               </div>
+
+              {/* Asset Preloader check card */}
+              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 rounded-lg ${assetStatus === 'ready' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400 animate-pulse'}`}>
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-200">Paper Diagrams &amp; Assets</p>
+                    <p className="text-xs text-slate-400">
+                      {assetStatus === 'checking'
+                        ? `Preloading question diagrams (${assetProgress.loaded}/${assetProgress.total})...`
+                        : `${assetProgress.total > 0 ? `${assetProgress.total} question diagrams cached & ready for instant 0ms viewing.` : 'No diagram images required for this paper.'}`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  {assetStatus === 'checking' ? (
+                    <span className="text-xs font-semibold text-slate-400 animate-pulse">Preloading...</span>
+                  ) : (
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400">
+                      READY
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl space-y-2">
@@ -486,9 +529,10 @@ function SscTestWorkspaceContent() {
 
             <button
               onClick={handleStartExamFromCheck}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/20 transition duration-150 transform active:translate-y-0.5"
+              disabled={assetStatus === 'checking'}
+              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/20 transition duration-150 transform active:translate-y-0.5"
             >
-              Start Official SSC CGL Exam (Fullscreen) &rarr;
+              {assetStatus === 'checking' ? 'Preloading Question Assets...' : 'Start Official SSC CGL Exam (Fullscreen) \u2192'}
             </button>
           </div>
         </div>

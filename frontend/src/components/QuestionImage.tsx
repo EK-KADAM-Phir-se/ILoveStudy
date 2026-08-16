@@ -16,13 +16,11 @@ export function getQuestionSupabaseUrl(
   examName: string = "Jee Mains",
   year?: number | string | null
 ): { supabaseUrl: string; localFallbackUrl: string } {
-  // Clean filename: remove leading slashes or full URLs if present
+  // Clean filename: extract just the file name (e.g. 9sep_shift2_q1_question.png)
   let cleanFileName = imageUrl;
-  if (cleanFileName.startsWith("http://") || cleanFileName.startsWith("https://")) {
+  if (cleanFileName.includes("/")) {
     const parts = cleanFileName.split("/");
     cleanFileName = parts[parts.length - 1];
-  } else if (cleanFileName.startsWith("/")) {
-    cleanFileName = cleanFileName.slice(1);
   }
 
   // Determine exact folder name matching Supabase bucket structure:
