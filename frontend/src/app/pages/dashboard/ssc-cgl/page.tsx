@@ -92,13 +92,6 @@ function SscCglDashboardContent() {
       });
     });
 
-    if (year === 2024 && !combined.some(c => c.name.includes("9 Sep"))) {
-      combined.push({
-        name: "9 Sep 2024 - Shift 1 (100 Questions)",
-        isDb: false
-      });
-    }
-
     return combined;
   };
 

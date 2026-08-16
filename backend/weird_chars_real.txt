@@ -1,0 +1,990 @@
+Q.1 (questionText): 'How many triangles are there in the given figure?'
+
+Q.1 (optionA): '(a) 4'
+
+Q.1 (optionB): '(b) 6'
+
+Q.1 (optionC): '(c) 3'
+
+Q.1 (optionD): '(d) 5'
+
+Q.2 (questionText): 'Select the correct mirror image of the given figure when the mirror is placed at MN as\nshown.'
+
+Q.2 (optionA): '/papers/ssc-cgl/images/9sep_shift2_q2_optA.png'
+
+Q.2 (optionB): '/papers/ssc-cgl/images/9sep_shift2_q2_optB.png'
+
+Q.2 (optionC): '/papers/ssc-cgl/images/9sep_shift2_q2_optC.png'
+
+Q.2 (optionD): '/papers/ssc-cgl/images/9sep_shift2_q2_optD.png'
+
+Q.3 (questionText): 'Select the correct mirror image of the given figure when the mirror is placed at MN as\nshown below.'
+
+Q.3 (optionA): '/papers/ssc-cgl/images/9sep_shift2_q3_optA.png'
+
+Q.3 (optionB): '/papers/ssc-cgl/images/9sep_shift2_q3_optB.png'
+
+Q.3 (optionC): '/papers/ssc-cgl/images/9sep_shift2_q3_optC.png'
+
+Q.3 (optionD): '/papers/ssc-cgl/images/9sep_shift2_q3_optD.png'
+
+Q.4 (questionText): 'Select the triad in which the numbers are related in the same way as are the numbers\nof the following triads.\n(NOTE: Operations should be performed on the whole numbers, without breaking\ndown the numbers into its constituent digits. E.g., 13 – Operations on 13 such as\nadding/deleting/multiplying etc. to 13 can be performed. Breaking down 13 into 1 and 3\nand then performing mathematical operations on 1 and 3 is not allowed.)\n(2, 3, 17)\n(5, 2, 21)'
+
+Q.4 (optionA): '(a) (3, 4, 23)'
+
+Q.4 (optionB): '(b) (5, 6, 72)'
+
+Q.4 (optionC): '(c) (2, 5, 42)'
+
+Q.4 (optionD): '(d) (1, 4, 17)'
+
+Q.5 (questionText): 'Select the option that represents the letters that when placed from left to right in the\nblanks below will complete the given letter series.\nN _ B A N A _ A _ A N A N A B _ N A N A B A _ A N A'
+
+Q.5 (optionA): '(a) ANANB'
+
+Q.5 (optionB): '(b) NANAB'
+
+Q.5 (optionC): '(c) ANABN'
+
+Q.5 (optionD): '(d) ANBAN'
+
+Q.6 (questionText): 'In a certain code language, ‘let it go’ is coded as ‘vc nt ap’ and ‘this is it’ is coded as\n‘mq vc lh’. What is the code for ‘it’ in that language?'
+
+Q.6 (optionA): '(a) nt'
+
+Q.6 (optionB): '(b) lh'
+
+Q.6 (optionC): '(c) vc'
+
+Q.6 (optionD): '(d) mq'
+
+Q.7 (questionText): 'In this question, three statements are given, followed by three conclusions numbered\nI, II and III. Assuming the statements to be true, even if they seem to be at variance\nwith commonly known facts, decide which of the conclusions logically follow(s) from\nthe statements.\nStatements:\nAll fans are brown.\nSome brown are chairs.\nSome chairs are plastic.\nConclusions:\nI.Some brown are fans.\nII.Some chairs are brown.\nIII.No chair is plastic.'
+
+Q.7 (optionA): '(a) Only conclusions II and III follow.'
+
+Q.7 (optionB): '(b) Only conclusion III follows.'
+
+Q.7 (optionC): '(c) None of the conclusions follows.'
+
+Q.7 (optionD): '(d) Only conclusions I and II follow.'
+
+Q.8 (questionText): 'Select the figure from among the given options that can replace the question mark (?)\nand logically complete the series.'
+
+Q.8 (optionA): '/papers/ssc-cgl/images/9sep_shift2_q8_optA.png'
+
+Q.8 (optionB): '/papers/ssc-cgl/images/9sep_shift2_q8_optB.png'
+
+Q.8 (optionC): '/papers/ssc-cgl/images/9sep_shift2_q8_optC.png'
+
+Q.8 (optionD): '/papers/ssc-cgl/images/9sep_shift2_q8_optD.png'
+
+Q.9 (questionText): 'In a certain code language,\nR + T means ‘R is the sister of T’.\nR – T means ‘R is the father of T’.\nR * T means ‘R is the wife of T’.\nR ÷ T means ‘R is the mother of T’.\nBased on the above, how is F related to C if ‘A + B – C ÷ D * E – F ÷ G’?'
+
+Q.9 (optionA): '(a) Wife'
+
+Q.9 (optionB): '(b) Daughter'
+
+Q.9 (optionC): '(c) Daughter’s daughter'
+
+Q.9 (optionD): '(d) Mother'
+
+Q.10 (questionText): 'Select the word-pair that best represents a similar relationship to the one expressed in\nthe pair of words given below.\n(The words must be considered as meaningful English words and must NOT be related\nto each other based on the number of letters/number of consonants/vowels in the\nword)\nEgypt : Nile'
+
+Q.10 (optionA): '(a) South Korea : Mekong'
+
+Q.10 (optionB): '(b) Brazil : Colorado'
+
+Q.10 (optionC): '(c) Russia : Mississippi'
+
+Q.10 (optionD): '(d) Myanmar : Irrawaddy'
+
+Q.11 (questionText): 'In a certain code language, ‘It’s your life’ is written as ‘Ao Bo Co’ and ‘It’s your food’ is\nwritten as ‘Ba Co Bo’. How will ‘food’ be written in that language?'
+
+Q.11 (optionA): '(a) Ba'
+
+Q.11 (optionB): '(b) Bo'
+
+Q.11 (optionC): '(c) Ao'
+
+Q.11 (optionD): '(d) Co'
+
+Q.12 (questionText): 'The position of how many letters will change, if each of the letters in the word\n‘SYSTEM’ is arranged in the English alphabetical order?'
+
+Q.12 (optionA): '(a) Three'
+
+Q.12 (optionB): '(b) Five'
+
+Q.12 (optionC): '(c) Four'
+
+Q.12 (optionD): '(d) Six'
+
+Q.13 (questionText): 'Identify the figure given in the options which when put in place of the question mark\n(?) will logically complete the series.'
+
+Q.13 (optionA): '/papers/ssc-cgl/images/9sep_shift2_q13_optA.png'
+
+Q.13 (optionB): '/papers/ssc-cgl/images/9sep_shift2_q13_optB.png'
+
+Q.13 (optionC): '/papers/ssc-cgl/images/9sep_shift2_q13_optC.png'
+
+Q.13 (optionD): '/papers/ssc-cgl/images/9sep_shift2_q13_optD.png'
+
+Q.14 (questionText): 'Select the number from among the given options that can replace the question mark\n(?) in the following series.\n99, 123, 150, 180, 213, ?'
+
+Q.14 (optionA): '(a) 248'
+
+Q.14 (optionB): '(b) 258'
+
+Q.14 (optionC): '(c) 259'
+
+Q.14 (optionD): '(d) 249'
+
+Q.15 (questionText): 'Read the given statements and conclusions carefully. You have to take the given\nstatements to be true even if they seem to be at variance from commonly known facts.\nYou have to decide which conclusion(s) logically follow(s) from the given statements\nStatements:\nNo river is a mountain.\nSome rivers are animals.\nSome birds are mountains.\nConclusions:\nI: No animal is a mountain.\nII: No river is a bird.'
+
+Q.15 (optionA): '(a) Both conclusions (I) and (II) follow'
+
+Q.15 (optionB): '(b) Neither conclusion (I) nor (II) follows'
+
+Q.15 (optionC): '(c) Only conclusion (I) follows'
+
+Q.15 (optionD): '(d) Only conclusion (II) follows'
+
+Q.16 (questionText): 'Select the set in which the numbers are related in the same way as are the numbers of\nthe following sets.\n(NOTE: Operations should be performed on the whole numbers, without breaking\ndown the numbers into its constituent digits. E.g. 13 – Operations on 13 such as\nadding /deleting /multiplying etc. to 13 can be performed. Breaking down 13 into 1 and\n3 and then performing mathematical operations on 1 and 3 is not allowed.)\n(18, 378, 7)\n(14, 210, 5)'
+
+Q.16 (optionA): '(a) (17, 272, 8)'
+
+Q.16 (optionB): '(b) (17, 204, 6)'
+
+Q.16 (optionC): '(c) (23, 230, 5)'
+
+Q.16 (optionD): '(d) (15, 405, 9)'
+
+Q.17 (questionText): 'Select the triad in which the numbers are related in the same way as are the numbers\nof the given triads.\n(16, 33, 67), (19, 39, 79)\n(NOTE : Operations should be performed on the whole numbers, without breaking\ndown the numbers into its constituent digits. E.g. 13 – Operations on 13 such as\nadding /deleting /multiplying etc. to 13 can be performed. Breaking down 13 into 1 and\n3 and then performing mathematical operations on 1 and 3 is not allowed)'
+
+Q.17 (optionA): '(a) (22, 45, 91)'
+
+Q.17 (optionB): '(b) (14, 27, 53)'
+
+Q.17 (optionC): '(c) (18, 36, 80)'
+
+Q.17 (optionD): '(d) (21, 45, 90)'
+
+Q.18 (questionText): 'The same operation(s) are followed in all the given number pairs except one. Find that\nodd number pair.\n(NOTE : Operations should be performed on the whole numbers, without breaking\ndown the numbers into its constituent digits. E.g. 13 – Operations on 13 such as\nadding /deleting /multiplying etc., to 13 can be performed. Breaking down 13 into 1 and\n3 and then performing mathematical operations on 1 and 3 is not allowed.)bxs'
+
+Q.18 (optionA): '(a) 15 : 48'
+
+Q.18 (optionB): '(b) 12 : 39'
+
+Q.18 (optionC): '(c) 13 : 42'
+
+Q.18 (optionD): '(d) 11 : 35'
+
+Q.19 (questionText): 'A paper is folded and cut as shown below. How will it appear when unfolded?'
+
+Q.19 (optionA): '/papers/ssc-cgl/images/9sep_shift2_q19_optA.png'
+
+Q.19 (optionB): '/papers/ssc-cgl/images/9sep_shift2_q19_optB.png'
+
+Q.19 (optionC): '/papers/ssc-cgl/images/9sep_shift2_q19_optC.png'
+
+Q.19 (optionD): '/papers/ssc-cgl/images/9sep_shift2_q19_optD.png'
+
+Q.20 (questionText): 'A square sheet of paper is folded along the dotted lines successively in the directions\nshown and is then punched in the last. How would the paper look when unfolded?'
+
+Q.20 (optionA): '/papers/ssc-cgl/images/9sep_shift2_q20_optA.png'
+
+Q.20 (optionB): '/papers/ssc-cgl/images/9sep_shift2_q20_optB.png'
+
+Q.20 (optionC): '/papers/ssc-cgl/images/9sep_shift2_q20_optC.png'
+
+Q.20 (optionD): '/papers/ssc-cgl/images/9sep_shift2_q20_optD.png'
+
+Q.21 (questionText): 'Three of the following four letter-cluster pairs are alike in a certain way and thus form\na group. Which is the letter-cluster pair that does NOT belong to that group?\n(Note: The odd one out is not based on the number of consonants/vowels or their\npositions in the letter-cluster.)'
+
+Q.21 (optionA): '(a) EJ - OT'
+
+Q.21 (optionB): '(b) KP - UZ'
+
+Q.21 (optionC): '(c) PF - OI'
+
+Q.21 (optionD): '(d) CH - MR'
+
+Q.22 (questionText): 'What will come in place of the question mark (?) in the following equation, if ‘+’ and ‘–’\nare interchanged and ‘×’ and ‘÷’ are interchanged?\n1604 × 4 – 525 ÷ 5 + 73 = ?'
+
+Q.22 (optionA): '(a) 2953'
+
+Q.22 (optionB): '(b) 2935'
+
+Q.22 (optionC): '(c) 2539'
+
+Q.22 (optionD): '(d) 2395'
+
+Q.23 (questionText): 'Select the letter-cluster from among the given options that can replace the question\nmark (?) to complete the given series.\nBVTO, DTVM, ?, HPZI, JNBG'
+
+Q.23 (optionA): '(a) RFXK'
+
+Q.23 (optionB): '(b) RXFK'
+
+Q.23 (optionC): '(c) FKXR'
+
+Q.23 (optionD): '(d) FRXK'
+
+Q.24 (questionText): 'Select the option that can replace the question mark (?) in the following series.\nVO39, TM35, RK31, PI27, ?'
+
+Q.24 (optionA): '(a) OH24'
+
+Q.24 (optionB): '(b) MG22'
+
+Q.24 (optionC): '(c) NG23'
+
+Q.24 (optionD): '(d) MH24'
+
+Q.25 (questionText): 'What will come in the place of ‘?’ in the following equation, if ‘+’ and ‘–‘ are\ninterchanged and ‘×’ and ‘÷’ are interchanged?\n4 ÷ 6 + 91 × 7 − 5 = ?'
+
+Q.25 (optionA): '(a) 12'
+
+Q.25 (optionB): '(b) 21'
+
+Q.25 (optionC): '(c) 16'
+
+Q.25 (optionD): '(d) 17'
+
+Q.26 (questionText): 'In which part of India does the hot wind ‘Loo’ blow?'
+
+Q.26 (optionA): '(a) South and Southwestern'
+
+Q.26 (optionB): '(b) East and Northeastern'
+
+Q.26 (optionC): '(c) West and Southwestern'
+
+Q.26 (optionD): '(d) North and Northwestern'
+
+Q.27 (questionText): 'The first southern campaign of Alauddin Khilji in 1307-08 AD was led to which of the\nfollowing regions?'
+
+Q.27 (optionA): '(a) Madura'
+
+Q.27 (optionB): '(b) Warangal'
+
+Q.27 (optionC): '(c) Dwar Samudra'
+
+Q.27 (optionD): '(d) Devagiri'
+
+Q.28 (questionText): 'Which of the following can be represented as a functional unit of nature?'
+
+Q.28 (optionA): '(a) Ecosystem'
+
+Q.28 (optionB): '(b) Humans'
+
+Q.28 (optionC): '(c) Vehicles'
+
+Q.28 (optionD): '(d) Plants'
+
+Q.29 (questionText): 'At what latitude does the easterly jet stream blow over peninsular India during the\nsummer months?'
+
+Q.29 (optionA): '(a) 30°N'
+
+Q.29 (optionB): '(b) 24°N'
+
+Q.29 (optionC): '(c) 28°N'
+
+Q.29 (optionD): '(d) 14°N'
+
+Q.30 (questionText): 'The inaugural match of the Women Premier League 2023 cricket was played in which\nof the following venues?'
+
+Q.30 (optionA): '(a) Chennai'
+
+Q.30 (optionB): '(b) Kolkata'
+
+Q.30 (optionC): '(c) Delhi'
+
+Q.30 (optionD): '(d) Mumbai'
+
+Q.31 (questionText): 'When electricity is passed through water, what kind of chemical reaction occurs?'
+
+Q.31 (optionA): '(a) Decomposition'
+
+Q.31 (optionB): '(b) Double displacement'
+
+Q.31 (optionC): '(c) Combination'
+
+Q.31 (optionD): '(d) Displacement'
+
+Q.32 (questionText): 'Which music-composer duo was honoured with the National Lata Mangeshkar Award\nfor the year 2020?'
+
+Q.32 (optionA): '(a) Jatin-Lalit'
+
+Q.32 (optionB): '(b) Anand-Milind'
+
+Q.32 (optionC): '(c) Salim–Sulaiman'
+
+Q.32 (optionD): '(d) Sachin–Jigar'
+
+Q.33 (questionText): 'In which of the following states is Govindji Nartanalaya located?'
+
+Q.33 (optionA): '(a) Assam'
+
+Q.33 (optionB): '(b) Nagaland'
+
+Q.33 (optionC): '(c) Tripura'
+
+Q.33 (optionD): '(d) Manipur'
+
+Q.34 (questionText): 'In which state of India is Kund or Tanka used for water harvesting?'
+
+Q.34 (optionA): '(a) Uttar Pradesh'
+
+Q.34 (optionB): '(b) Punjab'
+
+Q.34 (optionC): '(c) Rajasthan'
+
+Q.34 (optionD): '(d) Andhra Pradesh'
+
+Q.35 (questionText): 'When was the High Court and Supreme Court Judges (Salaries and Conditions of\nService) Amendment Bill, 2021 introduced in Lok Sabha?'
+
+Q.35 (optionA): '(a) 30 November 2021'
+
+Q.35 (optionB): '(b) 27 September 2021'
+
+Q.35 (optionC): '(c) 29 March 2021'
+
+Q.35 (optionD): '(d) 28 April 2021'
+
+Q.36 (questionText): 'Which condition, also known as icterus, causes a yellowing of your skin and the\nwhites of your eyes?'
+
+Q.36 (optionA): '(a) Pemphigus'
+
+Q.36 (optionB): '(b) Ichthyosis'
+
+Q.36 (optionC): '(c) Eczema'
+
+Q.36 (optionD): '(d) Jaundice'
+
+Q.37 (questionText): 'Which of the following inscriptions of Rudradaman happened to be the first royal\ninscription of early India composed in chaste Sanskrit?'
+
+Q.37 (optionA): '(a) Mehrauli'
+
+Q.37 (optionB): '(b) Prayag'
+
+Q.37 (optionC): '(c) Chirand'
+
+Q.37 (optionD): '(d) Girnar'
+
+Q.38 (questionText): 'According to Census of India 2011, in rural India, which state has the maximum female\nworkforce participation rate?'
+
+Q.38 (optionA): '(a) Andhra Pradesh'
+
+Q.38 (optionB): '(b) Arunachal Pradesh'
+
+Q.38 (optionC): '(c) Uttar Pradesh'
+
+Q.38 (optionD): '(d) Himachal Pradesh'
+
+Q.39 (questionText): 'Which of the following celebrations is dedicated to Sun God and his wife Usha to\nthank them for sustaining life on earth and for granting wishes?'
+
+Q.39 (optionA): '(a) Vishwakarma Puja'
+
+Q.39 (optionB): '(b) Madai Festival'
+
+Q.39 (optionC): '(c) Sorath Sabha'
+
+Q.39 (optionD): '(d) Chhath Puja'
+
+Q.40 (questionText): 'At which Olympics did Gagan Narang win a bronze medal?'
+
+Q.40 (optionA): '(a) Beijing 2008'
+
+Q.40 (optionB): '(b) London 2012'
+
+Q.40 (optionC): '(c) Athens 2004'
+
+Q.40 (optionD): '(d) Rio 2016'
+
+Q.41 (questionText): 'When was a Madrasa opened in Kolkata to promote the study of Arabic, Persian and\nIslamic law?'
+
+Q.41 (optionA): '(a) 1772 C.E.'
+
+Q.41 (optionB): '(b) 1783 C.E.'
+
+Q.41 (optionC): '(c) 1781 C.E.'
+
+Q.41 (optionD): '(d) 1774 C.E.'
+
+Q.42 (questionText): 'What is the IUPAC name of tertiarybutyl alcohol?'
+
+Q.42 (optionA): '(a) 1-propylpropan-3-ol'
+
+Q.42 (optionB): '(b) 1-ethylpropan-3-ol'
+
+Q.42 (optionC): '(c) 1-Methylpropan-3-ol'
+
+Q.42 (optionD): '(d) 2-Methylpropan-2-ol'
+
+Q.43 (questionText): 'Which Article of the Constitution explains that the executive power of every state shall\nbe so exercised as not to impede or prejudice the exercise of the executive power of\nthe Union, and the executive power of the union shall extend to the giving of such\ndirections to a state as may appear to the Government of India to be necessary for that\npurpose?'
+
+Q.43 (optionA): '(a) Article 123'
+
+Q.43 (optionB): '(b) Article 261'
+
+Q.43 (optionC): '(c) Article 257'
+
+Q.43 (optionD): '(d) Article 247'
+
+Q.44 (questionText): 'Under the leadership of which of the following revolutionaries was Chittagong\nArmoury Raid conducted?'
+
+Q.44 (optionA): '(a) Rash Behari Bose'
+
+Q.44 (optionB): '(b) Surya Sen'
+
+Q.44 (optionC): '(c) Hemu Kalani'
+
+Q.44 (optionD): '(d) Badal Gupta'
+
+Q.45 (questionText): 'What is the relationship between interest rate and demand for money?'
+
+Q.45 (optionA): '(a) Inverse'
+
+Q.45 (optionB): '(b) Direct'
+
+Q.45 (optionC): '(c) No relationship exists'
+
+Q.45 (optionD): '(d) Proportionate'
+
+Q.46 (questionText): 'The government of which of the following states created a draft policy in 2022 for\nsenior citizens on the basis of article 41, which aims to form a directorate for the\nwelfare of senior citizens?'
+
+Q.46 (optionA): '(a) Karnataka'
+
+Q.46 (optionB): '(b) Kerala'
+
+Q.46 (optionC): '(c) Telangana'
+
+Q.46 (optionD): '(d) Tamil Nadu'
+
+Q.47 (questionText): 'In the year 1952, who among the following lent his voice for the film ‘Amar Bhupali’,\nwhich was being produced in two languages simultaneously and he sang in both\nBengali and Marathi ?'
+
+Q.47 (optionA): '(a) Hemanta Mukherjee'
+
+Q.47 (optionB): '(b) Debabrata Biswas'
+
+Q.47 (optionC): '(c) Kishore Kumar'
+
+Q.47 (optionD): '(d) Manna Dey'
+
+Q.48 (questionText): 'Which of the following statements correctly defines the green revolution?'
+
+Q.48 (optionA): '(a) It is a new strategy to use green colour for all purposes.'
+
+Q.48 (optionB): '(b) It is a new strategy to increase the share of the forest.'
+
+Q.48 (optionC): '(c) It is a new strategy in agriculture to produce food grains, especially wheat and rice.'
+
+Q.48 (optionD): '(d) It is a new strategy to use only herbal products.'
+
+Q.49 (questionText): 'In 2021, in which of the following states did the Prime Minister lay the foundation\nstone for the Raja Mahendra Pratap Singh State University?'
+
+Q.49 (optionA): '(a) Gujarat'
+
+Q.49 (optionB): '(b) Himachal Pradesh'
+
+Q.49 (optionC): '(c) Nagaland'
+
+Q.49 (optionD): '(d) Uttar Pradesh'
+
+Q.50 (questionText): 'Which of the following is NOT correct about Directive Principles of State Policy?'
+
+Q.50 (optionA): '(a) They provide guidelines for the governance of the country.'
+
+Q.50 (optionB): '(b) They are justiciable in nature.'
+
+Q.50 (optionC): '(c) They are morally binding on the government.'
+
+Q.50 (optionD): '(d) They ensure social and economic development.'
+
+Q.51 (optionA): '/papers/ssc-cgl/images/9sep_shift2_q51_optA.png'
+
+Q.51 (optionB): '/papers/ssc-cgl/images/9sep_shift2_q51_optB.png'
+
+Q.51 (optionC): '/papers/ssc-cgl/images/9sep_shift2_q51_optC.png'
+
+Q.51 (optionD): '/papers/ssc-cgl/images/9sep_shift2_q51_optD.png'
+
+Q.52 (optionA): '/papers/ssc-cgl/images/9sep_shift2_q52_optA.png'
+
+Q.52 (optionB): '/papers/ssc-cgl/images/9sep_shift2_q52_optB.png'
+
+Q.52 (optionC): '/papers/ssc-cgl/images/9sep_shift2_q52_optC.png'
+
+Q.52 (optionD): '/papers/ssc-cgl/images/9sep_shift2_q52_optD.png'
+
+Q.53 (optionA): '(a) 30.2'
+
+Q.53 (optionB): '(b) 25.5'
+
+Q.53 (optionC): '(c) 28.7'
+
+Q.53 (optionD): '(d) 23.6'
+
+Q.54 (questionText): 'The pie chart given below shows the expenditure (in percentage) of Aditya. The\nmonthly income of Aditya is ₹54,000.\nHow much does he spend (in ₹) on Food?'
+
+Q.54 (optionA): '(a) 12,420'
+
+Q.54 (optionB): '(b) 13,420'
+
+Q.54 (optionC): '(c) 12,240'
+
+Q.54 (optionD): '(d) 11,240'
+
+Q.55 (questionText): 'Madhav purchased an item for ₹42,000 and sold it at a loss of 20%. With that amount,\nhe purchased another item and sold it at a gain of 30%. What is the overall gain (in ₹)?'
+
+Q.55 (optionA): '(a) 6720'
+
+Q.55 (optionB): '(b) 4200'
+
+Q.55 (optionC): '(c) 2520'
+
+Q.55 (optionD): '(d) 1680'
+
+Q.56 (questionText): 'Seven years ago, Prachi was four times as old as her daughter was at that time. Four\nyears from now, Prachi will be two-and-a-half times as old as her daughter would then\nbe. Find the sum of the present ages (in years) of Prachi and her daughter.'
+
+Q.56 (optionA): '(a) 77'
+
+Q.56 (optionB): '(b) 49'
+
+Q.56 (optionC): '(c) 72'
+
+Q.56 (optionD): '(d) 69'
+
+Q.57 (questionText): 'If a sum of ₹5,000 is taken at a simple rate of interest of 15% per annum for 3 years and\nanother sum of ₹8,000 is taken at a simple interest of 12% per annum for 4 years, the\npositive difference of the interests paid is:'
+
+Q.57 (optionA): '(a) ₹1,286'
+
+Q.57 (optionB): '(b) ₹1,378'
+
+Q.57 (optionC): '(c) ₹1,643'
+
+Q.57 (optionD): '(d) ₹1,590'
+
+Q.58 (questionText): 'Let C be a circle with centre O and P be an external point to C. Let PA and PB be two\ntangents to C with A and B being the points of tangency, respectively. If PA and PB are\ninclined to each other at an angle of 60°, then find ∠ POA.'
+
+Q.58 (optionA): '(a) 80°'
+
+Q.58 (optionB): '(b) 30°'
+
+Q.58 (optionC): '(c) 40°'
+
+Q.58 (optionD): '(d) 60°'
+
+Q.59 (questionText): 'The average temperature of a city for the first sixteen days of January is 22°C, and the\naverage temperature for the last sixteen days of the same month is 26°C. If the average\ntemperature for the entire month is 24°C, what is the temperature on the sixteenth\nday?'
+
+Q.59 (optionA): '(a) 23°C'
+
+Q.59 (optionB): '(b) 24°C'
+
+Q.59 (optionC): '(c) 25°C'
+
+Q.59 (optionD): '(d) 22°C'
+
+Q.60 (questionText): 'The monthly wages (in ₹) of three mess workers, Rahul, Sunil and Vipin, of a boy’s\nhostel for three months are given in the following table. Study the table carefully and\nanswer the question given below.\nIn November, the wages of Sunil is what percentage of the wages of Rahul? (Correct\nup to two decimal places.)'
+
+Q.60 (optionA): '(a) 91.30%'
+
+Q.60 (optionB): '(b) 90.23%'
+
+Q.60 (optionC): '(c) 89.30%'
+
+Q.60 (optionD): '(d) 88.23%'
+
+Q.61 (questionText): 'At present, A is thrice as old as B. C is 5 years elder than B. The sum of the ages of A,\nB, C is 75 years. The ratio of the age of B five years ago to the age of A three years\nfrom now is:'
+
+Q.61 (optionA): '(a) 1 : 4'
+
+Q.61 (optionB): '(b) 2 : 3'
+
+Q.61 (optionC): '(c) 1 : 5'
+
+Q.61 (optionD): '(d) 4 : 7'
+
+Q.62 (optionA): '(a) 3 cosA - 1'
+
+Q.62 (optionB): '(b) 1 – 3 sinA'
+
+Q.62 (optionC): '(c) sinA + cosA'
+
+Q.62 (optionD): '(d) 1 + sinA cosA'
+
+Q.63 (questionText): 'A right-angled isosceles triangle has an area of 50 square units. Its hypotenuse is (in\nunits):'
+
+Q.63 (optionA): '/papers/ssc-cgl/images/9sep_shift2_q63_optA.png'
+
+Q.63 (optionB): '/papers/ssc-cgl/images/9sep_shift2_q63_optB.png'
+
+Q.63 (optionC): '/papers/ssc-cgl/images/9sep_shift2_q63_optC.png'
+
+Q.63 (optionD): '/papers/ssc-cgl/images/9sep_shift2_q63_optD.png'
+
+Q.64 (optionA): '(a) 2816'
+
+Q.64 (optionB): '(b) 2686'
+
+Q.64 (optionC): '(c) 2784'
+
+Q.64 (optionD): '(d) 2456'
+
+Q.65 (questionText): 'A person earns ₹16,000 per month and spends 80% of his income and saves the\nremaining amount. If his income increases by 20% and expenditure by 10%, find the\npercentage of increase in his savings.'
+
+Q.65 (optionA): '(a) 90%'
+
+Q.65 (optionB): '(b) 120%'
+
+Q.65 (optionC): '(c) 140%'
+
+Q.65 (optionD): '(d) 60%'
+
+Q.66 (questionText): 'The marked price of an article is 26% more than its cost price. If a discount of 32% is\ngiven, what will be the loss percentage?'
+
+Q.66 (optionA): '(a) 12.26%'
+
+Q.66 (optionB): '(b) 15.25%'
+
+Q.66 (optionC): '(c) 18.64%'
+
+Q.66 (optionD): '(d) 14.32%'
+
+Q.67 (questionText): 'Varun and Sandeep started for a car race from the same point, in the same direction\nand at the same time on a circular track of length 1635 m with the speeds of 90 km/h\nand 108 km/h, respectively. After how much time (in s) will they meet again for the first\ntime?'
+
+Q.67 (optionA): '(a) 327'
+
+Q.67 (optionB): '(b) 325'
+
+Q.67 (optionC): '(c) 324'
+
+Q.67 (optionD): '(d) 326'
+
+Q.68 (questionText): 'The angles of triangle are such that one is average of other two, then the angles are:'
+
+Q.68 (optionA): '(a) 3'
+
+Q.68 (optionB): '(b) 1'
+
+Q.68 (optionC): '(c) 4'
+
+Q.68 (optionD): '(d) 2'
+
+Q.69 (questionText): 'From a circle with the radius of 15.75 cm, a sector with the arc length of 11 cm is cut\n2\noff. Find the area (in cm ) of this sector.'
+
+Q.69 (optionA): '(a) 86.625'
+
+Q.69 (optionB): '(b) 86.875'
+
+Q.69 (optionC): '(c) 86.525'
+
+Q.69 (optionD): '(d) 86.125'
+
+Q.70 (questionText): 'The given bar graph shows the number of students enrolled in Institutes A and B\nduring 5 years (2018 to 2022).\nWhat is the ratio of the total students enrolled in Institute B in 2019, 2020 and 2022 to\nthat of the total students enrolled in Institute A in 2018, 2020 and 2021?'
+
+Q.70 (optionA): '(a) 11 : 28'
+
+Q.70 (optionB): '(b) 28 : 37'
+
+Q.70 (optionC): '(c) 37 : 28'
+
+Q.70 (optionD): '(d) 28 : 11'
+
+Q.71 (questionText): 'The given chart shows the production of different types of cars in the year 2021.\nStudy the given chart and answer the question that follows.\nIf the total production in the year 2021 was 2,00,00,000, then what will be the central\nangle of the sector representing the production of type D cars in 2021?'
+
+Q.71 (optionA): '(a) 50°'
+
+Q.71 (optionB): '(b) 42°'
+
+Q.71 (optionC): '(c) 36°'
+
+Q.71 (optionD): '(d) 72°'
+
+Q.72 (questionText): 'If x varies inversely as y and x = 2 when y = 6, then the value of y when x = 3 is:'
+
+Q.72 (optionA): '(a) 3'
+
+Q.72 (optionB): '(b) 4'
+
+Q.72 (optionC): '(c) 2'
+
+Q.72 (optionD): '(d) 6'
+
+Q.73 (questionText): 'Without doing the actual division, find the remainder when 28735429 is divided by 9.'
+
+Q.73 (optionA): '(a) 4'
+
+Q.73 (optionB): '(b) 8'
+
+Q.73 (optionC): '(c) 2'
+
+Q.73 (optionD): '(d) 9'
+
+Q.74 (questionText): 'Simplify the following:\n21− 4.9 ÷ 7 + 3.9 × 0.4 + 0.9'
+
+Q.74 (optionA): '(a) 26.32'
+
+Q.74 (optionB): '(b) 18.23'
+
+Q.74 (optionC): '(c) 22.76'
+
+Q.74 (optionD): '(d) 24.12'
+
+Q.75 (questionText): 'Pipes M, N and S can fill a tank in 25, 50 and 100 minutes, respectively. Initially, pipes\nN and S are kept open for 10 minutes, and then pipe N is shut while pipe M is opened.\nPipe S is closed 15 minutes before the tank overflows. How much time (in minutes) will\nit take to fill the tank if the three pipes work in this pattern?'
+
+Q.75 (optionA): '(a) 27'
+
+Q.75 (optionB): '(b) 42'
+
+Q.75 (optionC): '(c) 30'
+
+Q.75 (optionD): '(d) 33'
+
+Q.76 (questionText): 'Select the option that expresses the given sentence in active voice.\nThe homework must be done by you.'
+
+Q.76 (optionA): '(a) You will do the homework.'
+
+Q.76 (optionB): '(b) You should have done the homework.'
+
+Q.76 (optionC): '(c) You must do the homework.'
+
+Q.76 (optionD): '(d) You do the homework.'
+
+Q.77 (questionText): 'Select the most appropriate option to substitute the underlined word in the given\nsentence.\nPollution levels have increased so  largely that they are almost killing us.'
+
+Q.77 (optionA): '(a) primarily'
+
+Q.77 (optionB): '(b) slowly'
+
+Q.77 (optionC): '(c) highly'
+
+Q.77 (optionD): '(d) chiefly'
+
+Q.78 (questionText): 'Parts of a sentence are given below in jumbled order. Arrange the parts in the correct\norder to form a meaningful sentence.\n(a) the use of animal research\n(b) throughout the past century\n(c) and it continues to be used to understand many diseases\n(d) has been of considerable importance\n(e) in the field of scientific and medical advancements'
+
+Q.78 (optionA): '(a) edcba'
+
+Q.78 (optionB): '(b) aecdb'
+
+Q.78 (optionC): '(c) ecdba'
+
+Q.78 (optionD): '(d) adebc'
+
+Q.79 (questionText): 'Select the most appropriate meaning of the given idiom.\nBreak a leg'
+
+Q.79 (optionA): '(a) Give advice on maintaining physical health.'
+
+Q.79 (optionB): '(b) Wish someone good luck before a performance.'
+
+Q.79 (optionC): '(c) Suggest taking a short break during work.'
+
+Q.79 (optionD): '(d) Encourage someone to engage in risky activities.'
+
+Q.80 (questionText): 'Select the most appropriate option that can substitute the underlined segment in the\ngiven sentence. If there is no need to substitute it, select ‘No substitution’.\nSpreading awareness about the rights of the consumers and the relief open to them in\ncase they  did not get their money’s worth of goods and service has rightly been\nidentified as the first priority.'
+
+Q.80 (optionA): '(a) were unable to get their money’s worth'
+
+Q.80 (optionB): '(b) did not getting their money’s worth'
+
+Q.80 (optionC): '(c) will not get their money’s worth'
+
+Q.80 (optionD): '(d) No substitution'
+
+Q.81 (questionText): 'Select the INCORRECTLY spelt word.'
+
+Q.81 (optionA): '(a) Allocation'
+
+Q.81 (optionB): '(b) Abismal'
+
+Q.81 (optionC): '(c) Aversion'
+
+Q.81 (optionD): '(d) Allegation'
+
+Q.82 (questionText): 'Select the most appropriate ANTONYM of the underlined word.\nIf you want to be a good detective, it helps to have an  inquisitive nature.'
+
+Q.82 (optionA): '(a) Comprehensive'
+
+Q.82 (optionB): '(b) Itemised'
+
+Q.82 (optionC): '(c) Intrusive'
+
+Q.82 (optionD): '(d) Disinterested'
+
+Q.83 (questionText): 'Select the option that can be used as a one-word substitute for the given group of\nwords.\nOne who does not show response to good or bad'
+
+Q.83 (optionA): '(a) Cynic'
+
+Q.83 (optionB): '(b) Phobic'
+
+Q.83 (optionC): '(c) Sceptic'
+
+Q.83 (optionD): '(d) Stoic'
+
+Q.84 (questionText): 'Given below are four jumbled sentences. Select the option that gives their correct\nlogical sequence.\nA. These can turn around to track stars with the rotation of Earth.\nB. Observatories are places to study place.\nC. They are mostly built on the mountain tops.\nD. Telescopes are placed in the dome-shaped roof of the building.'
+
+Q.84 (optionA): '(a) DCBA'
+
+Q.84 (optionB): '(b) CBDA'
+
+Q.84 (optionC): '(c) BCDA'
+
+Q.84 (optionD): '(d) ACDB'
+
+Q.85 (questionText): 'Select the correctly spelled sentence.'
+
+Q.85 (optionA): '(a) I will definitely attend the conference.'
+
+Q.85 (optionB): '(b) I will definetely attend the conference.'
+
+Q.85 (optionC): '(c) I will definately attend the conference.'
+
+Q.85 (optionD): '(d) I will definitly attend the conference.'
+
+Q.86 (questionText): 'Parts of a sentence are given below in jumbled order. Arrange the parts in the correct\norder to form a meaningful sentence.\n(O) as it was the last one of the evening\n(P) the city bus was overcrowded\n(Q) and this gave an opportunity\n(R) to the pickpockets\n(S) to try their skill'
+
+Q.86 (optionA): '(a) PSORQ'
+
+Q.86 (optionB): '(b) SRPOQ'
+
+Q.86 (optionC): '(c) SROPQ'
+
+Q.86 (optionD): '(d) POQRS'
+
+Q.87 (questionText): 'Select the most appropriate option to substitute the underlined segment in the given\nsentence.\nRaju’s job as a clerk seemed to be  bad at first because of the low salary, but resulted\nin something good happening later because it saved him from being unemployed.'
+
+Q.87 (optionA): '(a) a blessing in disguise'
+
+Q.87 (optionB): '(b) a boon in disguise'
+
+Q.87 (optionC): '(c) a jolt in disguise'
+
+Q.87 (optionD): '(d) a gift in disguise'
+
+Q.88 (questionText): 'Identify the most appropriate antonym of the given word.\nScary'
+
+Q.88 (optionA): '(a) awful'
+
+Q.88 (optionB): '(b) bright'
+
+Q.88 (optionC): '(c) comforting'
+
+Q.88 (optionD): '(d) Pristine'
+
+Q.89 (questionText): 'Select the most appropriate synonym of the given word.\nAbundant'
+
+Q.89 (optionA): '(a) Ample'
+
+Q.89 (optionB): '(b) Difficult'
+
+Q.89 (optionC): '(c) Scarce'
+
+Q.89 (optionD): '(d) Barren'
+
+Q.90 (questionText): 'Select the most appropriate synonym of the underlined word.\nI would love to  organise the farewell party at my house.'
+
+Q.90 (optionA): '(a) Arrange'
+
+Q.90 (optionB): '(b) Derange'
+
+Q.90 (optionC): '(c) Disorder'
+
+Q.90 (optionD): '(d) Confuse'
+
+Q.91 (questionText): 'Parts of the following sentence have been given as options. Select the option that\ncontains an error.\nEvery students in the hostel decided to travel to Delhi to witness the Republic Day\nparade.'
+
+Q.91 (optionA): '(a) Republic Day Parade.'
+
+Q.91 (optionB): '(b) to witness the'
+
+Q.91 (optionC): '(c) Every students in the hostel'
+
+Q.91 (optionD): '(d) decided to travel to Delhi'
+
+Q.92 (questionText): 'Select the option that expresses the given sentence in active voice.\nThe meal was not prepared by us.'
+
+Q.92 (optionA): '(a) We did not preparing the meal.'
+
+Q.92 (optionB): '(b) We did prepare the meal.'
+
+Q.92 (optionC): '(c) We did not prepare the meal.'
+
+Q.92 (optionD): '(d) We had not prepare the meal.'
+
+Q.93 (questionText): 'Select the most appropriate synonym of the given word.\nBerserk'
+
+Q.93 (optionA): '(a) Stubborn'
+
+Q.93 (optionB): '(b) Demented'
+
+Q.93 (optionC): '(c) Absurd'
+
+Q.93 (optionD): '(d) Lazy'
+
+Q.94 (questionText): 'The following sentence has been split into four segments. Identify the segment that\ncontains a grammatical error.\nBy this time next year / I will had graduated from college / and starting my first job / in\nthe field of marketing.'
+
+Q.94 (optionA): '(a) in the field of marketing'
+
+Q.94 (optionB): '(b) By this time next year'
+
+Q.94 (optionC): '(c) I will had graduated from college'
+
+Q.94 (optionD): '(d) and starting my first job'
+
+Q.95 (questionText): 'Select the most appropriate ANTONYM of the word in bold.\nElisabeth stood at the piano, which did nothing to allay his anxiety.'
+
+Q.95 (optionA): '(a) aggravate'
+
+Q.95 (optionB): '(b) mitigate'
+
+Q.95 (optionC): '(c) simplify'
+
+Q.95 (optionD): '(d) mollify'
+
+Q.96 (questionText): 'Select the most appropriate option to fill in blank number 1.'
+
+Q.96 (optionA): '(a) about'
+
+Q.96 (optionB): '(b) in'
+
+Q.96 (optionC): '(c) on'
+
+Q.96 (optionD): '(d) of'
+
+Q.97 (questionText): 'Select the most appropriate option to fill in blank number 2.'
+
+Q.97 (optionA): '(a) they’re'
+
+Q.97 (optionB): '(b) their'
+
+Q.97 (optionC): '(c) there'
+
+Q.97 (optionD): '(d) them'
+
+Q.98 (questionText): 'Select the most appropriate option to fill in blank number 3.'
+
+Q.98 (optionA): '(a) within'
+
+Q.98 (optionB): '(b) about'
+
+Q.98 (optionC): '(c) around'
+
+Q.98 (optionD): '(d) to'
+
+Q.99 (questionText): 'Select the most appropriate option to fill in blank number 4.'
+
+Q.99 (optionA): '(a) which'
+
+Q.99 (optionB): '(b) that'
+
+Q.99 (optionC): '(c) when'
+
+Q.99 (optionD): '(d) who'
+
+Q.100 (questionText): 'Select the most appropriate option to fill in blank number 5.'
+
+Q.100 (optionA): '(a) to'
+
+Q.100 (optionB): '(b) for'
+
+Q.100 (optionC): '(c) up'
+
+Q.100 (optionD): '(d) on'
+
