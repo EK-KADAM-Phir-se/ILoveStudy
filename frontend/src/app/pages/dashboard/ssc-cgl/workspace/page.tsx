@@ -45,12 +45,12 @@ function SscTestWorkspaceContent() {
   const [submitResult, setSubmitResult] = useState<any>(null);
   const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
 
-  // Per-Section Timer State (25 Mins = 1500 Seconds per section, 60 Mins Total)
+  // Per-Section Timer State (15 Mins = 900 Seconds per section, 60 Mins Total)
   const [sectionTimeLeft, setSectionTimeLeft] = useState<Record<string, number>>({
-    "General Intelligence and Reasoning": 1500,
-    "General Awareness": 1500,
-    "Quantitative Aptitude": 1500,
-    "English Comprehension": 1500
+    "General Intelligence and Reasoning": 900,
+    "General Awareness": 900,
+    "Quantitative Aptitude": 900,
+    "English Comprehension": 900
   });
 
   // Proctoring states
@@ -254,7 +254,7 @@ function SscTestWorkspaceContent() {
       }));
 
       setSectionTimeLeft((prev) => {
-        const currentSecRem = prev[selectedSubject] ?? 1500;
+        const currentSecRem = prev[selectedSubject] ?? 900;
         return {
           ...prev,
           [selectedSubject]: Math.max(0, currentSecRem - 1)
@@ -264,6 +264,33 @@ function SscTestWorkspaceContent() {
 
     return () => clearInterval(timer);
   }, [currentQuestionIndex, isExamActive, questions, selectedSubject, showSubmitModal, submitSuccess]);
+
+  // Auto-advance to next section when current section timer hits 0
+  useEffect(() => {
+    if (!isExamActive || questions.length === 0 || showSubmitModal || submitSuccess) return;
+    const currentRem = sectionTimeLeft[selectedSubject];
+    if (currentRem === 0) {
+      const SECTION_ORDER = [
+        "General Intelligence and Reasoning",
+        "General Awareness",
+        "Quantitative Aptitude",
+        "English Comprehension"
+      ];
+      const currentIndex = SECTION_ORDER.indexOf(selectedSubject);
+      if (currentIndex < SECTION_ORDER.length - 1) {
+        const nextSubject = SECTION_ORDER[currentIndex + 1];
+        alert(`Time's up for ${selectedSubject}! Switching to ${nextSubject}.`);
+        const firstQIdx = questions.findIndex(q => q.subject === nextSubject);
+        if (firstQIdx !== -1) {
+          setCurrentQuestionIndex(firstQIdx);
+        }
+        setSelectedSubject(nextSubject);
+      } else {
+        alert("Time's up for the final section! Your exam will be submitted automatically.");
+        handleFinalSubmit();
+      }
+    }
+  }, [sectionTimeLeft, selectedSubject, isExamActive, questions]);
 
   // Master Overall Exam Timer End
   useEffect(() => {
@@ -350,24 +377,22 @@ function SscTestWorkspaceContent() {
     notVisited: subjectQuestions.filter(q => !visitedQuestions.has(q.id)).length
   };
 
-  const activeSectionRemSeconds = sectionTimeLeft[selectedSubject] ?? 1500;
+  const activeSectionRemSeconds = sectionTimeLeft[selectedSubject] ?? 900;
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
       const nextQ = questions[currentQuestionIndex + 1];
-      if (nextQ && nextQ.subject !== selectedSubject) {
-        setSelectedSubject(nextQ.subject);
+      if (nextQ && nextQ.subject === selectedSubject) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
       }
     }
   };
 
   const handlePrevQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
       const prevQ = questions[currentQuestionIndex - 1];
-      if (prevQ && prevQ.subject !== selectedSubject) {
-        setSelectedSubject(prevQ.subject);
+      if (prevQ && prevQ.subject === selectedSubject) {
+        setCurrentQuestionIndex(currentQuestionIndex - 1);
       }
     }
   };
@@ -380,7 +405,10 @@ function SscTestWorkspaceContent() {
   const handleGridQuestionClick = (questionId: string) => {
     const idx = questions.findIndex(q => q.id === questionId);
     if (idx !== -1) {
-      setCurrentQuestionIndex(idx);
+      const q = questions[idx];
+      if (q && q.subject === selectedSubject) {
+        setCurrentQuestionIndex(idx);
+      }
     }
   };
 
@@ -450,7 +478,7 @@ function SscTestWorkspaceContent() {
               <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider">SSC CGL Tier-I Instructions</h4>
               <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
                 <li>Total Questions: 100 | Overall Duration: <strong>60 Minutes</strong></li>
-                <li>Per-Section Time Target: <strong>25 Minutes</strong> per section</li>
+                <li>Per-Section Time Limit: <strong>15 Minutes</strong> per section (No skipping allowed once started)</li>
                 <li>Marking Scheme: <strong>+2.0 Marks</strong> for Correct, <strong>-0.5 Marks</strong> for Wrong</li>
                 <li>Full Screen mode &amp; Screenshot protection enforced.</li>
               </ul>
@@ -489,12 +517,12 @@ function SscTestWorkspaceContent() {
           <h1 className="text-sm font-bold text-slate-200 hidden md:block">{name}</h1>
         </div>
 
-        {/* Live Timers Display (Overall 60m + Active Section 25m) */}
+        {/* Live Timers Display (Overall 60m + Active Section 15m) */}
         <div className="flex items-center space-x-4 sm:space-x-6">
           {/* Active Section Timer */}
           <div className="hidden sm:flex items-center space-x-2 bg-slate-950 px-3.5 py-1.5 rounded-lg border border-slate-800 shadow-inner">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Section:</span>
-            <span className={`font-mono text-sm font-extrabold tracking-wider ${activeSectionRemSeconds < 300 ? 'text-amber-400 animate-pulse' : 'text-teal-400'}`}>
+            <span className={`font-mono text-sm font-extrabold tracking-wider ${activeSectionRemSeconds < 180 ? 'text-amber-400 animate-pulse' : 'text-teal-400'}`}>
               {formatTime(activeSectionRemSeconds)}
             </span>
           </div>
@@ -538,17 +566,17 @@ function SscTestWorkspaceContent() {
           <div className="flex items-center space-x-2 border-b border-slate-800 bg-slate-900/50 px-6 py-2 shrink-0 overflow-x-auto">
             {currentSubjectList.map((subject) => {
               const count = questions.filter(q => q.subject === subject).length;
-              const secRem = sectionTimeLeft[subject] ?? 1500;
+              const secRem = sectionTimeLeft[subject] ?? 900;
               const isSelected = selectedSubject === subject;
 
               return (
                 <button
                   key={subject}
-                  onClick={() => setSelectedSubject(subject)}
+                  disabled={!isSelected}
                   className={`px-4 py-2 rounded-lg text-xs font-bold transition duration-150 flex items-center space-x-2 shrink-0 ${
                     isSelected
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                      ? 'bg-emerald-600 text-white shadow-md cursor-default'
+                      : 'text-slate-500 bg-slate-900/40 opacity-50 cursor-not-allowed'
                   }`}
                 >
                   <span>{subject} ({count})</span>
