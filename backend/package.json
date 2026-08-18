@@ -13,7 +13,8 @@
   },
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "build": "npm run build"
   },
   "devDependencies": {
     "nodemon": "^3.1.14",
