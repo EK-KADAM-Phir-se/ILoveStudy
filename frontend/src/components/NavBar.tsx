@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { GraduationCap, User, ScanLine } from "lucide-react";
+import { GraduationCap, User, ScanLine, Eye, LogIn } from "lucide-react";
+import { isGuestUser, clearGuestMode } from "@/src/lib/authUtils";
 
 interface NavBarProps {
   displayName?: string;
@@ -24,9 +25,11 @@ export default function NavBar({
   const router   = useRouter();
   const pathname = usePathname();
 
-  // Read name from localStorage when not provided via prop
+  const [isGuest, setIsGuest] = useState(false);
   const [localName, setLocalName] = useState("Profile");
+
   useEffect(() => {
+    setIsGuest(isGuestUser());
     const saved = localStorage.getItem("displayName");
     if (saved) setLocalName(saved);
   }, []);
@@ -68,6 +71,11 @@ export default function NavBar({
       localStorage.setItem("theme", "light");
     }
     if (onToggleDark) onToggleDark();
+  };
+
+  const handleLoginClick = () => {
+    clearGuestMode();
+    router.push("/login");
   };
 
   const isActive = (href: string) =>
@@ -118,6 +126,13 @@ export default function NavBar({
           >
             <span>🏢</span> Organisation
           </button>
+
+          {/* Guest Mode Indicator */}
+          {isGuest && (
+            <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              <Eye size={12} /> Guest Tour
+            </span>
+          )}
         </div>
 
         {/* ── Spacer ── */}
@@ -126,7 +141,7 @@ export default function NavBar({
         {/* ── Right Actions ── */}
         <div className="flex items-center gap-2 shrink-0">
           {/* Streak */}
-          {onStreakClick && (
+          {onStreakClick && !isGuest && (
             <button
               onClick={onStreakClick}
               className={`flex items-center gap-1.5 h-8 px-3 rounded-full border text-xs font-extrabold cursor-pointer transition-all hover:scale-105 ${
@@ -149,14 +164,24 @@ export default function NavBar({
             {isDark ? "☀️" : "🌙"}
           </button>
 
-          {/* Profile pill — matches ilovepdf "Sign up" red pill */}
-          <button
-            onClick={() => router.push("/profile")}
-            className="h-8 px-4 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold text-xs tracking-wide uppercase shadow-sm transition cursor-pointer"
-          >
-            <User size={13} />
-            <span className="hidden sm:inline">{displayName || "Profile"}</span>
-          </button>
+          {/* Profile pill or Log In button */}
+          {isGuest ? (
+            <button
+              onClick={handleLoginClick}
+              className="h-8 px-4 flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-full font-bold text-xs tracking-wide uppercase shadow-sm transition cursor-pointer"
+            >
+              <LogIn size={13} />
+              <span>Log In</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => router.push("/profile")}
+              className="h-8 px-4 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold text-xs tracking-wide uppercase shadow-sm transition cursor-pointer"
+            >
+              <User size={13} />
+              <span className="hidden sm:inline">{displayName || "Profile"}</span>
+            </button>
+          )}
 
           {/* Grid dots — apps menu */}
           <button className="h-8 w-8 flex items-center justify-center rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 transition cursor-pointer text-gray-500 dark:text-slate-400">

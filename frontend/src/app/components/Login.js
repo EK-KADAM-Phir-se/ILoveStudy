@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 import { syncUserProfile } from '../../lib/profileApi';
+import { enableGuestMode, clearGuestMode } from '../../lib/authUtils';
 
 const Login = () => {
   const router = useRouter();
@@ -16,6 +17,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const persistSession = async (firebaseUser, token) => {
+    clearGuestMode();
     const userEmail = firebaseUser.email;
     if (!userEmail) throw new Error('No email found on account.');
 
@@ -30,6 +32,11 @@ const Login = () => {
     if (synced?.token) {
       localStorage.setItem('token', synced.token);
     }
+  };
+
+  const handleGuestTour = () => {
+    enableGuestMode();
+    router.push('/pages/dashboard');
   };
 
   const handleSubmit = async (e) => {
@@ -145,7 +152,7 @@ const Login = () => {
         </button>
       </form>
 
-      <div className="flex items-center my-5">
+      <div className="flex items-center my-4">
         <div className="flex-grow border-t border-slate-800"></div>
         <span className="flex-shrink mx-4 text-slate-500 text-xs uppercase tracking-wider font-semibold">or</span>
         <div className="flex-grow border-t border-slate-800"></div>
@@ -155,7 +162,7 @@ const Login = () => {
         type="button"
         onClick={handleGoogleSignIn}
         disabled={loading}
-        className="w-full flex items-center justify-center bg-slate-900 text-slate-300 border border-slate-800 p-3 rounded-lg hover:bg-slate-850 hover:text-white hover:border-slate-700 disabled:opacity-60 transition-all duration-200 font-medium text-sm shadow-sm active:scale-[0.98] cursor-pointer transform hover:-translate-y-0.5 gap-2"
+        className="w-full flex items-center justify-center bg-slate-900 text-slate-300 border border-slate-800 p-3 rounded-lg hover:bg-slate-850 hover:text-white hover:border-slate-700 disabled:opacity-60 transition-all duration-200 font-medium text-sm shadow-sm active:scale-[0.98] cursor-pointer transform hover:-translate-y-0.5 gap-2 mb-3"
       >
         <svg className="w-5 h-5 mr-1" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
           <g transform="matrix(1, 0, 0, 1, 0, 0)">

@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import NavBar from "../../../../components/NavBar";
 
+import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
+import { isGuestUser } from "@/src/lib/authUtils";
+
 /* ─────────────────────────── Tool card data ─────────────────────────── */
 const TOOLS = [
   {
@@ -84,6 +87,7 @@ export default function CreateTestPage() {
 
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeTool, setActiveTool] = useState<string | null>(null);
+  const [showGuestModal, setShowGuestModal] = useState(false);
 
   // Form states
   const [testName, setTestName] = useState("");
@@ -104,7 +108,8 @@ export default function CreateTestPage() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) { router.push("/login"); return; }
+    const isGuest = isGuestUser();
+    if (!token && !isGuest) { router.push("/login"); return; }
 
     if (typeof window !== "undefined" && !(window as any).pdfjsLib) {
       const script = document.createElement("script");
@@ -219,6 +224,10 @@ export default function CreateTestPage() {
   /* ── submit (AI parse) ── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
     setError(""); setSuccess("");
     if (!testName.trim()) { setError("Enter a test name."); return; }
     if (!paperText.trim()) { setError("No content to process."); return; }
@@ -249,6 +258,10 @@ export default function CreateTestPage() {
 
   /* ── launch from JSON ── */
   const handleLaunchFromJSON = async () => {
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
     setError(""); setSuccess("");
     if (!testName.trim()) { setError("Enter a test name."); return; }
     if (!jsonPreview.trim()) { setError("JSON preview is empty."); return; }
@@ -526,6 +539,14 @@ export default function CreateTestPage() {
           <p className="text-indigo-500 text-sm font-medium animate-pulse">{loadingStatus}</p>
         </div>
       )}
+
+      {/* ── Guest Restriction Modal ── */}
+      <GuestRestrictionModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+        title="Custom Test Generator Restricted"
+        message="You are exploring in Guest Tour mode. To upload PDFs, import JSONs, or generate custom AI test papers, please log in or register."
+      />
     </div>
   );
 }

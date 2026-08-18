@@ -26,9 +26,14 @@ import {
 } from "@/src/lib/orgApi";
 import { fetchProfile } from "@/src/lib/profileApi";
 import { supabase } from "@/src/lib/supabase";
+import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
+import { isGuestUser } from "@/src/lib/authUtils";
 
 export default function OrganisationStudentPage() {
   const router = useRouter();
+
+  // Guest restriction modal state
+  const [showGuestModal, setShowGuestModal] = useState(false);
 
   // Mode switcher: "student" vs "organiser"
   const [activeTab, setActiveTab] = useState<"student" | "organiser">("student");
@@ -138,6 +143,10 @@ export default function OrganisationStudentPage() {
 
   const handleCreateRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
     if (!selectedOrgId) {
       alert("Please select or register an institution.");
       return;
@@ -219,6 +228,10 @@ export default function OrganisationStudentPage() {
 
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
     if (!accessCode.trim()) {
       setError("Please enter your examination access code.");
       return;
@@ -247,6 +260,10 @@ export default function OrganisationStudentPage() {
   };
 
   const handleStartExam = () => {
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
     if (!verifiedTest) return;
     if (!studentName.trim()) {
       setError("Please enter your full name before starting the exam.");
@@ -1121,6 +1138,13 @@ export default function OrganisationStudentPage() {
           </div>
         </div>
       )}
+
+      <GuestRestrictionModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+        title="Organisation Portal Restricted"
+        message="You are exploring in Guest Tour mode. To verify test access codes, attempt institution exams, or manage school tests, please sign in or register."
+      />
     </div>
   );
 }

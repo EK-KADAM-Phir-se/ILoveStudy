@@ -4,6 +4,8 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "../../../../components/NavBar";
 import Footer from "../../../../components/Footer";
+import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
+import { isGuestUser } from "@/src/lib/authUtils";
 
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
@@ -39,6 +41,7 @@ function SscCglDashboardContent() {
   const [expandedYear, setExpandedYear] = useState<number | null>(2025);
   const [dbShifts, setDbShifts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
 
   const years = [2025, 2024, 2023, 2022];
 
@@ -64,6 +67,10 @@ function SscCglDashboardContent() {
   }, []);
 
   const handleStartExam = (name: string, year: number, shiftId?: string) => {
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
     if (shiftId) {
       router.push(
         `/pages/dashboard/ssc-cgl/workspace?shiftId=${shiftId}&name=${encodeURIComponent(name)}&year=${year}`
@@ -238,6 +245,12 @@ function SscCglDashboardContent() {
           })}
         </div>
       </main>
+      <GuestRestrictionModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+        title="SSC CGL Exam Restricted"
+        message="You are exploring in Guest Tour mode. To attempt SSC CGL past papers, GK & Quant sectionals, and full evaluation, please sign in or register."
+      />
       <Footer />
     </div>
   );

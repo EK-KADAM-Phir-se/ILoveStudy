@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import NavBar from "../../../../components/NavBar";
 import Footer from "../../../../components/Footer";
+import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
+import { isGuestUser } from "@/src/lib/authUtils";
 
 /* ─────────────────────────── Static data ─────────────────────────── */
 const janExamDays = [22, 23, 24, 28, 29];
@@ -49,6 +51,7 @@ function JeeExamPageContent() {
   const [dbShifts,      setDbShifts]      = useState<any[]>([]);
   const [selectedYear,  setSelectedYear]  = useState<number | null>(null);
   const [activeAttempt, setActiveAttempt] = useState<"january" | "april">("january");
+  const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
 
   const years = Array.from({ length: 6 }, (_, i) => 2026 - i);
 
@@ -82,6 +85,10 @@ function JeeExamPageContent() {
   };
 
   const handleStart = (name: string, year: number, shiftId?: string) => {
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
     if (shiftId) {
       router.push(`/pages/dashboard/jee-mains/workspace?shiftId=${shiftId}&name=${encodeURIComponent(name)}&year=${year}`);
     } else {
@@ -281,6 +288,12 @@ function JeeExamPageContent() {
           </div>
         </div>
       )}
+      <GuestRestrictionModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+        title="JEE Mains Exam Restricted"
+        message="You are exploring in Guest Tour mode. To attempt JEE Mains past papers and track your scores, please log in or create a free account."
+      />
       <Footer />
     </div>
   );

@@ -16,6 +16,9 @@ import {
   CheckCircle2, Calendar, X, Zap, Building2, Dna,
 } from "lucide-react";
 
+import { isGuestUser, clearGuestMode } from "@/src/lib/authUtils";
+import { LogIn, Eye } from "lucide-react";
+
 export default function GeneralDashboard() {
   const router = useRouter();
 
@@ -23,6 +26,7 @@ export default function GeneralDashboard() {
   const [loading,         setLoading]         = useState(false);
   const [displayName,     setDisplayName]     = useState("Student");
   const [mounted,         setMounted]         = useState(false);
+  const [isGuest,         setIsGuest]         = useState(false);
   const [darkMode,        setDarkMode]        = useState(false);
   const [showStreakModal, setShowStreakModal]  = useState(false);
   const [checkingIn,      setCheckingIn]      = useState(false);
@@ -39,14 +43,24 @@ export default function GeneralDashboard() {
   // ── Mount guard (client-only work goes here) ──
   useEffect(() => {
     setMounted(true);
-    const saved = localStorage.getItem("displayName");
-    if (saved) setDisplayName(saved);
+    const guestStatus = isGuestUser();
+    setIsGuest(guestStatus);
+    if (guestStatus) {
+      setDisplayName("Guest Explorer");
+    } else {
+      const saved = localStorage.getItem("displayName");
+      if (saved) setDisplayName(saved);
+    }
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
     const token = localStorage.getItem("token");
-    if (!token) { router.push("/login"); return; }
+    const guestStatus = isGuestUser();
+    setIsGuest(guestStatus);
+
+    if (!token && !guestStatus) { router.push("/login"); return; }
+    if (guestStatus) { setLoading(false); return; }
 
     fetchProfile()
       .then(prof => {
@@ -264,6 +278,29 @@ export default function GeneralDashboard() {
               className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold shadow-lg shadow-orange-500/25 hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
               <Sparkles size={18} />
               <span>{checkingIn ? "Recording…" : "Check-In Completed ✨"}</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Guest Tour Banner ── */}
+      {isGuest && (
+        <div className="bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-blue-500/10 border-b border-amber-500/20 px-4 py-3 text-center">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-2">
+              <span className="p-1 rounded-md bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold">
+                <Eye size={16} />
+              </span>
+              <span>
+                <strong>Guest Tour Mode:</strong> You are exploring an overview of ILoveStudy. Sign in to attempt tests and join organizations.
+              </span>
+            </div>
+            <button
+              onClick={() => { clearGuestMode(); router.push("/login"); }}
+              className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs tracking-wide uppercase transition shadow-sm shrink-0 flex items-center gap-1 cursor-pointer"
+            >
+              <LogIn size={13} />
+              Log In Now
             </button>
           </div>
         </div>

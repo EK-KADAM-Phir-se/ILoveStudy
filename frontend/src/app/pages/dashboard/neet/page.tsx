@@ -8,6 +8,9 @@ import {
 } from "lucide-react";
 import NavBar from "@/src/components/NavBar";
 
+import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
+import { isGuestUser } from "@/src/lib/authUtils";
+
 const SUBJECT_TAGS = [
   { label: "Physics", icon: <Atom size={13} />, color: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
   { label: "Chemistry", icon: <FlaskConical size={13} />, color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" },
@@ -19,6 +22,7 @@ function NeetExamPageContent() {
   const [dbShifts, setDbShifts] = useState<any[]>([]);
   const [selectedYear, setSelectedYear] = useState<number>(2023);
   const [loading, setLoading] = useState(true);
+  const [showGuestModal, setShowGuestModal] = useState(false);
 
   const years = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016];
 
@@ -41,6 +45,10 @@ function NeetExamPageContent() {
   };
 
   const handleStartExam = (shift: any) => {
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
     const shiftYear = new Date(shift.date).getUTCFullYear() || 2023;
     router.push(
       `/pages/dashboard/neet/workspace?shiftId=${encodeURIComponent(
@@ -240,6 +248,12 @@ function NeetExamPageContent() {
           )}
         </div>
       </main>
+      <GuestRestrictionModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+        title="NEET Examination Restricted"
+        message="You are exploring in Guest Tour mode. To attempt NEET mock tests, 720-mark score tracking, and detailed answer keys, please log in or sign up."
+      />
     </div>
   );
 }

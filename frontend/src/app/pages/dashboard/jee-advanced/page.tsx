@@ -4,15 +4,26 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NavBar from '../../../../components/NavBar';
 import Footer from '../../../../components/Footer';
+import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
+import { isGuestUser } from "@/src/lib/authUtils";
 
 export default function JeeAdvancedDashboard() {
   const router = useRouter();
   const [selectedPaper, setSelectedPaper] = useState<string | null>(null);
+  const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
 
   const papers = [
     { id: "paper-1", name: "Paper 1 (09:00 AM - 12:00 PM)", status: "Ready to Launch", questions: 54 },
     { id: "paper-2", name: "Paper 2 (02:30 PM - 05:30 PM)", status: "Ready to Launch", questions: 54 }
   ];
+
+  const handleInitialize = () => {
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
+    alert("Launching JEE Advanced Workspace...");
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors flex flex-col justify-between">
@@ -43,12 +54,18 @@ export default function JeeAdvancedDashboard() {
               ))}
             </div>
 
-            <button disabled={!selectedPaper} className={`w-full py-3.5 rounded-xl font-bold text-white transition ${selectedPaper ? 'bg-indigo-600 hover:bg-indigo-700 shadow-md' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'}`}>
+            <button onClick={handleInitialize} disabled={!selectedPaper} className={`w-full py-3.5 rounded-xl font-bold text-white transition ${selectedPaper ? 'bg-indigo-600 hover:bg-indigo-700 shadow-md cursor-pointer' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'}`}>
               Initialize Heavy Workspace
             </button>
           </div>
         </div>
       </div>
+      <GuestRestrictionModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+        title="JEE Advanced Restricted"
+        message="You are exploring in Guest Tour mode. Sign in to attempt JEE Advanced Paper 1 and Paper 2 exams."
+      />
       <Footer />
     </div>
   );

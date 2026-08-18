@@ -1,6 +1,17 @@
+"use client";
+
 import Login from '../components/Login';
+import { useRouter } from 'next/navigation';
+import { enableGuestMode } from '@/src/lib/authUtils';
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const handleSkip = () => {
+    enableGuestMode();
+    router.push('/pages/dashboard');
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center relative overflow-hidden px-4">
       {/* Decorative Background Glow Blobs */}
@@ -8,6 +19,13 @@ export default function LoginPage() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[120px] pointer-events-none"></div>
       
       <div className="max-w-md w-full bg-slate-900/60 backdrop-blur-xl border border-slate-800 p-8 rounded-2xl shadow-2xl relative z-10 hover:border-slate-700/30 transition-all duration-300">
+        <button
+          onClick={handleSkip}
+          className="absolute top-5 right-6 text-slate-400 hover:text-slate-200 text-xs font-semibold tracking-wide uppercase transition cursor-pointer"
+        >
+          Skip &rarr;
+        </button>
+
         <div className="text-center mb-6">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-wide bg-gradient-to-r from-blue-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(79,70,229,0.15)]">
             ILoveStudy

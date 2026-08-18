@@ -19,6 +19,8 @@ import {
 } from "../../lib/profileApi";
 import { MyErrorReports } from "../../components/MyErrorReports";
 
+import { isGuestUser, clearGuestMode } from "@/src/lib/authUtils";
+
 export default function ProfilePage() {
   const router = useRouter();
 
@@ -75,9 +77,30 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const isGuest = isGuestUser();
 
-    if (!token) {
+    if (!token && !isGuest) {
       router.push("/login");
+      return;
+    }
+
+    if (isGuest) {
+      setProfile({
+        id: "guest",
+        email: "guest@ilovestudy.explore",
+        fullName: "Guest Explorer",
+        targetExam: "JEE Mains",
+        age: null,
+        school: "Website Tour Mode",
+        avatarUrl: null,
+      });
+      setForm({
+        fullName: "Guest Explorer",
+        age: "",
+        school: "Website Tour Mode",
+        targetExam: "JEE Mains",
+      });
+      setLoading(false);
       return;
     }
 

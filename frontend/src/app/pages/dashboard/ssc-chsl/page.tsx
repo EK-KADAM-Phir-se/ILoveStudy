@@ -4,10 +4,21 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NavBar from '../../../../components/NavBar';
 import Footer from '../../../../components/Footer';
+import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
+import { isGuestUser } from "@/src/lib/authUtils";
 
 export default function SscChslDashboard() {
   const router = useRouter();
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
+
+  const handleBeginRun = () => {
+    if (isGuestUser()) {
+      setShowGuestModal(true);
+      return;
+    }
+    alert("Starting SSC CHSL Speed Run...");
+  };
 
   return (
     <div className="min-h-screen bg-orange-50/30 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors flex flex-col justify-between">
@@ -28,12 +39,18 @@ export default function SscChslDashboard() {
               </button>
             </div>
 
-            <button disabled={!selectedSession} className={`w-full py-3.5 rounded-xl font-bold text-white transition ${selectedSession ? 'bg-orange-500 hover:bg-orange-600 shadow-md cursor-pointer' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'}`}>
+            <button onClick={handleBeginRun} disabled={!selectedSession} className={`w-full py-3.5 rounded-xl font-bold text-white transition ${selectedSession ? 'bg-orange-500 hover:bg-orange-600 shadow-md cursor-pointer' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'}`}>
               Begin Rapid Exam Run
             </button>
           </div>
         </div>
       </div>
+      <GuestRestrictionModal
+        isOpen={showGuestModal}
+        onClose={() => setShowGuestModal(false)}
+        title="SSC CHSL Exam Restricted"
+        message="You are exploring in Guest Tour mode. Sign in to begin SSC CHSL speed runs and save your results."
+      />
       <Footer />
     </div>
   );
