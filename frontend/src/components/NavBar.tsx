@@ -97,7 +97,7 @@ export default function NavBar({
           {/* Custom Test pill — right next to logo */}
           <button
             onClick={() => router.push("/pages/dashboard/create-test")}
-            className={`hidden sm:flex items-center gap-1.5 px-4 py-1.5 text-xs font-extrabold tracking-wide uppercase rounded-full transition cursor-pointer border ${
+            className={`hidden sm:flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium tracking-wide uppercase rounded-full transition cursor-pointer border ${
               isActive("/pages/dashboard/create-test")
                 ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
                 : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-500 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
@@ -110,25 +110,13 @@ export default function NavBar({
           {/* Organisation Portal Link */}
           <button
             onClick={() => router.push("/pages/dashboard/organisation")}
-            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-extrabold tracking-wide uppercase rounded-full transition cursor-pointer border ${
+            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium tracking-wide uppercase rounded-full transition cursor-pointer border ${
               isActive("/pages/dashboard/organisation")
                 ? "bg-blue-600 text-white border-blue-600"
                 : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-500 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
             }`}
           >
             <span>🏢</span> Organisation
-          </button>
-
-          {/* Admin Reports link */}
-          <button
-            onClick={() => router.push("/admin/reports")}
-            className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold tracking-wide uppercase rounded-full transition cursor-pointer border ${
-              isActive("/admin/reports")
-                ? "bg-indigo-600 text-white border-indigo-600"
-                : "bg-slate-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
-            }`}
-          >
-            <span>🚩</span> Reports
           </button>
         </div>
 

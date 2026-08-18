@@ -12,6 +12,10 @@ router.get('/admin/organizations', orgController.listOrganizations);
 
 // Test creation & listing
 router.post('/admin/tests', orgController.createOrgTest);
+router.post('/admin/tests/validate-json', orgController.validateOrgTestJSON);
+router.post('/admin/tests/import-json', orgController.importOrgTestFromJSON);
+router.post('/admin/tests/:testId/duplicate', orgController.duplicateOrgTest);
+router.patch('/admin/tests/:testId/status', orgController.updateOrgTestStatus);
 router.get('/admin/tests', orgController.listOrgTests);
 router.get('/admin/tests/:testId', orgController.getOrgTestDetails);
 
@@ -24,6 +28,12 @@ router.get('/admin/check-access', orgController.checkAdminAccess);
 router.get('/admin/admins', orgController.listAdminEmails);
 router.post('/admin/admins', orgController.addAdminEmail);
 router.delete('/admin/admins/:id', orgController.removeAdminEmail);
+
+// Test Request & PDF Workflow (Organiser & Admin)
+router.post('/organiser/requests', orgController.createOrgTestRequest);
+router.get('/organiser/requests', orgController.listOrganiserTestRequests);
+router.get('/admin/requests', orgController.listAdminTestRequests);
+router.delete('/requests/:requestId', orgController.deleteOrgTestRequest);
 
 // -------------------------------------------------------------
 // Student Endpoints (Code-based exam access)

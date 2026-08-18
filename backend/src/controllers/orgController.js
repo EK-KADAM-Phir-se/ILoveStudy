@@ -184,6 +184,446 @@ exports.createOrgTest = async (req, res) => {
   }
 };
 
+// -------------------------------------------------------------
+// JSON TEST IMPORT & LIFECYCLE MANAGEMENT
+// -------------------------------------------------------------
+
+function validateTestJSONData(jsonInput) {
+  const errors = [];
+  let data = jsonInput;
+
+  if (typeof jsonInput === 'string') {
+    try {
+      data = JSON.parse(jsonInput);
+    } catch (e) {
+      return { valid: false, errors: ["Invalid JSON syntax: " + e.message] };
+    }
+  }
+
+  if (!data || typeof data !== 'object') {
+    return { valid: false, errors: ["JSON content must be a valid JSON object."] };
+  }
+
+  const testObj = (data.test && typeof data.test === 'object') ? data.test : data;
+
+  const title = (testObj.title || testObj.name || "").toString().trim();
+  if (!title) {
+    errors.push("Test: 'title' is required and must be a non-empty string.");
+  }
+
+  const durationMinutes = parseInt(testObj.duration_minutes ?? testObj.durationMinutes ?? testObj.duration, 10);
+  if (isNaN(durationMinutes) || durationMinutes <= 0) {
+    errors.push("Test: 'duration_minutes' must be a positive number greater than 0.");
+  }
+
+  const scheduledStart = testObj.scheduled_start || testObj.startTime || null;
+  const scheduledEnd = testObj.scheduled_end || testObj.endTime || null;
+
+  if (scheduledStart && isNaN(new Date(scheduledStart).getTime())) {
+    errors.push("Test: 'scheduled_start' is not a valid datetime string.");
+  }
+
+  if (scheduledEnd && isNaN(new Date(scheduledEnd).getTime())) {
+    errors.push("Test: 'scheduled_end' is not a valid datetime string.");
+  }
+
+  if (scheduledStart && scheduledEnd && !isNaN(new Date(scheduledStart).getTime()) && !isNaN(new Date(scheduledEnd).getTime())) {
+    if (new Date(scheduledEnd) <= new Date(scheduledStart)) {
+      errors.push("Test: 'scheduled_end' must be strictly after 'scheduled_start'.");
+    }
+  }
+
+  const questions = testObj.questions;
+  if (!Array.isArray(questions) || questions.length === 0) {
+    errors.push("Test: 'questions' must be a non-empty array of question objects.");
+  } else {
+    const questionIdsSeen = new Set();
+
+    questions.forEach((q, idx) => {
+      const qNum = idx + 1;
+      const qId = (q.question_id || q.id || `q${qNum}`).toString().trim();
+
+      if (questionIdsSeen.has(qId)) {
+        errors.push(`Question ${qNum} (ID '${qId}'): Duplicate question_id '${qId}'. Question IDs must be unique.`);
+      } else {
+        questionIdsSeen.add(qId);
+      }
+
+      const qText = (q.question_text || q.questionText || q.question || "").toString().trim();
+      if (!qText) {
+        errors.push(`Question ${qNum} (ID '${qId}'): 'question_text' is missing or empty.`);
+      }
+
+      let optionList = [];
+      if (Array.isArray(q.options) && q.options.length > 0) {
+        const optIdsSeen = new Set();
+        q.options.forEach((opt, optIdx) => {
+          let optId = "";
+          let optText = "";
+          if (typeof opt === 'object' && opt !== null) {
+            optId = (opt.id || String.fromCharCode(65 + optIdx)).toString().trim().toUpperCase();
+            optText = (opt.text || opt.value || "").toString().trim();
+          } else {
+            optId = String.fromCharCode(65 + optIdx);
+            optText = String(opt).trim();
+          }
+          if (optIdsSeen.has(optId)) {
+            errors.push(`Question ${qNum} (ID '${qId}'): Duplicate option ID '${optId}'.`);
+          } else {
+            optIdsSeen.add(optId);
+          }
+          if (!optText) {
+            errors.push(`Question ${qNum} (ID '${qId}'): Option '${optId}' text is empty.`);
+          }
+          optionList.push({ id: optId, text: optText });
+        });
+      } else {
+        const optA = (q.optionA || "").toString().trim();
+        const optB = (q.optionB || "").toString().trim();
+        const optC = (q.optionC || "").toString().trim();
+        const optD = (q.optionD || "").toString().trim();
+
+        if (optA) optionList.push({ id: "A", text: optA });
+        if (optB) optionList.push({ id: "B", text: optB });
+        if (optC) optionList.push({ id: "C", text: optC });
+        if (optD) optionList.push({ id: "D", text: optD });
+      }
+
+      if (optionList.length < 2) {
+        errors.push(`Question ${qNum} (ID '${qId}'): Must provide at least 2 options.`);
+      }
+
+      let correctAnswers = [];
+      if (Array.isArray(q.correct_answer)) {
+        correctAnswers = q.correct_answer.map(a => String(a).trim().toUpperCase());
+      } else if (q.correct_answer !== undefined && q.correct_answer !== null) {
+        correctAnswers = [String(q.correct_answer).trim().toUpperCase()];
+      } else if (q.correctOption !== undefined && q.correctOption !== null) {
+        correctAnswers = [String(q.correctOption).trim().toUpperCase()];
+      }
+
+      if (correctAnswers.length === 0 || !correctAnswers[0]) {
+        errors.push(`Question ${qNum} (ID '${qId}'): 'correct_answer' is missing.`);
+      } else {
+        const availableOptIds = optionList.map(o => o.id);
+        correctAnswers.forEach(ans => {
+          if (!availableOptIds.includes(ans)) {
+            errors.push(`Question ${qNum} (ID '${qId}'): correct_answer "${ans}" does not exist in available options (${availableOptIds.join(', ')}).`);
+          }
+        });
+      }
+
+      const marksVal = parseFloat(q.marks ?? q.positiveMarks ?? testObj.total_marks_per_question ?? 1);
+      if (isNaN(marksVal) || marksVal < 0) {
+        errors.push(`Question ${qNum} (ID '${qId}'): 'marks' must be a valid non-negative number.`);
+      }
+    });
+  }
+
+  const valid = errors.length === 0;
+
+  let summary = null;
+  if (testObj && Array.isArray(questions)) {
+    const totalQuestions = questions.length;
+    const posMarksDefault = parseFloat(testObj.total_marks_per_question || 1);
+    const totalMarks = testObj.total_marks ? parseFloat(testObj.total_marks) : questions.reduce((sum, q) => sum + parseFloat(q.marks ?? q.positiveMarks ?? posMarksDefault), 0);
+    const negMarking = testObj.negative_marking !== undefined ? Boolean(testObj.negative_marking) : true;
+    const negVal = parseFloat(testObj.negative_marks_per_wrong_answer ?? testObj.negative_marks ?? 0.25);
+
+    summary = {
+      title,
+      description: testObj.description || "",
+      examType: testObj.exam_type || testObj.subject || "General",
+      durationMinutes: durationMinutes || 60,
+      scheduledStart: scheduledStart ? new Date(scheduledStart).toISOString() : null,
+      scheduledEnd: scheduledEnd ? new Date(scheduledEnd).toISOString() : null,
+      totalQuestions,
+      totalMarks,
+      passingMarks: testObj.passing_marks ? parseFloat(testObj.passing_marks) : null,
+      negativeMarking: negMarking,
+      negativeMarks: negMarking ? (negVal > 0 ? -negVal : negVal) : 0,
+      instructions: Array.isArray(testObj.instructions) ? testObj.instructions : []
+    };
+  }
+
+  return { valid, errors, summary, parsedTest: testObj };
+}
+
+exports.validateOrgTestJSON = async (req, res) => {
+  try {
+    const { jsonPayload } = req.body;
+    if (!jsonPayload) {
+      return res.status(400).json({ valid: false, errors: ["No JSON content provided."] });
+    }
+    const result = validateTestJSONData(jsonPayload);
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(400).json({ valid: false, errors: ["Failed to parse JSON content: " + err.message] });
+  }
+};
+
+exports.importOrgTestFromJSON = async (req, res) => {
+  try {
+    const { organizationId, jsonPayload, customCode, startTime, endTime, status = "ACTIVE", requestId } = req.body;
+
+    if (!organizationId || !jsonPayload) {
+      return res.status(400).json({ error: "organizationId and jsonPayload are required." });
+    }
+
+    const org = await prisma.organization.findUnique({
+      where: { id: organizationId }
+    });
+
+    if (!org) {
+      return res.status(404).json({ error: "Selected organization does not exist." });
+    }
+
+    const validation = validateTestJSONData(jsonPayload);
+    if (!validation.valid) {
+      return res.status(400).json({
+        error: "JSON Validation Failed",
+        errors: validation.errors
+      });
+    }
+
+    const testObj = validation.parsedTest;
+    const summary = validation.summary;
+
+    const title = summary.title;
+    const subject = summary.examType || "General";
+    const durationMinutes = summary.durationMinutes || 60;
+    const positiveMarksDefault = parseFloat(testObj.total_marks_per_question || 4);
+    const negativeMarksDefault = summary.negativeMarking ? (summary.negativeMarks || -0.25) : 0;
+
+    const finalStartTime = startTime ? new Date(startTime) : (summary.scheduledStart ? new Date(summary.scheduledStart) : null);
+    const finalEndTime = endTime ? new Date(endTime) : (summary.scheduledEnd ? new Date(summary.scheduledEnd) : null);
+
+    let initialStatus = status.toUpperCase();
+    const now = new Date();
+    if (finalStartTime && finalStartTime > now && initialStatus === "ACTIVE") {
+      initialStatus = "SCHEDULED";
+    }
+
+    let finalCode = (customCode || "").trim().toUpperCase();
+    if (!finalCode) {
+      let isUnique = false;
+      while (!isUnique) {
+        finalCode = generateAccessCode(org.code, subject);
+        const codeExists = await prisma.orgTest.findUnique({ where: { accessCode: finalCode } });
+        if (!codeExists) isUnique = true;
+      }
+    } else {
+      const codeExists = await prisma.orgTest.findUnique({ where: { accessCode: finalCode } });
+      if (codeExists) {
+        return res.status(400).json({ error: `Access code '${finalCode}' is already in use. Please choose another code.` });
+      }
+    }
+
+    const newTest = await prisma.orgTest.create({
+      data: {
+        organizationId: org.id,
+        title,
+        accessCode: finalCode,
+        description: summary.description || null,
+        subject,
+        durationMinutes,
+        positiveMarks: positiveMarksDefault,
+        negativeMarks: negativeMarksDefault,
+        startTime: finalStartTime,
+        endTime: finalEndTime,
+        status: initialStatus
+      }
+    });
+
+    const questions = testObj.questions || [];
+    const formattedQuestions = questions.map((q, idx) => {
+      let optA = (q.optionA || "").trim();
+      let optB = (q.optionB || "").trim();
+      let optC = (q.optionC || "").trim();
+      let optD = (q.optionD || "").trim();
+
+      if (Array.isArray(q.options) && q.options.length > 0) {
+        q.options.forEach((opt, optIdx) => {
+          const text = (typeof opt === 'object' ? (opt.text || opt.value || "") : String(opt)).trim();
+          const id = (typeof opt === 'object' && opt.id ? opt.id : String.fromCharCode(65 + optIdx)).toUpperCase();
+          if (id === "A" || optIdx === 0) optA = text;
+          else if (id === "B" || optIdx === 1) optB = text;
+          else if (id === "C" || optIdx === 2) optC = text;
+          else if (id === "D" || optIdx === 3) optD = text;
+        });
+      }
+
+      let correct = "A";
+      if (Array.isArray(q.correct_answer)) {
+        correct = q.correct_answer[0] ? String(q.correct_answer[0]).toUpperCase() : "A";
+      } else if (q.correct_answer) {
+        correct = String(q.correct_answer).toUpperCase();
+      } else if (q.correctOption) {
+        correct = String(q.correctOption).toUpperCase();
+      }
+
+      const qPosMarks = q.marks !== undefined ? parseFloat(q.marks) : (q.positiveMarks !== undefined ? parseFloat(q.positiveMarks) : positiveMarksDefault);
+      const qNegMarks = q.negative_marks !== undefined ? parseFloat(q.negative_marks) : (q.negativeMarks !== undefined ? parseFloat(q.negativeMarks) : negativeMarksDefault);
+
+      return {
+        orgTestId: newTest.id,
+        subject: (q.subject || q.topic || subject || "General").trim(),
+        questionText: (q.question_text || q.questionText || q.question || "").trim(),
+        imageUrl: q.imageUrl || q.image_url || null,
+        optionA: optA,
+        optionB: optB,
+        optionC: optC,
+        optionD: optD,
+        correctOption: correct,
+        explanation: q.explanation ? q.explanation.trim() : null,
+        positiveMarks: qPosMarks,
+        negativeMarks: qNegMarks,
+        orderIndex: idx + 1
+      };
+    });
+
+    await prisma.orgQuestion.createMany({
+      data: formattedQuestions
+    });
+
+    if (requestId) {
+      await prisma.orgTestRequest.update({
+        where: { id: requestId },
+        data: {
+          status: "CONVERTED",
+          orgTestId: newTest.id
+        }
+      }).catch((err) => console.error("Could not link test request:", err));
+    }
+
+    return res.status(201).json({
+      message: "Test published successfully!",
+      test: {
+        id: newTest.id,
+        title: newTest.title,
+        accessCode: newTest.accessCode,
+        organizationName: org.name,
+        organizationCode: org.code,
+        questionCount: formattedQuestions.length,
+        durationMinutes: newTest.durationMinutes,
+        status: newTest.status,
+        startTime: newTest.startTime,
+        endTime: newTest.endTime
+      }
+    });
+  } catch (error) {
+    console.error("Import Org Test from JSON error:", error);
+    return res.status(500).json({ error: "Failed to import and publish test." });
+  }
+};
+
+exports.duplicateOrgTest = async (req, res) => {
+  try {
+    const { testId } = req.params;
+    const test = await prisma.orgTest.findUnique({
+      where: { id: testId },
+      include: {
+        organization: true,
+        questions: { orderBy: { orderIndex: 'asc' } }
+      }
+    });
+
+    if (!test) {
+      return res.status(404).json({ error: "Test not found." });
+    }
+
+    let newCode = "";
+    let isUnique = false;
+    while (!isUnique) {
+      newCode = generateAccessCode(test.organization.code, test.subject);
+      const codeExists = await prisma.orgTest.findUnique({ where: { accessCode: newCode } });
+      if (!codeExists) isUnique = true;
+    }
+
+    const duplicatedTest = await prisma.orgTest.create({
+      data: {
+        organizationId: test.organizationId,
+        title: `${test.title} (Copy)`,
+        accessCode: newCode,
+        description: test.description,
+        subject: test.subject,
+        durationMinutes: test.durationMinutes,
+        positiveMarks: test.positiveMarks,
+        negativeMarks: test.negativeMarks,
+        startTime: test.startTime,
+        endTime: test.endTime,
+        status: "DRAFT"
+      }
+    });
+
+    if (test.questions && test.questions.length > 0) {
+      const clonedQuestions = test.questions.map(q => ({
+        orgTestId: duplicatedTest.id,
+        subject: q.subject,
+        questionText: q.questionText,
+        imageUrl: q.imageUrl,
+        optionA: q.optionA,
+        optionB: q.optionB,
+        optionC: q.optionC,
+        optionD: q.optionD,
+        correctOption: q.correctOption,
+        explanation: q.explanation,
+        positiveMarks: q.positiveMarks,
+        negativeMarks: q.negativeMarks,
+        orderIndex: q.orderIndex
+      }));
+
+      await prisma.orgQuestion.createMany({ data: clonedQuestions });
+    }
+
+    return res.status(201).json({
+      message: "Test duplicated successfully.",
+      test: {
+        id: duplicatedTest.id,
+        title: duplicatedTest.title,
+        accessCode: duplicatedTest.accessCode,
+        organizationName: test.organization.name,
+        questionCount: test.questions.length,
+        status: duplicatedTest.status
+      }
+    });
+  } catch (error) {
+    console.error("Duplicate test error:", error);
+    return res.status(500).json({ error: "Failed to duplicate test." });
+  }
+};
+
+exports.updateOrgTestStatus = async (req, res) => {
+  try {
+    const { testId } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ error: "Status is required." });
+    }
+
+    const validStatuses = ["ACTIVE", "SCHEDULED", "LIVE", "ENDED", "CANCELLED", "DRAFT", "CLOSED"];
+    const cleanStatus = status.toString().trim().toUpperCase();
+
+    if (!validStatuses.includes(cleanStatus)) {
+      return res.status(400).json({ error: `Invalid status '${cleanStatus}'.` });
+    }
+
+    const updated = await prisma.orgTest.update({
+      where: { id: testId },
+      data: { status: cleanStatus }
+    });
+
+    return res.status(200).json({
+      message: `Test status updated to ${cleanStatus}.`,
+      test: updated
+    });
+  } catch (error) {
+    console.error("Update test status error:", error);
+    return res.status(500).json({ error: "Failed to update test status." });
+  }
+};
+
 // List all organization tests (optionally filtered by orgId)
 exports.listOrgTests = async (req, res) => {
   try {
@@ -285,8 +725,70 @@ exports.getOrgTestResults = async (req, res) => {
       correctCount: attempt.correctCount,
       incorrectCount: attempt.incorrectCount,
       unattemptedCount: attempt.unattemptedCount,
+      violationsCount: attempt.violationsCount || 0,
+      terminatedBySecurity: attempt.terminatedBySecurity || false,
       submittedAt: attempt.submittedAt
     }));
+
+    // Question-wise & Topic-wise Analytics
+    const questionAnalytics = test.questions.map((q, idx) => {
+      let correct = 0;
+      let wrong = 0;
+      let unattempted = 0;
+
+      test.attempts.forEach((att) => {
+        let saved = {};
+        if (att.answersSaved) {
+          try {
+            saved = typeof att.answersSaved === 'string' ? JSON.parse(att.answersSaved) : att.answersSaved;
+          } catch (e) { saved = {}; }
+        }
+        const rec = saved[q.id] || saved[q.id.toString()];
+        if (!rec || !rec.selected) {
+          unattempted++;
+        } else if (rec.isCorrect) {
+          correct++;
+        } else {
+          wrong++;
+        }
+      });
+
+      const total = totalAttempts || 1;
+      return {
+        questionId: q.id,
+        orderIndex: idx + 1,
+        questionText: q.questionText,
+        subject: q.subject || test.subject || "General",
+        correctPct: totalAttempts > 0 ? parseFloat(((correct / total) * 100).toFixed(1)) : 0,
+        wrongPct: totalAttempts > 0 ? parseFloat(((wrong / total) * 100).toFixed(1)) : 0,
+        unattemptedPct: totalAttempts > 0 ? parseFloat(((unattempted / total) * 100).toFixed(1)) : 0,
+        correctCount: correct,
+        wrongCount: wrong,
+        unattemptedCount: unattempted
+      };
+    });
+
+    const topicMap = {};
+    questionAnalytics.forEach((qa) => {
+      const topic = qa.subject || "General";
+      if (!topicMap[topic]) {
+        topicMap[topic] = { totalQuestions: 0, totalCorrect: 0, totalAttemptsPossible: 0 };
+      }
+      topicMap[topic].totalQuestions++;
+      topicMap[topic].totalCorrect += qa.correctCount;
+      topicMap[topic].totalAttemptsPossible += (totalAttempts || 0);
+    });
+
+    const topicAnalytics = Object.entries(topicMap).map(([topic, data]) => {
+      const accuracyPct = data.totalAttemptsPossible > 0
+        ? parseFloat(((data.totalCorrect / data.totalAttemptsPossible) * 100).toFixed(1))
+        : 0;
+      return {
+        topic,
+        totalQuestions: data.totalQuestions,
+        accuracyPct
+      };
+    });
 
     return res.status(200).json({
       test: {
@@ -299,13 +801,17 @@ exports.getOrgTestResults = async (req, res) => {
         durationMinutes: test.durationMinutes,
         totalQuestions: test.questions.length,
         maxPossibleMarks: test.questions.reduce((sum, q) => sum + (q.positiveMarks || 4), 0),
-        status: test.status
+        status: test.status,
+        startTime: test.startTime,
+        endTime: test.endTime
       },
       analytics: {
         totalSubmissions: totalAttempts,
         averageScore: parseFloat(avgScore),
         highestScore: maxScore,
-        lowestScore: minScore
+        lowestScore: minScore,
+        questionAnalytics,
+        topicAnalytics
       },
       results: rankedAttempts
     });
@@ -345,6 +851,8 @@ exports.exportOrgTestCSV = async (req, res) => {
       "Correct",
       "Incorrect",
       "Unattempted",
+      "Proctoring Violations",
+      "Security Status",
       "Submission Date"
     ];
 
@@ -359,6 +867,8 @@ exports.exportOrgTestCSV = async (req, res) => {
       attempt.correctCount,
       attempt.incorrectCount,
       attempt.unattemptedCount,
+      attempt.violationsCount || 0,
+      `"${attempt.terminatedBySecurity ? "TERMINATED (5/5 Violations)" : (attempt.violationsCount || 0) > 0 ? "WARNINGS RECORDED" : "CLEAN"}"`,
       `"${new Date(attempt.submittedAt).toLocaleString('en-IN')}"`
     ]);
 
@@ -412,21 +922,49 @@ exports.verifyStudentAccessCode = async (req, res) => {
       return res.status(404).json({ error: "Invalid test access code. Please check and try again." });
     }
 
+    const now = new Date();
+
+    // 1. Check if test was cancelled by admin
+    if (test.status === "CANCELLED") {
+      return res.status(403).json({
+        error: "This examination has been cancelled by the organiser."
+      });
+    }
+
+    // 2. Check if test is closed or draft
     if (test.status === "CLOSED" || test.status === "DRAFT") {
       return res.status(403).json({ error: `This test is currently ${test.status.toLowerCase()} and cannot be accessed.` });
     }
 
-    const now = new Date();
-    if (test.startTime && now < new Date(test.startTime)) {
-      return res.status(403).json({
-        error: `This test has not started yet. It will open on ${new Date(test.startTime).toLocaleString('en-IN')}.`
-      });
-    }
-
-    if (test.endTime && now > new Date(test.endTime)) {
+    // 3. Check if test has ended
+    if (test.status === "ENDED" || (test.endTime && now > new Date(test.endTime))) {
+      if (test.status !== "ENDED") {
+        await prisma.orgTest.update({ where: { id: test.id }, data: { status: "ENDED" } }).catch(() => {});
+      }
       return res.status(403).json({
         error: `This test has ended on ${new Date(test.endTime).toLocaleString('en-IN')}.`
       });
+    }
+
+    // 4. Check if test has not started yet (future start time)
+    if (test.startTime && now < new Date(test.startTime)) {
+      return res.status(200).json({
+        valid: false,
+        scheduled: true,
+        message: `This examination is scheduled to begin at ${new Date(test.startTime).toLocaleString('en-IN')}. Please return at the scheduled time.`,
+        test: {
+          id: test.id,
+          accessCode: test.accessCode,
+          title: test.title,
+          organizationName: test.organization.name,
+          startTime: test.startTime
+        }
+      });
+    }
+
+    // 5. If test was SCHEDULED but current time has reached/passed start time, auto-activate it
+    if (test.status === "SCHEDULED") {
+      await prisma.orgTest.update({ where: { id: test.id }, data: { status: "ACTIVE" } }).catch(() => {});
     }
 
     return res.status(200).json({
@@ -520,7 +1058,9 @@ exports.submitStudentTest = async (req, res) => {
       studentEmail,
       studentRollNumber,
       answers = {}, // { [questionId]: "A" | "B" | "C" | "D" }
-      timeSpentMap = {} // { [questionId]: seconds }
+      timeSpentMap = {}, // { [questionId]: seconds }
+      violationsCount = 0,
+      terminatedBySecurity = false
     } = req.body;
 
     if (!accessCode) {
@@ -604,7 +1144,9 @@ exports.submitStudentTest = async (req, res) => {
         correctCount,
         incorrectCount,
         unattemptedCount,
-        answersSaved
+        answersSaved,
+        violationsCount: parseInt(violationsCount, 10) || 0,
+        terminatedBySecurity: Boolean(terminatedBySecurity)
       }
     });
 
@@ -853,5 +1395,134 @@ exports.removeAdminEmail = async (req, res) => {
   } catch (error) {
     console.error("Remove admin email error:", error);
     return res.status(500).json({ error: "Failed to remove admin email." });
+  }
+};
+
+// -------------------------------------------------------------
+// 6. ORGANISER & ADMIN: Test Request & PDF-to-JSON Workflow
+// -------------------------------------------------------------
+
+// Organiser submits a test request with PDF paper
+exports.createOrgTestRequest = async (req, res) => {
+  try {
+    const {
+      organizationId,
+      title,
+      description,
+      subject = "General",
+      durationMinutes = 60,
+      positiveMarks = 4,
+      negativeMarks = -1,
+      scheduledStart,
+      scheduledEnd,
+      expectedStudents = 50,
+      pdfUrl,
+      pdfFileName
+    } = req.body;
+
+    if (!organizationId || !title) {
+      return res.status(400).json({ error: "organizationId and title are required." });
+    }
+
+    const org = await prisma.organization.findUnique({
+      where: { id: organizationId }
+    });
+
+    if (!org) {
+      return res.status(404).json({ error: "Selected organization does not exist." });
+    }
+
+    const testRequest = await prisma.orgTestRequest.create({
+      data: {
+        organizationId: org.id,
+        title: title.trim(),
+        description: description ? description.trim() : null,
+        subject: subject.trim(),
+        durationMinutes: parseInt(durationMinutes, 10) || 60,
+        positiveMarks: parseFloat(positiveMarks) || 4,
+        negativeMarks: parseFloat(negativeMarks) || 0,
+        scheduledStart: scheduledStart ? new Date(scheduledStart) : null,
+        scheduledEnd: scheduledEnd ? new Date(scheduledEnd) : null,
+        expectedStudents: parseInt(expectedStudents, 10) || 50,
+        pdfUrl: pdfUrl || null,
+        pdfFileName: pdfFileName || null,
+        status: "PENDING_JSON_CONVERSION"
+      },
+      include: {
+        organization: { select: { name: true, code: true } }
+      }
+    });
+
+    return res.status(201).json({
+      message: "Test request submitted successfully! Admin will convert the PDF paper into an online exam.",
+      testRequest
+    });
+  } catch (error) {
+    console.error("Create test request error:", error);
+    return res.status(500).json({ error: "Failed to submit test request." });
+  }
+};
+
+// List all test requests for Admin
+exports.listAdminTestRequests = async (req, res) => {
+  try {
+    const requests = await prisma.orgTestRequest.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        organization: { select: { id: true, name: true, code: true, contactEmail: true } },
+        orgTest: { select: { id: true, accessCode: true, status: true } }
+      }
+    });
+
+    return res.status(200).json({ requests });
+  } catch (error) {
+    console.error("List admin test requests error:", error);
+    return res.status(500).json({ error: "Failed to fetch test requests." });
+  }
+};
+
+// List test requests for an Organiser (filtered by organizationId)
+exports.listOrganiserTestRequests = async (req, res) => {
+  try {
+    const { organizationId } = req.query;
+
+    const where = organizationId ? { organizationId } : {};
+
+    const requests = await prisma.orgTestRequest.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: {
+        organization: { select: { id: true, name: true, code: true } },
+        orgTest: {
+          select: {
+            id: true,
+            accessCode: true,
+            status: true,
+            _count: { select: { attempts: true } }
+          }
+        }
+      }
+    });
+
+    return res.status(200).json({ requests });
+  } catch (error) {
+    console.error("List organiser test requests error:", error);
+    return res.status(500).json({ error: "Failed to fetch organiser test requests." });
+  }
+};
+
+// Delete a test request
+exports.deleteOrgTestRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+
+    await prisma.orgTestRequest.delete({
+      where: { id: requestId }
+    });
+
+    return res.status(200).json({ message: "Test request deleted successfully." });
+  } catch (error) {
+    console.error("Delete test request error:", error);
+    return res.status(500).json({ error: "Failed to delete test request." });
   }
 };

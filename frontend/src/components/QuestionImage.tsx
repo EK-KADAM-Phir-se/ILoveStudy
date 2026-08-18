@@ -33,6 +33,12 @@ export function getQuestionSupabaseUrl(
     folderExam = "SSC CGL";
   } else if (lowerExam.includes("ssc chsl") || lowerExam.includes("chsl")) {
     folderExam = "SSC CHSL";
+  } else if (lowerExam.includes("neet")) {
+    const storagePath = `NEET/${cleanFileName}`;
+    const { data } = supabase.storage
+      .from("QuestionBank")
+      .getPublicUrl(storagePath);
+    return { supabaseUrl: data?.publicUrl || imageUrl, localFallbackUrl: imageUrl };
   } else if (lowerExam.includes("gate")) {
     folderExam = "Gate";
   } else {

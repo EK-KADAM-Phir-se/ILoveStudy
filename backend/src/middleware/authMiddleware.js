@@ -70,7 +70,7 @@ module.exports = async (req, res, next) => {
     // Try to decode as Firebase ID Token
     try {
       const decodedFirebase = jwt.decode(token);
-      if (decodedFirebase && decodedFirebase.iss && decodedFirebase.iss.startsWith('https://securetoken.google.com/')) {
+      if (decodedFirebase && decodedFirebase.email && decodedFirebase.iss && decodedFirebase.iss.startsWith('https://securetoken.google.com/')) {
         const email = decodedFirebase.email;
         let user = await prisma.user.findUnique({
           where: { email },

@@ -53,6 +53,7 @@ export async function syncUserProfile(data: {
     const result = await handleJsonResponse(response, "Failed to sync profile");
 
     localStorage.setItem("backendToken", result.token);
+    localStorage.setItem("token", result.token);
     localStorage.setItem("displayName", result.profile.fullName);
     localStorage.setItem("userEmail", result.profile.email);
 

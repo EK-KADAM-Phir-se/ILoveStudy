@@ -22,17 +22,22 @@ const Login = () => {
     const fullName = firebaseUser.displayName || userEmail.split('@')[0];
 
     localStorage.setItem('token', token);
-    await syncUserProfile({
+    const synced = await syncUserProfile({
       email: userEmail,
       fullName,
       avatarUrl: firebaseUser.photoURL,
     });
+    if (synced?.token) {
+      localStorage.setItem('token', synced.token);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    const cleanEmail = email.trim();
 
     try {
       let userCredential;
@@ -42,9 +47,9 @@ const Login = () => {
           setLoading(false);
           return;
         }
-        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, password);
       } else {
-        userCredential = await signInWithEmailAndPassword(auth, email, password);
+        userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
       }
 
       const token = await userCredential.user.getIdToken();

@@ -11,6 +11,7 @@ const TestReviewModal = dynamic(() => import('@/src/components/TestReviewModal')
 import { LatexRenderer } from '../../../../components/LatexRenderer';
 import { QuestionImage, preloadExamImages } from '@/src/components/QuestionImage';
 import { ReportErrorButton } from '@/src/components/ReportErrorButton';
+import { NtaQuestionButton, type NtaQuestionStatus } from '@/src/components/NtaQuestionButton';
 
 function TestWorkspacePageContent() {
   const router = useRouter();
@@ -39,11 +40,21 @@ function TestWorkspacePageContent() {
 
   const [selectedSubject, setSelectedSubject] = useState<string>("Physics");
   const [visitedQuestions, setVisitedQuestions] = useState<Set<string>>(new Set());
+  const [markedForReview, setMarkedForReview] = useState<Set<string>>(new Set());
+  const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Set<string>>(new Set());
+  const [showInstructionBox, setShowInstructionBox] = useState<boolean>(true);
+  const [displayName, setDisplayName] = useState<string>("Raghuwanshi");
   const [showSubmitModal, setShowSubmitModal] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
   const [submitResult, setSubmitResult] = useState<any>(null);
   const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("displayName");
+    if (saved) setDisplayName(saved);
+  }, []);
+
 
   // Proctoring states
   const [violationsCount, setViolationsCount] = useState<number>(0);
@@ -649,110 +660,191 @@ function TestWorkspacePageContent() {
     }
   };
 
-  // NTA Status counters for the current subject
-  const subjectCounters = {
-    answered: subjectQuestions.filter(q => answers[q.id]).length,
-    notAnswered: subjectQuestions.filter(q => !answers[q.id] && visitedQuestions.has(q.id)).length,
-    notVisited: subjectQuestions.filter(q => !answers[q.id] && !visitedQuestions.has(q.id)).length,
+  // NTA Status helper function
+  const getQuestionStatus = (qId: string): NtaQuestionStatus => {
+    const isAns = Boolean(answers[qId]);
+    const isMrk = markedForReview.has(qId);
+    const isVis = visitedQuestions.has(qId);
+
+    if (isAns && isMrk) return "answered_marked";
+    if (isMrk) return "marked";
+    if (isAns) return "answered";
+    if (isVis) return "not_answered";
+    return "not_visited";
   };
+
+  const handleMarkForReviewAndNext = () => {
+    if (activeQuestion) {
+      setMarkedForReview(prev => new Set(prev).add(activeQuestion.id));
+    }
+    handleNextQuestion();
+  };
+
+  const handleToggleBookmark = () => {
+    if (!activeQuestion) return;
+    const qId = activeQuestion.id;
+    setBookmarkedQuestions(prev => {
+      const next = new Set(prev);
+      if (next.has(qId)) next.delete(qId);
+      else next.add(qId);
+      return next;
+    });
+  };
+
+  // Global NTA Status counters
+  const totalCounters = {
+    answered: questions.filter(q => getQuestionStatus(q.id) === "answered").length,
+    notAnswered: questions.filter(q => getQuestionStatus(q.id) === "not_answered").length,
+    notVisited: questions.filter(q => getQuestionStatus(q.id) === "not_visited").length,
+    marked: questions.filter(q => getQuestionStatus(q.id) === "marked").length,
+    answeredMarked: questions.filter(q => getQuestionStatus(q.id) === "answered_marked").length,
+  };
+
+  const activeSubjectIndex = subjectQuestions.findIndex(q => q.id === activeQuestion.id);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans select-none overflow-hidden h-screen">
-      {/* Top Navbar header */}
-      <header className="bg-slate-900 border-b border-slate-800 px-6 py-3.5 flex justify-between items-center shrink-0">
-        <div>
-          <div className="flex items-center space-x-3">
-            <button 
-              onClick={() => {
-                if (confirm("Are you sure you want to exit the exam? Your progress is saved.")) {
-                  router.push('/pages/dashboard/jee-mains?type=mains');
-                }
-              }} 
-              className="text-slate-400 hover:text-white transition text-xs font-semibold uppercase tracking-wider"
-            >
-              &larr; Exit Exam
-            </button>
-            <span className="text-slate-700">|</span>
-            <span className="bg-indigo-500/10 text-indigo-400 text-xs font-bold px-2 py-0.5 rounded border border-indigo-500/20">
-              {year} Attempt
-            </span>
-          </div>
-          <h1 className="text-lg font-bold text-slate-100 mt-1">{name}</h1>
+      {/* 1. NTA Topmost Dark Banner */}
+      <div className="bg-[#1a1d20] text-yellow-400 font-bold text-xs sm:text-sm px-4 py-2 flex items-center justify-between border-b border-slate-800 shrink-0">
+        <div className="flex items-center gap-2">
+          <span>JEE Main Mock Test UPDATED AS PER LATEST NTA PATTERN</span>
         </div>
-
-        {/* Floating Timer Console */}
-        <div className="flex items-center space-x-6">
-          <div className="bg-slate-950/80 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-3 shadow-inner">
-            <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Time Left:</span>
-            <span className={`font-mono text-xl font-bold tracking-widest ${examTimeLeft < 600 ? 'text-red-500 animate-pulse' : 'text-emerald-400'}`}>
-              {formatTime(examTimeLeft)}
-            </span>
-          </div>
-
-          {!isFullscreen && (
-            <button 
-              onClick={handleToggleFullscreen}
-              className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white rounded-lg transition"
-              title="Toggle Fullscreen"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 20v-4m0 4h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
-            </button>
-          )}
-
-          <button 
-            onClick={() => setShowSubmitModal(true)}
-            className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-2.5 px-6 rounded-lg shadow-lg hover:shadow-red-500/20 transition duration-150 transform hover:-translate-y-0.5 active:translate-y-0"
+        <div className="flex items-center gap-3 text-xs">
+          <button
+            onClick={() => alert("NTA Accessibility options enabled.")}
+            className="bg-[#4caf50] hover:bg-[#43a047] text-white px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer"
           >
-            Submit Exam
+            <span>♿</span> Accessibility
+          </button>
+          <button
+            onClick={() => alert("Screen Magnifier active.")}
+            className="bg-[#ff9800] hover:bg-[#fb8c00] text-white px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer"
+          >
+            <span>🔍</span> Screen Magnifier
           </button>
         </div>
-      </header>
+      </div>
+
+      {/* 2. Sub-Header Bar (Paper Badge + Timer) */}
+      <div className="bg-[#e8edf2] dark:bg-[#1e232a] text-slate-800 dark:text-slate-100 px-4 py-2 flex items-center justify-between text-xs border-b border-slate-300 dark:border-slate-800 shrink-0">
+        <div className="flex items-center gap-3">
+          <span className="bg-[#31708f] text-white px-3 py-1 rounded-md font-bold text-xs shadow-sm">
+            Jee Main {year}
+          </span>
+          <button
+            onClick={() => {
+              if (confirm("Are you sure you want to exit the exam? Your progress is saved.")) {
+                router.push('/pages/dashboard/jee-mains?type=mains');
+              }
+            }}
+            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-semibold"
+          >
+            &larr; Exit Exam
+          </button>
+        </div>
+
+        <div className="flex items-center gap-4 font-bold text-sm">
+          <span className="text-slate-600 dark:text-slate-400 text-xs uppercase tracking-wide">Sections</span>
+          <div className="bg-white dark:bg-slate-900 px-3 py-1 rounded border border-slate-300 dark:border-slate-700 shadow-inner">
+            Time Left : <span className={`font-mono text-base font-bold ${examTimeLeft < 600 ? 'text-red-600 animate-pulse' : 'text-blue-600 dark:text-blue-400'}`}>{formatTime(examTimeLeft)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. NTA Section Tabs Bar */}
+      <div className="bg-[#f5f5f5] dark:bg-[#181b20] border-b border-slate-300 dark:border-slate-800 px-4 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0">
+        {subjects.map((sub) => {
+          const subName = sub === 'Math' ? 'Mathematics' : sub;
+          return (
+            <React.Fragment key={sub}>
+              <button
+                onClick={() => handleSubjectTabClick(sub)}
+                className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                  selectedSubject === sub
+                    ? "bg-[#337ab7] text-white shadow"
+                    : "bg-white dark:bg-slate-800 text-[#337ab7] dark:text-blue-400 border border-slate-300 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-700"
+                }`}
+              >
+                <span>{subName} (Section A)</span>
+                <span className="w-3.5 h-3.5 rounded-full border border-current flex items-center justify-center text-[9px] font-mono">i</span>
+              </button>
+              <button
+                onClick={() => handleSubjectTabClick(sub)}
+                className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                  selectedSubject === sub
+                    ? "bg-white dark:bg-slate-800 text-[#337ab7] dark:text-blue-400 border border-slate-300 dark:border-slate-700"
+                    : "bg-white dark:bg-slate-800 text-[#337ab7] dark:text-blue-400 border border-slate-300 dark:border-slate-700 opacity-70"
+                }`}
+              >
+                <span>{subName} (Section B)</span>
+                <span className="w-3.5 h-3.5 rounded-full border border-current flex items-center justify-center text-[9px] font-mono">i</span>
+              </button>
+            </React.Fragment>
+          );
+        })}
+      </div>
+
+      {/* 4. Question Metadata Bar */}
+      <div className="bg-[#f8f9fa] dark:bg-[#1e2229] border-b border-slate-300 dark:border-slate-800 px-4 py-1.5 flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 shrink-0">
+        <span className="font-semibold">Question Type: <strong className="text-slate-900 dark:text-white">Multiple Choice</strong></span>
+        <span>Marks for correct answer: <strong className="text-emerald-600 dark:text-emerald-400">+4</strong> | Negative Marks: <strong className="text-rose-600 dark:text-rose-400">1</strong></span>
+      </div>
 
       {/* Main Body Grid */}
       <div className="flex-1 flex overflow-hidden w-full">
         
-        {/* Left Side Panel: Question view & tabs */}
+        {/* Left Side Panel: Question view & options */}
         <main className="flex-1 flex flex-col bg-slate-950 overflow-hidden border-r border-slate-900">
           
-          {/* Subject Switch Tabs */}
-          <div className="bg-slate-900/50 border-b border-slate-900/80 px-6 py-2.5 flex space-x-2 shrink-0">
-            {subjects.map((sub) => {
-              const isActive = selectedSubject === sub;
-              return (
-                <button
-                  key={sub}
-                  onClick={() => handleSubjectTabClick(sub)}
-                  className={`px-5 py-2.5 rounded-lg text-sm font-bold tracking-wide uppercase transition-all duration-200 cursor-pointer ${
-                    isActive
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/10'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-                  }`}
-                >
-                  {sub === 'Math' ? 'Mathematics' : sub}
-                </button>
-              );
-            })}
+          {/* Question No & Bookmark bar */}
+          <div className="bg-slate-900 border-b border-slate-800 px-6 py-2 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3">
+              <span className="font-bold text-slate-100 text-sm">Question No. {activeSubjectIndex + 1}</span>
+              <button
+                onClick={handleToggleBookmark}
+                className={`px-3 py-1 text-xs font-bold rounded-lg border flex items-center gap-1.5 transition cursor-pointer ${
+                  bookmarkedQuestions.has(activeQuestion.id)
+                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                    : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                }`}
+              >
+                <span>🔖</span> Bookmark
+              </button>
+            </div>
+            <div className="flex items-center gap-3">
+              <ReportErrorButton questionId={activeQuestion.id} questionTextSnippet={activeQuestion.questionText} />
+              <button
+                onClick={() => setShowInstructionBox(!showInstructionBox)}
+                className="p-1 rounded bg-slate-800 text-slate-300 hover:bg-slate-700 transition"
+                title="Toggle Instructions"
+              >
+                {showInstructionBox ? "▲" : "▼"}
+              </button>
+            </div>
           </div>
 
-          {/* Question and Option Screen Box */}
-          <div className="flex-1 overflow-y-auto p-8 space-y-6">
+          {/* Section Instruction Box (Collapsible Card) */}
+          {showInstructionBox && (
+            <div className="bg-slate-900/90 border border-slate-800 rounded-xl m-4 p-4 text-xs text-slate-200 space-y-2 shrink-0 shadow-lg">
+              <div className="flex justify-between items-center font-bold border-b border-slate-800 pb-2">
+                <span className="text-indigo-400 text-sm">{selectedSubject === 'Math' ? 'Mathematics' : selectedSubject} (Section A) (Maximum Marks: 80)</span>
+                <button onClick={() => setShowInstructionBox(false)} className="text-slate-400 hover:text-white">▲</button>
+              </div>
+              <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
+                <li>This section contains <strong>TWENTY (20)</strong> questions.</li>
+                <li>Each question has <strong>FOUR</strong> options (A), (B), (C) and (D). <strong>ONLY ONE</strong> of these four options is the correct answer.</li>
+                <li>For each question, choose the option corresponding to the correct answer.</li>
+                <li>Answer to each question will be evaluated according to the marking scheme: <strong>+4</strong> for correct, <strong>0</strong> if unattempted, <strong>-1</strong> in all other cases.</li>
+              </ul>
+            </div>
+          )}
+
+          {/* Question and Option Display */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
             <div className="max-w-4xl mx-auto space-y-6">
               
               {/* Question card */}
               <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md">
-                <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
-                  <span className="text-indigo-400 font-bold text-sm tracking-wide uppercase">
-                    Question {subjectQuestions.findIndex(q => q.id === activeQuestion.id) + 1} of {subjectQuestions.length}
-                  </span>
-                  <div className="flex items-center space-x-4 text-xs text-slate-400">
-                    <span>Marks: <strong className="text-emerald-400">+4</strong> / <strong className="text-red-400">-1</strong></span>
-                    <span>•</span>
-                    <span>Time Spent: <strong className="text-slate-200">{questionTimers[activeQuestion.id] || 0}s</strong></span>
-                    <span>•</span>
-                    <ReportErrorButton questionId={activeQuestion.id} questionTextSnippet={activeQuestion.questionText} />
-                  </div>
-                </div>
-
                 <div className="text-slate-100 text-base leading-relaxed whitespace-pre-line">
                   <LatexRenderer text={activeQuestion.questionText} />
                 </div>
@@ -808,7 +900,7 @@ function TestWorkspacePageContent() {
                         {answers[activeQuestion.id] && (
                           <button
                             onClick={() => selectOption(activeQuestion.id, '')}
-                            className="px-4 py-3 border border-slate-700 hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-xl text-xs font-semibold transition"
+                            className="px-4 py-3 border border-slate-700 hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
                           >
                             Clear Value
                           </button>
@@ -857,91 +949,106 @@ function TestWorkspacePageContent() {
             </div>
           </div>
 
-          {/* Bottom Bar: Action buttons */}
-          <footer className="bg-slate-900 border-t border-slate-850 px-6 py-4 flex justify-between items-center shrink-0">
-            <button
-              onClick={handlePrevQuestion}
-              disabled={subjectQuestions.findIndex(q => q.id === activeQuestion.id) === 0}
-              className="px-5 py-2.5 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:pointer-events-none rounded-lg text-sm font-semibold transition"
-            >
-              &larr; Previous Question
-            </button>
-
-            <button
-              onClick={handleClearResponse}
-              disabled={!answers[activeQuestion.id]}
-              className="px-5 py-2.5 border border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-300 disabled:opacity-30 disabled:pointer-events-none rounded-lg text-sm font-semibold transition"
-            >
-              Clear Response
-            </button>
-
-            <button
-              onClick={handleNextQuestion}
-              disabled={subjectQuestions.findIndex(q => q.id === activeQuestion.id) === subjectQuestions.length - 1}
-              className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-30 disabled:pointer-events-none rounded-lg text-sm font-bold shadow-md shadow-indigo-600/10 transition"
-            >
-              Save &amp; Next &rarr;
-            </button>
+          {/* 5. NTA Bottom Control Bar */}
+          <footer className="bg-slate-900 border-t border-slate-800 px-4 py-3 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleMarkForReviewAndNext}
+                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs transition cursor-pointer shadow-sm"
+              >
+                Mark for Review &amp; Next
+              </button>
+              <button
+                onClick={handleClearResponse}
+                disabled={!answers[activeQuestion.id]}
+                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 disabled:opacity-40 font-semibold text-xs transition cursor-pointer shadow-sm"
+              >
+                Clear Response
+              </button>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleNextQuestion}
+                className="px-5 py-2 rounded-lg bg-[#337ab7] hover:bg-[#286090] text-white font-bold text-xs transition cursor-pointer shadow"
+              >
+                Save &amp; Next
+              </button>
+              <button
+                onClick={() => setShowSubmitModal(true)}
+                className="px-5 py-2 rounded-lg bg-[#2e6da4] hover:bg-[#204d74] text-white font-bold text-xs transition cursor-pointer shadow"
+              >
+                Submit
+              </button>
+            </div>
           </footer>
         </main>
 
-        {/* Right Side Panel: question navigation grid & summary info */}
-        <aside className="w-80 shrink-0 bg-slate-900 flex flex-col overflow-hidden h-full">
+        {/* 6. NTA Right Sidebar (Profile + Legend + Palette Grid) */}
+        <aside className="w-80 shrink-0 bg-slate-900 border-l border-slate-800 flex flex-col h-full overflow-hidden">
           
-          {/* Header section status summary */}
-          <div className="p-5 border-b border-slate-800 space-y-4 shrink-0">
-            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-              {selectedSubject === 'Math' ? 'Mathematics' : selectedSubject} Summary
-            </h3>
-            
-            <div className="grid grid-cols-3 gap-2.5">
-              <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-850 text-center">
-                <p className="text-xl font-black text-emerald-400">{subjectCounters.answered}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Answered</p>
-              </div>
-              
-              <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-850 text-center">
-                <p className="text-xl font-black text-red-400">{subjectCounters.notAnswered}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Visited</p>
-              </div>
-
-              <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-850 text-center">
-                <p className="text-xl font-black text-slate-400">{subjectCounters.notVisited}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Not Visited</p>
-              </div>
+          {/* Candidate Profile Box */}
+          <div className="p-3 bg-slate-950 border-b border-slate-800 flex items-center gap-3 shrink-0">
+            <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 overflow-hidden shrink-0">
+              <svg className="w-8 h-8 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+            </div>
+            <div>
+              <p className="font-bold text-slate-100 text-sm truncate max-w-[170px]">{displayName}</p>
+              <p className="text-[11px] text-slate-400 font-medium">Candidate</p>
             </div>
           </div>
 
-          {/* Grid of question buttons */}
-          <div className="flex-1 overflow-y-auto p-5">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Question Navigation</h4>
-            
-            <div className="grid grid-cols-4 gap-3">
+          {/* NTA Status Legend Box */}
+          <div className="p-3 bg-slate-900/90 border-b border-slate-800 text-xs space-y-2 shrink-0">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center gap-2">
+                <NtaQuestionButton questionNumber={totalCounters.answered} status="answered" size="sm" />
+                <span className="text-slate-300 text-[11px]">Answered</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <NtaQuestionButton questionNumber={totalCounters.notAnswered} status="not_answered" size="sm" />
+                <span className="text-slate-300 text-[11px]">Not Answered</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <NtaQuestionButton questionNumber={totalCounters.notVisited} status="not_visited" size="sm" />
+                <span className="text-slate-300 text-[11px]">Not Visited</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <NtaQuestionButton questionNumber={totalCounters.marked} status="marked" size="sm" />
+                <span className="text-slate-300 text-[11px]">Marked for Review</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 pt-1 border-t border-slate-800">
+              <NtaQuestionButton questionNumber={totalCounters.answeredMarked} status="answered_marked" size="sm" />
+              <span className="text-slate-300 text-[10px] leading-tight">
+                Answered &amp; Marked for Review (will be evaluated)
+              </span>
+            </div>
+          </div>
+
+          {/* NTA Section Header */}
+          <div className="bg-[#337ab7] text-white px-3 py-2 text-xs font-bold shrink-0">
+            <p>{selectedSubject === 'Math' ? 'Mathematics' : selectedSubject} (Section A)</p>
+            <p className="text-[10px] font-normal opacity-90">Choose a Question</p>
+          </div>
+
+          {/* NTA Question Grid Palette */}
+          <div className="flex-1 overflow-y-auto p-3">
+            <div className="grid grid-cols-4 gap-2.5 justify-items-center">
               {subjectQuestions.map((q, idx) => {
                 const globalIdx = questions.findIndex(item => item.id === q.id);
                 const isCurrent = currentQuestionIndex === globalIdx;
-                const isAnswered = !!answers[q.id];
-                const isVisited = visitedQuestions.has(q.id);
-
-                let bgClass = "bg-slate-950 hover:bg-slate-800 text-slate-400 border border-slate-800";
-                if (isAnswered) {
-                  bgClass = "bg-emerald-600 text-white font-semibold border-emerald-500 shadow-md shadow-emerald-600/10";
-                } else if (isVisited) {
-                  bgClass = "bg-red-600 text-white font-semibold border-red-500 shadow-md shadow-red-600/10";
-                }
-
-                if (isCurrent) {
-                  bgClass += " ring-2 ring-indigo-500 ring-offset-2 ring-offset-slate-900";
-                }
+                const qStatus = getQuestionStatus(q.id);
 
                 return (
-                  <button
+                  <NtaQuestionButton
                     key={q.id}
+                    questionNumber={idx + 1}
+                    status={qStatus}
+                    isSelected={isCurrent}
                     onClick={() => handleGridQuestionClick(q.id)}
-                    className={`h-11 rounded-lg text-sm font-bold flex items-center justify-center transition-all duration-150 cursor-pointer ${bgClass}`}
-                  >
-                    {idx + 1}
-                  </button>
+                  />
                 );
               })}
             </div>
@@ -950,6 +1057,7 @@ function TestWorkspacePageContent() {
         </aside>
 
       </div>
+
 
       {/* Submit Confirmation Modal */}
       {showSubmitModal && (

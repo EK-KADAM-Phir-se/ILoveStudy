@@ -9,5 +9,4 @@ router.patch("/", protect, profileController.updateProfile);
 router.get("/attempts", protect, profileController.getTestAttempts);
 router.get("/streak", protect, profileController.getStreak);
 router.post("/streak/check-in", protect, profileController.checkInStreak);
-
 module.exports = router;

@@ -123,7 +123,7 @@ exports.login = async (req, res) => {
       include: { profiles: true } // Fetches profile relation if it exists
     });
 
-    if (!user) {
+    if (!user || !user.password) {
       return res.status(400).json({ error: "Invalid email or password." });
     }
 

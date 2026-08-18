@@ -56,13 +56,58 @@ export interface OrgTest {
   negativeMarks: number;
   startTime?: string | null;
   endTime?: string | null;
-  status: "ACTIVE" | "DRAFT" | "CLOSED";
+  status: "ACTIVE" | "SCHEDULED" | "LIVE" | "ENDED" | "CANCELLED" | "DRAFT" | "CLOSED";
   createdAt: string;
   questions?: OrgQuestion[];
   _count?: {
     questions: number;
     attempts: number;
   };
+}
+
+export interface OrgTestRequest {
+  id: string;
+  organizationId: string;
+  organization?: Organization;
+  title: string;
+  description?: string | null;
+  subject: string;
+  durationMinutes: number;
+  positiveMarks: number;
+  negativeMarks: number;
+  scheduledStart?: string | null;
+  scheduledEnd?: string | null;
+  expectedStudents: number;
+  pdfUrl?: string | null;
+  pdfFileName?: string | null;
+  status: "PENDING_JSON_CONVERSION" | "CONVERTED" | "REJECTED";
+  orgTestId?: string | null;
+  orgTest?: {
+    id: string;
+    accessCode: string;
+    status: string;
+    _count?: { attempts: number };
+  } | null;
+  createdAt: string;
+}
+
+export interface QuestionAnalyticsItem {
+  questionId: string;
+  orderIndex: number;
+  questionText: string;
+  subject: string;
+  correctPct: number;
+  wrongPct: number;
+  unattemptedPct: number;
+  correctCount: number;
+  wrongCount: number;
+  unattemptedCount: number;
+}
+
+export interface TopicAnalyticsItem {
+  topic: string;
+  totalQuestions: number;
+  accuracyPct: number;
 }
 
 export interface StudentAttemptItem {
@@ -77,6 +122,8 @@ export interface StudentAttemptItem {
   correctCount: number;
   incorrectCount: number;
   unattemptedCount: number;
+  violationsCount?: number;
+  terminatedBySecurity?: boolean;
   submittedAt: string;
 }
 
@@ -92,31 +139,59 @@ export interface OrgTestResultsResponse {
     totalQuestions: number;
     maxPossibleMarks: number;
     status: string;
+    startTime?: string | null;
+    endTime?: string | null;
   };
   analytics: {
     totalSubmissions: number;
     averageScore: number;
     highestScore: number;
     lowestScore: number;
+    questionAnalytics?: QuestionAnalyticsItem[];
+    topicAnalytics?: TopicAnalyticsItem[];
   };
   results: StudentAttemptItem[];
 }
 
 export interface StudentVerifyResponse {
   valid: boolean;
-  test: {
+  scheduled?: boolean;
+  message?: string;
+  error?: string;
+  test?: {
     id: string;
     accessCode: string;
     title: string;
     description?: string;
-    subject: string;
-    organizationName: string;
-    organizationCode: string;
-    durationMinutes: number;
-    positiveMarks: number;
-    negativeMarks: number;
-    totalQuestions: number;
+    subject?: string;
+    organizationName?: string;
+    organizationCode?: string;
+    durationMinutes?: number;
+    positiveMarks?: number;
+    negativeMarks?: number;
+    totalQuestions?: number;
+    startTime?: string | null;
   };
+}
+
+export interface JSONValidationResult {
+  valid: boolean;
+  errors: string[];
+  summary?: {
+    title: string;
+    description?: string;
+    examType?: string;
+    durationMinutes?: number;
+    scheduledStart?: string | null;
+    scheduledEnd?: string | null;
+    totalQuestions: number;
+    totalMarks: number;
+    passingMarks?: number | null;
+    negativeMarking?: boolean;
+    negativeMarks?: number;
+    instructions?: string[];
+  };
+  parsedTest?: any;
 }
 
 export interface StudentAttemptResultResponse {
@@ -177,6 +252,34 @@ export async function createOrgTest(data: {
   return res.data;
 }
 
+export async function validateOrgTestJSON(jsonPayload: string): Promise<JSONValidationResult> {
+  const res = await axios.post(`${API_BASE}/admin/tests/validate-json`, { jsonPayload }, getAuthHeaders());
+  return res.data;
+}
+
+export async function importOrgTestJSON(payload: {
+  organizationId: string;
+  jsonPayload: string;
+  customCode?: string;
+  startTime?: string;
+  endTime?: string;
+  status?: string;
+  requestId?: string;
+}): Promise<{ message: string; test: OrgTest }> {
+  const res = await axios.post(`${API_BASE}/admin/tests/import-json`, payload, getAuthHeaders());
+  return res.data;
+}
+
+export async function duplicateOrgTest(testId: string): Promise<{ message: string; test: OrgTest }> {
+  const res = await axios.post(`${API_BASE}/admin/tests/${testId}/duplicate`, {}, getAuthHeaders());
+  return res.data;
+}
+
+export async function updateOrgTestStatus(testId: string, status: string): Promise<{ message: string; test: OrgTest }> {
+  const res = await axios.patch(`${API_BASE}/admin/tests/${testId}/status`, { status }, getAuthHeaders());
+  return res.data;
+}
+
 export async function fetchOrgTests(organizationId?: string): Promise<OrgTest[]> {
   const url = organizationId
     ? `${API_BASE}/admin/tests?organizationId=${encodeURIComponent(organizationId)}`
@@ -232,6 +335,8 @@ export async function submitStudentTest(payload: {
   studentRollNumber?: string;
   answers: Record<string, string>;
   timeSpentMap?: Record<string, number>;
+  violationsCount?: number;
+  terminatedBySecurity?: boolean;
 }): Promise<{
   message: string;
   attemptId: string;
@@ -287,4 +392,43 @@ export async function addAdminEmail(email: string, role: string = "ADMIN"): Prom
 
 export async function removeAdminEmail(id: string): Promise<void> {
   await axios.delete(`${API_BASE}/admin/admins/${id}`, getAuthHeaders());
+}
+
+// -------------------------------------------------------------
+// Organiser & Admin Test Request API Functions
+// -------------------------------------------------------------
+
+export async function createOrgTestRequest(data: {
+  organizationId: string;
+  title: string;
+  description?: string;
+  subject?: string;
+  durationMinutes?: number;
+  positiveMarks?: number;
+  negativeMarks?: number;
+  scheduledStart?: string;
+  scheduledEnd?: string;
+  expectedStudents?: number;
+  pdfUrl?: string;
+  pdfFileName?: string;
+}): Promise<{ message: string; testRequest: OrgTestRequest }> {
+  const res = await axios.post(`${API_BASE}/organiser/requests`, data, getAuthHeaders());
+  return res.data;
+}
+
+export async function fetchAdminTestRequests(): Promise<OrgTestRequest[]> {
+  const res = await axios.get(`${API_BASE}/admin/requests`, getAuthHeaders());
+  return res.data.requests || [];
+}
+
+export async function fetchOrganiserTestRequests(organizationId?: string): Promise<OrgTestRequest[]> {
+  const url = organizationId
+    ? `${API_BASE}/organiser/requests?organizationId=${encodeURIComponent(organizationId)}`
+    : `${API_BASE}/organiser/requests`;
+  const res = await axios.get(url, getAuthHeaders());
+  return res.data.requests || [];
+}
+
+export async function deleteOrgTestRequest(requestId: string): Promise<void> {
+  await axios.delete(`${API_BASE}/requests/${requestId}`, getAuthHeaders());
 }
