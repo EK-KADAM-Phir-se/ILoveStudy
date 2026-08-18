@@ -11,6 +11,7 @@ import NavBar from "../../../../components/NavBar";
 
 import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
 import { isGuestUser } from "@/src/lib/authUtils";
+import { API_BASE_URL } from "@/src/lib/apiConfig";
 
 /* ─────────────────────────── Tool card data ─────────────────────────── */
 const TOOLS = [
@@ -243,7 +244,7 @@ export default function CreateTestPage() {
     setLoading(true); setLoadingStatus("Connecting to Groq AI…");
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/test/generate", {
+      const res = await fetch(`${API_BASE_URL}/api/test/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ testName: testName.trim(), subject, paperText: trimmed, pages: pdfPages, images: pdfImages })
@@ -280,7 +281,7 @@ export default function CreateTestPage() {
     setLoading(true); setLoadingStatus("Importing JSON and launching…");
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/test/generate", {
+      const res = await fetch(`${API_BASE_URL}/api/test/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ testName: testName.trim(), subject, paperText: finalJson, images: pdfImages })

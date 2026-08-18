@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_BASE_URL } from "@/src/lib/apiConfig";
 
-const API_BASE = "http://localhost:5000/api/org";
+const API_BASE = `${API_BASE_URL}/api/org`;
 
 function getAuthHeaders() {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;

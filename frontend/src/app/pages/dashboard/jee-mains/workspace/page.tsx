@@ -12,6 +12,7 @@ import { LatexRenderer } from '../../../../components/LatexRenderer';
 import { QuestionImage, preloadExamImages } from '@/src/components/QuestionImage';
 import { ReportErrorButton } from '@/src/components/ReportErrorButton';
 import { NtaQuestionButton, type NtaQuestionStatus } from '@/src/components/NtaQuestionButton';
+import { API_BASE_URL } from '@/src/lib/apiConfig';
 
 function TestWorkspacePageContent() {
   const router = useRouter();
@@ -101,7 +102,7 @@ function TestWorkspacePageContent() {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);
-      const res = await fetch('http://localhost:5000/api/exams', { 
+      const res = await fetch(`${API_BASE_URL}/api/exams`, { 
         method: 'HEAD',
         signal: controller.signal 
       });

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "@/src/lib/apiConfig";
 import { LatexRenderer } from "@/src/app/components/LatexRenderer";
 import { QuestionImage } from "@/src/components/QuestionImage";
 import { ReportErrorButton } from "@/src/components/ReportErrorButton";
@@ -62,7 +63,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
       setError(null);
       try {
         const token = typeof window !== "undefined" ? (localStorage.getItem("token") || "SIMULATED_TOKEN") : "SIMULATED_TOKEN";
-        const res = await axios.get(`http://localhost:5000/api/test/review/${attemptId}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/test/review/${attemptId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

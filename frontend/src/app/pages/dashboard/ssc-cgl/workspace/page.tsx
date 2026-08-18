@@ -11,6 +11,7 @@ const TestReviewModal = dynamic(() => import('@/src/components/TestReviewModal')
 import { LatexRenderer } from '../../../../components/LatexRenderer';
 import { QuestionImage, preloadExamImages } from '@/src/components/QuestionImage';
 import { ReportErrorButton } from '@/src/components/ReportErrorButton';
+import { API_BASE_URL } from '@/src/lib/apiConfig';
 
 function SscTestWorkspaceContent() {
   const router = useRouter();
@@ -109,7 +110,7 @@ function SscTestWorkspaceContent() {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);
-      const res = await fetch('http://localhost:5000/api/exams', { 
+      const res = await fetch(`${API_BASE_URL}/api/exams`, { 
         method: 'HEAD',
         signal: controller.signal 
       });

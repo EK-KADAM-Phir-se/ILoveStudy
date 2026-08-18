@@ -10,6 +10,7 @@ import NavBar from "@/src/components/NavBar";
 
 import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
 import { isGuestUser } from "@/src/lib/authUtils";
+import { API_BASE_URL } from "@/src/lib/apiConfig";
 
 const SUBJECT_TAGS = [
   { label: "Physics", icon: <Atom size={13} />, color: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
@@ -27,7 +28,7 @@ function NeetExamPageContent() {
   const years = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016];
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/exams")
+    fetch(`${API_BASE_URL}/api/exams`)
       .then(r => r.json())
       .then(data => {
         const neet = data.find((e: any) => e.name === "NEET" || e.name.toLowerCase().includes("neet"));

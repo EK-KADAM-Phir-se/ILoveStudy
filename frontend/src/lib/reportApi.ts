@@ -1,4 +1,6 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { API_BASE_URL } from "@/src/lib/apiConfig";
+
+const API_BASE = API_BASE_URL;
 
 export type ErrorReportStatus = "pending" | "reviewing" | "resolved" | "rejected";
 

@@ -6,6 +6,7 @@ import NavBar from "../../../../components/NavBar";
 import Footer from "../../../../components/Footer";
 import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
 import { isGuestUser } from "@/src/lib/authUtils";
+import { API_BASE_URL } from "@/src/lib/apiConfig";
 
 function CalendarIcon({ className = "" }: { className?: string }) {
   return (
@@ -48,7 +49,7 @@ function SscCglDashboardContent() {
   useEffect(() => {
     const fetchDbShifts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/exams");
+        const response = await fetch(`${API_BASE_URL}/api/exams`);
         if (!response.ok) throw new Error("Failed to fetch exams");
         const data = await response.json();
 

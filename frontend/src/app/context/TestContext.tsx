@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '@/src/lib/apiConfig';
 
 interface Question {
   id: string;
@@ -67,14 +68,14 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
       const token = localStorage.getItem('token') || 'SIMULATED_TOKEN';
       let response;
       try {
-        response = await axios.get(`http://localhost:5000/api/exams/shifts/${shiftId}`, {
+        response = await axios.get(`${API_BASE_URL}/api/exams/shifts/${shiftId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
       } catch (authErr: any) {
         if (authErr?.response?.status === 401 || authErr?.response?.status === 400) {
-          response = await axios.get(`http://localhost:5000/api/exams/shifts/${shiftId}`, {
+          response = await axios.get(`${API_BASE_URL}/api/exams/shifts/${shiftId}`, {
             headers: {
               'Authorization': `Bearer SIMULATED_TOKEN`
             }
@@ -134,7 +135,7 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const token = localStorage.getItem('token') || 'SIMULATED_TOKEN';
       // 2. Stream payload directly into our high-performance Redis cache backend
-      await axios.post('http://localhost:5000/api/test/save-answer', {
+      await axios.post(`${API_BASE_URL}/api/test/save-answer`, {
         shiftId: activeShiftId,
         questionId,
         selectedOption: option,
@@ -152,7 +153,7 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
   // Final Exam submission wrapper
   const submitFinalExam = async (): Promise<any> => {
     const token = localStorage.getItem('token') || 'SIMULATED_TOKEN';
-    const response = await axios.post('http://localhost:5000/api/test/submit', {
+    const response = await axios.post(`${API_BASE_URL}/api/test/submit`, {
       shiftId: activeShiftId
     }, {
       headers: { 'Authorization': `Bearer ${token}` }

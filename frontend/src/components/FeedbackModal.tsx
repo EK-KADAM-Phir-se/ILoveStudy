@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X, MessageSquare, Star, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/src/lib/supabase";
+import { API_BASE_URL } from "@/src/lib/apiConfig";
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -154,8 +155,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
 
       // If Supabase client was blocked by API role permissions, send via backend database pooler
       if (!isInserted) {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const res = await fetch(`${API_BASE}/api/feedback`, {
+        const res = await fetch(`${API_BASE_URL}/api/feedback`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
