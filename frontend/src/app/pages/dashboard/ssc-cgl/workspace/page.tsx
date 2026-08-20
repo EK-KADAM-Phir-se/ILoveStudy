@@ -963,7 +963,7 @@ function SscTestWorkspaceContent() {
                   <button
                     onClick={() => {
                       setShowSubmitModal(false);
-                      router.push('/pages/dashboard/ssc-cgl');
+                      router.replace('/pages/dashboard/ssc-cgl');
                     }}
                     className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition"
                   >

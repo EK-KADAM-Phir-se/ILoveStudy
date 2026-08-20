@@ -13,6 +13,9 @@ import { QuestionImage, preloadExamImages } from '@/src/components/QuestionImage
 import { ReportErrorButton } from '@/src/components/ReportErrorButton';
 import { NtaQuestionButton, type NtaQuestionStatus } from '@/src/components/NtaQuestionButton';
 import { API_BASE_URL } from '@/src/lib/apiConfig';
+import { AccessibilityModal, type AccessibilitySettings } from '@/src/components/AccessibilityModal';
+import { ScreenMagnifierBar } from '@/src/components/ScreenMagnifierBar';
+import { ExitConfirmModal } from '@/src/components/ExitConfirmModal';
 import {
   Clock, Award, ChevronLeft, ChevronRight, CheckCircle2,
   AlertCircle, Maximize2, Minimize2, Dna, Atom, FlaskConical,
@@ -57,6 +60,47 @@ function NeetWorkspacePageContent() {
   const [submitResult, setSubmitResult] = useState<any>(null);
   const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
 
+  // ── Accessibility & Screen Magnifier States ──
+  const [showAccessibilityModal, setShowAccessibilityModal] = useState<boolean>(false);
+  const [showMagnifierBar, setShowMagnifierBar] = useState<boolean>(false);
+  const [zoomLevel, setZoomLevel] = useState<number>(100);
+  const [showExitConfirmModal, setShowExitConfirmModal] = useState<boolean>(false);
+  const [showMobilePalette, setShowMobilePalette] = useState<boolean>(false);
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [accessSettings, setAccessSettings] = useState<AccessibilitySettings>({
+    fontSize: 'normal',
+    highContrast: 'default',
+    dyslexicFont: false,
+    highFocusOutline: false,
+  });
+
+  const speakQuestionText = () => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window) || !questions[currentQuestionIndex]) return;
+    const currentQ = questions[currentQuestionIndex];
+    window.speechSynthesis.cancel();
+    const cleanText = (currentQ.questionText || '').replace(/\$/g, '').replace(/\\text\{([^}]+)\}/g, '$1');
+    const opts = [
+      currentQ.optionA ? `Option A: ${currentQ.optionA.replace(/\$/g, '')}` : '',
+      currentQ.optionB ? `Option B: ${currentQ.optionB.replace(/\$/g, '')}` : '',
+      currentQ.optionC ? `Option C: ${currentQ.optionC.replace(/\$/g, '')}` : '',
+      currentQ.optionD ? `Option D: ${currentQ.optionD.replace(/\$/g, '')}` : '',
+    ].filter(Boolean).join('. ');
+    const textToRead = `Question ${currentQuestionIndex + 1}. ${cleanText}. ${opts}`;
+    const utterance = new SpeechSynthesisUtterance(textToRead);
+    utterance.rate = 0.95;
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    setIsSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeaking = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  };
+
   useEffect(() => {
     const saved = localStorage.getItem("displayName");
     if (saved) setDisplayName(saved);
@@ -77,13 +121,29 @@ function NeetWorkspacePageContent() {
   const [assetProgress, setAssetProgress] = useState<{ loaded: number; total: number }>({ loaded: 0, total: 0 });
   const [countdown, setCountdown] = useState<number | null>(null);
   const [detectedExts, setDetectedExts] = useState<string[]>([]);
+  const [completedResult, setCompletedResult] = useState<any>(null);
+
+  // Check if exam was previously completed & submitted
+  useEffect(() => {
+    if (typeof window !== 'undefined' && shiftId) {
+      const saved = sessionStorage.getItem(`submitted_neet_${shiftId}`);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setCompletedResult(parsed);
+        } catch (e) {
+          console.error("Error parsing saved exam result:", e);
+        }
+      }
+    }
+  }, [shiftId]);
 
   // Load shift on mount
   useEffect(() => {
-    if (shiftId) {
+    if (shiftId && !completedResult) {
       loadShift(shiftId, name, year);
     }
-  }, [shiftId]);
+  }, [shiftId, completedResult]);
 
   // Pre-checks execution
   const runPreChecks = async () => {
@@ -360,6 +420,9 @@ function NeetWorkspacePageContent() {
       const res = await submitFinalExam();
       setSubmitResult(res);
       setSubmitSuccess(true);
+      if (typeof window !== 'undefined' && shiftId) {
+        sessionStorage.setItem(`submitted_neet_${shiftId}`, JSON.stringify(res));
+      }
       setShowAutoSubmitModal(false);
       setShowSubmitModal(true);
       if (document.fullscreenElement) {
@@ -367,7 +430,6 @@ function NeetWorkspacePageContent() {
       }
     } catch (err) {
       console.error("Submission failed:", err);
-      alert("Failed to submit exam. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -385,6 +447,85 @@ function NeetWorkspacePageContent() {
   const markedCount = markedForReview.size;
   const notAnsweredCount = visitedQuestions.size - answeredCount;
   const notVisitedCount = questions.length - visitedQuestions.size;
+
+  if (completedResult) {
+    return (
+      <div className="min-h-screen bg-slate-955 flex items-center justify-center p-4 text-slate-100 font-sans">
+        <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto shadow-inner">
+            <CheckCircle2 size={36} />
+          </div>
+
+          <div className="space-y-1">
+            <h2 className="text-2xl font-black text-white">{name || `NEET ${year}`}</h2>
+            <p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+              Exam Session Completed &amp; Evaluated
+            </p>
+          </div>
+
+          <div className="bg-slate-950/80 border border-slate-800 rounded-2xl divide-y divide-slate-800 text-sm text-left">
+            <div className="flex justify-between items-center p-3.5">
+              <span className="text-slate-400 font-semibold">Total Score:</span>
+              <span className="font-extrabold text-emerald-400 text-xl">
+                {completedResult.finalScore} / {(completedResult.totalQuestions || 200) * 4}
+              </span>
+            </div>
+            <div className="flex justify-between items-center p-3.5">
+              <span className="text-slate-400">Correct Answers:</span>
+              <span className="font-extrabold text-emerald-400 text-base">{completedResult.correctCount}</span>
+            </div>
+            <div className="flex justify-between items-center p-3.5">
+              <span className="text-slate-400">Incorrect Answers:</span>
+              <span className="font-extrabold text-rose-400 text-base">{completedResult.incorrectCount}</span>
+            </div>
+            <div className="flex justify-between items-center p-3.5">
+              <span className="text-slate-400">Unattempted Questions:</span>
+              <span className="font-extrabold text-slate-400 text-base">{completedResult.unattemptedCount}</span>
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            {completedResult.attemptId && (
+              <button
+                onClick={() => setReviewAttemptId(completedResult.attemptId)}
+                className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-lg shadow-emerald-600/20"
+              >
+                <span>Review Detailed Solutions</span>
+                <span>→</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => router.replace('/pages/dashboard/neet')}
+              className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer shadow-md"
+            >
+              Return to NEET Dashboard
+            </button>
+
+            <button
+              onClick={() => {
+                if (typeof window !== 'undefined' && shiftId) {
+                  sessionStorage.removeItem(`submitted_neet_${shiftId}`);
+                }
+                setCompletedResult(null);
+                loadShift(shiftId, name, year);
+              }}
+              className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition cursor-pointer border border-slate-700"
+            >
+              Retake Exam Practice
+            </button>
+          </div>
+
+          {reviewAttemptId && (
+            <TestReviewModal
+              attemptId={reviewAttemptId}
+              onClose={() => setReviewAttemptId(null)}
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (loading || questions.length === 0) {
     return (
@@ -543,19 +684,30 @@ function NeetWorkspacePageContent() {
         </div>
         <div className="flex items-center gap-3 text-xs">
           <button
-            onClick={() => alert("NTA Accessibility options enabled.")}
-            className="bg-[#4caf50] hover:bg-[#43a047] text-white px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer"
+            onClick={() => setShowAccessibilityModal(true)}
+            className="bg-[#4caf50] hover:bg-[#43a047] text-white px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer shadow-sm transition"
           >
             <span>♿</span> Accessibility
           </button>
           <button
-            onClick={() => alert("Screen Magnifier active.")}
-            className="bg-[#ff9800] hover:bg-[#fb8c00] text-white px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer"
+            onClick={() => setShowMagnifierBar(prev => !prev)}
+            className={`px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer shadow-sm transition ${
+              showMagnifierBar ? 'bg-amber-600 ring-2 ring-amber-400 text-white' : 'bg-[#ff9800] hover:bg-[#fb8c00] text-white'
+            }`}
           >
             <span>🔍</span> Screen Magnifier
           </button>
         </div>
       </div>
+
+      {/* Screen Magnifier Floating Control Toolbar */}
+      {showMagnifierBar && (
+        <ScreenMagnifierBar
+          zoomLevel={zoomLevel}
+          onZoomChange={(z) => setZoomLevel(z)}
+          onClose={() => setShowMagnifierBar(false)}
+        />
+      )}
 
       {/* 2. Sub-Header Bar (Paper Badge + Timer) */}
       <div className="bg-[#e8edf2] dark:bg-[#1e232a] text-slate-800 dark:text-slate-100 px-4 py-2 flex items-center justify-between text-xs border-b border-slate-300 dark:border-slate-800 shrink-0">
@@ -564,12 +716,8 @@ function NeetWorkspacePageContent() {
             NEET {year}
           </span>
           <button
-            onClick={() => {
-              if (confirm("Are you sure you want to exit the exam? Your progress is saved.")) {
-                router.push('/pages/dashboard/neet');
-              }
-            }}
-            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-semibold"
+            onClick={() => setShowExitConfirmModal(true)}
+            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-semibold cursor-pointer"
           >
             &larr; Exit Exam
           </button>
@@ -608,30 +756,36 @@ function NeetWorkspacePageContent() {
       </div>
 
       {/* Main Body Grid */}
-      <div className="flex-1 flex overflow-hidden w-full">
+      <div className="flex-1 flex overflow-hidden w-full relative">
         
         {/* Left Side Panel: Question view & options */}
-        <main className="flex-1 flex flex-col bg-slate-950 overflow-hidden border-r border-slate-900">
+        <main className="flex-1 flex flex-col bg-slate-950 overflow-hidden border-r-0 lg:border-r border-slate-900 w-full min-w-0">
           
           {/* Question No & Bookmark bar */}
-          <div className="bg-slate-900 border-b border-slate-800 px-6 py-2 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-3">
-              <span className="font-bold text-slate-100 text-sm">Question No. {currentQuestionIndex + 1}</span>
+          <div className="bg-slate-900 border-b border-slate-800 px-4 sm:px-6 py-2 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="font-bold text-slate-100 text-xs sm:text-sm">Question No. {currentQuestionIndex + 1}</span>
               {currentQ && (
                 <button
                   onClick={handleToggleBookmark}
-                  className={`px-3 py-1 text-xs font-bold rounded-lg border flex items-center gap-1.5 transition cursor-pointer ${
+                  className={`px-2.5 py-1 text-xs font-bold rounded-lg border flex items-center gap-1 transition cursor-pointer ${
                     bookmarkedQuestions.has(currentQ.id)
                       ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
                       : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
                   }`}
                 >
-                  <span>🔖</span> Bookmark
+                  <span>🔖</span> <span className="hidden sm:inline">Bookmark</span>
                 </button>
               )}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {currentQ && <ReportErrorButton questionId={currentQ.id} questionTextSnippet={currentQ.questionText} />}
+              <button
+                onClick={() => setShowMobilePalette(true)}
+                className="lg:hidden px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1 cursor-pointer shadow"
+              >
+                <span>🔢</span> <span className="hidden sm:inline">Palette</span> ({totalCounters.answered}/{questions.length})
+              </button>
               <button
                 onClick={() => setShowInstructionBox(!showInstructionBox)}
                 className="p-1 rounded bg-slate-800 text-slate-300 hover:bg-slate-700 transition"
@@ -644,12 +798,12 @@ function NeetWorkspacePageContent() {
 
           {/* Section Instruction Box (Collapsible Card) */}
           {showInstructionBox && (
-            <div className="bg-slate-900/90 border border-slate-800 rounded-xl m-4 p-4 text-xs text-slate-200 space-y-2 shrink-0 shadow-lg">
+            <div className="bg-slate-900/90 border border-slate-800 rounded-xl m-2 sm:m-4 p-3 sm:p-4 text-xs text-slate-200 space-y-2 shrink-0 shadow-lg">
               <div className="flex justify-between items-center font-bold border-b border-slate-800 pb-2">
                 <span className="text-rose-400 text-sm">{selectedSubject} (Maximum Marks: 720)</span>
                 <button onClick={() => setShowInstructionBox(false)} className="text-slate-400 hover:text-white">▲</button>
               </div>
-              <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed">
+              <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed text-[11px] sm:text-xs">
                 <li>This section contains questions for <strong>{selectedSubject}</strong>.</li>
                 <li>Each question has <strong>FOUR</strong> options (A), (B), (C) and (D). <strong>ONLY ONE</strong> option is correct.</li>
                 <li>Marking Scheme: <strong>+4</strong> for correct answer, <strong>0</strong> if unattempted, <strong>-1</strong> for incorrect.</li>
@@ -658,30 +812,42 @@ function NeetWorkspacePageContent() {
           )}
 
           {/* Question and Option Display */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
+            <div 
+              className="max-w-4xl mx-auto space-y-4 sm:space-y-6 transition-all duration-150 w-full min-w-0"
+              style={zoomLevel !== 100 ? { zoom: `${zoomLevel}%` } : undefined}
+            >
               {currentQ && (
                 <>
                   {/* Question card */}
-                  <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md">
-                    <div className="text-slate-100 text-base leading-relaxed whitespace-pre-line">
+                  <div className={`rounded-xl p-4 sm:p-6 transition-all break-words min-w-0 ${
+                    accessSettings.highContrast === 'yellow-on-black'
+                      ? 'bg-black border-2 border-yellow-400 text-yellow-300 font-mono shadow-2xl'
+                      : accessSettings.highContrast === 'high-contrast-light'
+                      ? 'bg-white border-2 border-slate-900 text-black shadow-2xl'
+                      : 'bg-slate-900 border border-slate-800 text-slate-100 shadow-md'
+                  }`}>
+                    <div className={`whitespace-pre-line break-words overflow-x-auto ${
+                      accessSettings.fontSize === 'large' ? 'text-base sm:text-xl' :
+                      accessSettings.fontSize === 'xlarge' ? 'text-lg sm:text-2xl' : 'text-sm sm:text-base'
+                    } ${accessSettings.dyslexicFont ? 'tracking-wider leading-loose font-mono' : 'leading-relaxed'}`}>
                       <LatexRenderer text={currentQ.questionText} />
                     </div>
 
                     {currentQ.imageUrl && (
-                      <div className="mt-4 border border-slate-800 rounded-lg p-4 bg-slate-950 flex justify-center">
+                      <div className="mt-4 border border-slate-800 rounded-lg p-2 sm:p-4 bg-slate-950 flex justify-center">
                         <QuestionImage
                           imageUrl={currentQ.imageUrl}
                           examName="neet"
                           alt={`Question ${currentQuestionIndex + 1} Diagram`}
-                          className="max-h-72 object-contain"
+                          className="max-h-60 sm:max-h-72 max-w-full object-contain"
                         />
                       </div>
                     )}
                   </div>
 
                   {/* Options List */}
-                  <div className="space-y-3">
+                  <div className="space-y-2.5 sm:space-y-3">
                     {[
                       { key: 'A', text: currentQ.optionA },
                       { key: 'B', text: currentQ.optionB },
@@ -690,24 +856,41 @@ function NeetWorkspacePageContent() {
                     ].map(({ key, text }) => {
                       if (!text) return null;
                       const isSelected = answers[currentQ.id] === key;
+                      
+                      let optionBg = 'bg-slate-900 border-slate-800/80 hover:border-slate-700/80 hover:bg-slate-850/50';
+                      if (isSelected) {
+                        optionBg = 'bg-[#337ab7]/20 border-[#337ab7] shadow-md shadow-blue-500/5';
+                      }
+
+                      if (accessSettings.highContrast === 'yellow-on-black') {
+                        optionBg = isSelected
+                          ? 'bg-yellow-400 text-black font-extrabold border-2 border-yellow-300 shadow-lg'
+                          : 'bg-black text-yellow-300 border-2 border-yellow-500/80 hover:bg-yellow-950/40';
+                      } else if (accessSettings.highContrast === 'high-contrast-light') {
+                        optionBg = isSelected
+                          ? 'bg-blue-600 text-white font-bold border-2 border-blue-900 shadow-lg'
+                          : 'bg-slate-100 text-black border-2 border-slate-900 hover:bg-slate-200';
+                      }
+
                       return (
                         <div
                           key={key}
                           onClick={() => handleOptionChange(key)}
-                          className={`group flex items-center p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
-                            isSelected
-                              ? 'bg-[#337ab7]/20 border-[#337ab7] shadow-md shadow-blue-500/5'
-                              : 'bg-slate-900 border-slate-800/80 hover:border-slate-700/80 hover:bg-slate-850/50'
+                          className={`group flex items-start sm:items-center p-3 sm:p-4 rounded-xl border cursor-pointer transition-all duration-200 ${optionBg} ${
+                            accessSettings.highFocusOutline ? 'focus:ring-4 focus:ring-emerald-400' : ''
                           }`}
                         >
-                          <span className={`h-8 w-8 rounded-lg font-bold flex items-center justify-center mr-4 transition ${
+                          <span className={`h-7 w-7 sm:h-8 sm:w-8 rounded-lg font-bold flex items-center justify-center mr-3 shrink-0 text-xs sm:text-sm transition ${
                             isSelected
-                              ? 'bg-[#337ab7] text-white'
-                              : 'bg-slate-950 text-slate-400 group-hover:bg-slate-800 group-hover:text-slate-200'
+                              ? (accessSettings.highContrast === 'yellow-on-black' ? 'bg-black text-yellow-400' : 'bg-[#337ab7] text-white')
+                              : 'bg-slate-955 text-slate-400 group-hover:bg-slate-800 group-hover:text-slate-200'
                           }`}>
                             {key}
                           </span>
-                          <div className={`text-sm ${isSelected ? 'text-blue-200 font-semibold' : 'text-slate-300'}`}>
+                          <div className={`text-xs sm:text-sm break-words min-w-0 flex-1 ${
+                            accessSettings.fontSize === 'large' ? 'text-sm sm:text-base' :
+                            accessSettings.fontSize === 'xlarge' ? 'text-base sm:text-lg' : 'text-xs sm:text-sm'
+                          } ${isSelected ? 'text-blue-200 font-semibold' : 'text-slate-300'}`}>
                             <LatexRenderer text={text} />
                           </div>
                         </div>
@@ -720,32 +903,38 @@ function NeetWorkspacePageContent() {
           </div>
 
           {/* 5. NTA Bottom Control Bar */}
-          <footer className="bg-slate-900 border-t border-slate-800 px-4 py-3 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-3">
+          <footer className="bg-slate-900 border-t border-slate-800 px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={handleMarkForReviewAndNext}
-                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs transition cursor-pointer shadow-sm"
+                className="px-3 sm:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs transition cursor-pointer shadow-sm"
               >
                 Mark for Review &amp; Next
               </button>
               <button
                 onClick={handleClearResponse}
                 disabled={!currentQ || !answers[currentQ.id]}
-                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 disabled:opacity-40 font-semibold text-xs transition cursor-pointer shadow-sm"
+                className="px-3 sm:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 disabled:opacity-40 font-semibold text-xs transition cursor-pointer shadow-sm"
               >
                 Clear Response
               </button>
+              <button
+                onClick={() => setShowMobilePalette(true)}
+                className="lg:hidden px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow"
+              >
+                <span>🔢</span> Palette ({totalCounters.answered}/{questions.length})
+              </button>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={handleNextQuestion}
-                className="px-5 py-2 rounded-lg bg-[#337ab7] hover:bg-[#286090] text-white font-bold text-xs transition cursor-pointer shadow"
+                className="px-4 sm:px-5 py-2 rounded-lg bg-[#337ab7] hover:bg-[#286090] text-white font-bold text-xs transition cursor-pointer shadow"
               >
                 Save &amp; Next
               </button>
               <button
                 onClick={() => setShowSubmitModal(true)}
-                className="px-5 py-2 rounded-lg bg-[#2e6da4] hover:bg-[#204d74] text-white font-bold text-xs transition cursor-pointer shadow"
+                className="px-4 sm:px-5 py-2 rounded-lg bg-[#2e6da4] hover:bg-[#204d74] text-white font-bold text-xs transition cursor-pointer shadow"
               >
                 Submit
               </button>
@@ -753,9 +942,35 @@ function NeetWorkspacePageContent() {
           </footer>
         </main>
 
+        {/* Mobile Backdrop Overlay */}
+        {showMobilePalette && (
+          <div 
+            className="fixed inset-0 z-40 bg-slate-955/80 backdrop-blur-sm lg:hidden animate-fadeIn"
+            onClick={() => setShowMobilePalette(false)}
+          />
+        )}
+
         {/* 6. NTA Right Sidebar (Profile + Legend + Palette Grid) */}
-        <aside className="w-80 shrink-0 bg-slate-900 border-l border-slate-800 flex flex-col h-full overflow-hidden">
+        <aside className={`
+          fixed inset-y-0 right-0 z-50 w-80 bg-slate-900 border-l border-slate-800 flex flex-col h-full 
+          transition-transform duration-300 transform 
+          lg:static lg:translate-x-0 lg:z-auto shrink-0
+          ${showMobilePalette ? 'translate-x-0 shadow-2xl' : 'translate-x-full lg:translate-x-0'}
+        `}>
           
+          {/* Mobile Drawer Close Header */}
+          <div className="lg:hidden p-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0">
+            <span className="font-bold text-xs text-white flex items-center gap-1.5">
+              <span>🔢</span> Question Palette ({totalCounters.answered}/{questions.length})
+            </span>
+            <button 
+              onClick={() => setShowMobilePalette(false)}
+              className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold"
+            >
+              ✕ Close
+            </button>
+          </div>
+
           {/* Candidate Profile Box */}
           <div className="p-3 bg-slate-950 border-b border-slate-800 flex items-center gap-3 shrink-0">
             <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 overflow-hidden shrink-0">
@@ -822,6 +1037,7 @@ function NeetWorkspacePageContent() {
                       else if (s.toLowerCase().includes("chem")) setSelectedSubject("Chemistry");
                       else if (s.toLowerCase().includes("bio")) setSelectedSubject("Biology");
                       setCurrentQuestionIndex(idx);
+                      setShowMobilePalette(false);
                     }}
                   />
                 );
@@ -931,7 +1147,7 @@ function NeetWorkspacePageContent() {
                   <button
                     onClick={() => {
                       setShowSubmitModal(false);
-                      router.push('/pages/dashboard/neet');
+                      router.replace('/pages/dashboard/neet');
                     }}
                     className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-4 rounded-xl transition duration-150 shadow-lg shadow-indigo-600/10 cursor-pointer"
                   >
@@ -998,6 +1214,28 @@ function NeetWorkspacePageContent() {
           onClose={() => setReviewAttemptId(null)}
         />
       )}
+
+      {/* Accessibility & Inclusive Options Modal */}
+      <AccessibilityModal
+        isOpen={showAccessibilityModal}
+        onClose={() => setShowAccessibilityModal(false)}
+        settings={accessSettings}
+        onUpdateSettings={(newS) => setAccessSettings(prev => ({ ...prev, ...newS }))}
+        onSpeakQuestion={speakQuestionText}
+        onStopSpeaking={stopSpeaking}
+        isSpeaking={isSpeaking}
+      />
+
+      {/* Exit Exam Confirmation Modal */}
+      <ExitConfirmModal
+        isOpen={showExitConfirmModal}
+        onClose={() => setShowExitConfirmModal(false)}
+        onConfirmExit={() => {
+          setShowExitConfirmModal(false);
+          router.replace('/pages/dashboard/neet');
+        }}
+        examName="NEET CBT"
+      />
     </div>
   );
 }
