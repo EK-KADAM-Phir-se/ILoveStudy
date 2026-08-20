@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" width="100%" height="100%" style="background:#0f172a; font-family: system-ui, sans-serif;">
+  <!-- Axes -->
+  <line x1="60" y1="220" x2="60" y2="120" stroke="#e2e8f0" stroke-width="2"/>
+  <polygon points="60,115 56,125 64,125" fill="#e2e8f0"/>
+  <text x="60" y="105" fill="#e2e8f0" font-size="14" font-weight="bold" text-anchor="middle">ĵ</text>
+
+  <line x1="60" y1="220" x2="160" y2="220" stroke="#e2e8f0" stroke-width="2"/>
+  <polygon points="165,220 155,216 155,224" fill="#e2e8f0"/>
+  <text x="175" y="225" fill="#e2e8f0" font-size="14" font-weight="bold">î</text>
+
+  <!-- Ground -->
+  <line x1="180" y1="220" x2="380" y2="220" stroke="#94a3b8" stroke-width="3"/>
+  <!-- Hatching for ground -->
+  <path d="M 190 220 L 180 230 M 210 220 L 200 230 M 230 220 L 220 230 M 250 220 L 240 230 M 270 220 L 260 230 M 290 220 L 280 230 M 310 220 L 300 230 M 330 220 L 320 230 M 350 220 L 340 230 M 370 220 L 360 230" stroke="#64748b" stroke-width="1.5"/>
+
+  <!-- Disc -->
+  <circle cx="280" cy="140" r="80" fill="#0284c7" fill-opacity="0.1" stroke="#38bdf8" stroke-width="3"/>
+  <circle cx="280" cy="140" r="4" fill="#f43f5e"/>
+  <text x="265" y="145" fill="#f43f5e" font-size="16" font-weight="bold">O</text>
+
+  <!-- Contact point A -->
+  <circle cx="280" cy="220" r="4" fill="#38bdf8"/>
+  <text x="280" y="245" fill="#38bdf8" font-size="16" font-weight="bold" text-anchor="middle">A</text>
+
+  <!-- Radius r -->
+  <line x1="280" y1="140" x2="336" y2="84" stroke="#fbbf24" stroke-width="2"/>
+  <text x="300" y="105" fill="#fbbf24" font-size="15" font-weight="bold">r</text>
+
+  <!-- Angular velocity w arc -->
+  <path d="M 230 110 A 60 60 0 0 1 290 80" fill="none" stroke="#22c55e" stroke-width="3.5"/>
+  <polygon points="295,78 285,73 287,85" fill="#22c55e"/>
+  <text x="220" y="95" fill="#22c55e" font-size="16" font-weight="bold">ω</text>
+</svg>

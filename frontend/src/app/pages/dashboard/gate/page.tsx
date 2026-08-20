@@ -45,7 +45,12 @@ export default function GateDashboard() {
     ];
 
     if (dbShifts.length > 0) {
-      const matched = dbShifts.filter((s: any) => s.name.includes(selectedBranch) || s.name.includes(selectedYear.toString()));
+      const matched = dbShifts.filter((s: any) => {
+        const hasBranch = s.name.toUpperCase().includes(selectedBranch.toUpperCase()) || 
+                          (selectedBranch === 'ME' && s.name.toUpperCase().includes('MECHANICAL'));
+        const hasYear = s.name.includes(selectedYear.toString());
+        return hasBranch && hasYear;
+      });
       if (matched.length > 0) {
         return matched.map(s => ({
           id: s.id,

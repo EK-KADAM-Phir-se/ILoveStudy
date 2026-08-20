@@ -1,0 +1,876 @@
+const prisma = require('../../lib/prisma');
+const fs = require('fs');
+const path = require('path');
+
+const rawQuestions = [
+  // ── GENERAL APTITUDE (Q1 - Q10) ──
+  {
+    subject: "General Aptitude",
+    questionText: "Fish : Shoal :: Lion : _______\nSelect the correct option to complete the analogy.",
+    imageUrl: null,
+    optionA: "(A) Pride",
+    optionB: "(B) School",
+    optionC: "(C) Forest",
+    optionD: "(D) Series",
+    correctOption: "A",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "General Aptitude",
+    questionText: "Identify the grammatically correct sentence:",
+    imageUrl: null,
+    optionA: "(A) It is I who am responsible for this fiasco.",
+    optionB: "(B) It is myself who is responsible for this fiasco.",
+    optionC: "(C) It is I who is responsible for this fiasco.",
+    optionD: "(D) It is I who are responsible for this fiasco.",
+    correctOption: "A",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "General Aptitude",
+    questionText: "Two cars, P and Q, start from a point X in India at 10 AM. Car P travels North with a speed of 25 km/h and car Q travels East with a speed of 30 km/h. Car P travels continuously but car Q stops for some time after travelling for one hour. If both the cars are at the same distance from X at 11:30 AM, for how long (in minutes) did car Q stop?",
+    imageUrl: null,
+    optionA: "(A) 10",
+    optionB: "(B) 12",
+    optionC: "(C) 15",
+    optionD: "(D) 18",
+    correctOption: "C",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "General Aptitude",
+    questionText: "The ceiling function of a real number $x$, denoted by $ce(x)$, is defined as the smallest integer that is greater than or equal to $x$. Similarly, the floor function, denoted by $fl(x)$, is defined as the largest integer that is smaller than or equal to $x$. Which one of the following statements is NOT correct for all possible values of $x$?",
+    imageUrl: null,
+    optionA: "(A) $ce(x) \\ge x$",
+    optionB: "(B) $fl(x) \\le x$",
+    optionC: "(C) $ce(x) \\ge fl(x)$",
+    optionD: "(D) $fl(x) < ce(x)$",
+    correctOption: "D",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "General Aptitude",
+    questionText: "P and Q play chess frequently against each other. Of these matches, P has won 80% of the matches, drawn 15% of the matches and lost 5% of the matches. If they play 3 more matches, what is the probability of P winning exactly 2 of these 3 matches?",
+    imageUrl: null,
+    optionA: "(A) 48/125",
+    optionB: "(B) 16/125",
+    optionC: "(C) 16/25",
+    optionD: "(D) 25/48",
+    correctOption: "A",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "General Aptitude",
+    questionText: "Identify the option that has the most appropriate sequence such that a coherent paragraph is formed:\n\nP. At once, without thinking much, people rushed towards the city in hordes with the sole aim of grabbing as much gold as they could.\nQ. However, little did they realize about the impending hardships they would have to face on their way to the city: miles of mud, unfriendly forests, hungry beasts and inimical local lords – all of which would reduce their chances of getting gold to almost zero.\nR. All of them thought that easily they could lay their hands on gold and become wealthy overnight.\nS. About a hundred years ago, the news that gold had been discovered in Kolar spread like wildfire and the whole State was in raptures.",
+    imageUrl: null,
+    optionA: "(A) P → Q → R → S",
+    optionB: "(B) Q → S → R → P",
+    optionC: "(C) S → Q → P → R",
+    optionD: "(D) S → P → R → Q",
+    correctOption: "D",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "General Aptitude",
+    questionText: "If HIDE and CAGE are coded as 19-23-7-11 and 5-2-17-11 respectively, then what is the code for HIGH?",
+    imageUrl: null,
+    optionA: "(A) 5-17-1-2",
+    optionB: "(B) 17-19-13-17",
+    optionC: "(C) 13-3-1-2",
+    optionD: "(D) 19-23-17-19",
+    correctOption: "D",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "General Aptitude",
+    questionText: "The given figure is reflected about the horizontal dashed line and then rotated clockwise by 90° about an axis perpendicular to the plane of the figure.\nWhich one of the following options correctly shows the resultant figure?",
+    imageUrl: "/GATE/gate_2025_me_q8.svg",
+    optionA: "(A) Option A",
+    optionB: "(B) Option B",
+    optionC: "(C) Option C",
+    optionD: "(D) Option D",
+    correctOption: "B",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "General Aptitude",
+    questionText: "Which one of the following options has the correct sequence of objects arranged in the increasing number of mirror lines (lines of symmetry)?",
+    imageUrl: null,
+    optionA: "(A) Circle; Square; Equilateral triangle; Isosceles triangle",
+    optionB: "(B) Isosceles triangle; Equilateral triangle; Square; Circle",
+    optionC: "(C) Equilateral triangle; Isosceles triangle; Square; Circle",
+    optionD: "(D) Isosceles triangle; Square; Equilateral triangle; Circle",
+    correctOption: "D",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "General Aptitude",
+    questionText: "A final year student appears for placement interview in two companies, S and T. Based on her interview performance, she estimates the probability of receiving job offers from companies S and T to be 0.8 and 0.6, respectively. Let $p$ be the probability that she receives job offers from both the companies. Select the most appropriate option.",
+    imageUrl: null,
+    optionA: "(A) 0 ≤ p ≤ 0.2",
+    optionB: "(B) 0.4 ≤ p ≤ 0.6",
+    optionC: "(C) 0.2 ≤ p ≤ 0.4",
+    optionD: "(D) 0.6 ≤ p ≤ 1.0",
+    correctOption: "B",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+
+  // ── MECHANICAL ENGINEERING (Q11 - Q35, 1 Mark Each) ──
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Let A and B be real symmetric matrices of same size. Which one of the following options is correct?",
+    imageUrl: null,
+    optionA: "(A) A^T = A^-1",
+    optionB: "(B) AB = BA",
+    optionC: "(C) (AB)^T = B^T A^T",
+    optionD: "(D) A = A^-1",
+    correctOption: "C",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "For the differential equation given below, which one of the following options is correct?\n$$\\frac{\\partial^2 u}{\\partial x^2} + \\frac{\\partial^2 u}{\\partial y^2} = 0, \\quad 0 \\le x \\le 1, \\, 0 \\le y \\le 1$$",
+    imageUrl: null,
+    optionA: "(A) $u = e^{x+y}$ is a solution for all x and y",
+    optionB: "(B) $u = e^x \\sin y$ is a solution for all x and y",
+    optionC: "(C) $u = \\sin x \\sin y$ is a solution for all x and y",
+    optionD: "(D) $u = \\cos x \\cos y$ is a solution for all x and y",
+    correctOption: "B",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "The divergence of the curl of a vector field is",
+    imageUrl: null,
+    optionA: "(A) the magnitude of this vector field",
+    optionB: "(B) the argument of this vector field",
+    optionC: "(C) the magnitude of the curl of this vector field",
+    optionD: "(D) zero",
+    correctOption: "D",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "If two unbiased coins are tossed, then what is the probability of having at least one head?",
+    imageUrl: null,
+    optionA: "(A) 0.25",
+    optionB: "(B) 0.5",
+    optionC: "(C) 0.675",
+    optionD: "(D) 0.75",
+    correctOption: "D",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Let a spherical block of ice at -7°C be exposed to atmospheric air at 30°C with the gravitational direction as shown in the figure below. What will be the overall direction of air flow in this situation?",
+    imageUrl: "/GATE/gate_2025_me_q15.svg",
+    optionA: "(A) Upward",
+    optionB: "(B) Downward",
+    optionC: "(C) NO motion",
+    optionD: "(D) Sideward",
+    correctOption: "B",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Consider two identical tanks with a bottom hole of diameter $d$. One tank is filled with water and the other tank is filled with engine oil. The height of the fluid column $h$ is same in both the cases. The fluid exit velocity in the two tanks are $V_1$ and $V_2$. Neglecting all losses, which one of the following options is correct?",
+    imageUrl: "/GATE/gate_2025_me_q16.svg",
+    optionA: "(A) V_2 > V_1",
+    optionB: "(B) V_2 = V_1",
+    optionC: "(C) V_2 < V_1",
+    optionD: "(D) Insufficient data to definitively conclude the relationship between V_1 and V_2",
+    correctOption: "D",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "In a laboratory experiment using a scaled down model to measure scour at a bridge pier, the Froude number is important. The ratio of the prototype length to the model length is 100. If the velocity of the model is 1 m s^-1, the velocity (in m s^-1) of the prototype is",
+    imageUrl: null,
+    optionA: "(A) 0.1",
+    optionB: "(B) 1",
+    optionC: "(C) 10",
+    optionD: "(D) 100",
+    correctOption: "D",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Air inside a rigid, thermally-insulated tank undergoes stirring as shown in the figure below. Which one of the following options is correct?",
+    imageUrl: "/GATE/gate_2025_me_q18.svg",
+    optionA: "(A) The enthalpy of the air increases while the entropy of the air remains constant",
+    optionB: "(B) Both the enthalpy and the entropy of the air remain constant",
+    optionC: "(C) Both the enthalpy and the entropy of the air increase",
+    optionD: "(D) The enthalpy of the air decreases while the entropy of the air increases",
+    correctOption: "C",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "In a psychrometric chart, one axis represents dry-bulb temperature. The axis, that is perpendicular to the dry-bulb temperature axis, represents",
+    imageUrl: null,
+    optionA: "(A) wet-bulb temperature",
+    optionB: "(B) specific humidity",
+    optionC: "(C) relative humidity",
+    optionD: "(D) enthalpy",
+    correctOption: "B",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Among the following surface hardening processes, steel is heated to the lowest temperature in",
+    imageUrl: null,
+    optionA: "(A) carburizing",
+    optionB: "(B) cyaniding",
+    optionC: "(C) nitriding",
+    optionD: "(D) carbonitriding",
+    correctOption: "C",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "The welding process commonly used for fabricating tailor-welded blanks of dissimilar thickness for automotive applications is",
+    imageUrl: null,
+    optionA: "(A) gas welding",
+    optionB: "(B) laser welding",
+    optionC: "(C) arc welding",
+    optionD: "(D) friction welding",
+    correctOption: "B",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "The yield stress of a metal in uniaxial tension is 200 MPa. According to von Mises yield criterion, the yield stress (in MPa) of the metal in pure shear is closest to",
+    imageUrl: null,
+    optionA: "(A) 115.5",
+    optionB: "(B) 100.0",
+    optionC: "(C) 66.7",
+    optionD: "(D) 141.4",
+    correctOption: "A",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "In computer aided design (CAD), solid models can be constructed using",
+    imageUrl: null,
+    optionA: "(A) boundary representation (B-rep)",
+    optionB: "(B) Bezier curves",
+    optionC: "(C) B-splines",
+    optionD: "(D) nonuniform rational B-splines (NURBS)",
+    correctOption: "A",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Ceramics and glass are machined by",
+    imageUrl: null,
+    optionA: "(A) electric discharge machining",
+    optionB: "(B) ultrasonic machining",
+    optionC: "(C) electrochemical machining",
+    optionD: "(D) transferred arc plasma machining",
+    correctOption: "B",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "When assembled, the hole $30^{+0.030}_{+0.000}\\text{ mm}$ and shaft $30^{+0.020}_{-0.020}\\text{ mm}$ will result in",
+    imageUrl: null,
+    optionA: "(A) loose fit",
+    optionB: "(B) interference fit",
+    optionC: "(C) transition fit",
+    optionD: "(D) clearance fit",
+    correctOption: "C",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A rigid circular disc of radius $r$ (in m) is rolling without slipping on a flat surface as shown in the figure below. The angular velocity of the disc is $\\omega$ (in rad s^-1). The velocities (in m s^-1) at points O and A, respectively, are",
+    imageUrl: "/GATE/gate_2025_me_q26.svg",
+    optionA: "(A) $r\\omega \\hat{i}$ and $0 \\hat{i}$",
+    optionB: "(B) $-r\\omega \\hat{i}$ and $0 \\hat{i}$",
+    optionC: "(C) $-r\\omega \\hat{i}$ and $-r\\omega \\hat{i}$",
+    optionD: "(D) $r\\omega \\hat{i}$ and $r\\omega \\hat{i}$",
+    correctOption: "A",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A truss structure is loaded as shown in the figure below. Among the options given, which member in the truss is a zero-force member?",
+    imageUrl: "/GATE/gate_2025_me_q27.svg",
+    optionA: "(A) BD",
+    optionB: "(B) BC",
+    optionC: "(C) BA",
+    optionD: "(D) AD",
+    correctOption: "A",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A metallic square plate is subjected to a uniform hydrostatic pressure (P). Choose the correct Mohr’s circle representing the state of stress at any point in the plate from the options given below.\nFor the Mohr’s circle, normal stress is positive towards right and shear stress is positive in the upward direction.",
+    imageUrl: "/GATE/gate_2025_me_q28.svg",
+    optionA: "(A) Point circle at (+P, 0)",
+    optionB: "(B) Point circle at (-P, 0)",
+    optionC: "(C) Circle centered at O with radius P",
+    optionD: "(D) Circle passing through (-P, 0)",
+    correctOption: "B",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "In the context of balancing of rotating and reciprocating masses, which one of the following options is true?",
+    imageUrl: null,
+    optionA: "(A) An unbalanced rigid rotor can be completely balanced using a single balancing mass",
+    optionB: "(B) An unbalanced rigid rotor can be completely balanced using two balancing masses attached in two distinct planes",
+    optionC: "(C) A single-cylinder internal combustion engine can be completely balanced using a single balancing mass",
+    optionD: "(D) A single-cylinder internal combustion engine can be completely balanced using two balancing masses",
+    correctOption: "B",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A shaft carries a helical spur gear. Which one of the following bearings can NOT be used to support it?",
+    imageUrl: null,
+    optionA: "(A) Angular contact bearing",
+    optionB: "(B) Double-row ball bearing",
+    optionC: "(C) Straight roller bearing",
+    optionD: "(D) Tapered roller bearing",
+    correctOption: "C",
+    positiveMarks: 1,
+    negativeMarks: -0.33
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "The values of a function $f$ obtained for different values of $x$ are shown in the table below:\n\n| x | 0 | 0.25 | 0.5 | 0.75 | 1.0 |\n|---|---|---|---|---|---|\n| f(x) | 0.9 | 2.0 | 1.5 | 1.8 | 0.4 |\n\nUsing Simpson’s one-third rule, $\\int_0^1 f(x) \\, dx \\approx$ _______ (rounded off to 2 decimal places).",
+    imageUrl: null,
+    optionA: "1.63",
+    optionB: "1.63",
+    optionC: "1.63",
+    optionD: "1.63",
+    correctOption: "1.63",
+    positiveMarks: 1,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "The thermal efficiency of an ideal air-standard Otto cycle is 0.5. The value of specific heat ratio of air is 1.4. The compression ratio of the cycle is _______ (rounded off to 1 decimal place).",
+    imageUrl: null,
+    optionA: "5.7",
+    optionB: "5.7",
+    optionC: "5.7",
+    optionD: "5.7",
+    correctOption: "5.7",
+    positiveMarks: 1,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "During a welding operation, thermal power of 2500 W is incident normally on a metallic surface. As shown in the figure below, the heated area is circular. Out of the incident power, 85% of the power is absorbed within a circle of radius 5 mm while 65% is absorbed within an inner concentric circle of radius 3 mm. The power density in the shaded area is _______ W mm^-2 (rounded off to 2 decimal places).",
+    imageUrl: "/GATE/gate_2025_me_q33.svg",
+    optionA: "9.95",
+    optionB: "9.95",
+    optionC: "9.95",
+    optionD: "9.95",
+    correctOption: "9.95",
+    positiveMarks: 1,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A liquid metal is poured in a mold cavity of size 200 mm × 200 mm × 200 mm. The cooling is uniform in all directions with NO additional compensation for shrinkage. Considering the volumetric shrinkage during solidification and solid contraction as 7% and 8%, respectively, the length of the cube edge after cooling down to the room temperature is _______ mm (rounded off to 1 decimal place).",
+    imageUrl: null,
+    optionA: "189.9",
+    optionB: "189.9",
+    optionC: "189.9",
+    optionD: "189.9",
+    correctOption: "189.9",
+    positiveMarks: 1,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A block of mass 1 kg connected to a spring of stiffness 10 N m^-1 is operating in a viscous medium such that the damping ratio (or damping factor) is equal to the ratio of the damped frequency to the natural frequency. The magnitude of the damping ratio for this system is _______ (rounded off to 2 decimal places).",
+    imageUrl: null,
+    optionA: "0.71",
+    optionB: "0.71",
+    optionC: "0.71",
+    optionD: "0.71",
+    correctOption: "0.71",
+    positiveMarks: 1,
+    negativeMarks: 0
+  },
+
+  // ── MECHANICAL ENGINEERING (Q36 - Q65, 2 Marks Each) ──
+  {
+    subject: "Mechanical Engineering",
+    questionText: "In the closed interval [0, 3], the minimum value of the function $f$ given below is\n$$f(x) = 2x^3 - 9x^2 + 12x$$",
+    imageUrl: null,
+    optionA: "(A) 0",
+    optionB: "(B) 4",
+    optionC: "(C) 5",
+    optionD: "(D) 9",
+    correctOption: "A",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Considering the actual demand and the forecast for a product given in the table below, the mean forecast error and the mean absolute deviation, respectively, are:\n\n| Period | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |\n|---|---|---|---|---|---|---|---|---|---|---|\n| Actual demand | 425 | 415 | 420 | 430 | 427 | 418 | 422 | 416 | 426 | 421 |\n| Forecast | 427 | 422 | 416 | 422 | 423 | 420 | 419 | 418 | 430 | 415 |",
+    imageUrl: null,
+    optionA: "(A) 0.8 and 42.0",
+    optionB: "(B) 0.8 and 4.2",
+    optionC: "(C) 8.0 and 42.0",
+    optionD: "(D) 8.0 and 4.2",
+    correctOption: "B",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Match the mold elements in the casting process with the most suitable function:\n\n| Mold element | Function |\n|---|---|\n| P. Blind riser | I. Casting with internal cavity |\n| Q. Chill | II. Molten metal reservoir |\n| R. Skim bob | III. Nucleating agent |\n| S. Core | IV. Assisting in faster heat removal from melt |\n| T. Insulating sleeve | V. Removal of impurities |\n| U. Inoculant | VI. Increasing the solidification time |",
+    imageUrl: null,
+    optionA: "(A) P-II, Q-IV, R-V, S-I, T-VI, U-III",
+    optionB: "(B) P-II, Q-V, R-VI, S-I, T-III, U-IV",
+    optionC: "(C) P-V, Q-I, R-VI, S-III, T-II, U-IV",
+    optionD: "(D) P-II, Q-IV, R-I, S-V, T-VI, U-III",
+    correctOption: "A",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Wire drawing operation is performed on a perfectly plastic metal without any strain hardening. Assuming no friction and no redundant work, the maximum possible percentage reduction in area in a single pass is closest to",
+    imageUrl: null,
+    optionA: "(A) 51.2",
+    optionB: "(B) 63.2",
+    optionC: "(C) 75.0",
+    optionD: "(D) 93.2",
+    correctOption: "B",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "In relation to additive manufacturing, match the following:\n\n| Process | Layer creation technique | Material |\n|---|---|---|\n| P. Stereolithography | 1. Injection of powder stream | I. Paper |\n| Q. Fused deposition modeling | 2. Extrusion of melted polymer | II. Epoxy |\n| R. Laminated object manufacturing | 3. Liquid layer curing | III. Titanium |\n| S. Laser-engineered net shaping | 4. Sheet material deposition | IV. Acrylonitrile butadiene styrene (ABS) |",
+    imageUrl: null,
+    optionA: "(A) P-3-III, Q-1-IV, R-4-I, S-2-II",
+    optionB: "(B) P-3-II, Q-2-IV, R-4-I, S-1-III",
+    optionC: "(C) P-4-III, Q-2-IV, R-1-II, S-3-I",
+    optionD: "(D) P-3-II, Q-2-IV, R-1-I, S-4-III",
+    correctOption: "B",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A plate of 30 mm thickness is fed through a rolling mill with two powered rolls. Each roll has a diameter of 500 mm. The plate thickness is to be reduced to 27 mm in a single pass. Assume no change in width. The process feasibility and the maximum draft (in mm) can be represented, respectively, as (Use coefficient of friction as 0.12):",
+    imageUrl: null,
+    optionA: "(A) feasible and 3.6",
+    optionB: "(B) NOT feasible and 2.6",
+    optionC: "(C) feasible and 3.0",
+    optionD: "(D) NOT feasible and 6.0",
+    correctOption: "A",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "The system shown in the figure below consists of a cantilever beam (with flexural rigidity $EI$ and negligible mass), a spring (with spring constant $K$ and negligible mass) and a block of mass $m$. Assuming a lumped parameter model for the system, the fundamental natural frequency ($\\omega_n$) of the system is",
+    imageUrl: "/GATE/gate_2025_me_q42.svg",
+    optionA: "(A) \\sqrt{\\frac{3EI/L^3 + K}{m}}",
+    optionB: "(B) \\sqrt{\\frac{EI/L^3 + K}{m}}",
+    optionC: "(C) \\sqrt{\\frac{3EI/L^3 + K}{2m}}",
+    optionD: "(D) \\sqrt{\\frac{EI/L^3 + K}{2m}}",
+    correctOption: "A",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "The endurance limit of a specific grade of steel is same as its yield strength. The ultimate strength of this grade of steel is twice of its yield strength. A component made of this steel is loaded in tension and unloaded periodically. It is required that the component does NOT fail for at least 10^6 loading cycles, as per the Soderberg law. Considering a factor of safety of 2, the maximum applied tensile principal stress is",
+    imageUrl: null,
+    optionA: "(A) one-fourth of the endurance limit",
+    optionB: "(B) half of the endurance limit",
+    optionC: "(C) the endurance limit",
+    optionD: "(D) twice the endurance limit",
+    correctOption: "B",
+    positiveMarks: 2,
+    negativeMarks: -0.67
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "For a fully-developed pipe flow, which of the following options is/are correct?",
+    imageUrl: null,
+    optionA: "(A) For the same maximum velocity, the average velocity is higher in the turbulent regime than that of the laminar regime",
+    optionB: "(B) Compressibility effects are important if Mach number is less than 0.3",
+    optionC: "(C) For laminar flow, the friction factor is independent of surface roughness",
+    optionD: "(D) For laminar flow, friction factor decreases with decrease in Reynolds number",
+    correctOption: "A;C",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "If $C$ is the unit circle in the complex plane with its center at the origin, then the value of $n$ in the equation given below is _______ (rounded off to 1 decimal place).\n$$\\oint_C \\frac{z^3}{(z^2 + 4)(z^2 - 4)} \\, dz = 2 \\pi i n$$",
+    imageUrl: null,
+    optionA: "0.0",
+    optionB: "0.0",
+    optionC: "0.0",
+    optionD: "0.0",
+    correctOption: "0.0",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "The directional derivative of the function $f(x, y) = x^2 + x y^2$ at the point (1, 0) in the direction of $\\frac{1}{2}(\\hat{i} + \\sqrt{3}\\hat{j})$ is _______ (rounded off to 1 decimal place).",
+    imageUrl: null,
+    optionA: "1.0",
+    optionB: "1.0",
+    optionC: "1.0",
+    optionD: "1.0",
+    correctOption: "1.0",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Let $y$ be the solution of the differential equation with the initial conditions given below:\n$$x^2 \\frac{d^2 y}{dx^2} + 3x \\frac{dy}{dx} + y = 0, \\quad y(x=1) = 0, \\quad \\frac{dy}{dx}(x=1) = 1$$\nIf $y(x=2) = A \\ln 2$, then the value of $A$ is _______ (rounded off to 2 decimal places).",
+    imageUrl: null,
+    optionA: "0.50",
+    optionB: "0.50",
+    optionC: "0.50",
+    optionD: "0.50",
+    correctOption: "0.50",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Consider a cylindrical furnace of 5 m diameter and 5 m length with bottom, top and curved surfaces maintained at uniform temperatures of 800 K, 1500 K and 500 K, respectively. The view factor between the bottom and top surfaces, $F_{12}$ is 0.2. The magnitude of net radiation heat transfer rate between the bottom surface and the curved surface is _______ kW (rounded off to 1 decimal place).\n\nAll surfaces of the furnace can be assumed as black.\nStefan-Boltzmann constant, $\\sigma = 5.67 \\times 10^{-8} \\text{ W m}^{-2} \\text{K}^{-4}$.",
+    imageUrl: "/GATE/gate_2025_me_q48.svg",
+    optionA: "309.0",
+    optionB: "309.0",
+    optionC: "309.0",
+    optionD: "309.0",
+    correctOption: "309.0",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A pitot tube connected to a U-tube mercury manometer measures the speed of air flowing in the wind tunnel as shown in the figure below. The density of air is $1.23 \\text{ kg m}^{-3}$ while the density of water is $1000 \\text{ kg m}^{-3}$. For the manometer reading of $h = 30 \\text{ mm}$ of mercury, the speed of air in the wind tunnel is _______ m s^-1 (rounded off to 1 decimal place).\n\nAssume: Specific gravity of mercury = 13.6, Acceleration due to gravity = 10 m s^-2.",
+    imageUrl: "/GATE/gate_2025_me_q49.svg",
+    optionA: "81.3",
+    optionB: "81.3",
+    optionC: "81.3",
+    optionD: "81.3",
+    correctOption: "81.3",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Consider a velocity field $\\vec{V} = 3z \\hat{i} + 0 \\hat{j} + C x \\hat{k}$, where $C$ is a constant. If the flow is irrotational, the value of $C$ is _______ (rounded off to 1 decimal place).",
+    imageUrl: null,
+    optionA: "3.0",
+    optionB: "3.0",
+    optionC: "3.0",
+    optionD: "3.0",
+    correctOption: "3.0",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Water enters a tube of diameter, $D = 60 \\text{ mm}$ with mass flow rate of $0.01 \\text{ kg s}^{-1}$ as shown in the figure below. The inlet mean temperature is $T_{m,i} = 293 \\text{ K}$ and the uniform heat flux at the surface of the tube is $2000 \\text{ W m}^{-2}$. For the exit mean temperature of $T_{m,o} = 353 \\text{ K}$, the length of the tube, $L$ is _______ m (rounded off to 1 decimal place).\n\nUse the specific heat of water as $4181 \\text{ J kg}^{-1} \\text{K}^{-1}$.",
+    imageUrl: "/GATE/gate_2025_me_q51.svg",
+    optionA: "6.66",
+    optionB: "6.66",
+    optionC: "6.66",
+    optionD: "6.66",
+    correctOption: "6.66",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A thermal power plant is running with no reheat or regeneration. The specific enthalpy and specific entropy of steam at the turbine inlet are $3344 \\text{ kJ kg}^{-1}$ and $6.5 \\text{ kJ kg}^{-1}\\text{K}^{-1}$, respectively. The turbine isentropic efficiency is 0.9, and the mass flow rate of steam at the turbine inlet is $102 \\text{ kg s}^{-1}$. The turbine power output is _______ MW (rounded off to 1 decimal place).\n\nProperties of saturated liquid and saturated vapor at turbine exit pressure:\n- Saturated liquid water: $h_f = 341 \\text{ kJ/kg}, s_f = 1.1 \\text{ kJ/kg}\\cdot\\text{K}$\n- Saturated water vapor: $h_g = 2645 \\text{ kJ/kg}, s_g = 7.6 \\text{ kJ/kg}\\cdot\\text{K}$",
+    imageUrl: null,
+    optionA: "100.0",
+    optionB: "100.0",
+    optionC: "100.0",
+    optionD: "100.0",
+    correctOption: "100.0",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Consider a Pelton wheel of 1 m diameter. The magnitude of relative velocity of water at the bucket inlet is same as the magnitude of relative velocity of water at the bucket exit. The absolute speed of water at the bucket inlet is $125.66 \\text{ m s}^{-1}$. For maximum power output from the Pelton wheel, the rpm of the Pelton wheel is _______ (rounded off to 1 decimal place).",
+    imageUrl: null,
+    optionA: "1200.0",
+    optionB: "1200.0",
+    optionC: "1200.0",
+    optionD: "1200.0",
+    correctOption: "1200.0",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A thermodynamically closed system contains 1 kg of hydrogen. The system undergoes a reversible polytropic process with polytropic index 1.3. The work output during the process is 400 kJ. During the process, hydrogen behaves as an ideal gas with constant specific heats. The absolute value of heat transfer during the process is _______ kJ (rounded off to 1 decimal place).\n\nSpecific heat of hydrogen at constant pressure = $14.56 \\text{ kJ kg}^{-1}\\text{K}^{-1}$\nSpecific heat of hydrogen at constant volume = $10.4 \\text{ kJ kg}^{-1}\\text{K}^{-1}$",
+    imageUrl: null,
+    optionA: "100.0",
+    optionB: "100.0",
+    optionC: "100.0",
+    optionD: "100.0",
+    correctOption: "100.0",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A heat pump, operating in reversed Carnot cycle, maintains a steady air temperature of 300 K inside an auditorium. The heat pump receives heat from the ambient air. The ambient air temperature is 280 K. Heat loss from the auditorium is 15 kW. The power consumption of the heat pump is _______ kW (rounded off to 2 decimal places).",
+    imageUrl: null,
+    optionA: "1.00",
+    optionB: "1.00",
+    optionC: "1.00",
+    optionD: "1.00",
+    correctOption: "1.00",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "The state of stress at a point is shown in the figure given below ($\\sigma_x = 350 \\text{ GPa}, \\sigma_y = 150 \\text{ GPa}, \\tau_{xy} = 50 \\text{ GPa}$). Under plane stress assumption, the normal strain along the thickness direction ($\\varepsilon_{zz}$) is _______ (rounded off to 2 decimal places).\n\nUse the Young’s Modulus $E = 200 \\text{ GPa}$ and Poisson’s ratio $\\nu = 0.27$.",
+    imageUrl: "/GATE/gate_2025_me_q56.svg",
+    optionA: "-0.27",
+    optionB: "-0.27",
+    optionC: "-0.27",
+    optionD: "-0.27",
+    correctOption: "-0.27",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A simply supported beam of length 1 m is subjected to a uniformly distributed bending moment of $1 \\text{ N m per m}$ throughout the length as shown in the figure given below. The bending moment at the mid-point of the beam is _______ N m (rounded off to the nearest integer).",
+    imageUrl: "/GATE/gate_2025_me_q57.svg",
+    optionA: "0",
+    optionB: "0",
+    optionC: "0",
+    optionD: "0",
+    correctOption: "0",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "An isotropic brittle material is tested in the universal testing machine. The stress-strain diagram for the material shows a bi-linear elastic behavior as shown in the figure given below ($\\sigma_1 = 100 \\text{ MPa}$ at $\\varepsilon_1 = 0.01$, $\\sigma_2 = 120 \\text{ MPa}$ at $\\varepsilon_2 = 0.015$). The strain energy density is _______ MJ m^-3 (rounded off to 2 decimal places).",
+    imageUrl: "/GATE/gate_2025_me_q58.svg",
+    optionA: "1.05",
+    optionB: "1.05",
+    optionC: "1.05",
+    optionD: "1.05",
+    correctOption: "1.05",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A pair of spur gears is required to maintain a velocity ratio of 1:2. The module of the gears is 10 mm and the addendum is 10 mm. If the operating pressure angle is 15°, the minimum number of teeth required on the pinion to ensure NO interference/undercutting is _______ (answer in integer).",
+    imageUrl: null,
+    optionA: "25",
+    optionB: "25",
+    optionC: "25",
+    optionD: "25",
+    correctOption: "25",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "An offset slider-crank mechanism is shown in the figure below. The length of the crank is 30 mm, connecting rod is 50 mm, and offset is 10 mm. The length of the stroke of the slider is _______ mm (rounded off to nearest integer).",
+    imageUrl: "/GATE/gate_2025_me_q60.svg",
+    optionA: "62",
+    optionB: "62",
+    optionC: "62",
+    optionD: "62",
+    correctOption: "62",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Two plates of thickness 10 mm each are to be joined by a transverse fillet weld on one side and the resulting structure is loaded as shown in the figure below. If the ultimate tensile strength of the weld material is 150 MPa and the factor of safety to be used is 3, the minimum length of the weld required to ensure that the weld does NOT fail is _______ mm (rounded off to 2 decimal places).",
+    imageUrl: "/GATE/gate_2025_me_q61.svg",
+    optionA: "13.33",
+    optionB: "13.33",
+    optionC: "13.33",
+    optionD: "13.33",
+    correctOption: "13.33",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Two metal parts (a cylinder and a cube) of same volume are cast under identical conditions. The diameter of the cylinder is equal to its height. The ratio of the solidification time of the cube to that of the cylinder is _______ (rounded off to 2 decimal places).\n\nAssume that solidification time follows Chvorinov’s rule with an exponent of 2.",
+    imageUrl: null,
+    optionA: "0.85",
+    optionB: "0.85",
+    optionC: "0.85",
+    optionD: "0.85",
+    correctOption: "0.85",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "Cylindrical workpieces of diameter 60 mm and length 400 mm are machined on a lathe at a cutting speed of $25 \\text{ m min}^{-1}$ and a feed of $0.2 \\text{ mm rev}^{-1}$. The Taylor’s tool life parameters $C$ and $n$ for this setup are 75 and 0.25, respectively. The tool changing time is 3 minutes. With a labor and overhead cost of ₹ 5 per minute, the tool changing cost per piece is ₹ _______ (rounded off to 2 decimal places).",
+    imageUrl: null,
+    optionA: "2.80",
+    optionB: "2.80",
+    optionC: "2.80",
+    optionD: "2.80",
+    correctOption: "2.80",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A company uses 3000 units of a part annually. The units are priced as given in the table below. It costs ₹ 150 to place an order. Carrying costs are 40 percent of the purchase price per unit on an annual basis. The minimum total annual cost is ₹ _______ (rounded off to 1 decimal place).\n\n| Order quantity | Unit price (₹) |\n|---|---|\n| 1 to 499 | 9.0 |\n| 500 to 999 | 8.5 |\n| 1000 or more | 8.0 |",
+    imageUrl: null,
+    optionA: "26038.5",
+    optionB: "26038.5",
+    optionC: "26038.5",
+    optionD: "26038.5",
+    correctOption: "26038.5",
+    positiveMarks: 2,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mechanical Engineering",
+    questionText: "A project involves eight activities with the precedence relationship and duration as shown in the table below. The slack for the activity D is _______ hours (answer in integer).\n\n| Activity | Immediate predecessor | Duration (hours) |\n|---|---|---|\n| A | - | 4 |\n| B | A | 8 |\n| C | A | 5 |\n| D | B | 2 |\n| E | B | 7 |\n| F | C | 6 |\n| G | D | 3 |\n| H | E, F, G | 9 |",
+    imageUrl: null,
+    optionA: "2",
+    optionB: "2",
+    optionC: "2",
+    optionD: "2",
+    correctOption: "2",
+    positiveMarks: 2,
+    negativeMarks: 0
+  }
+];
+
+async function seedGate2025Me() {
+  console.log(`🚀 Compiling GATE 2025 Mechanical Engineering (ME) Paper with ${rawQuestions.length} questions...`);
+
+  const paperData = {
+    examName: "GATE",
+    year: 2025,
+    branch: "ME",
+    shiftName: "GATE 2025 Mechanical Engineering (ME)",
+    examDate: "2025-02-01T09:00:00Z",
+    totalMarks: 100,
+    totalQuestions: 65,
+    durationMinutes: 180,
+    questions: rawQuestions
+  };
+
+  const jsonOutputPath = path.join(__dirname, 'GATE 2025 Mechanical Engineering (ME).json');
+  fs.writeFileSync(jsonOutputPath, JSON.stringify(paperData, null, 2));
+  console.log(`✅ Saved paper JSON to: ${jsonOutputPath}`);
+
+  console.log(`🌱 Seeding GATE 2025 Mechanical Engineering (ME) into PostgreSQL via Prisma...`);
+  
+  let exam = await prisma.exam.findFirst({
+    where: { name: { contains: "GATE", mode: "insensitive" } }
+  });
+
+  if (!exam) {
+    exam = await prisma.exam.create({
+      data: { name: "GATE" }
+    });
+  }
+
+  const existingShift = await prisma.shift.findFirst({
+    where: {
+      examId: exam.id,
+      name: "GATE 2025 Mechanical Engineering (ME)"
+    }
+  });
+
+  if (existingShift) {
+    console.log(`Removing old shift ${existingShift.id}...`);
+    await prisma.shift.delete({ where: { id: existingShift.id } });
+  }
+
+  const shift = await prisma.shift.create({
+    data: {
+      examId: exam.id,
+      name: "GATE 2025 Mechanical Engineering (ME)",
+      date: new Date("2025-02-01T09:00:00Z")
+    }
+  });
+  console.log(`Created Shift "GATE 2025 Mechanical Engineering (ME)" (ID: ${shift.id})`);
+
+  console.log(`Inserting ${rawQuestions.length} questions into DB...`);
+  for (let i = 0; i < rawQuestions.length; i++) {
+    const q = rawQuestions[i];
+    await prisma.question.create({
+      data: {
+        shiftId: shift.id,
+        subject: q.subject,
+        questionText: q.questionText,
+        imageUrl: q.imageUrl || null,
+        optionA: q.optionA,
+        optionB: q.optionB,
+        optionC: q.optionC,
+        optionD: q.optionD,
+        correctOption: q.correctOption,
+        positiveMarks: q.positiveMarks,
+        negativeMarks: q.negativeMarks,
+        orderIndex: i + 1
+      }
+    });
+  }
+
+  console.log(`🎉 Successfully seeded 65 questions for GATE 2025 Mechanical Engineering (ME) into Database!`);
+}
+
+seedGate2025Me()
+  .catch((e) => {
+    console.error("❌ Seeding error:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
