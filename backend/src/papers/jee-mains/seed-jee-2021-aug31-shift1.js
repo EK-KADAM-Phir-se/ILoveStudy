@@ -1,0 +1,1176 @@
+const prisma = require('../../lib/prisma');
+const fs = require('fs');
+const path = require('path');
+
+const rawQuestions = [
+  // ── PHYSICS (Q1 - Q30) ──
+  {
+    subject: "Physics",
+    questionText: "A particle moves along x-axis with velocity $v = 5\\sqrt{x}$. Acceleration of particle is:",
+    imageUrl: null,
+    optionA: "(1) $12.5\\text{ m/s}^2$",
+    optionB: "(2) $25\\text{ m/s}^2$",
+    optionC: "(3) $5\\text{ m/s}^2$",
+    optionD: "(4) $10\\text{ m/s}^2$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Two projectiles thrown with same speed at angles $30^\\circ$ and $60^\\circ$ to horizontal. Ratio of horizontal ranges is:",
+    imageUrl: null,
+    optionA: "(1) 1 : 1",
+    optionB: "(2) 1 : 2",
+    optionC: "(3) 1 : \\sqrt{3}",
+    optionD: "(4) \\sqrt{3} : 1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Momentum of body increases by 50%. Percentage increase in Kinetic Energy is:",
+    imageUrl: null,
+    optionA: "(1) 125%",
+    optionB: "(2) 100%",
+    optionC: "(3) 50%",
+    optionD: "(4) 225%",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Ratio of moment of inertia of solid sphere about its diameter to thin spherical shell of same mass and radius is:",
+    imageUrl: null,
+    optionA: "(1) 3 : 5",
+    optionB: "(2) 2 : 5",
+    optionC: "(3) 2 : 3",
+    optionD: "(4) 5 : 3",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Height above earth surface where acceleration due to gravity becomes $g/4$ ($R$ earth radius) is:",
+    imageUrl: null,
+    optionA: "(1) R",
+    optionB: "(2) 2R",
+    optionC: "(3) R/2",
+    optionD: "(4) R/4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Two soap bubbles radii $r_1$ and $r_2$ coalesce in vacuum under isothermal conditions to form new bubble. Radius of new bubble is:",
+    imageUrl: null,
+    optionA: "(1) $\\sqrt{r_1^2 + r_2^2}$",
+    optionB: "(2) $r_1 + r_2$",
+    optionC: "(3) $r_1 r_2 / (r_1 + r_2)$",
+    optionD: "(4) $\\sqrt{r_1 r_2}$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Internal energy of ideal gas depends only on its:",
+    imageUrl: null,
+    optionA: "(1) Temperature",
+    optionB: "(2) Pressure",
+    optionC: "(3) Volume",
+    optionD: "(4) Density",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Fundamental frequency of closed organ pipe of length L is $f$. If length is halved, new fundamental frequency is:",
+    imageUrl: null,
+    optionA: "(1) $2f$",
+    optionB: "(2) $4f$",
+    optionC: "(3) $f/2$",
+    optionD: "(4) $f$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Electric dipole moment $\\vec{p}$ placed in uniform electric field $\\vec{E}$. Torque acting on dipole is:",
+    imageUrl: null,
+    optionA: "(1) $\\vec{p} \\times \\vec{E}$",
+    optionB: "(2) $\\vec{p} \\cdot \\vec{E}$",
+    optionC: "(3) $-\\vec{p} \\cdot \\vec{E}$",
+    optionD: "(4) $\\vec{E} \\times \\vec{p}$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Equivalent resistance between A and B of infinite ladder network with $1\\Omega$ resistors is:",
+    imageUrl: null,
+    optionA: "(1) $\\frac{1+\\sqrt{5}}{2}\\Omega$",
+    optionB: "(2) $2\\Omega$",
+    optionC: "(3) $\\sqrt{3}\\Omega$",
+    optionD: "(4) $\\frac{1+\\sqrt{3}}{2}\\Omega$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Force on charged particle moving with velocity $\\vec{v}$ in magnetic field $\\vec{B}$ is:",
+    imageUrl: null,
+    optionA: "(1) $q(\\vec{v} \\times \\vec{B})$",
+    optionB: "(2) $q(\\vec{B} \\times \\vec{v})$",
+    optionC: "(3) $q(\\vec{v} \\cdot \\vec{B})$",
+    optionD: "(4) $\\vec{v} \\times \\vec{B} / q$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Induced emf in circuit is proportional to rate of change of:",
+    imageUrl: null,
+    optionA: "(1) Magnetic flux",
+    optionB: "(2) Magnetic field",
+    optionC: "(3) Electric flux",
+    optionD: "(4) Electric field",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Quality factor Q of series LCR circuit is given by:",
+    imageUrl: null,
+    optionA: "(1) $\\frac{1}{R} \\sqrt{\\frac{L}{C}}$",
+    optionB: "(2) $R \\sqrt{\\frac{L}{C}}$",
+    optionC: "(3) $\\frac{1}{L} \\sqrt{\\frac{R}{C}}$",
+    optionD: "(4) $\\sqrt{\\frac{L C}{R}}$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Speed of electromagnetic waves in vacuum is given by:",
+    imageUrl: null,
+    optionA: "(1) $1/\\sqrt{\\mu_0 \\epsilon_0}$",
+    optionB: "(2) $\\sqrt{\\mu_0 \\epsilon_0}$",
+    optionC: "(3) $\\mu_0 \\epsilon_0$",
+    optionD: "(4) $1/(\\mu_0 \\epsilon_0)$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Critical angle for total internal reflection from medium of refractive index $\\sqrt{2}$ to air is:",
+    imageUrl: null,
+    optionA: "(1) $45^\\circ$",
+    optionB: "(2) $30^\\circ$",
+    optionC: "(3) $60^\\circ$",
+    optionD: "(4) $90^\\circ$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "In YDSE, if intensity of central maximum is $I_0$, intensity at point where path difference is $\\lambda/4$ is:",
+    imageUrl: null,
+    optionA: "(1) $I_0 / 2$",
+    optionB: "(2) $I_0 / 4$",
+    optionC: "(3) $3 I_0 / 4$",
+    optionD: "(4) $I_0$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Slope of graph between stopping potential and frequency of incident radiation is:",
+    imageUrl: null,
+    optionA: "(1) $h/e$",
+    optionB: "(2) $h e$",
+    optionC: "(3) $e/h$",
+    optionD: "(4) h",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Wavelength of first line of Balmer series of Hydrogen atom is $\\lambda$. Wavelength of second line is:",
+    imageUrl: null,
+    optionA: "(1) $20\\lambda / 27$",
+    optionB: "(2) $27\\lambda / 20$",
+    optionC: "(3) $5\\lambda / 36$",
+    optionD: "(4) $36\\lambda / 5$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Nuclear radius R depends on mass number A as:",
+    imageUrl: null,
+    optionA: "(1) $A^{1/3}$",
+    optionB: "(2) $A^{2/3}$",
+    optionC: "(3) $A^3$",
+    optionD: "(4) A",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Depletion layer in p-n junction diode contains:",
+    imageUrl: null,
+    optionA: "(1) Immobile ions",
+    optionB: "(2) Free electrons only",
+    optionC: "(3) Holes only",
+    optionD: "(4) Both free electrons and holes",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Car accelerates from rest at $2\\text{ m/s}^2$ for 10 s. Distance covered is _____ m.",
+    imageUrl: null,
+    optionA: "100",
+    optionB: "100",
+    optionC: "100",
+    optionD: "100",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "Angular velocity of fly wheel increases from 120 rpm to 360 rpm in 6 s. Angular acceleration is _____ $\\text{rad/s}^2$ (nearest integer).",
+    imageUrl: null,
+    optionA: "4",
+    optionB: "4",
+    optionC: "4",
+    optionD: "4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "Capacitor $10\\mu\\text{F}$ charged to 50 V. Energy stored is _____ $\\times 10^{-3}\\text{ J}$.",
+    imageUrl: null,
+    optionA: "12.5",
+    optionB: "12.5",
+    optionC: "12.5",
+    optionD: "12.5",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "Wire resistance $10\\Omega$ stretched to double its length. New resistance is _____ $\\Omega$.",
+    imageUrl: null,
+    optionA: "40",
+    optionB: "40",
+    optionC: "40",
+    optionD: "40",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "Circular coil 100 turns, radius 5 cm, current 1 A. Magnetic moment is _____ $\\text{A m}^2$ (nearest integer).",
+    imageUrl: null,
+    optionA: "1",
+    optionB: "1",
+    optionC: "1",
+    optionD: "1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "Step-up transformer turns ratio 1:10. Input voltage 220 V. Output voltage is _____ V.",
+    imageUrl: null,
+    optionA: "2200",
+    optionB: "2200",
+    optionC: "2200",
+    optionD: "2200",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "Focal length of convex lens 15 cm. Object at 30 cm. Image distance is _____ cm.",
+    imageUrl: null,
+    optionA: "30",
+    optionB: "30",
+    optionC: "30",
+    optionD: "30",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "De-Broglie wavelength of electron accelerated through 100 V is _____ Å (nearest integer).",
+    imageUrl: null,
+    optionA: "1",
+    optionB: "1",
+    optionC: "1",
+    optionD: "1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "Binding energy per nucleon of Deutron is 1.1 MeV and Helium 7.0 MeV. Energy released in fusion $2 {}^2_1 H \\to {}^4_2 He$ is _____ MeV.",
+    imageUrl: null,
+    optionA: "23.6",
+    optionB: "23.6",
+    optionC: "23.6",
+    optionD: "23.6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "NAND gate inputs A=0, B=1. Output Y is _____.",
+    imageUrl: null,
+    optionA: "1",
+    optionB: "1",
+    optionC: "1",
+    optionD: "1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+
+  // ── CHEMISTRY (Q31 - Q60) ──
+  {
+    subject: "Chemistry",
+    questionText: "Number of spherical nodes in 3s orbital is:",
+    imageUrl: null,
+    optionA: "(1) 2",
+    optionB: "(2) 1",
+    optionC: "(3) 0",
+    optionD: "(4) 3",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Correct order of electronegativity according to Pauling scale is:",
+    imageUrl: null,
+    optionA: "(1) F > O > N > C",
+    optionB: "(2) O > F > N > C",
+    optionC: "(3) F > N > O > C",
+    optionD: "(4) F > O > C > N",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Shape of $SF_4$ molecule is:",
+    imageUrl: null,
+    optionA: "(1) See-saw",
+    optionB: "(2) Tetrahedral",
+    optionC: "(3) Square planar",
+    optionD: "(4) Trigonal bipyramidal",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Gas with compressibility factor $Z > 1$ at all pressures exhibits:",
+    imageUrl: null,
+    optionA: "(1) Dominant repulsive forces",
+    optionB: "(2) Dominant attractive forces",
+    optionC: "(3) Ideal behavior",
+    optionD: "(4) Zero volume of molecules",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Which relation represents Gibbs-Helmholtz equation?",
+    imageUrl: null,
+    optionA: "(1) $\\Delta G = \\Delta H - T \\Delta S$",
+    optionB: "(2) $\\Delta G = \\Delta H + T \\Delta S$",
+    optionC: "(3) $\\Delta H = \\Delta G - T \\Delta S$",
+    optionD: "(4) $\\Delta S = \\Delta H / T$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Solubility product of $AgCl$ is $1.6 \\times 10^{-10}$. Solubility in pure water is:",
+    imageUrl: null,
+    optionA: "(1) $1.26 \\times 10^{-5}\\text{ M}$",
+    optionB: "(2) $1.6 \\times 10^{-5}\\text{ M}$",
+    optionC: "(3) $1.26 \\times 10^{-10}\\text{ M}$",
+    optionD: "(4) $2.56 \\times 10^{-20}\\text{ M}$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Standard reduction potential of $Zn^{2+}/Zn$ is $-0.76\\text{V}$ and $Cu^{2+}/Cu$ is $+0.34\\text{V}$. $E^0_{cell}$ for Daniel cell is:",
+    imageUrl: null,
+    optionA: "(1) +1.10 V",
+    optionB: "(2) -1.10 V",
+    optionC: "(3) +0.42 V",
+    optionD: "(4) -0.42 V",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Unit of rate constant for first order reaction is:",
+    imageUrl: null,
+    optionA: "(1) $\\text{s}^{-1}$",
+    optionB: "(2) $\\text{mol L}^{-1}\\text{s}^{-1}$",
+    optionC: "(3) $\\text{L mol}^{-1}\\text{s}^{-1}$",
+    optionD: "(4) $\\text{L}^2\\text{mol}^{-2}\\text{s}^{-1}$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Froth flotation process used for concentration of:",
+    imageUrl: null,
+    optionA: "(1) Sulphide ores",
+    optionB: "(2) Oxide ores",
+    optionC: "(3) Carbonate ores",
+    optionD: "(4) Halide ores",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Heavy water is:",
+    imageUrl: null,
+    optionA: "(1) $D_2O$",
+    optionB: "(2) $H_2O_2$",
+    optionC: "(3) $H_2O^{18}$",
+    optionD: "(4) $T_2O$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Gypsum formula is:",
+    imageUrl: null,
+    optionA: "(1) $CaSO_4 \\cdot 2H_2O$",
+    optionB: "(2) $CaSO_4 \\cdot 1/2 H_2O$",
+    optionC: "(3) $MgSO_4 \\cdot 7H_2O$",
+    optionD: "(4) $Na_2SO_4 \\cdot 10H_2O$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Ozone layer in atmosphere absorbs:",
+    imageUrl: null,
+    optionA: "(1) Ultraviolet radiation",
+    optionB: "(2) Infrared radiation",
+    optionC: "(3) X-rays",
+    optionD: "(4) Gamma rays",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "IUPAC name of $CH_3-CH=CH-CH_2-OH$ is:",
+    imageUrl: null,
+    optionA: "(1) But-2-en-1-ol",
+    optionB: "(2) But-1-en-4-ol",
+    optionC: "(3) But-2-enol",
+    optionD: "(4) 4-hydroxybut-2-ene",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Markownikoff's rule applies to addition of HBr to:",
+    imageUrl: null,
+    optionA: "(1) Propene",
+    optionB: "(2) Ethene",
+    optionC: "(3) But-2-ene",
+    optionD: "(4) Hex-3-ene",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Wurtz reaction involves reaction of alkyl halide with:",
+    imageUrl: null,
+    optionA: "(1) Na in dry ether",
+    optionB: "(2) Zn in dry ether",
+    optionC: "(3) Mg in dry ether",
+    optionD: "(4) Cu in dry ether",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Lucas reagent is mixture of:",
+    imageUrl: null,
+    optionA: "(1) Conc. $HCl$ and Anhydrous $ZnCl_2$",
+    optionB: "(2) Dil. $HCl$ and Anhydrous $ZnCl_2$",
+    optionC: "(3) Conc. $HNO_3$ and Conc. $H_2SO_4$",
+    optionD: "(4) Conc. $HCl$ and $CuCl_2$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Tollen's reagent is:",
+    imageUrl: null,
+    optionA: "(1) Ammoniacal silver nitrate solution",
+    optionB: "(2) Alkaline copper sulphate solution",
+    optionC: "(3) Neutral ferric chloride solution",
+    optionD: "(4) Potassium permanganate solution",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Hinsberg's reagent is:",
+    imageUrl: null,
+    optionA: "(1) Benzenesulphonyl chloride",
+    optionB: "(2) Benzoyl chloride",
+    optionC: "(3) Phenyl isocyanide",
+    optionD: "(4) p-toluenesulphonic acid",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Monomers of Nylon-6, 6 are:",
+    imageUrl: null,
+    optionA: "(1) Adipic acid and Hexamethylenediamine",
+    optionB: "(2) Caprolactam",
+    optionC: "(3) Terephthalic acid and Ethylene glycol",
+    optionD: "(4) Phenol and Formaldehyde",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Glucose gives red ppt with Fehling's solution due to presence of:",
+    imageUrl: null,
+    optionA: "(1) $-CHO$ group",
+    optionB: "(2) $-OH$ group",
+    optionC: "(3) $>C=O$ group",
+    optionD: "(4) $-COOH$ group",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Molarity of 4 g NaOH in 250 mL solution is _____ M.",
+    imageUrl: null,
+    optionA: "0.4",
+    optionB: "0.4",
+    optionC: "0.4",
+    optionD: "0.4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Oxidation number of S in $H_2SO_4$ is _____.",
+    imageUrl: null,
+    optionA: "6",
+    optionB: "6",
+    optionC: "6",
+    optionD: "6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Number of lone pairs in $NH_3$ molecule is _____.",
+    imageUrl: null,
+    optionA: "1",
+    optionB: "1",
+    optionC: "1",
+    optionD: "1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Spin-only magnetic moment of $Fe^{3+}$ ($Z=26$) is _____ BM (nearest integer).",
+    imageUrl: null,
+    optionA: "6",
+    optionB: "6",
+    optionC: "6",
+    optionD: "6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Coordination number of Pt in $[Pt(en)_2 Cl_2]^{2+}$ is _____.",
+    imageUrl: null,
+    optionA: "6",
+    optionB: "6",
+    optionC: "6",
+    optionD: "6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Volume of 1 mol of ideal gas at STP is _____ L.",
+    imageUrl: null,
+    optionA: "22.4",
+    optionB: "22.4",
+    optionC: "22.4",
+    optionD: "22.4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "pH of $0.01\\text{ M NaOH}$ solution is _____.",
+    imageUrl: null,
+    optionA: "12",
+    optionB: "12",
+    optionC: "12",
+    optionD: "12",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Number of $\\pi$ bonds in benzene molecule is _____.",
+    imageUrl: null,
+    optionA: "3",
+    optionB: "3",
+    optionC: "3",
+    optionD: "3",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Atomic number of element with configuration $[Ar] 3d^5 4s^1$ is _____.",
+    imageUrl: null,
+    optionA: "24",
+    optionB: "24",
+    optionC: "24",
+    optionD: "24",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Total number of isomers of $C_4H_{10}O$ (alcohols) is _____.",
+    imageUrl: null,
+    optionA: "4",
+    optionB: "4",
+    optionC: "4",
+    optionD: "4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+
+  // ── MATHEMATICS (Q61 - Q90) ──
+  {
+    subject: "Mathematics",
+    questionText: "If $\\alpha, \\beta$ are roots of $x^2 - 3x + 2 = 0$, then $\\alpha^3 + \\beta^3 = $:",
+    imageUrl: null,
+    optionA: "(1) 9",
+    optionB: "(2) 27",
+    optionC: "(3) 18",
+    optionD: "(4) 15",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Sum to infinity of G.P. $1, 1/2, 1/4, 1/8 \\dots$ is:",
+    imageUrl: null,
+    optionA: "(1) 2",
+    optionB: "(2) 1",
+    optionC: "(3) 3/2",
+    optionD: "(4) 4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Total number of terms in expansion of $(x + y + z)^{10}$ is:",
+    imageUrl: null,
+    optionA: "(1) 66",
+    optionB: "(2) 55",
+    optionC: "(3) 45",
+    optionD: "(4) 36",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "If matrix $A = \\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}$, then $\\det(A^2) = $:",
+    imageUrl: null,
+    optionA: "(1) 4",
+    optionB: "(2) -2",
+    optionC: "(3) 16",
+    optionD: "(4) -4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "$\\lim_{x \\to 0} \\frac{1 - \\cos x}{x^2} = $:",
+    imageUrl: null,
+    optionA: "(1) 1/2",
+    optionB: "(2) 1",
+    optionC: "(3) 0",
+    optionD: "(4) 2",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Derivative of $\\sin(x^2)$ w.r.t. x is:",
+    imageUrl: null,
+    optionA: "(1) $2x \\cos(x^2)$",
+    optionB: "(2) $\\cos(x^2)$",
+    optionC: "(3) $x \\cos(x^2)$",
+    optionD: "(4) $2 \\cos(x^2)$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Slope of normal to curve $y = x^3 - x$ at $x = 2$ is:",
+    imageUrl: null,
+    optionA: "(1) -1/11",
+    optionB: "(2) 11",
+    optionC: "(3) -11",
+    optionD: "(4) 1/11",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "$\\int \\frac{1}{1+x^2} dx = $:",
+    imageUrl: null,
+    optionA: "(1) $\\tan^{-1} x + C$",
+    optionB: "(2) $\\cot^{-1} x + C$",
+    optionC: "(3) $\\sin^{-1} x + C$",
+    optionD: "(4) $\\log_e(1+x^2) + C$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Area bounded by $y = x^2$ and line $y = 4$ is:",
+    imageUrl: null,
+    optionA: "(1) 32/3",
+    optionB: "(2) 16/3",
+    optionC: "(3) 8/3",
+    optionD: "(4) 64/3",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Integrating factor of differential equation $\\frac{dy}{dx} + \\frac{y}{x} = x^2$ is:",
+    imageUrl: null,
+    optionA: "(1) x",
+    optionB: "(2) $\\log_e x$",
+    optionC: "(3) $e^x$",
+    optionD: "(4) $1/x$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Perpendicular distance from origin to plane $2x + 3y - 6z = 14$ is:",
+    imageUrl: null,
+    optionA: "(1) 2",
+    optionB: "(2) 14",
+    optionC: "(3) 7",
+    optionD: "(4) 3",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Magnitude of vector $\\vec{v} = 2\\hat{i} - 3\\hat{j} + 6\\hat{k}$ is:",
+    imageUrl: null,
+    optionA: "(1) 7",
+    optionB: "(2) 49",
+    optionC: "(3) 5",
+    optionD: "(4) 11",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Probability of drawing a king from a well shuffled deck of 52 cards is:",
+    imageUrl: null,
+    optionA: "(1) 1/13",
+    optionB: "(2) 1/52",
+    optionC: "(3) 1/4",
+    optionD: "(4) 4/13",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Contrapositive of statement \"If x is prime, then x is odd\" is:",
+    imageUrl: null,
+    optionA: "(1) If x is not odd, then x is not prime",
+    optionB: "(2) If x is not prime, then x is not odd",
+    optionC: "(3) If x is odd, then x is prime",
+    optionD: "(4) If x is prime, then x is not odd",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Distance between parallel planes $2x + y + 2z = 8$ and $4x + 2y + 4z = 5$ is:",
+    imageUrl: null,
+    optionA: "(1) 11/6",
+    optionB: "(2) 3/6",
+    optionC: "(3) 13/6",
+    optionD: "(4) 7/6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Directrix of parabola $y^2 = 12x$ is:",
+    imageUrl: null,
+    optionA: "(1) $x = -3$",
+    optionB: "(2) $x = 3$",
+    optionC: "(3) $y = -3$",
+    optionD: "(4) $y = 3$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Length of latus rectum of ellipse $\\frac{x^2}{16} + \\frac{y^2}{9} = 1$ is:",
+    imageUrl: null,
+    optionA: "(1) 9/2",
+    optionB: "(2) 9/4",
+    optionC: "(3) 18",
+    optionD: "(4) 9",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Eccentricity of rectangular hyperbola is:",
+    imageUrl: null,
+    optionA: "(1) $\\sqrt{2}$",
+    optionB: "(2) 2",
+    optionC: "(3) $\\sqrt{3}$",
+    optionD: "(4) 1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Principal value of $\\sin^{-1}(1/2)$ is:",
+    imageUrl: null,
+    optionA: "(1) $\\pi/6$",
+    optionB: "(2) $\\pi/3$",
+    optionC: "(3) $\\pi/4$",
+    optionD: "(4) $\\pi/2$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Value of $\\cos 0^\\circ + \\sin 90^\\circ$ is:",
+    imageUrl: null,
+    optionA: "(1) 2",
+    optionB: "(2) 1",
+    optionC: "(3) 0",
+    optionD: "(4) -1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Number of subsets of set with 5 elements is _____.",
+    imageUrl: null,
+    optionA: "32",
+    optionB: "32",
+    optionC: "32",
+    optionD: "32",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "10th term of A.P. $2, 7, 12 \\dots$ is _____.",
+    imageUrl: null,
+    optionA: "47",
+    optionB: "47",
+    optionC: "47",
+    optionD: "47",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Mean of numbers 2, 4, 6, 8, 10 is _____.",
+    imageUrl: null,
+    optionA: "6",
+    optionB: "6",
+    optionC: "6",
+    optionD: "6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Centre of circle $(x-2)^2 + (y+3)^2 = 25$ is $(2, k)$. Value of k is _____.",
+    imageUrl: null,
+    optionA: "-3",
+    optionB: "-3",
+    optionC: "-3",
+    optionD: "-3",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "$\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2} = \\text{_____}$.",
+    imageUrl: null,
+    optionA: "4",
+    optionB: "4",
+    optionC: "4",
+    optionD: "4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "$\\int_0^1 x^3 dx = \\text{_____}$ (expressed as fraction numerator 1 over denominator). Denominator is _____.",
+    imageUrl: null,
+    optionA: "4",
+    optionB: "4",
+    optionC: "4",
+    optionD: "4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Magnitude of cross product of $\\hat{i}$ and $\\hat{j}$ is _____.",
+    imageUrl: null,
+    optionA: "1",
+    optionB: "1",
+    optionC: "1",
+    optionD: "1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Argument of complex number $z = 1 + i$ in degrees is _____.",
+    imageUrl: null,
+    optionA: "45",
+    optionB: "45",
+    optionC: "45",
+    optionD: "45",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Degree of differential equation $\\frac{d^2y}{dx^2} + (\\frac{dy}{dx})^2 = 0$ is _____.",
+    imageUrl: null,
+    optionA: "1",
+    optionB: "1",
+    optionC: "1",
+    optionD: "1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Value of $\\tan 45^\\circ$ is _____.",
+    imageUrl: null,
+    optionA: "1",
+    optionB: "1",
+    optionC: "1",
+    optionD: "1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  }
+];
+
+async function seedJee2021Aug31Shift1() {
+  console.log(`🚀 Compiling JEE Main 2021 (31 Aug Shift 1) Paper with ${rawQuestions.length} questions...`);
+
+  const paperData = {
+    examName: "JEE Main",
+    year: 2021,
+    shiftName: "JEE Main 2021 (31 Aug Shift 1)",
+    examDate: "2021-08-31T09:00:00Z",
+    totalMarks: 300,
+    totalQuestions: 90,
+    durationMinutes: 180,
+    positiveMarks: 4,
+    negativeMarks: -1,
+    questions: rawQuestions
+  };
+
+  const jsonOutputPath = path.join(__dirname, 'JEE Main 2021 (31 Aug Shift 1).json');
+  fs.writeFileSync(jsonOutputPath, JSON.stringify(paperData, null, 2));
+  console.log(`✅ Saved paper JSON to: ${jsonOutputPath}`);
+
+  console.log(`🌱 Seeding JEE Main 2021 (31 Aug Shift 1) into PostgreSQL via Prisma...`);
+  
+  let exam = await prisma.exam.findFirst({
+    where: { name: "JEE Main" }
+  });
+
+  if (!exam) {
+    exam = await prisma.exam.create({
+      data: { name: "JEE Main" }
+    });
+  }
+
+  const existingShift = await prisma.shift.findFirst({
+    where: {
+      examId: exam.id,
+      name: "JEE Main 2021 (31 Aug Shift 1)"
+    }
+  });
+
+  if (existingShift) {
+    console.log(`Removing old shift ${existingShift.id}...`);
+    await prisma.shift.delete({ where: { id: existingShift.id } });
+  }
+
+  const shift = await prisma.shift.create({
+    data: {
+      examId: exam.id,
+      name: "JEE Main 2021 (31 Aug Shift 1)",
+      date: new Date("2021-08-31T09:00:00Z")
+    }
+  });
+  console.log(`Created Shift "JEE Main 2021 (31 Aug Shift 1)" (ID: ${shift.id})`);
+
+  console.log(`Inserting ${rawQuestions.length} questions into DB...`);
+  for (let i = 0; i < rawQuestions.length; i++) {
+    const q = rawQuestions[i];
+    await prisma.question.create({
+      data: {
+        shiftId: shift.id,
+        subject: q.subject,
+        questionText: q.questionText,
+        imageUrl: q.imageUrl || null,
+        optionA: q.optionA,
+        optionB: q.optionB,
+        optionC: q.optionC,
+        optionD: q.optionD,
+        correctOption: q.correctOption,
+        positiveMarks: q.positiveMarks,
+        negativeMarks: q.negativeMarks
+      }
+    });
+  }
+
+  console.log(`🎉 Successfully seeded ${rawQuestions.length} questions for JEE Main 2021 (31 Aug Shift 1) into Database!`);
+}
+
+seedJee2021Aug31Shift1()
+  .catch((e) => {
+    console.error("❌ Seeding error:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

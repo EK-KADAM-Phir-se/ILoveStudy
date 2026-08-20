@@ -51,7 +51,7 @@ function JeeExamPageContent() {
 
   const [dbShifts,      setDbShifts]      = useState<any[]>([]);
   const [selectedYear,  setSelectedYear]  = useState<number | null>(null);
-  const [activeAttempt, setActiveAttempt] = useState<"january" | "february" | "april">("january");
+  const [activeAttempt, setActiveAttempt] = useState<"january" | "february" | "march" | "april" | "june" | "july" | "august">("january");
   const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
 
   const years = Array.from({ length: 6 }, (_, i) => 2026 - i);
@@ -67,14 +67,18 @@ function JeeExamPageContent() {
   }, []);
 
   /* ── helpers ── */
-  const getShifts = (year: number, attempt: "january" | "february" | "april") => {
-    const staticNames = mainsPapersData[year]?.[attempt] || [];
+  const getShifts = (year: number, attempt: "january" | "february" | "march" | "april" | "june" | "july" | "august") => {
+    const staticNames = (mainsPapersData[year] as any)?.[attempt] || [];
     const dbMatched   = dbShifts.filter((s: any) => {
       const d = new Date(s.date);
       return d.getUTCFullYear() === year &&
         ((attempt === "january"  && d.getUTCMonth() === 0) ||
          (attempt === "february" && d.getUTCMonth() === 1) ||
-         (attempt === "april"    && d.getUTCMonth() === 3));
+         (attempt === "march"    && d.getUTCMonth() === 2) ||
+         (attempt === "april"    && d.getUTCMonth() === 3) ||
+         (attempt === "june"     && d.getUTCMonth() === 5) ||
+         (attempt === "july"     && d.getUTCMonth() === 6) ||
+         (attempt === "august"   && (d.getUTCMonth() === 7 || d.getUTCMonth() === 8)));
     });
     const combined: { name: string; id?: string }[] = [];
     dbMatched.forEach((s: any)  => combined.push({ name: s.name, id: s.id }));
@@ -101,14 +105,17 @@ function JeeExamPageContent() {
   /* ── open modal ── */
   const openYear = (year: number) => {
     setSelectedYear(year);
-    setActiveAttempt("january");
+    if (year === 2022) {
+      setActiveAttempt("june");
+    } else if (year === 2021) {
+      setActiveAttempt("august");
+    } else {
+      setActiveAttempt("january");
+    }
   };
 
   /* modal data */
-  const modalJan = selectedYear ? getShifts(selectedYear, "january")  : [];
-  const modalFeb = selectedYear ? getShifts(selectedYear, "february") : [];
-  const modalApr = selectedYear ? getShifts(selectedYear, "april")    : [];
-  const modalShifts = activeAttempt === "january" ? modalJan : activeAttempt === "february" ? modalFeb : modalApr;
+  const modalShifts = selectedYear ? getShifts(selectedYear, activeAttempt) : [];
 
   /* ───────────────────────────── RENDER ───────────────────────────── */
   return (
@@ -141,9 +148,14 @@ function JeeExamPageContent() {
           const col        = YEAR_COLORS[idx % YEAR_COLORS.length];
           const janShifts  = getShifts(year, "january");
           const febShifts  = getShifts(year, "february");
+          const marShifts  = getShifts(year, "march");
           const aprShifts  = getShifts(year, "april");
-          const total      = isAdvanced ? 2 : janShifts.length + febShifts.length + aprShifts.length;
-          const dbCount    = [...janShifts, ...febShifts, ...aprShifts].filter(s => s.id).length;
+          const junShifts  = getShifts(year, "june");
+          const julShifts  = getShifts(year, "july");
+          const augShifts  = getShifts(year, "august");
+          const allShifts  = [...janShifts, ...febShifts, ...marShifts, ...aprShifts, ...junShifts, ...julShifts, ...augShifts];
+          const total      = isAdvanced ? 2 : allShifts.length;
+          const dbCount    = allShifts.filter(s => s.id).length;
 
           return (
             <button
@@ -242,17 +254,25 @@ function JeeExamPageContent() {
               ) : (
                 <>
                   {/* Attempt tab pills */}
-                  <div className="flex gap-2">
-                    {(["january", "february", "april"] as const).map(attempt => (
-                      <button key={attempt} onClick={() => setActiveAttempt(attempt)}
-                        className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition cursor-pointer capitalize ${
-                          activeAttempt === attempt
-                            ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
-                            : "bg-white text-gray-500 border-gray-200 hover:border-gray-400 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
-                        }`}>
-                        {attempt === "january" ? "🔵 January" : attempt === "february" ? "🟣 February" : "🟠 April"}
-                      </button>
-                    ))}
+                  <div className="flex gap-2 flex-wrap">
+                    {(["january", "february", "march", "april", "june", "july", "august"] as const)
+                      .filter(attempt => {
+                        if (selectedYear === 2021) return attempt === "august" || attempt === "july" || attempt === "february" || attempt === "march" || getShifts(selectedYear, attempt).length > 0;
+                        if (selectedYear === 2022) return attempt === "june" || attempt === "july" || getShifts(selectedYear, attempt).length > 0;
+                        if (attempt === "june" || attempt === "july" || attempt === "august" || attempt === "march") return getShifts(selectedYear, attempt).length > 0;
+                        if (attempt === "february") return getShifts(selectedYear, "february").length > 0;
+                        return true;
+                      })
+                      .map(attempt => (
+                        <button key={attempt} onClick={() => setActiveAttempt(attempt)}
+                          className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition cursor-pointer capitalize ${
+                            activeAttempt === attempt
+                              ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
+                              : "bg-white text-gray-500 border-gray-200 hover:border-gray-400 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
+                          }`}>
+                          {attempt === "january" ? "🔵 January" : attempt === "february" ? "🟣 February" : attempt === "march" ? "🟡 March" : attempt === "april" ? "🟠 April" : attempt === "june" ? "🟢 June" : attempt === "july" ? "🔴 July" : "🟤 August"}
+                        </button>
+                      ))}
                   </div>
 
                   {/* Paper cards */}
