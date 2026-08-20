@@ -395,8 +395,22 @@ exports.importOrgTestFromJSON = async (req, res) => {
     const positiveMarksDefault = parseFloat(testObj.total_marks_per_question || 4);
     const negativeMarksDefault = summary.negativeMarking ? (summary.negativeMarks || -0.25) : 0;
 
-    const finalStartTime = startTime ? new Date(startTime) : (summary.scheduledStart ? new Date(summary.scheduledStart) : null);
-    const finalEndTime = endTime ? new Date(endTime) : (summary.scheduledEnd ? new Date(summary.scheduledEnd) : null);
+    let testReq = null;
+    if (requestId) {
+      testReq = await prisma.orgTestRequest.findUnique({ where: { id: requestId } });
+    }
+
+    const finalStartTime = startTime 
+      ? new Date(startTime) 
+      : (testReq && testReq.scheduledStart 
+          ? testReq.scheduledStart 
+          : (summary.scheduledStart ? new Date(summary.scheduledStart) : null));
+          
+    const finalEndTime = endTime 
+      ? new Date(endTime) 
+      : (testReq && testReq.scheduledEnd 
+          ? testReq.scheduledEnd 
+          : (summary.scheduledEnd ? new Date(summary.scheduledEnd) : null));
 
     let initialStatus = status.toUpperCase();
     const now = new Date();
@@ -942,7 +956,7 @@ exports.verifyStudentAccessCode = async (req, res) => {
         await prisma.orgTest.update({ where: { id: test.id }, data: { status: "ENDED" } }).catch(() => {});
       }
       return res.status(403).json({
-        error: `This test has ended on ${new Date(test.endTime).toLocaleString('en-IN')}.`
+        error: `This test has ended on ${new Date(test.endTime).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}.`
       });
     }
 
@@ -951,7 +965,7 @@ exports.verifyStudentAccessCode = async (req, res) => {
       return res.status(200).json({
         valid: false,
         scheduled: true,
-        message: `This examination is scheduled to begin at ${new Date(test.startTime).toLocaleString('en-IN')}. Please return at the scheduled time.`,
+        message: `This examination is scheduled to begin at ${new Date(test.startTime).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}. Please return at the scheduled time.`,
         test: {
           id: test.id,
           accessCode: test.accessCode,
@@ -1407,6 +1421,7 @@ exports.createOrgTestRequest = async (req, res) => {
   try {
     const {
       organizationId,
+      organizationName,
       title,
       description,
       subject = "General",
@@ -1417,32 +1432,112 @@ exports.createOrgTestRequest = async (req, res) => {
       scheduledEnd,
       expectedStudents = 50,
       pdfUrl,
-      pdfFileName
+      pdfFileName,
+      requesterEmail: reqBodyEmail,
+      requesterName: reqBodyName
     } = req.body;
 
-    if (!organizationId || !title) {
-      return res.status(400).json({ error: "organizationId and title are required." });
+    if (!title || !title.trim()) {
+      return res.status(400).json({ error: "Examination title is required." });
     }
 
-    const org = await prisma.organization.findUnique({
-      where: { id: organizationId }
-    });
+    const cleanOrgName = (organizationName || "").trim();
+
+    let org = null;
+    if (organizationId) {
+      org = await prisma.organization.findUnique({ where: { id: organizationId } });
+    }
+
+    if (!org && cleanOrgName) {
+      // Look up existing organization by name
+      org = await prisma.organization.findFirst({
+        where: { name: { equals: cleanOrgName, mode: "insensitive" } }
+      });
+
+      // If not exists, automatically create it
+      if (!org) {
+        const words = cleanOrgName.split(/\s+/).filter(Boolean);
+        let baseCode = "";
+        if (words.length === 1) {
+          baseCode = words[0].slice(0, 4).toUpperCase();
+        } else {
+          baseCode = words.map(w => w[0]).join("").slice(0, 6).toUpperCase();
+        }
+        if (!baseCode || baseCode.length < 2) baseCode = "INST";
+
+        let uniqueCode = baseCode;
+        let counter = 1;
+        while (await prisma.organization.findUnique({ where: { code: uniqueCode } })) {
+          uniqueCode = `${baseCode}${counter++}`;
+        }
+
+        org = await prisma.organization.create({
+          data: {
+            name: cleanOrgName,
+            code: uniqueCode,
+            contactEmail: (reqBodyEmail || "").trim() || null
+          }
+        });
+      }
+    }
 
     if (!org) {
-      return res.status(404).json({ error: "Selected organization does not exist." });
+      return res.status(400).json({ error: "School or college name is required." });
+    }
+
+    // Resolve requester email & name
+    let userEmail = (reqBodyEmail || "").trim().toLowerCase();
+    let userName = (reqBodyName || "").trim();
+
+    if (!userEmail && req.userId) {
+      const u = await prisma.user.findUnique({
+        where: { id: req.userId },
+        include: { profiles: true }
+      });
+      if (u && u.email) userEmail = u.email.trim().toLowerCase();
+    }
+
+    const requesterTag = userEmail ? `[REQUESTER:${userEmail}]` : '';
+    const finalDescription = description 
+      ? `${requesterTag} ${description.trim()}`.trim()
+      : (requesterTag || null);
+
+    // Validate 12-hour minimum advance scheduling rule
+    let parsedStart = null;
+    let parsedEnd = null;
+
+    if (scheduledStart) {
+      parsedStart = new Date(scheduledStart);
+      if (isNaN(parsedStart.getTime())) {
+        return res.status(400).json({ error: "Invalid scheduled start date format." });
+      }
+
+      const minAdvanceTime = new Date(Date.now() + 12 * 60 * 60 * 1000);
+      if (parsedStart < minAdvanceTime) {
+        return res.status(400).json({
+          error: "Examination scheduled time must be at least 12 hours in the future to allow admin question paper verification and digitisation."
+        });
+      }
+
+      if (scheduledEnd) {
+        parsedEnd = new Date(scheduledEnd);
+      } else {
+        const dur = parseInt(durationMinutes, 10) || 60;
+        parsedEnd = new Date(parsedStart.getTime() + dur * 60 * 1000);
+      }
     }
 
     const testRequest = await prisma.orgTestRequest.create({
       data: {
         organizationId: org.id,
         title: title.trim(),
-        description: description ? description.trim() : null,
+        description: finalDescription,
         subject: subject.trim(),
         durationMinutes: parseInt(durationMinutes, 10) || 60,
         positiveMarks: parseFloat(positiveMarks) || 4,
         negativeMarks: parseFloat(negativeMarks) || 0,
-        scheduledStart: scheduledStart ? new Date(scheduledStart) : null,
-        scheduledEnd: scheduledEnd ? new Date(scheduledEnd) : null,
+        scheduledStart: parsedStart,
+        scheduledEnd: parsedEnd,
         expectedStudents: parseInt(expectedStudents, 10) || 50,
         pdfUrl: pdfUrl || null,
         pdfFileName: pdfFileName || null,
@@ -1481,24 +1576,67 @@ exports.listAdminTestRequests = async (req, res) => {
   }
 };
 
-// List test requests for an Organiser (filtered by organizationId)
+// List test requests for an Organiser (Strictly isolated: Admins see all, Organizers see only their own)
 exports.listOrganiserTestRequests = async (req, res) => {
   try {
-    const { organizationId } = req.query;
+    const { organizationId, email: queryEmail } = req.query;
 
-    const where = organizationId ? { organizationId } : {};
+    let userEmail = (queryEmail || "").trim().toLowerCase();
+    if (!userEmail && req.userId) {
+      const u = await prisma.user.findUnique({ where: { id: req.userId }, select: { email: true } });
+      if (u && u.email) userEmail = u.email.trim().toLowerCase();
+    }
+
+    // Check if the user is an authorized admin
+    const isAdmin = await exports.isAuthorizedAdmin(req.userId, userEmail);
+
+    let where = {};
+
+    if (isAdmin) {
+      // Admins see all requests (optionally filtered by organizationId)
+      where = organizationId ? { organizationId } : {};
+    } else if (userEmail) {
+      // Organizers see ONLY their own requests (enforced by matching email tag in description)
+      if (organizationId) {
+        where = {
+          AND: [
+            { organizationId },
+            { description: { contains: userEmail } }
+          ]
+        };
+      } else {
+        where = { description: { contains: userEmail } };
+      }
+    } else {
+      // Unauthenticated / other students without organizer email see NO private requests
+      return res.status(200).json({ requests: [] });
+    }
 
     const requests = await prisma.orgTestRequest.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: {
-        organization: { select: { id: true, name: true, code: true } },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        subject: true,
+        durationMinutes: true,
+        positiveMarks: true,
+        negativeMarks: true,
+        expectedStudents: true,
+        scheduledStart: true,
+        scheduledEnd: true,
+        status: true,
+        createdAt: true,
+        organization: { select: { id: true, name: true, code: true, contactEmail: true } },
         orgTest: {
           select: {
             id: true,
             accessCode: true,
             status: true,
-            _count: { select: { attempts: true } }
+            startTime: true,
+            endTime: true,
+            _count: { select: { attempts: true, questions: true } }
           }
         }
       }
@@ -1511,7 +1649,36 @@ exports.listOrganiserTestRequests = async (req, res) => {
   }
 };
 
-// Delete a test request
+// Organiser toggles test to OPEN (flexible forever / retakes) or CLOSED
+exports.toggleOrgTestOpen = async (req, res) => {
+  try {
+    const { testId } = req.params;
+    const { isOpen } = req.body;
+
+    const test = await prisma.orgTest.findUnique({ where: { id: testId } });
+    if (!test) {
+      return res.status(404).json({ error: "Test not found." });
+    }
+
+    const updated = await prisma.orgTest.update({
+      where: { id: testId },
+      data: {
+        status: isOpen ? "ACTIVE" : "ENDED",
+        endTime: isOpen ? null : new Date()
+      }
+    });
+
+    return res.status(200).json({
+      message: isOpen ? "Test is now OPEN for unlimited practice & retakes!" : "Test has been CLOSED.",
+      test: updated
+    });
+  } catch (error) {
+    console.error("Toggle test open error:", error);
+    return res.status(500).json({ error: "Failed to toggle test open status." });
+  }
+};
+
+// Delete a test request (Only creator or admin)
 exports.deleteOrgTestRequest = async (req, res) => {
   try {
     const { requestId } = req.params;

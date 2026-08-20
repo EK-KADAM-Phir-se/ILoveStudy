@@ -87,7 +87,9 @@ export interface OrgTestRequest {
     id: string;
     accessCode: string;
     status: string;
-    _count?: { attempts: number };
+    startTime?: string | null;
+    endTime?: string | null;
+    _count?: { attempts: number; questions?: number };
   } | null;
   createdAt: string;
 }
@@ -400,7 +402,8 @@ export async function removeAdminEmail(id: string): Promise<void> {
 // -------------------------------------------------------------
 
 export async function createOrgTestRequest(data: {
-  organizationId: string;
+  organizationId?: string;
+  organizationName?: string;
   title: string;
   description?: string;
   subject?: string;
@@ -412,6 +415,8 @@ export async function createOrgTestRequest(data: {
   expectedStudents?: number;
   pdfUrl?: string;
   pdfFileName?: string;
+  requesterEmail?: string;
+  requesterName?: string;
 }): Promise<{ message: string; testRequest: OrgTestRequest }> {
   const res = await axios.post(`${API_BASE}/organiser/requests`, data, getAuthHeaders());
   return res.data;
@@ -422,14 +427,22 @@ export async function fetchAdminTestRequests(): Promise<OrgTestRequest[]> {
   return res.data.requests || [];
 }
 
-export async function fetchOrganiserTestRequests(organizationId?: string): Promise<OrgTestRequest[]> {
-  const url = organizationId
-    ? `${API_BASE}/organiser/requests?organizationId=${encodeURIComponent(organizationId)}`
-    : `${API_BASE}/organiser/requests`;
+export async function fetchOrganiserTestRequests(organizationId?: string, email?: string): Promise<OrgTestRequest[]> {
+  const params = new URLSearchParams();
+  if (organizationId) params.append("organizationId", organizationId);
+  if (email) params.append("email", email);
+
+  const qs = params.toString();
+  const url = qs ? `${API_BASE}/organiser/requests?${qs}` : `${API_BASE}/organiser/requests`;
   const res = await axios.get(url, getAuthHeaders());
   return res.data.requests || [];
 }
 
 export async function deleteOrgTestRequest(requestId: string): Promise<void> {
   await axios.delete(`${API_BASE}/requests/${requestId}`, getAuthHeaders());
+}
+
+export async function toggleOrganiserTestOpen(testId: string, isOpen: boolean): Promise<{ message: string; test: OrgTest }> {
+  const res = await axios.patch(`${API_BASE}/organiser/tests/${testId}/toggle-open`, { isOpen }, getAuthHeaders());
+  return res.data;
 }

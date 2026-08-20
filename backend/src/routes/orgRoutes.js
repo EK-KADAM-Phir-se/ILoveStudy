@@ -32,6 +32,7 @@ router.delete('/admin/admins/:id', orgController.removeAdminEmail);
 // Test Request & PDF Workflow (Organiser & Admin)
 router.post('/organiser/requests', orgController.createOrgTestRequest);
 router.get('/organiser/requests', orgController.listOrganiserTestRequests);
+router.patch('/organiser/tests/:testId/toggle-open', orgController.toggleOrgTestOpen);
 router.get('/admin/requests', orgController.listAdminTestRequests);
 router.delete('/requests/:requestId', orgController.deleteOrgTestRequest);
 
