@@ -13,7 +13,7 @@ import Footer from "../../../components/Footer";
 import {
   GraduationCap, ArrowRight, BookOpen, Brain,
   Users, Landmark, Sparkles, Flame, Trophy,
-  CheckCircle2, Calendar, X, Zap, Building2, Dna,
+  CheckCircle2, Calendar, X, Zap, Building2, Dna, Cpu
 } from "lucide-react";
 
 import { isGuestUser, clearGuestMode } from "@/src/lib/authUtils";
@@ -164,6 +164,17 @@ export default function GeneralDashboard() {
       iconBg: "bg-gradient-to-br from-indigo-500 to-violet-600",
       shadow: "shadow-indigo-200",
       hover: "group-hover:border-indigo-300",
+    },
+    {
+      id: "gate",
+      name: "GATE Exam",
+      description: "Graduate Aptitude Test in Engineering with CS/IT, ECE, EE, ME, Civil & Data Science papers, NAT inputs, and 3-hour CBT pattern.",
+      route: "/pages/dashboard/gate",
+      category: "Engineering",
+      icon: Cpu,
+      iconBg: "bg-gradient-to-br from-teal-500 to-emerald-600",
+      shadow: "shadow-teal-200",
+      hover: "group-hover:border-teal-300",
     },
     {
       id: "neet",
