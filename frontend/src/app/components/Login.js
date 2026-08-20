@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 import { syncUserProfile } from '../../lib/profileApi';
 import { enableGuestMode, clearGuestMode } from '../../lib/authUtils';
@@ -15,21 +15,6 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          const token = await firebaseUser.getIdToken();
-          await persistSession(firebaseUser, token);
-          router.push('/pages/dashboard');
-        } catch (e) {
-          console.warn("Session auto-restoration error:", e);
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, []);
 
   const persistSession = async (firebaseUser, token) => {
     clearGuestMode();

@@ -1,23 +1,6 @@
-"use client";
-
-import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { isGuestUser } from '@/src/lib/authUtils';
 
 export default function HomePage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
-      const isGuest = isGuestUser();
-      if (token || isGuest) {
-        router.push('/pages/dashboard');
-      }
-    }
-  }, [router]);
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-between">
       {/* Navbar Header */}
@@ -50,4 +33,3 @@ export default function HomePage() {
     </div>
   );
 }
-
