@@ -1,0 +1,1176 @@
+const prisma = require('../../lib/prisma');
+const fs = require('fs');
+const path = require('path');
+
+const rawQuestions = [
+  // ── MATHEMATICS (Q1 - Q30) ──
+  {
+    subject: "Mathematics",
+    questionText: "Let $f: [-1, 2] \\to \\mathbb{R}$ be given by $f(x) = 2x^2 + x + [x^2] - [x]$, where [t] denotes the greatest integer less than or equal to t. The number of points, where $f$ is not continuous, is :",
+    imageUrl: null,
+    optionA: "(1) 6",
+    optionB: "(2) 3",
+    optionC: "(3) 4",
+    optionD: "(4) 5",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "The differential equation of the family of circles passing the origin and having center at the line $y = x$ is :",
+    imageUrl: null,
+    optionA: "(1) $(x^2 - y^2 + 2xy)dx = (x^2 - y^2 + 2xy)dy$",
+    optionB: "(2) $(x^2 + y^2 + 2xy)dx = (x^2 + y^2 - 2xy)dy$",
+    optionC: "(3) $(x^2 - y^2 + 2xy)dx = (x^2 - y^2 - 2xy)dy$",
+    optionD: "(4) $(x^2 + y^2 - 2xy)dx = (x^2 + y^2 + 2xy)dy$",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let $S_1 = \\{z \\in \\mathbb{C} : |z| \\le 5\\}, S_2 = \\{z \\in \\mathbb{C} : \\text{Im}\\left(\\frac{z+1-\\sqrt{3}i}{1-\\sqrt{3}i}\\right) \\ge 0\\}$ and $S_3 = \\{z \\in \\mathbb{C} : \\text{Re}(z) \\ge 0\\}$. Then the area of region $S_1 \\cap S_2 \\cap S_3$ is",
+    imageUrl: null,
+    optionA: "(1) $\\frac{125\\pi}{6}$",
+    optionB: "(2) $\\frac{125\\pi}{24}$",
+    optionC: "(3) $\\frac{125\\pi}{4}$",
+    optionD: "(4) $\\frac{125\\pi}{12}$",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "The area enclosed between the curves $y = x|x|$ and $y = x - |x|$ is :",
+    imageUrl: null,
+    optionA: "(1) 8/3",
+    optionB: "(2) 2/3",
+    optionC: "(3) 1",
+    optionD: "(4) 4/3",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "60 words can be made using all the letters of the word BHBJO, with or without meaning. If these words are written as in a dictionary, then the 50th word is :",
+    imageUrl: null,
+    optionA: "(1) OBBHJ",
+    optionB: "(2) HBBJO",
+    optionC: "(3) OBBJH",
+    optionD: "(4) JBBOH",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let $\\vec{a} = 2\\hat{i} + 5\\hat{j} - \\hat{k}, \\vec{b} = 2\\hat{i} - 2\\hat{j} + 2\\hat{k}$ and $\\vec{c}$ be three vectors such that $(\\vec{c} + \\hat{i}) \\times (\\vec{a} + \\vec{b} + \\hat{i}) = \\vec{a} \\times (\\vec{c} + \\hat{i})$. If $\\vec{a} \\cdot \\vec{c} = -29$, then $\\vec{c} \\cdot (-2\\hat{i} + \\hat{j} + \\hat{k})$ is equal to:",
+    imageUrl: null,
+    optionA: "(1) 10",
+    optionB: "(2) 5",
+    optionC: "(3) 15",
+    optionD: "(4) 12",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Consider three vectors $\\vec{a}, \\vec{b}, \\vec{c}$. Let $|\\vec{a}| = 2, |\\vec{b}| = 3$ and $\\vec{a} = \\vec{b} \\times \\vec{c}$. If $\\alpha \\in [0, \\frac{\\pi}{3}]$ is the angle between the vectors $\\vec{b}$ and $\\vec{c}$, then the minimum value of $27|\\vec{c} - \\vec{a}|^2$ is equal to :",
+    imageUrl: null,
+    optionA: "(1) 110",
+    optionB: "(2) 105",
+    optionC: "(3) 124",
+    optionD: "(4) 121",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let A(–1, 1) and B(2, 3) be two points and P be a variable point above the line AB such that the area of $\\Delta PAB$ is 10. If the locus of P is $ax + by = 15$, then $5a + 2b$ is :",
+    imageUrl: null,
+    optionA: "(1) $-12/5$",
+    optionB: "(2) $-6/5$",
+    optionC: "(3) 4",
+    optionD: "(4) 6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let $(\\alpha, \\beta, \\gamma)$ be the image of the point (8, 5, 7) in the line $\\frac{x-1}{2} = \\frac{y+1}{3} = \\frac{z-2}{5}$. Then $\\alpha + \\beta + \\gamma$ is equal to",
+    imageUrl: null,
+    optionA: "(1) 16",
+    optionB: "(2) 18",
+    optionC: "(3) 14",
+    optionD: "(4) 20",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "If the constant term in the expansion of $(\\frac{\\sqrt{3}}{x^5} + \\frac{2x}{\\sqrt{5}^3})^{12}, x \\neq 0$ is $\\alpha \\times 2^8 \\times \\sqrt{3}^5$ then $25\\alpha$ is equal to:",
+    imageUrl: null,
+    optionA: "(1) 639",
+    optionB: "(2) 724",
+    optionC: "(3) 693",
+    optionD: "(4) 742",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let $f, g : \\mathbb{R} \\to \\mathbb{R}$ be defined as : $f(x) = |x - 1|$ and $g(x) = \\begin{cases} e^x, & x \\ge 0 \\\\ x + 1, & x \\le 0 \\end{cases}$. Then the function $f(g(x))$ is",
+    imageUrl: null,
+    optionA: "(1) neither one-one nor onto.",
+    optionB: "(2) one-one but not onto.",
+    optionC: "(3) both one-one and onto.",
+    optionD: "(4) onto but not one-one.",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let the circle $C_1 : x^2 + y^2 - 2(x + y) + 1 = 0$ and $C_2$ be a circle having centre at (–1, 0) and radius 2. If the line of the common chord of $C_1$ and $C_2$ intersects the y-axis at the point P, then the square of the distance of P from the centre of $C_1$ is :",
+    imageUrl: null,
+    optionA: "(1) 2",
+    optionB: "(2) 1",
+    optionC: "(3) 6",
+    optionD: "(4) 4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let the set $S = \\{2, 4, 8, 16, \\dots, 512\\}$ be partitioned into 3 sets A, B, C with equal number of elements such that $A \\cup B \\cup C = S$ and $A \\cap B = B \\cap C = A \\cap C = \\phi$. The maximum number of such possible partitions of S is equal to :",
+    imageUrl: null,
+    optionA: "(1) 1680",
+    optionB: "(2) 1520",
+    optionC: "(3) 1710",
+    optionD: "(4) 1640",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "The values of m, n, for which the system of equations $x + y + z = 4, 2x + 5y + 5z = 17, x + 2y + mz = n$ has infinitely many solutions, satisfy the equation :",
+    imageUrl: null,
+    optionA: "(1) $m^2 + n^2 - m - n = 46$",
+    optionB: "(2) $m^2 + n^2 + m + n = 64$",
+    optionC: "(3) $m^2 + n^2 + mn = 68$",
+    optionD: "(4) $m^2 + n^2 - mn = 39$",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "The coefficients a, b, c in the quadratic equation $ax^2 + bx + c = 0$ are from the set $\{1, 2, 3, 4, 5, 6\}$. If the probability of this equation having one real root bigger than the other is p, then 216p equals :",
+    imageUrl: null,
+    optionA: "(1) 57",
+    optionB: "(2) 38",
+    optionC: "(3) 19",
+    optionD: "(4) 76",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let ABCD and AEFG be squares of side 4 and 2 units, respectively. The point E is on the line segment AB and the point F is on the diagonal AC. Then the radius r of the circle passing through the point F and touching the line segments BC and CD satisfies :",
+    imageUrl: null,
+    optionA: "(1) $r = 1$",
+    optionB: "(2) $r^2 - 8r + 8 = 0$",
+    optionC: "(3) $2r^2 - 4r + 1 = 0$",
+    optionD: "(4) $2r^2 - 8r + 7 = 0$",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let $\\beta(m, n) = \\int_0^1 x^{m-1} (1 - x)^{n-1} dx, m, n > 0$. If $\\int_0^1 (1 - x^{10})^{20} dx = a \\times \\beta(b, c)$ then $100 (a + b + c)$ equals _______.",
+    imageUrl: null,
+    optionA: "(1) 1021",
+    optionB: "(2) 1120",
+    optionC: "(3) 2012",
+    optionD: "(4) 2120",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let $\\alpha\\beta \\neq 0$ and $A = \\begin{bmatrix} \\beta & \\alpha & 3 \\\\ \\alpha & \\alpha & \\beta \\\\ -\\beta & \\alpha & 2\\alpha \\end{bmatrix}$. If $B = \\begin{bmatrix} 3\\alpha & -9 & 3\\alpha \\\\ -\\alpha & 7 & -2\\alpha \\\\ -2\\alpha & 5 & -2\\beta \\end{bmatrix}$ is the matrix of cofactors of the elements of A, then $\\det(AB)$ is equal to :",
+    imageUrl: null,
+    optionA: "(1) 343",
+    optionB: "(2) 125",
+    optionC: "(3) 64",
+    optionD: "(4) 216",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "If $y(\\theta) = \\frac{2\\cos\\theta+\\cos 2\\theta}{\\cos 3\\theta+4\\cos 2\\theta+5\\cos\\theta+2}$ then at $\\theta = \\frac{\\pi}{2}, y'' + y' + y$ is equal to",
+    imageUrl: null,
+    optionA: "(1) 3/2",
+    optionB: "(2) 1",
+    optionC: "(3) 1/2",
+    optionD: "(4) 2",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "For $x \\ge 0$ the least value of K, for which $4^{1+x} + 4^{1-x}, \\frac{K}{2}, 16^x + 16^{-x}$ are three consecutive terms of an A.P. is equal to :",
+    imageUrl: null,
+    optionA: "(1) 10",
+    optionB: "(2) 4",
+    optionC: "(3) 8",
+    optionD: "(4) 16",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let the mean and the standard deviation of the probability distribution (X: $\\alpha, 1, 0, -3$ with P(X): $1/3, K, 1/6, 1/4$) be $\\mu$ and $\\sigma$, respectively. If $\\sigma - \\mu = 2$, then $\\sigma + \\mu$ is equal to _____.",
+    imageUrl: null,
+    optionA: "5",
+    optionB: "5",
+    optionC: "5",
+    optionD: "5",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let $y = y(x)$ be the solution of the differential equation $\\frac{dy}{dx} + \\frac{2x}{(1+x^2)^2} y = x e^{-\\frac{1}{1+x^2}} ; y(0) = 0$. Then the area enclosed by the curve $f(x) = y(x)e^{\\frac{1}{1+x^2}}$ and the line $y - x = 4$ is ____.",
+    imageUrl: null,
+    optionA: "18",
+    optionB: "18",
+    optionC: "18",
+    optionD: "18",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "The number of solutions of $\\sin^2 x + (2 + 2x - x^2)\\sin x - 3(x - 1)^2 = 0$, where $-\\pi \\le x \\le \\pi$, is",
+    imageUrl: null,
+    optionA: "2",
+    optionB: "2",
+    optionC: "2",
+    optionD: "2",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let the point $(-1, \\alpha, \\beta)$ lie on the line of the shortest distance between the lines $\\frac{x+2}{-3} = \\frac{y-2}{4} = \\frac{z-5}{2}$ and $\\frac{x+2}{-1} = \\frac{y+6}{2} = \\frac{z-1}{0}$. Then $(\\alpha - \\beta)^2$ is equal to______",
+    imageUrl: null,
+    optionA: "25",
+    optionB: "25",
+    optionC: "25",
+    optionD: "25",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "If $1 + \\frac{\\sqrt{3}-\\sqrt{2}}{2\\sqrt{3}} + \\frac{5-2\\sqrt{6}}{18} + \\frac{9\\sqrt{3}-11\\sqrt{2}}{36\\sqrt{3}} + \\frac{49-20\\sqrt{6}}{180} + \\dots \\text{ upto } \\infty = 2(\\sqrt{\\frac{b}{a}+1})\\log_e(\\frac{a}{b})$ where a and b are integers with $\\text{gcd}(a, b) = 1$, then $11a + 18b$ is equal to ______.",
+    imageUrl: null,
+    optionA: "76",
+    optionB: "76",
+    optionC: "76",
+    optionD: "76",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let $a > 0$ be a root of the equation $2x^2 + x - 2 = 0$. If $\\lim_{x\\to 1/a} \\frac{16(1-\\cos(2+x-2x^2))}{(1-ax^2)} = \\alpha + \\beta\\sqrt{17}$ where $\\alpha, \\beta \\in \\mathbb{Z}$ then $\\alpha + \\beta$ is equal to____",
+    imageUrl: null,
+    optionA: "170",
+    optionB: "170",
+    optionC: "170",
+    optionD: "170",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "If $f(t) = \\int_0^t \\frac{2xdx}{1-\\cos^2 t \\sin^2 x}, 0 < t < \\pi$ then the value of $\\int_0^{\\pi/2} \\frac{\\pi^2 dt}{f(t)}$ equals ______.",
+    imageUrl: null,
+    optionA: "1",
+    optionB: "1",
+    optionC: "1",
+    optionD: "1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let the maximum and minimum values of $(\\sqrt{8x - x^2 - 12} - 4)^2 + (x - 7)^2, x \\in \\mathbb{R}$ be M and m respectively. Then $M^2 - m^2$ is equal to _____.",
+    imageUrl: null,
+    optionA: "1600",
+    optionB: "1600",
+    optionC: "1600",
+    optionD: "1600",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "Let a line perpendicular to the line $2x - y = 10$ touch the parabola $y^2 = 4(x - 9)$ at the point P. The distance of the point P from the centre of the circle $x^2 + y^2 - 14x - 8y + 56 = 0$ is ______",
+    imageUrl: null,
+    optionA: "10",
+    optionB: "10",
+    optionC: "10",
+    optionD: "10",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Mathematics",
+    questionText: "The number of real solutions of the equation $x |x + 5| + 2|x + 7| - 2 = 0$ is _____.",
+    imageUrl: null,
+    optionA: "3",
+    optionB: "3",
+    optionC: "3",
+    optionD: "3",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+
+  // ── CHEMISTRY (Q31 - Q60) ──
+  {
+    subject: "Chemistry",
+    questionText: "Match List - I with List - II\nList I: A. ICl, B. $\\text{ICl}_3$, C. $\\text{ClF}_5$, D. $\\text{IF}_7$\nList II: I. T -Shape, II. Square pyramidal, III. Pentagonal bipyramidal, IV. Linear",
+    imageUrl: null,
+    optionA: "(1) (A)–(I), (B)–(IV), (C)–(III), (D)–(II)",
+    optionB: "(2) (A)–(I), (B)–(III), (C)–(II), (D)–(IV)",
+    optionC: "(3) (A)–(IV), (B)–(I), (C)–(II), (D)–(III)",
+    optionD: "(4) (A)–(IV), (B)–(III), (C)–(II), (D)–(I)",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "While preparing crystals of Mohr's salt, dil. $\\text{H}_2\\text{SO}_4$ is added to a mixture of ferrous sulphate and ammonium sulphate, before dissolving this mixture in water, dil. $\\text{H}_2\\text{SO}_4$ is added here to:",
+    imageUrl: null,
+    optionA: "(1) prevent the hydrolysis of ferrous sulphate",
+    optionB: "(2) prevent the hydrolysis of ammonium sulphate",
+    optionC: "(3) make the medium strongly acidic",
+    optionD: "(4) increase the rate of formation of crystals",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Identify the major product in the elimination reaction of 1-bromo-1-methylcyclopentane with $\\text{C}_2\\text{H}_5\\text{OH} / \\text{OH}^-$:",
+    imageUrl: null,
+    optionA: "(1) Methylenecyclopentane",
+    optionB: "(2) 1-Methylcyclopent-2-ene",
+    optionC: "(3) 1-Methylcyclopentene",
+    optionD: "(4) 3-Methylcyclopentene",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The correct nomenclature for 2-formyl-4-hydroxyhept-6-enoic acid is:",
+    imageUrl: null,
+    optionA: "(1) 2–carboxy–4–hydroxyhept–6–enal",
+    optionB: "(2) 2–carboxy–4–hydroxyhept–7–enal",
+    optionC: "(3) 2–formyl–4–hydroxyhept–6–enoic acid",
+    optionD: "(4) 2–formyl–4–hydroxyhept–7–enoic acid",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Given below are two statements : one is labelled as Assertion (A) and the other is labelled as Reason (R)\nAssertion (A) : $\\text{NH}_3$ and $\\text{NF}_3$ molecule have pyramidal shape with a lone pair of electrons on nitrogen atom. The resultant dipole moment of $\\text{NH}_3$ is greater than that of $\\text{NF}_3$.\nReason (R) : In $\\text{NH}_3$, the orbital dipole due to lone pair is in the same direction as the resultant dipole moment of the N–H bonds. F is the most electronegative element.\nIn the light of the above statements, choose the correct answer from the options given below:",
+    imageUrl: null,
+    optionA: "(1) Both (A) and (R) are true and (R) is the correct explanation of (A)",
+    optionB: "(2) (A) is false but (R) is true",
+    optionC: "(3) (A) is true but (R) is false",
+    optionD: "(4) Both (A) and (R) are true but (R) is NOT the correct explanation of (A)",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Given below are two statements:\nStatement I : On passing HCl(g) through a saturated solution of $\\text{BaCl}_2$, at room temperature white turbidity appears.\nStatement II : When HCl gas is passed through a saturated solution of NaCl, sodium chloride is precipitated due to common ion effect.\nIn the light of the above statements, choose the most appropriate answer from the options given below:",
+    imageUrl: null,
+    optionA: "(1) Statement I is correct but Statement II is incorrect",
+    optionB: "(2) Both Statement I and Statement II are incorrect",
+    optionC: "(3) Statement I is incorrect but Statement II is correct",
+    optionD: "(4) Both Statement I and Statement II are correct",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The metal atom present in the complex MABXL (where A, B, X and L are unidentate ligands and M is metal) involves $sp^3$ hybridization. The number of geometrical isomers exhibited by the complex is:",
+    imageUrl: null,
+    optionA: "(1) 4",
+    optionB: "(2) 0",
+    optionC: "(3) 2",
+    optionD: "(4) 3",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Match List - I with List - II\nList I (Pair of Compounds): A. n-propanol and Isopropanol, B. Methoxypropane and ethoxyethane, C. Propanone and propanal, D. Neopentane and Isopentane\nList II (Isomerism): I. Metamerism, II. Chain Isomerism, III. Position Isomerism, IV. Functional Isomerism",
+    imageUrl: null,
+    optionA: "(1) (A)–(II), (B)–(I), (C)–(IV), (D)–(III)",
+    optionB: "(2) (A)–(III), (B)–(I), (C)–(II), (D)–(IV)",
+    optionC: "(3) (A)–(I), (B)–(III), (C)–(IV), (D)–(II)",
+    optionD: "(4) (A)–(III), (B)–(I), (C)–(IV), (D)–(II)",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The quantity of silver deposited when one coulomb charge is passed through $\\text{AgNO}_3$ solution:",
+    imageUrl: null,
+    optionA: "(1) 0.1 g atom of silver",
+    optionB: "(2) 1 chemical equivalent of silver",
+    optionC: "(3) 1 g of silver",
+    optionD: "(4) 1 electrochemical equivalent of silver",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Which one of the following reactions is NOT possible?",
+    imageUrl: null,
+    optionA: "(1) Anisole + HBr -> Phenol + MeBr",
+    optionB: "(2) Phenol + HCl -> Chlorobenzene + H2O",
+    optionC: "(3) Chlorobenzene + NaOH (high temp/H+) -> Phenol",
+    optionD: "(4) Anisole + Cl2/AlCl3 -> o- and p-Chloroanisole",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Given below are two statements :\nStatement I : The metallic radius of Na is 1.86 Å and the ionic radius of $\\text{Na}^+$ is lesser than 1.86 Å\nStatement II : Ions are always smaller in size than the corresponding elements.\nIn the light of the above statements, choose the correct answer from the options given below :",
+    imageUrl: null,
+    optionA: "(1) Statement I is correct but Statement II is false",
+    optionB: "(2) Both Statement I and Statement II are true",
+    optionC: "(3) Both Statement I and Statement II are false",
+    optionD: "(4) Statement I is incorrect but Statement II is true",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Ethanol $\\xrightarrow{\\text{Jones' Reagent}} \\xrightarrow{\\text{KMnO}_4} \\xrightarrow{\\text{NaOH, CaO, } \\Delta} P$. Identify the major product P.",
+    imageUrl: null,
+    optionA: "(1) Methane",
+    optionB: "(2) Methanal",
+    optionC: "(3) Methoxymethane",
+    optionD: "(4) Methanoic acid",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Consider the chemical reaction : Cyclohexene $\\xrightarrow{\\text{KMnO}_4-\\text{H}_2\\text{SO}_4, \\text{Heat}} P$. Product \"P\" is :",
+    imageUrl: null,
+    optionA: "(1) picric acid",
+    optionB: "(2) oxalic acid",
+    optionC: "(3) acetic acid",
+    optionD: "(4) adipic acid",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "For the electro chemical cell $M|M^{2+}||X|X^{2-}$. If $E^0(M^{2+}/M) = 0.46\\text{V}$ and $E^0(X/X^{2-}) = 0.34\\text{V}$. Which of the following is correct ?",
+    imageUrl: null,
+    optionA: "(1) $E_{\\text{cell}} = -0.80\\text{ V}$",
+    optionB: "(2) $M + X \\to M^{2+} + X^{2-}$ is a spontaneous reaction",
+    optionC: "(3) $M^{2+} + X^{2-} \\to M + X$ is a spontaneous reaction",
+    optionD: "(4) $E_{\\text{cell}} = 0.80\\text{ V}$",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The number of moles of methane required to produce 11g $\\text{CO}_2(g)$ after complete combustion is:",
+    imageUrl: null,
+    optionA: "(1) 0.75",
+    optionB: "(2) 0.25",
+    optionC: "(3) 0.35",
+    optionD: "(4) 0.5",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The number of complexes from the following with no electrons in the $t_2$ orbital is _______.\\n$\\text{TiCl}_4, [\\text{MnO}_4]^-, [\\text{FeO}_4]^{2-}, [\\text{FeCl}_4]^-, [\\text{CoCl}_4]^{2-}$",
+    imageUrl: null,
+    optionA: "(1) 3",
+    optionB: "(2) 1",
+    optionC: "(3) 4",
+    optionD: "(4) 2",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The number of ions from the following that have the ability to liberate hydrogen from a dilute acid is _______. $\\text{Ti}^{2+}, \\text{Cr}^{2+}$ and $\\text{V}^{2+}$",
+    imageUrl: null,
+    optionA: "(1) 0",
+    optionB: "(2) 2",
+    optionC: "(3) 3",
+    optionD: "(4) 1",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Identify A and B in Friedel-Crafts acylation of tetralin with succinic anhydride followed by Clemmensen reduction:",
+    imageUrl: null,
+    optionA: "(1) A = 4-(tetralin-6-yl)-4-oxobutanoic acid, B = 4-(tetralin-6-yl)butanoic acid",
+    optionB: "(2) A = 4-(tetralin-6-yl)butanoic acid, B = 4-(tetralin-6-yl)butanoic acid",
+    optionC: "(3) A = 4-oxobutanoic acid, B = 4-oxobutanoic acid",
+    optionD: "(4) A = 4-(tetralin-6-yl)-4-oxobutanoic acid, B = 4-(tetralin-6-yl)-4-oxobutanoic acid",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The correct statements from the following are :\n(A) The decreasing order of atomic radii of group 13 elements is $\\text{Tl} > \\text{In} > \\text{Ga} > \\text{Al} > \\text{B}$.\n(B) Down the group 13 electronegativity decreases from top to bottom.\n(C) Al dissolves in dil. HCl and liberate $\\text{H}_2$ but conc. $\\text{HNO}_3$ renders Al passive by forming a protective oxide layer on the surface\n(D) All elements of group 13 exhibits highly stable +1 oxidation state.\n(E) Hybridisation of Al in $[\\text{Al}(\\text{H}_2\\text{O})_6]^{3+}$ ion is $sp^3d^2$.\nChoose the correct answer from the options given below :",
+    imageUrl: null,
+    optionA: "(1) (C) and (E) only",
+    optionB: "(2) (A), (C) and (E) only",
+    optionC: "(3) (A), (B), (C) and (E) only",
+    optionD: "(4) (A) and (C) only",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Coagulation of egg, on heating is because of :",
+    imageUrl: null,
+    optionA: "(1) Denaturation of protein occurs",
+    optionB: "(2) The secondary structure of protein remains unchanged",
+    optionC: "(3) Breaking of the peptide linkage in the primary structure of protein occurs",
+    optionD: "(4) Biological property of protein remains unchanged",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Combustion of 1 mole of benzene: $\\text{C}_6\\text{H}_6(l) + \\frac{15}{2}\\text{O}_2(g) \\to 6\\text{CO}_2(g) + 3\\text{H}_2\\text{O}(l)$. Standard enthalpy of combustion of 2 mol of benzene is – 'x' kJ. Standard formation enthalpies: $\\text{C}_6\\text{H}_6 = 48.5\\text{ kJ/mol}, \\text{CO}_2 = -393.5\\text{ kJ/mol}, \\text{H}_2\\text{O} = -286\\text{ kJ/mol}$. x = ______.",
+    imageUrl: null,
+    optionA: "6535",
+    optionB: "6535",
+    optionC: "6535",
+    optionD: "6535",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "The fusion of chromite ore with sodium carbonate in the presence of air leads to the formation of products A and B along with the evolution of $\\text{CO}_2$. The sum of spin-only magnetic moment values of A and B is ___ B.M. (Nearest integer)",
+    imageUrl: null,
+    optionA: "6",
+    optionB: "6",
+    optionC: "6",
+    optionD: "6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "X of ethanamine was subjected to reaction with $\\text{NaNO}_2/\\text{HCl}$ followed by hydrolysis to liberate $\\text{N}_2$ and HCl. The HCl generated was completely neutralised by 0.2 moles of NaOH. X is ____ g.",
+    imageUrl: null,
+    optionA: "9",
+    optionB: "9",
+    optionC: "9",
+    optionD: "9",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "In an atom, total number of electrons having quantum numbers $n = 4, |m_l| = 1$ and $m_s = -1/2$ is ______.",
+    imageUrl: null,
+    optionA: "6",
+    optionB: "6",
+    optionC: "6",
+    optionD: "6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Using paper chromatography, the ratio of $R_f$ values of sample A (5.0 cm / 10.0 cm) and sample C (10.0 cm / 10.0 cm) is $x \\times 10^{-2}$. Value of x is __________.",
+    imageUrl: null,
+    optionA: "50",
+    optionB: "50",
+    optionC: "50",
+    optionD: "50",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "In the Claisen-Schmidt reaction to prepare 351 g of dibenzalacetone using 87 g of acetone, the amount of benzaldehyde required is _________g. (Nearest integer)",
+    imageUrl: null,
+    optionA: "318",
+    optionB: "318",
+    optionC: "318",
+    optionD: "318",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Gas phase reaction $2A_{(g)} + B_{(g)} \\to C_{(g)}$. Initial rate is $r_1$ with 1.5 atm of A and 0.7 atm of B. Rate $r_2$ is recorded when pressure of C becomes 0.5 atm. Ratio $r_1 : r_2$ is ________ $\\times 10^{-1}$. (Nearest integer)",
+    imageUrl: null,
+    optionA: "315",
+    optionB: "315",
+    optionC: "315",
+    optionD: "315",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Tolyl propyl ketone $\\xrightarrow{\\text{KMnO}_4-\\text{KOH}} A \\xrightarrow{\\text{H}_3\\text{O}^+} B \\xrightarrow{\\text{Br}_2/\\text{FeBr}_3} C$. Product C has _________ $\\pi$ bonds.",
+    imageUrl: null,
+    optionA: "4",
+    optionB: "4",
+    optionC: "4",
+    optionD: "4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Acetic acid dissociation constant $K_a = 6.25 \\times 10^{-5}$. If 5 mL of acetic acid is dissolved in 1 litre water, the solution freezes at $-x \\times 10^{-2 \\circ}\\text{C}$. ($K_f = 1.86\\text{ K kg mol}^{-1}$, density $= 1.2\\text{ g/mL}$, molar mass $= 60\\text{ g/mol}$). x = _________.",
+    imageUrl: null,
+    optionA: "19",
+    optionB: "19",
+    optionC: "19",
+    optionD: "19",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Chemistry",
+    questionText: "Number of compounds from the following with zero dipole moment is __________.\\n$\\text{HF}, \\text{H}_2, \\text{H}_2\\text{S}, \\text{CO}_2, \\text{NH}_3, \\text{BF}_3, \\text{CH}_4, \\text{CHCl}_3, \\text{SiF}_4, \\text{H}_2\\text{O}, \\text{BeF}_2$",
+    imageUrl: null,
+    optionA: "6",
+    optionB: "6",
+    optionC: "6",
+    optionD: "6",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+
+  // ── PHYSICS (Q61 - Q90) ──
+  {
+    subject: "Physics",
+    questionText: "To find the (k) of a spring experimentally, a student commits 2% positive error in the measurement of time and 1% negative error in measurement of mass. The percentage error in determining value of k is :",
+    imageUrl: null,
+    optionA: "(1) 3%",
+    optionB: "(2) 1%",
+    optionC: "(3) 4%",
+    optionD: "(4) 5%",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "A bullet of mass 50 g is fired with a speed 100 m/s on a plywood and emerges with 40 m/s. The percentage loss of kinetic energy is :",
+    imageUrl: null,
+    optionA: "(1) 32%",
+    optionB: "(2) 44%",
+    optionC: "(3) 16%",
+    optionD: "(4) 84%",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "The ratio of the shortest wavelength of Balmer series to the shortest wavelength of Lyman series for hydrogen atom is :",
+    imageUrl: null,
+    optionA: "(1) 4 : 1",
+    optionB: "(2) 1 : 2",
+    optionC: "(3) 1 : 4",
+    optionD: "(4) 2 : 1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "To project a body of mass m from earth's surface to infinity, the required kinetic energy is (assume, the radius of earth is $R_E$, g = acceleration due to gravity on the surface of earth) :",
+    imageUrl: null,
+    optionA: "(1) $2mgR_E$",
+    optionB: "(2) $mgR_E$",
+    optionC: "(3) $\\frac{1}{2}mgR_E$",
+    optionD: "(4) $4mgR_E$",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Electromagnetic waves travel in a medium with speed of $1.5 \\times 10^8\\text{ ms}^{-1}$. The relative permeability of the medium is 2.0. The relative permittivity will be :",
+    imageUrl: null,
+    optionA: "(1) 5",
+    optionB: "(2) 1",
+    optionC: "(3) 4",
+    optionD: "(4) 2",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Which of the following phenomena does not explain by wave nature of light.\\n(A) reflection, (B) diffraction, (C) photoelectric effect, (D) interference, (E) polarization\\nChoose the most appropriate answer from the options given below :",
+    imageUrl: null,
+    optionA: "(1) E only",
+    optionB: "(2) C only",
+    optionC: "(3) B, D only",
+    optionD: "(4) A, C only",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "While measuring diameter of wire using screw gauge the following readings were noted. Main scale reading is 1 mm and circular scale reading is equal to 42 divisions. Pitch of screw gauge is 1 mm and it has 100 divisions on circular scale. The diameter of the wire is $\\frac{x}{50}\\text{ mm}$. The value of x is :",
+    imageUrl: null,
+    optionA: "(1) 142",
+    optionB: "(2) 71",
+    optionC: "(3) 42",
+    optionD: "(4) 21",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "$\\sigma$ is the uniform surface charge density of a thin spherical shell of radius R. The electric field at any point on the surface of the spherical shell is :",
+    imageUrl: null,
+    optionA: "(1) $\\sigma / \\epsilon_0 R$",
+    optionB: "(2) $\\sigma / 2\\epsilon_0$",
+    optionC: "(3) $\\sigma / \\epsilon_0$",
+    optionD: "(4) $\\sigma / 4\\epsilon_0$",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "The value of unknown resistance (x) for which the potential difference between B and D will be zero in the bridge arrangement with $24\\Omega, 12\\Omega, 12\\Omega, 1\\Omega, 12\\Omega, 0.5\\Omega$ connected to 14.5V source is :",
+    imageUrl: null,
+    optionA: "(1) $3\\Omega$",
+    optionB: "(2) $9\\Omega$",
+    optionC: "(3) $6\\Omega$",
+    optionD: "(4) $42\\Omega$",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "The specific heat at constant pressure of a real gas obeying $PV^2 = RT$ equation is :",
+    imageUrl: null,
+    optionA: "(1) $C_v + R$",
+    optionB: "(2) $\\frac{R}{3} + C_v$",
+    optionC: "(3) R",
+    optionD: "(4) $C_v + \\frac{R}{2V}$",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Match List I with List II\\nList I: A. Torque, B. Magnetic field, C. Magnetic moment, D. Permeability of free space\\nList II: I. $[M^1L^1T^{-2}A^{-2}]$, II. $[L^2A^1]$, III. $[M^1T^{-2}A^{-1}]$, IV. $[M^1L^2T^{-2}]$",
+    imageUrl: null,
+    optionA: "(1) A-I, B-III, C-II, D-IV",
+    optionB: "(2) A-IV, B-III, C-II, D-I",
+    optionC: "(3) A-III, B-I, C-II, D-IV",
+    optionD: "(4) A-IV, B-II, C-III, D-I",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Given below are two statements :\\nStatement I : In an LCR series circuit, current is maximum at resonance.\\nStatement II : Current in a purely resistive circuit can never be less than that in a series LCR circuit when connected to same voltage source.\\nIn the light of the above statements, choose the correct from the options given below :",
+    imageUrl: null,
+    optionA: "(1) Statement I is true but Statement II is false",
+    optionB: "(2) Statement I is false but Statement II is true",
+    optionC: "(3) Both Statement I and Statement II are true",
+    optionD: "(4) Both Statement I and Statement II are false",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "The correct truth table for logic circuit with AND gates feeding a NOR gate (A, B -> 0,0->1; 0,1->1; 1,0->0; 1,1->1) is option :",
+    imageUrl: null,
+    optionA: "(1) Table 1",
+    optionB: "(2) Table 2 (A=0,B=0=>1; A=0,B=1=>1; A=1,B=0=>0; A=1,B=1=>1)",
+    optionC: "(3) Table 3",
+    optionD: "(4) Table 4",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "A sample contains mixture of helium and oxygen gas. The ratio of root mean square speed of helium and oxygen in the sample, is :",
+    imageUrl: null,
+    optionA: "(1) $\\frac{1}{32}$",
+    optionB: "(2) $2\\sqrt{2} : 1$",
+    optionC: "(3) $\\frac{1}{4}$",
+    optionD: "(4) $\\frac{1}{2\\sqrt{2}}$",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "A light string passing over a smooth light pulley connects two blocks of masses $m_1$ and $m_2$ ($m_2 > m_1$). If the acceleration of the system is $\\frac{g}{\\sqrt{2}}$, then the ratio of the masses $\\frac{m_1}{m_2}$ is :",
+    imageUrl: null,
+    optionA: "(1) $\\frac{\\sqrt{2}-1}{\\sqrt{2}+1}$",
+    optionB: "(2) $\\frac{1+\\sqrt{5}}{\\sqrt{5}-1}$",
+    optionC: "(3) $\\frac{1+\\sqrt{5}}{\\sqrt{2}-1}$",
+    optionD: "(4) $\\frac{\\sqrt{3}+1}{\\sqrt{2}-1}$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "Four particles A, B, C, D of mass $m/2, m, 2m, 4m$ have the same momentum, respectively. The particle with maximum kinetic energy is :",
+    imageUrl: null,
+    optionA: "(1) D",
+    optionB: "(2) C",
+    optionC: "(3) A",
+    optionD: "(4) B",
+    correctOption: "C",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "A train starting from rest first accelerates uniformly up to a speed of 80 km/h for time t, then it moves with a constant speed for time 3t. The average speed of the train for this duration of journey will be (in km/h) :",
+    imageUrl: null,
+    optionA: "(1) 80",
+    optionB: "(2) 70",
+    optionC: "(3) 30",
+    optionD: "(4) 40",
+    correctOption: "B",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "An element $\\Delta\\ell = \\Delta x\\hat{i}$ is placed at the origin and carries a large current $I = 10\\text{A}$. The magnetic field on the y-axis at a distance of 0.5 m from the elements $\\Delta x$ of 1 cm length is :",
+    imageUrl: null,
+    optionA: "(1) $4 \\times 10^{-8}\\text{ T}$",
+    optionB: "(2) $8 \\times 10^{-8}\\text{ T}$",
+    optionC: "(3) $12 \\times 10^{-8}\\text{ T}$",
+    optionD: "(4) $10 \\times 10^{-8}\\text{ T}$",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "A small ball of mass m and density $\\rho$ is dropped in a viscous liquid of density $\\rho_0$. After some time, the ball falls with constant velocity. The viscous force on the ball is :",
+    imageUrl: null,
+    optionA: "(1) $mg (\\frac{\\rho_0}{\\rho} - 1)$",
+    optionB: "(2) $mg (1 + \\frac{\\rho}{\\rho_0})$",
+    optionC: "(3) $mg(1 - \\rho\\rho_0)$",
+    optionD: "(4) $mg (1 - \\frac{\\rho_0}{\\rho})$",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "In photoelectric experiment energy of 2.48 eV irradiates a photo sensitive material. The stopping potential was measured to be 0.5 V. Work function of the photo sensitive material is :",
+    imageUrl: null,
+    optionA: "(1) 0.5 eV",
+    optionB: "(2) 1.68 eV",
+    optionC: "(3) 2.48 eV",
+    optionD: "(4) 1.98 eV",
+    correctOption: "D",
+    positiveMarks: 4,
+    negativeMarks: -1
+  },
+  {
+    subject: "Physics",
+    questionText: "If the radius of earth is reduced to three-fourth of its present value without change in its mass then value of duration of the day of earth will be ______ hours 30 minutes.",
+    imageUrl: null,
+    optionA: "13",
+    optionB: "13",
+    optionC: "13",
+    optionD: "13",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "Three infinitely long charged thin sheets are placed at $x=-a, x=a, x=3a$ with densities $-\\sigma, 2\\sigma, \\sigma$. The magnitude of electric field at point P is $\\frac{x\\sigma}{\\epsilon_0}$. Value of x is _____.",
+    imageUrl: null,
+    optionA: "2",
+    optionB: "2",
+    optionC: "2",
+    optionD: "2",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "A big drop is formed by coalescing 1000 small droplets of water. The ratio of the surface energy of 1000 droplets to that of energy of big drop is $\\frac{10}{x}$. The value of x is _________.",
+    imageUrl: null,
+    optionA: "1",
+    optionB: "1",
+    optionC: "1",
+    optionD: "1",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "When a dc voltage of 100V is applied to an inductor, a dc current of 5A flows through it. When an ac voltage of 200V peak value is connected to inductor, its inductive reactance is found to be $20\\sqrt{3}\\Omega$. The power dissipated in the circuit is _________W.",
+    imageUrl: null,
+    optionA: "250",
+    optionB: "250",
+    optionC: "250",
+    optionD: "250",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "The refractive index of prism is $\\mu = \\sqrt{3}$ and the ratio of the angle of minimum deviation to the angle of prism is one. The value of angle of prism is _________\\deg.",
+    imageUrl: null,
+    optionA: "60",
+    optionB: "60",
+    optionC: "60",
+    optionD: "60",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "A wire of resistance R and radius r is stretched till its radius became r/2. If new resistance of the stretched wire is x R, then value of x is _________.",
+    imageUrl: null,
+    optionA: "16",
+    optionB: "16",
+    optionC: "16",
+    optionD: "16",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "Radius of a certain orbit of hydrogen atom is 8.48 Å. If energy of electron in this orbit is E/x, then x = _________. (Given $a_0 = 0.529Å, E = \\text{energy of electron in ground state}$)",
+    imageUrl: null,
+    optionA: "16",
+    optionB: "16",
+    optionC: "16",
+    optionD: "16",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "A circular coil having 200 turns, $2.5 \\times 10^{-4}\\text{ m}^2$ area and carrying $100\\mu\\text{A}$ current is placed in a uniform magnetic field of 1 T. Initially the magnetic dipole moment (\\vec{M}) was directed along \\vec{B}. Amount of work, required to rotate the coil through $90^\\circ$ from its initial orientation such that \\vec{M} becomes perpendicular to \\vec{B}, is _________ $\\mu\\text{J}$.",
+    imageUrl: null,
+    optionA: "5",
+    optionB: "5",
+    optionC: "5",
+    optionD: "5",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "A particle is doing simple harmonic motion of amplitude 0.06 m and time period 3.14 s. The maximum velocity of the particle is _______ cm/s.",
+    imageUrl: null,
+    optionA: "12",
+    optionB: "12",
+    optionC: "12",
+    optionD: "12",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  },
+  {
+    subject: "Physics",
+    questionText: "For three vectors $\\vec{A} = (-x\\hat{i} - 6\\hat{j} - 2\\hat{k}), \\vec{B} = (-\\hat{i} + 4\\hat{j} + 3\\hat{k})$ and $\\vec{C} = (-8\\hat{i} - \\hat{j} + 3\\hat{k})$, if $\\vec{A} \\cdot (\\vec{B} \\times \\vec{C}) = 0$ then value of x is ______.",
+    imageUrl: null,
+    optionA: "4",
+    optionB: "4",
+    optionC: "4",
+    optionD: "4",
+    correctOption: "A",
+    positiveMarks: 4,
+    negativeMarks: 0
+  }
+];
+
+async function seedJee2024Apr05Shift2() {
+  console.log(`🚀 Compiling JEE Main 2024 (05 Apr Shift 2) Paper with ${rawQuestions.length} questions...`);
+
+  const paperData = {
+    examName: "JEE Main",
+    year: 2024,
+    shiftName: "JEE Main 2024 (05 Apr Shift 2)",
+    examDate: "2024-04-05T15:00:00Z",
+    totalMarks: 300,
+    totalQuestions: 90,
+    durationMinutes: 180,
+    positiveMarks: 4,
+    negativeMarks: -1,
+    questions: rawQuestions
+  };
+
+  const jsonOutputPath = path.join(__dirname, 'JEE Main 2024 (05 Apr Shift 2).json');
+  fs.writeFileSync(jsonOutputPath, JSON.stringify(paperData, null, 2));
+  console.log(`✅ Saved paper JSON to: ${jsonOutputPath}`);
+
+  console.log(`🌱 Seeding JEE Main 2024 (05 Apr Shift 2) into PostgreSQL via Prisma...`);
+  
+  let exam = await prisma.exam.findFirst({
+    where: { name: "JEE Main" }
+  });
+
+  if (!exam) {
+    exam = await prisma.exam.create({
+      data: { name: "JEE Main" }
+    });
+  }
+
+  const existingShift = await prisma.shift.findFirst({
+    where: {
+      examId: exam.id,
+      name: "JEE Main 2024 (05 Apr Shift 2)"
+    }
+  });
+
+  if (existingShift) {
+    console.log(`Removing old shift ${existingShift.id}...`);
+    await prisma.shift.delete({ where: { id: existingShift.id } });
+  }
+
+  const shift = await prisma.shift.create({
+    data: {
+      examId: exam.id,
+      name: "JEE Main 2024 (05 Apr Shift 2)",
+      date: new Date("2024-04-05T15:00:00Z")
+    }
+  });
+  console.log(`Created Shift "JEE Main 2024 (05 Apr Shift 2)" (ID: ${shift.id})`);
+
+  console.log(`Inserting ${rawQuestions.length} questions into DB...`);
+  for (let i = 0; i < rawQuestions.length; i++) {
+    const q = rawQuestions[i];
+    await prisma.question.create({
+      data: {
+        shiftId: shift.id,
+        subject: q.subject,
+        questionText: q.questionText,
+        imageUrl: q.imageUrl || null,
+        optionA: q.optionA,
+        optionB: q.optionB,
+        optionC: q.optionC,
+        optionD: q.optionD,
+        correctOption: q.correctOption,
+        positiveMarks: q.positiveMarks,
+        negativeMarks: q.negativeMarks
+      }
+    });
+  }
+
+  console.log(`🎉 Successfully seeded ${rawQuestions.length} questions for JEE Main 2024 (05 Apr Shift 2) into Database!`);
+}
+
+seedJee2024Apr05Shift2()
+  .catch((e) => {
+    console.error("❌ Seeding error:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
