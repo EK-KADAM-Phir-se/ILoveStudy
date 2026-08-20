@@ -326,6 +326,8 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                             badge = <span className="text-[11px] font-extrabold bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded border border-rose-500/40">✕ Your Choice (Incorrect)</span>;
                           }
 
+                          const isImageOption = opt.value && (opt.value.startsWith("data:image") || opt.value.startsWith("http") || opt.value.startsWith("/"));
+
                           return (
                             <div
                               key={opt.key}
@@ -335,7 +337,11 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                                 {opt.key}
                               </span>
                               <div className="flex-1 text-sm font-medium pt-0.5">
-                                <LatexRenderer text={opt.value} />
+                                {isImageOption ? (
+                                  <img src={opt.value} alt={`Option ${opt.key}`} className="max-h-24 object-contain rounded" />
+                                ) : (
+                                  <LatexRenderer text={opt.value} />
+                                )}
                               </div>
                               {badge && <div className="shrink-0">{badge}</div>}
                             </div>

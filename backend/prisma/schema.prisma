@@ -65,6 +65,7 @@ model Question {
   correctOption String   // "A", "B", "C", or "D"
   positiveMarks Float    @default(4)
   negativeMarks Float    @default(-1)
+  orderIndex    Int      @default(0)
   errorReports  ErrorReport[]
 }
 
