@@ -54,6 +54,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
   const [selectedSubject, setSelectedSubject] = useState<string>("All");
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>("All");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [zoomLevel, setZoomLevel] = useState<number>(100);
 
   useEffect(() => {
     if (!attemptId) return;
@@ -129,383 +130,376 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-6xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-slate-100">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white border border-slate-300 rounded-lg w-full max-w-6xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 select-none" style={{ zoom: `${zoomLevel}%` }}>
         
         {/* TOP HEADER BAR */}
-        <div className="px-6 py-4 border-b border-slate-800 bg-slate-900/90 flex flex-wrap items-center justify-between gap-4">
+        <header className="bg-white border-b border-slate-300 px-6 py-3 flex items-center justify-between shrink-0 shadow-sm">
           <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-extrabold text-lg">
-              🔍
-            </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
-                {attempt ? `${attempt.examName} — ${attempt.shiftName}` : "Test Attempt Review"}
-                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                  Detailed Review
-                </span>
-              </h2>
-              {attempt && (
-                <p className="text-xs text-slate-400">
-                  Submitted on {new Date(attempt.submittedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-                </p>
-              )}
-            </div>
+            <h1 className="text-lg font-extrabold text-slate-800 tracking-tight">
+              {attempt ? `${attempt.examName} — ${attempt.shiftName}` : "SSC CGL MOCK TEST — ANSWER REVIEW"}
+            </h1>
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
+              Answer Key &amp; Review
+            </span>
           </div>
 
-          <div className="flex items-center space-x-4">
+          {attempt && (
+            <div className="flex items-center space-x-4 text-xs">
+              <div className="flex items-center space-x-3 bg-slate-100 px-3.5 py-1.5 rounded border border-slate-200">
+                <span>Score: <strong className="text-blue-700 text-sm font-bold">{attempt.score} / {attempt.maxMarks}</strong></span>
+                <span>•</span>
+                <span>Accuracy: <strong className="text-emerald-700 text-sm font-bold">{attempt.percentage}%</strong></span>
+              </div>
+              <button
+                onClick={onClose}
+                className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 rounded text-xs transition"
+              >
+                ✕ Close Review
+              </button>
+            </div>
+          )}
+        </header>
+
+        {/* SUB HEADER / CONTROLS & SUMMARY BANNER */}
+        <div className="bg-slate-100 border-b border-slate-300 text-xs shrink-0">
+          <div className="px-6 py-1.5 flex items-center justify-between border-b border-slate-200 bg-white">
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setZoomLevel(prev => Math.min(prev + 10, 140))}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition"
+              >
+                Zoom (+)
+              </button>
+              <button
+                onClick={() => setZoomLevel(prev => Math.max(prev - 10, 80))}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition"
+              >
+                Zoom (-)
+              </button>
+              <span className="ml-3 font-semibold text-slate-700">Detailed Attempt Evaluation</span>
+            </div>
+
             {attempt && (
-              <div className="hidden md:flex items-center space-x-3 text-xs bg-slate-950/60 px-4 py-2 rounded-xl border border-slate-800">
-                <div>
-                  <span className="text-slate-400">Score: </span>
-                  <span className="font-extrabold text-indigo-400 text-sm">{attempt.score}</span>
-                  <span className="text-slate-400"> / {attempt.maxMarks}</span>
-                </div>
-                <div className="h-4 w-px bg-slate-800"></div>
-                <div>
-                  <span className="text-slate-400">Accuracy: </span>
-                  <span className="font-extrabold text-emerald-400 text-sm">{attempt.percentage}%</span>
-                </div>
+              <div className="flex items-center space-x-3 font-medium text-slate-700">
+                <span className="text-emerald-700 font-bold">✓ Correct: {attempt.correctCount} (+{attempt.correctCount * positiveMultiplier} pts)</span>
+                <span>|</span>
+                <span className="text-red-600 font-bold">✕ Wrong: {attempt.incorrectCount} (-{attempt.incorrectCount * negativeMultiplier} pts)</span>
+                <span>|</span>
+                <span className="text-slate-600 font-bold">⚪ Unattempted: {attempt.unattemptedCount}</span>
               </div>
             )}
+          </div>
 
-            <button
-              onClick={onClose}
-              className="h-9 w-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition border border-slate-700"
-              title="Close Review"
-            >
-              ✕
-            </button>
+          <div className="bg-[#fffde7] border-b border-yellow-200 px-6 py-1 text-slate-800 text-[11px] flex items-center space-x-4">
+            <span className="font-bold text-yellow-900">ANSWER REVIEW MODE</span>
+            <span className="text-slate-700">Green indicates correct choice, Red indicates incorrect choice.</span>
           </div>
         </div>
 
         {/* CONTENT AREA */}
         {loading ? (
           <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center space-y-4 p-8">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-500"></div>
-            <p className="text-sm font-semibold text-slate-400 animate-pulse">Loading attempt review data...</p>
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600"></div>
+            <p className="text-sm font-semibold text-slate-600 animate-pulse">Loading detailed question analysis...</p>
           </div>
         ) : error ? (
           <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center space-y-4 p-8 text-center">
-            <div className="h-12 w-12 rounded-full bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl font-bold">
-              ⚠️
-            </div>
-            <p className="text-rose-400 font-semibold">{error}</p>
+            <p className="text-red-600 font-semibold text-sm">{error}</p>
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl border border-slate-700 transition"
+              className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs rounded transition"
             >
               Close
             </button>
           </div>
         ) : !attempt || questions.length === 0 ? (
-          <div className="flex-1 min-h-[400px] flex items-center justify-center p-8 text-slate-400 text-sm">
+          <div className="flex-1 min-h-[400px] flex items-center justify-center p-8 text-slate-500 text-xs">
             No review questions found for this attempt.
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
+          <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
             
-            {/* LEFT MAIN PANEL: QUESTION DETAILS */}
-            <div className="flex-1 p-4 sm:p-6 space-y-6 overflow-y-auto">
-              
-              {/* SUMMARY STATS BANNER */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 text-xs">
-                <div className="flex flex-col">
-                  <span className="text-slate-400">Total Score</span>
-                  <span className="text-base font-extrabold text-indigo-400">
-                    {attempt.score} <span className="text-xs font-normal text-slate-400">/ {attempt.maxMarks}</span>
-                  </span>
+            {/* LEFT SIDEBAR: FILTERS & QUESTION PALETTE GRID */}
+            <aside className="w-full lg:w-80 bg-white border-r border-slate-300 flex flex-col justify-between shrink-0 overflow-y-auto">
+              <div className="p-4 space-y-4">
+                
+                {/* SUBJECT FILTER */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
+                    Subject Filter
+                  </label>
+                  <div className="flex flex-wrap gap-1">
+                    {subjects.map((subj) => (
+                      <button
+                        key={subj}
+                        onClick={() => setSelectedSubject(subj)}
+                        className={`px-2.5 py-1 rounded text-xs font-bold transition ${
+                          selectedSubject === subj
+                            ? "bg-blue-600 text-white shadow-xs"
+                            : "bg-white text-blue-600 border border-slate-300 hover:bg-slate-100"
+                        }`}
+                      >
+                        {subj}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-slate-400">Correct ({attempt.correctCount})</span>
-                  <span className="text-base font-extrabold text-emerald-400">+{attempt.correctCount * positiveMultiplier} pts</span>
+
+                {/* RESULT STATUS FILTER */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
+                    Status Filter
+                  </label>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {[
+                      { id: "All", label: "All Questions", count: questions.length },
+                      { id: "Correct", label: "✓ Correct", count: attempt.correctCount },
+                      { id: "Wrong", label: "✕ Wrong", count: attempt.incorrectCount },
+                      { id: "Unattempted", label: "⚪ Unattempted", count: attempt.unattemptedCount },
+                    ].map((st) => (
+                      <button
+                        key={st.id}
+                        onClick={() => setSelectedStatusFilter(st.id)}
+                        className={`px-2.5 py-1.5 rounded text-xs font-semibold transition text-left flex justify-between items-center ${
+                          selectedStatusFilter === st.id
+                            ? "bg-blue-600 text-white font-bold"
+                            : "bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300"
+                        }`}
+                      >
+                        <span>{st.label}</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-800">
+                          {st.count}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-slate-400">Incorrect ({attempt.incorrectCount})</span>
-                  <span className="text-base font-extrabold text-rose-400">-{attempt.incorrectCount * negativeMultiplier} pts</span>
+
+                {/* QUESTION PALETTE GRID */}
+                <div className="space-y-2 pt-2 border-t border-slate-200">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+                    Questions Palette ({filteredQuestions.length})
+                  </h4>
+                  <div className="grid grid-cols-5 gap-2 max-h-[260px] overflow-y-auto pr-1">
+                    {filteredQuestions.map((q, idx) => {
+                      const originalIdx = questions.findIndex((orig) => orig.id === q.id);
+                      const isSelected = activeQuestion?.id === q.id;
+
+                      let bgClass = "bg-slate-200 text-slate-700 font-bold";
+                      if (q.status === "Correct") {
+                        bgClass = "bg-emerald-600 text-white font-bold";
+                      } else if (q.status === "Wrong") {
+                        bgClass = "bg-rose-600 text-white font-bold";
+                      }
+
+                      let borderClass = isSelected ? "ring-2 ring-blue-700 ring-offset-1" : "";
+
+                      return (
+                        <button
+                          key={q.id}
+                          onClick={() => setCurrentIndex(idx)}
+                          className={`w-9 h-9 rounded text-xs flex items-center justify-center transition shadow-xs cursor-pointer ${bgClass} ${borderClass}`}
+                          title={`Q${originalIdx + 1} (${q.subject}) - ${q.status}`}
+                        >
+                          {originalIdx + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-slate-400">Unattempted</span>
-                  <span className="text-base font-extrabold text-slate-400">{attempt.unattemptedCount}</span>
+
+                {/* LEGEND */}
+                <div className="pt-3 border-t border-slate-200 space-y-1.5 text-[11px] text-slate-600">
+                  <div className="flex items-center space-x-2">
+                    <span className="h-3 w-3 rounded bg-emerald-600"></span>
+                    <span>Correct Answer</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="h-3 w-3 rounded bg-rose-600"></span>
+                    <span>Wrong Answer</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="h-3 w-3 rounded bg-slate-300"></span>
+                    <span>Unattempted</span>
+                  </div>
                 </div>
+
               </div>
 
-              {/* ACTIVE QUESTION CONTAINER */}
-              {activeQuestion ? (
-                <div className="space-y-6">
-                  
-                  {/* QUESTION HEADER TAGS */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                    <div className="flex items-center space-x-2">
-                      <span className="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-3 py-1 rounded-lg text-xs font-extrabold uppercase tracking-wide">
-                        Question {questions.findIndex((q) => q.id === activeQuestion.id) + 1} of {questions.length}
-                      </span>
-                      <span className="bg-slate-800 text-slate-300 px-3 py-1 rounded-lg text-xs font-semibold">
-                        {activeQuestion.subject}
-                      </span>
+              <div className="p-4 border-t border-slate-300 bg-slate-50">
+                <button
+                  onClick={onClose}
+                  className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded text-xs shadow transition cursor-pointer"
+                >
+                  Close Review
+                </button>
+              </div>
+            </aside>
+
+            {/* RIGHT MAIN CONTENT AREA: QUESTION VIEW & OPTIONS */}
+            <main className="flex-1 bg-white flex flex-col justify-between overflow-y-auto">
+              <div className="p-6 space-y-5 max-w-5xl mx-auto w-full">
+                {activeQuestion ? (
+                  <div className="space-y-5">
+                    
+                    {/* QUESTION HEADER & STATUS TAG */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-sm font-bold text-slate-800">
+                          Question : {questions.findIndex((q) => q.id === activeQuestion.id) + 1}
+                        </span>
+                        <span className="text-xs px-2.5 py-0.5 rounded font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                          {activeQuestion.subject}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        {activeQuestion.status === "Correct" && (
+                          <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1 rounded text-xs font-bold flex items-center gap-1">
+                            ✓ Correct (+{activeQuestion.positiveMarks})
+                          </span>
+                        )}
+                        {activeQuestion.status === "Wrong" && (
+                          <span className="bg-rose-100 text-rose-800 border border-rose-300 px-3 py-1 rounded text-xs font-bold flex items-center gap-1">
+                            ✕ Wrong ({activeQuestion.negativeMarks})
+                          </span>
+                        )}
+                        {activeQuestion.status === "Unattempted" && (
+                          <span className="bg-slate-100 text-slate-600 border border-slate-300 px-3 py-1 rounded text-xs font-semibold flex items-center gap-1">
+                            ⚪ Unattempted (0)
+                          </span>
+                        )}
+                        <ReportErrorButton questionId={activeQuestion.id} />
+                      </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                      {/* STATUS BADGE */}
-                      {activeQuestion.status === "Correct" && (
-                        <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5">
-                          ✓ Correct (+{activeQuestion.positiveMarks})
-                        </span>
+                    {/* QUESTION TEXT */}
+                    <div className="text-sm text-slate-800 font-medium leading-relaxed bg-slate-50 p-4 rounded border border-slate-200">
+                      <LatexRenderer text={activeQuestion.questionText} />
+                      {activeQuestion.imageUrl && (
+                        <div className="mt-3">
+                          <QuestionImage imageUrl={activeQuestion.imageUrl} examName={attempt?.examName} alt="Question Diagram" className="max-h-72 object-contain rounded" />
+                        </div>
                       )}
-                      {activeQuestion.status === "Wrong" && (
-                        <span className="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5">
-                          ✕ Wrong ({activeQuestion.negativeMarks})
-                        </span>
-                      )}
-                      {activeQuestion.status === "Unattempted" && (
-                        <span className="bg-slate-800 text-slate-400 border border-slate-700 px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5">
-                          ⚪ Unattempted (0)
-                        </span>
-                      )}
-
-                      <ReportErrorButton questionId={activeQuestion.id} />
                     </div>
-                  </div>
 
-                  {/* QUESTION TEXT */}
-                  <div className="text-sm sm:text-base font-medium text-slate-100 leading-relaxed bg-slate-950/40 p-4 rounded-xl border border-slate-800/80">
-                    <LatexRenderer text={activeQuestion.questionText} />
-                    {activeQuestion.imageUrl && (
-                      <div className="mt-3">
-                        <QuestionImage imageUrl={activeQuestion.imageUrl} examName={attempt?.examName} alt="Question Diagram" />
+                    {/* OPTIONS ANALYSIS */}
+                    {isNumericalQuestion(activeQuestion) ? (
+                      <div className="space-y-3 bg-slate-50 p-4 rounded border border-slate-200 text-xs">
+                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Numerical Answer Details</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className={`p-3 rounded border ${activeQuestion.status === "Correct" ? "bg-emerald-50 border-emerald-300 text-emerald-900" : activeQuestion.status === "Wrong" ? "bg-rose-50 border-rose-300 text-rose-900" : "bg-white border-slate-200 text-slate-700"}`}>
+                            <span className="text-xs text-slate-500 block mb-1">Your Answer:</span>
+                            <span className="font-bold text-sm">
+                              {activeQuestion.userAnswer !== null && activeQuestion.userAnswer !== "" ? activeQuestion.userAnswer : "Not Attempted"}
+                            </span>
+                          </div>
+                          <div className="p-3 rounded border bg-emerald-50 border-emerald-300 text-emerald-900">
+                            <span className="text-xs text-emerald-700 block mb-1">Correct Answer:</span>
+                            <span className="font-bold text-sm">
+                              {getNumericVal(activeQuestion.optionA) || activeQuestion.correctOption}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Options &amp; Answer Key Analysis</h4>
+                        
+                        <div className="grid grid-cols-1 gap-2.5">
+                          {[
+                            { key: "A", value: activeQuestion.optionA },
+                            { key: "B", value: activeQuestion.optionB },
+                            { key: "C", value: activeQuestion.optionC },
+                            { key: "D", value: activeQuestion.optionD },
+                          ].map((opt) => {
+                            const isCorrectOption = activeQuestion.correctOption?.toUpperCase() === opt.key;
+                            const isUserSelected = activeQuestion.userAnswer?.toUpperCase() === opt.key || activeQuestion.userAnswer === getNumericVal(opt.value);
+
+                            let optionCardStyle = "border-slate-200 bg-white text-slate-800";
+                            let badge = null;
+
+                            if (isCorrectOption && isUserSelected) {
+                              optionCardStyle = "border-2 border-emerald-600 bg-emerald-50 text-emerald-900 font-semibold";
+                              badge = <span className="text-xs font-bold bg-emerald-600 text-white px-2.5 py-0.5 rounded">✓ Your Choice (Correct)</span>;
+                            } else if (isCorrectOption) {
+                              optionCardStyle = "border-2 border-emerald-600 bg-emerald-50 text-emerald-900 font-semibold";
+                              badge = <span className="text-xs font-bold bg-emerald-700 text-white px-2.5 py-0.5 rounded">✓ Official Correct Answer</span>;
+                            } else if (isUserSelected) {
+                              optionCardStyle = "border-2 border-rose-500 bg-rose-50 text-rose-900 font-semibold";
+                              badge = <span className="text-xs font-bold bg-rose-600 text-white px-2.5 py-0.5 rounded">✕ Your Choice (Incorrect)</span>;
+                            }
+
+                            const isImageOption = opt.value && (opt.value.startsWith("data:image") || opt.value.startsWith("http") || opt.value.startsWith("/"));
+
+                            return (
+                              <div
+                                key={opt.key}
+                                className={`p-3 rounded border flex items-center justify-between text-xs transition ${optionCardStyle}`}
+                              >
+                                <div className="flex items-center space-x-3 flex-1">
+                                  <span className={`w-7 h-7 rounded flex items-center justify-center font-bold text-xs shrink-0 ${
+                                    isCorrectOption ? 'bg-emerald-600 text-white' : isUserSelected ? 'bg-rose-600 text-white' : 'bg-slate-200 text-slate-700'
+                                  }`}>
+                                    {opt.key}
+                                  </span>
+                                  <div className="flex-1 font-medium">
+                                    {isImageOption ? (
+                                      <img src={opt.value} alt={`Option ${opt.key}`} className="max-h-20 object-contain rounded" />
+                                    ) : (
+                                      <LatexRenderer text={opt.value} />
+                                    )}
+                                  </div>
+                                </div>
+                                {badge && <div className="shrink-0 ml-3">{badge}</div>}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SOLUTION / EXPLANATION SECTION */}
+                    {activeQuestion.explanation && (
+                      <div className="bg-blue-50 border border-blue-200 rounded p-4 space-y-2 text-xs text-slate-800">
+                        <h4 className="font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
+                          💡 Solution &amp; Detailed Explanation
+                        </h4>
+                        <div className="leading-relaxed">
+                          <LatexRenderer text={activeQuestion.explanation} />
+                        </div>
                       </div>
                     )}
                   </div>
-
-                  {/* OPTIONS / ANSWER DISPLAY */}
-                  {isNumericalQuestion(activeQuestion) ? (
-                    /* NUMERICAL QUESTION TYPE */
-                    <div className="space-y-3 bg-slate-950/50 p-4 rounded-xl border border-slate-800">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Numerical Answer Details</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className={`p-3.5 rounded-xl border ${activeQuestion.status === "Correct" ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300" : activeQuestion.status === "Wrong" ? "bg-rose-500/10 border-rose-500/30 text-rose-300" : "bg-slate-900 border-slate-800 text-slate-400"}`}>
-                          <span className="text-xs text-slate-400 block mb-1">Your Answer:</span>
-                          <span className="font-extrabold text-base">
-                            {activeQuestion.userAnswer !== null && activeQuestion.userAnswer !== "" ? activeQuestion.userAnswer : "Not Attempted"}
-                          </span>
-                        </div>
-                        <div className="p-3.5 rounded-xl border bg-emerald-500/10 border-emerald-500/30 text-emerald-300">
-                          <span className="text-xs text-emerald-400/80 block mb-1">Correct Answer:</span>
-                          <span className="font-extrabold text-base">
-                            {getNumericVal(activeQuestion.optionA) || activeQuestion.correctOption}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    /* MULTIPLE CHOICE QUESTIONS (A, B, C, D) */
-                    <div className="space-y-3">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Options &amp; Analysis</h4>
-                      
-                      <div className="grid grid-cols-1 gap-3">
-                        {[
-                          { key: "A", value: activeQuestion.optionA },
-                          { key: "B", value: activeQuestion.optionB },
-                          { key: "C", value: activeQuestion.optionC },
-                          { key: "D", value: activeQuestion.optionD },
-                        ].map((opt) => {
-                          const isCorrectOption = activeQuestion.correctOption?.toUpperCase() === opt.key;
-                          const isUserSelected = activeQuestion.userAnswer?.toUpperCase() === opt.key || activeQuestion.userAnswer === getNumericVal(opt.value);
-
-                          let borderClass = "border-slate-800 bg-slate-950/40 text-slate-300";
-                          let badge = null;
-
-                          if (isCorrectOption && isUserSelected) {
-                            borderClass = "border-emerald-500/60 bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/30";
-                            badge = <span className="text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/40">✓ Your Answer (Correct)</span>;
-                          } else if (isCorrectOption) {
-                            borderClass = "border-emerald-500/50 bg-emerald-500/10 text-emerald-300";
-                            badge = <span className="text-[11px] font-extrabold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">✓ Correct Answer</span>;
-                          } else if (isUserSelected) {
-                            borderClass = "border-rose-500/60 bg-rose-500/15 text-rose-200 ring-1 ring-rose-500/30";
-                            badge = <span className="text-[11px] font-extrabold bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded border border-rose-500/40">✕ Your Choice (Incorrect)</span>;
-                          }
-
-                          const isImageOption = opt.value && (opt.value.startsWith("data:image") || opt.value.startsWith("http") || opt.value.startsWith("/"));
-
-                          return (
-                            <div
-                              key={opt.key}
-                              className={`p-3.5 rounded-xl border flex items-start space-x-3 transition ${borderClass}`}
-                            >
-                              <span className="font-extrabold text-sm px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-200 border border-slate-700 shrink-0">
-                                {opt.key}
-                              </span>
-                              <div className="flex-1 text-sm font-medium pt-0.5">
-                                {isImageOption ? (
-                                  <img src={opt.value} alt={`Option ${opt.key}`} className="max-h-24 object-contain rounded" />
-                                ) : (
-                                  <LatexRenderer text={opt.value} />
-                                )}
-                              </div>
-                              {badge && <div className="shrink-0">{badge}</div>}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* SOLUTION / EXPLANATION SECTION */}
-                  {activeQuestion.explanation && (
-                    <div className="bg-indigo-950/30 border border-indigo-500/20 rounded-xl p-4 space-y-2">
-                      <h4 className="text-xs font-extrabold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
-                        💡 Solution &amp; Explanation
-                      </h4>
-                      <div className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                        <LatexRenderer text={activeQuestion.explanation} />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* BOTTOM PREV/NEXT NAV BUTTONS */}
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-800">
-                    <button
-                      onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
-                      disabled={currentIndex === 0}
-                      className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-slate-800 text-slate-200 font-bold text-xs border border-slate-700 transition"
-                    >
-                      ← Previous Question
-                    </button>
-                    <span className="text-xs text-slate-400 font-semibold">
-                      {currentIndex + 1} / {filteredQuestions.length}
-                    </span>
-                    <button
-                      onClick={() => setCurrentIndex((prev) => Math.min(filteredQuestions.length - 1, prev + 1))}
-                      disabled={currentIndex === filteredQuestions.length - 1}
-                      className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 text-white font-bold text-xs transition shadow-lg shadow-indigo-600/10"
-                    >
-                      Next Question →
-                    </button>
+                ) : (
+                  <div className="min-h-[250px] flex items-center justify-center text-slate-500 text-xs">
+                    No questions match the selected filters.
                   </div>
-
-                </div>
-              ) : (
-                <div className="min-h-[250px] flex items-center justify-center text-slate-400 text-sm">
-                  No questions match the selected filters.
-                </div>
-              )}
-            </div>
-
-            {/* RIGHT SIDEBAR: QUESTION GRID & FILTERS */}
-            <div className="w-full lg:w-80 bg-slate-900/60 p-4 sm:p-5 space-y-5 border-l border-slate-800 shrink-0">
-              
-              {/* SUBJECT FILTER TABS */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                  Subject Filter
-                </label>
-                <div className="flex flex-wrap gap-1.5">
-                  {subjects.map((subj) => (
-                    <button
-                      key={subj}
-                      onClick={() => setSelectedSubject(subj)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                        selectedSubject === subj
-                          ? "bg-indigo-600 text-white shadow-md"
-                          : "bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
-                      }`}
-                    >
-                      {subj}
-                    </button>
-                  ))}
-                </div>
+                )}
               </div>
 
-              {/* STATUS FILTER TABS */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-                  Result Status Filter
-                </label>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {[
-                    { id: "All", label: "All Questions", count: questions.length },
-                    { id: "Correct", label: "✓ Correct", count: attempt.correctCount },
-                    { id: "Wrong", label: "✕ Wrong", count: attempt.incorrectCount },
-                    { id: "Unattempted", label: "⚪ Unattempted", count: attempt.unattemptedCount },
-                  ].map((st) => (
-                    <button
-                      key={st.id}
-                      onClick={() => setSelectedStatusFilter(st.id)}
-                      className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition text-left flex justify-between items-center ${
-                        selectedStatusFilter === st.id
-                          ? "bg-indigo-600 text-white font-bold"
-                          : "bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/80"
-                      }`}
-                    >
-                      <span>{st.label}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-900/60 text-slate-300">
-                        {st.count}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* QUESTION PALETTE GRID */}
-              <div className="space-y-2 pt-2 border-t border-slate-800">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Question Palette ({filteredQuestions.length})
-                  </label>
-                </div>
-
-                <div className="grid grid-cols-5 gap-2 max-h-[300px] overflow-y-auto pr-1 pt-1">
-                  {filteredQuestions.map((q, idx) => {
-                    const originalIdx = questions.findIndex((orig) => orig.id === q.id);
-                    const isSelected = activeQuestion?.id === q.id;
-
-                    let bgClass = "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700";
-
-                    if (q.status === "Correct") {
-                      bgClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30";
-                    } else if (q.status === "Wrong") {
-                      bgClass = "bg-rose-500/20 text-rose-300 border-rose-500/40 hover:bg-rose-500/30";
-                    } else if (q.status === "Unattempted") {
-                      bgClass = "bg-slate-800/60 text-slate-400 border-slate-700/60 hover:bg-slate-700";
-                    }
-
-                    if (isSelected) {
-                      bgClass += " ring-2 ring-indigo-500 ring-offset-2 ring-offset-slate-900 font-black";
-                    }
-
-                    return (
-                      <button
-                        key={q.id}
-                        onClick={() => setCurrentIndex(idx)}
-                        className={`h-9 rounded-lg text-xs font-bold border transition flex items-center justify-center ${bgClass}`}
-                        title={`Q${originalIdx + 1} (${q.subject}) - ${q.status}`}
-                      >
-                        {originalIdx + 1}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* LEGEND */}
-              <div className="pt-3 border-t border-slate-800 space-y-1.5 text-[11px] text-slate-400">
-                <div className="flex items-center space-x-2">
-                  <span className="h-3 w-3 rounded-full bg-emerald-500"></span>
-                  <span>Correct Answer</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="h-3 w-3 rounded-full bg-rose-500"></span>
-                  <span>Incorrect Answer</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="h-3 w-3 rounded-full bg-slate-600"></span>
-                  <span>Unattempted Question</span>
-                </div>
-              </div>
-
-            </div>
-
+              {/* FOOTER NAVIGATION */}
+              <footer className="border-t border-slate-300 bg-slate-50 px-6 py-3 flex items-center justify-between shrink-0">
+                <button
+                  onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+                  disabled={currentIndex === 0}
+                  className="px-4 py-2 rounded text-xs font-bold bg-white hover:bg-slate-100 border border-slate-300 disabled:opacity-40 text-slate-700 shadow-xs transition"
+                >
+                  ← Previous Question
+                </button>
+                <span className="text-xs text-slate-600 font-bold">
+                  {currentIndex + 1} of {filteredQuestions.length}
+                </span>
+                <button
+                  onClick={() => setCurrentIndex((prev) => Math.min(filteredQuestions.length - 1, prev + 1))}
+                  disabled={currentIndex === filteredQuestions.length - 1}
+                  className="px-4 py-2 rounded text-xs font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white shadow-xs transition"
+                >
+                  Next Question →
+                </button>
+              </footer>
+            </main>
           </div>
         )}
 

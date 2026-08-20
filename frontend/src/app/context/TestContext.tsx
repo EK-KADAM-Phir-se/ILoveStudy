@@ -100,9 +100,14 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
         maths: 4,
         math: 4,
         "general intelligence & reasoning": 1,
+        "general intelligence and reasoning": 1,
+        "reasoning": 1,
+        "general intelligence": 1,
         "general awareness": 2,
+        "gk": 2,
         "quantitative aptitude": 3,
         "english comprehension": 4,
+        "english": 4,
       };
 
       rawQs.sort((a: any, b: any) => {

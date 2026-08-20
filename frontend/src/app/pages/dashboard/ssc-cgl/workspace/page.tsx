@@ -13,6 +13,19 @@ import { QuestionImage, preloadExamImages } from '@/src/components/QuestionImage
 import { ReportErrorButton } from '@/src/components/ReportErrorButton';
 import { API_BASE_URL } from '@/src/lib/apiConfig';
 
+interface PartConfig {
+  id: string;
+  partLabel: string;
+  subjectName: string;
+}
+
+const PARTS: PartConfig[] = [
+  { id: 'PART-A', partLabel: 'PART-A', subjectName: 'General Intelligence and Reasoning' },
+  { id: 'PART-B', partLabel: 'PART-B', subjectName: 'General Awareness' },
+  { id: 'PART-C', partLabel: 'PART-C', subjectName: 'Quantitative Aptitude' },
+  { id: 'PART-D', partLabel: 'PART-D', subjectName: 'English Comprehension' }
+];
+
 function SscTestWorkspaceContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -40,7 +53,17 @@ function SscTestWorkspaceContent() {
 
   const [selectedSubject, setSelectedSubject] = useState<string>("General Intelligence and Reasoning");
   const [visitedQuestions, setVisitedQuestions] = useState<Set<string>>(new Set());
+  const [markedForReview, setMarkedForReview] = useState<Set<string>>(new Set());
+  const [zoomLevel, setZoomLevel] = useState<number>(100);
+  const [candidateName, setCandidateName] = useState<string>("Candidate Name");
   const [showSubmitModal, setShowSubmitModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem("displayName") || localStorage.getItem("userName") || localStorage.getItem("user");
+      if (saved) setCandidateName(saved);
+    }
+  }, []);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
   const [submitResult, setSubmitResult] = useState<any>(null);
@@ -68,8 +91,9 @@ function SscTestWorkspaceContent() {
   const [assetProgress, setAssetProgress] = useState<{ loaded: number; total: number }>({ loaded: 0, total: 0 });
   const [detectedExts, setDetectedExts] = useState<string[]>([]);
   const [toastNotice, setToastNotice] = useState<string | null>(null);
+  const [language, setLanguage] = useState<string>("English");
 
-  // Overall time left dynamically calculated from all section timers (prevents timer mismatch/drift)
+  // Overall time left dynamically calculated from all section timers
   const overallTimeLeft = Object.values(sectionTimeLeft).reduce((acc, curr) => acc + curr, 0);
 
   // Unique list of subjects in questions
@@ -80,6 +104,16 @@ function SscTestWorkspaceContent() {
     "Quantitative Aptitude",
     "English Comprehension"
   ];
+
+  const activePart = PARTS.find(p => {
+    const sName = (selectedSubject || "").toLowerCase();
+    const pName = p.subjectName.toLowerCase();
+    return sName.includes(pName) || pName.includes(sName) ||
+      (p.id === 'PART-A' && (sName.includes('reasoning') || sName.includes('intelligence'))) ||
+      (p.id === 'PART-B' && sName.includes('awareness')) ||
+      (p.id === 'PART-C' && (sName.includes('quantitative') || sName.includes('aptitude') || sName.includes('math'))) ||
+      (p.id === 'PART-D' && (sName.includes('english') || sName.includes('comprehension')));
+  }) || PARTS[0];
 
   const handleFinalSubmit = async () => {
     setIsSubmitting(true);
@@ -139,7 +173,6 @@ function SscTestWorkspaceContent() {
     setDetectedExts(detectedExtensions);
     setExtensionStatus(detectedExtensions.length > 0 ? 'warning' : 'clean');
 
-    // Preload all question diagram images from Supabase Storage
     setAssetStatus('checking');
     try {
       const res = await preloadExamImages(questions, "SSC CGL", year, (loaded, total) => {
@@ -159,7 +192,6 @@ function SscTestWorkspaceContent() {
     }
   }, [questions]);
 
-  // Fullscreen change listener
   useEffect(() => {
     const handleFullscreenChange = () => {
       const isCurrentlyFullscreen = !!document.fullscreenElement;
@@ -176,7 +208,6 @@ function SscTestWorkspaceContent() {
     };
   }, [isExamActive, showSubmitModal, submitSuccess, violationsCount, setIsFullscreen]);
 
-  // PrintScreen & Screenshot & Focus Loss Security Proctoring
   useEffect(() => {
     if (!isExamActive || violationsCount >= 5 || showSubmitModal || submitSuccess) return;
 
@@ -198,67 +229,51 @@ function SscTestWorkspaceContent() {
         e.preventDefault();
         e.stopPropagation();
         triggerViolation(
-          isPrintScreen ? "PrintScreen key pressed (Screenshot prohibited)" :
-          isWinScreenshot || isMacScreenshot ? "OS-level Screenshot shortcut detected (Win+Shift+S / Cmd+Shift+3,4,5)" :
-          isCopy ? "Copy shortcut (Ctrl+C / Cmd+C) prohibited" :
-          isPaste ? "Paste shortcut (Ctrl+V / Cmd+V) prohibited" :
-          "Cut shortcut (Ctrl+X / Cmd+X) prohibited"
+          isCopy ? "Attempted copy shortcut (Ctrl+C / Cmd+C)" :
+          isPaste ? "Attempted paste shortcut (Ctrl+V / Cmd+V)" :
+          isCut ? "Attempted cut shortcut (Ctrl+X / Cmd+X)" :
+          isWinScreenshot || isMacScreenshot ? "Attempted OS-level screenshot shortcut" :
+          "Attempted PrintScreen action"
         );
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === 'PrintScreen' || e.keyCode === 44 || e.code === 'PrintScreen') {
-        e.preventDefault();
-        triggerViolation("PrintScreen key action detected (Screenshot prohibited)");
       }
     };
 
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
-      triggerViolation("Right-click context menu prohibited");
+      triggerViolation("Attempted right-click (Context Menu)");
     };
 
     const handleCopy = (e: ClipboardEvent) => {
       e.preventDefault();
       if (e.clipboardData) {
-        e.clipboardData.setData('text/plain', 'Security Violation: Copying exam content is strictly prohibited.');
+        e.clipboardData.setData('text/plain', 'Security Violation recorded.');
       }
-      triggerViolation("Clipboard copy prohibited");
     };
 
     const handleBlur = () => {
-      if (showSubmitModal || submitSuccess || !isExamActive) return;
-      triggerViolation("Window lost focus (Screenshot / Snipping Tool active)");
+      if (isSubmitting || submitSuccess) return;
+      triggerViolation("Window focus lost (possible screenshot tool or navigation)");
     };
 
-    window.addEventListener('keydown', handleKeyDown, true);
-    window.addEventListener('keyup', handleKeyUp, true);
-    window.addEventListener('contextmenu', handleContextMenu, true);
-    window.addEventListener('copy', handleCopy, true);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('contextmenu', handleContextMenu);
+    window.addEventListener('copy', handleCopy);
     window.addEventListener('blur', handleBlur);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown, true);
-      window.removeEventListener('keyup', handleKeyUp, true);
-      window.removeEventListener('contextmenu', handleContextMenu, true);
-      window.removeEventListener('copy', handleCopy, true);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('contextmenu', handleContextMenu);
+      window.removeEventListener('copy', handleCopy);
       window.removeEventListener('blur', handleBlur);
     };
-  }, [isExamActive, violationsCount, showSubmitModal, submitSuccess]);
+  }, [isExamActive, violationsCount, isSubmitting, submitSuccess]);
 
-  // Browser Back Button & Swipe-Back Gesture Proctoring Protection
   useEffect(() => {
     if (!isExamActive || showSubmitModal || submitSuccess) return;
-
-    // Push dummy history entry so back swipe/button can be intercepted
     window.history.pushState({ examActive: true }, '', window.location.href);
 
     const handlePopState = () => {
-      // Keep user on the workspace page
       window.history.pushState({ examActive: true }, '', window.location.href);
-
-      // Increment violation count and show security violation warning modal
       setViolationsCount((prev) => prev + 1);
       setViolationReason("Attempted back navigation / swipe-back gesture during active exam session");
       setShowViolationModal(true);
@@ -280,122 +295,113 @@ function SscTestWorkspaceContent() {
   }, [isExamActive, showSubmitModal, submitSuccess]);
 
   useEffect(() => {
+    if (isExamActive && violationsCount >= 5 && !showAutoSubmitModal) {
+      setShowAutoSubmitModal(true);
+      handleFinalSubmit();
+    }
+  }, [violationsCount, isExamActive, showAutoSubmitModal]);
+
+  const handleResumeFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.warn("Fullscreen auto-enable suppressed by browser permissions:", err);
+      });
+      setIsFullscreen(true);
+    }
+    setShowViolationModal(false);
+  };
+
+  const handleStartExamFromCheck = () => {
+    setShowPreCheck(false);
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.warn("Fullscreen request error:", err);
+      });
+      setIsFullscreen(true);
+    }
+    setIsExamActive(true);
+  };
+
+  useEffect(() => {
     if (shiftId) {
       loadShift(shiftId, name, year);
     }
   }, [shiftId]);
 
   useEffect(() => {
-    if (currentSubjectList.length > 0 && !currentSubjectList.includes(selectedSubject)) {
-      setSelectedSubject(currentSubjectList[0]);
+    if (questions.length > 0) {
+      const partAQ = questions.find(q => {
+        const s = (q.subject || "").toLowerCase();
+        return s.includes("reasoning") || s.includes("intelligence");
+      }) || questions[0];
+      const targetIdx = questions.findIndex(q => q.id === partAQ.id);
+      setSelectedSubject(partAQ.subject);
+      setCurrentQuestionIndex(targetIdx !== -1 ? targetIdx : 0);
     }
   }, [questions]);
 
-  // Master Question Timer & Section Timer Interval
   useEffect(() => {
-    if (!isExamActive || questions.length === 0 || showSubmitModal || submitSuccess) return;
-    const activeQuestion = questions[currentQuestionIndex];
-    if (!activeQuestion) return;
+    if (questions.length > 0 && questions[currentQuestionIndex]) {
+      const activeQ = questions[currentQuestionIndex];
+      setVisitedQuestions(prev => {
+        const next = new Set(prev);
+        next.add(activeQ.id);
+        return next;
+      });
+      if (activeQ.subject && activeQ.subject !== selectedSubject) {
+        setSelectedSubject(activeQ.subject);
+      }
+    }
+  }, [currentQuestionIndex, questions]);
 
-    setVisitedQuestions((prev) => new Set(prev).add(activeQuestion.id));
+  // Section timer decrements
+  useEffect(() => {
+    if (questions.length === 0 || loading || !isExamActive) return;
 
-    const timer = setInterval(() => {
-      setQuestionTimers((prev) => ({
-        ...prev,
-        [activeQuestion.id]: (prev[activeQuestion.id] || 0) + 1
-      }));
+    const interval = setInterval(() => {
+      setSectionTimeLeft(prev => {
+        const currentSecTime = prev[selectedSubject];
+        if (currentSecTime === undefined) return prev;
 
-      setSectionTimeLeft((prev) => {
-        const currentSecRem = prev[selectedSubject] ?? 900;
+        if (currentSecTime <= 1) {
+          const currentIndex = currentSubjectList.indexOf(selectedSubject);
+          if (currentIndex !== -1 && currentIndex < currentSubjectList.length - 1) {
+            const nextSubject = currentSubjectList[currentIndex + 1];
+            setToastNotice(`Time expired for section: ${selectedSubject}! Moving to next section: ${nextSubject}`);
+            setTimeout(() => setToastNotice(null), 5000);
+            setSelectedSubject(nextSubject);
+
+            const nextSecQuestionIdx = questions.findIndex(q => q.subject === nextSubject);
+            if (nextSecQuestionIdx !== -1) {
+              setCurrentQuestionIndex(nextSecQuestionIdx);
+            }
+            return { ...prev, [selectedSubject]: 0 };
+          } else {
+            handleFinalSubmit();
+            return { ...prev, [selectedSubject]: 0 };
+          }
+        }
+
         return {
           ...prev,
-          [selectedSubject]: Math.max(0, currentSecRem - 1)
+          [selectedSubject]: currentSecTime - 1
         };
       });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [currentQuestionIndex, isExamActive, questions, selectedSubject, showSubmitModal, submitSuccess]);
-
-  // Auto-advance to next section when current section timer hits 0 (non-blocking toast to avoid proctoring violations)
-  useEffect(() => {
-    if (!isExamActive || questions.length === 0 || showSubmitModal || submitSuccess) return;
-    const currentRem = sectionTimeLeft[selectedSubject];
-    if (currentRem === 0) {
-      const SECTION_ORDER = [
-        "General Intelligence and Reasoning",
-        "General Awareness",
-        "Quantitative Aptitude",
-        "English Comprehension"
-      ];
-      const currentIndex = SECTION_ORDER.indexOf(selectedSubject);
-      if (currentIndex < SECTION_ORDER.length - 1) {
-        const nextSubject = SECTION_ORDER[currentIndex + 1];
-        setToastNotice(`⏰ Time's up for ${selectedSubject}! Automatically switched to ${nextSubject}.`);
-        setTimeout(() => setToastNotice(null), 5000);
-        const firstQIdx = questions.findIndex(q => q.subject === nextSubject);
-        if (firstQIdx !== -1) {
-          setCurrentQuestionIndex(firstQIdx);
-        }
-        setSelectedSubject(nextSubject);
-      } else {
-        setToastNotice("⏰ Time's up for the final section! Submitting exam automatically...");
-        handleFinalSubmit();
-      }
-    }
-  }, [sectionTimeLeft, selectedSubject, isExamActive, questions]);
-
-  // Master Overall Exam Timer End
-  useEffect(() => {
-    if (isExamActive && overallTimeLeft <= 0 && !showSubmitModal && !submitSuccess && !isSubmitting) {
-      handleFinalSubmit();
-    }
-  }, [overallTimeLeft, isExamActive, showSubmitModal, submitSuccess, isSubmitting]);
-
-  // Violations Max Limit (5) Auto-Submit
-  useEffect(() => {
-    if (violationsCount >= 5 && isExamActive && !showAutoSubmitModal && !submitSuccess) {
-      setShowViolationModal(false);
-      setShowAutoSubmitModal(true);
-      setTimeout(() => {
-        handleFinalSubmit();
-      }, 3000);
-    }
-  }, [violationsCount, isExamActive]);
-
-  const handleStartExamFromCheck = async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-        setIsFullscreen(true);
-      }
-    } catch (err) {
-      console.warn("Fullscreen request denied or restricted:", err);
-    }
-    setShowPreCheck(false);
-    setIsExamActive(true);
-  };
-
-  const handleResumeFullscreen = async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-        setIsFullscreen(true);
-      }
-    } catch (err) {
-      console.warn("Could not re-enter fullscreen:", err);
-    }
-    setShowViolationModal(false);
-  };
+    return () => clearInterval(interval);
+  }, [selectedSubject, questions, loading, isExamActive, currentSubjectList]);
 
   const handleToggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(err => {
-        console.error("Error enabling full-screen:", err);
+        console.error("Error enabling fullscreen:", err);
       });
       setIsFullscreen(true);
     } else {
-      document.exitFullscreen();
+      document.exitFullscreen().catch(err => {
+        console.error("Error exiting fullscreen:", err);
+      });
       setIsFullscreen(false);
     }
   };
@@ -404,13 +410,13 @@ function SscTestWorkspaceContent() {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${hrs > 0 ? `${hrs.toString().padStart(2, '0')}:` : ''}${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${hrs.toString().padStart(2, '0')} : ${mins.toString().padStart(2, '0')} : ${secs.toString().padStart(2, '0')}`;
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mb-4"></div>
+      <div className="min-h-screen bg-slate-100 flex flex-col items-center justify-center text-slate-800">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-4"></div>
         <p className="font-bold text-lg">Loading SSC CGL Shift Questions...</p>
       </div>
     );
@@ -420,8 +426,6 @@ function SscTestWorkspaceContent() {
   const currentQuestion = questions[currentQuestionIndex];
 
   const answeredQuestionsCount = Object.keys(answers).length;
-  const remainingQuestionsCount = questions.length - answeredQuestionsCount;
-  const unattemptedQuestionsCount = questions.length - visitedQuestions.size;
 
   const subjectCounters = {
     answered: subjectQuestions.filter(q => !!answers[q.id]).length,
@@ -429,13 +433,18 @@ function SscTestWorkspaceContent() {
     notVisited: subjectQuestions.filter(q => !visitedQuestions.has(q.id)).length
   };
 
+  const activePartIndex = PARTS.findIndex(p => p.subjectName.toLowerCase() === selectedSubject.toLowerCase());
+  const currentActivePartIdx = activePartIndex !== -1 ? activePartIndex : 0;
   const activeSectionRemSeconds = sectionTimeLeft[selectedSubject] ?? 900;
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
       const nextQ = questions[currentQuestionIndex + 1];
-      if (nextQ && nextQ.subject === selectedSubject) {
+      if (nextQ && nextQ.subject.toLowerCase() === selectedSubject.toLowerCase()) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+        setToastNotice(`You have reached the end of ${activePart.partLabel}. Please wait for the 15-minute section timer to finish.`);
+        setTimeout(() => setToastNotice(null), 4000);
       }
     }
   };
@@ -443,7 +452,7 @@ function SscTestWorkspaceContent() {
   const handlePrevQuestion = () => {
     if (currentQuestionIndex > 0) {
       const prevQ = questions[currentQuestionIndex - 1];
-      if (prevQ && prevQ.subject === selectedSubject) {
+      if (prevQ && prevQ.subject.toLowerCase() === selectedSubject.toLowerCase()) {
         setCurrentQuestionIndex(currentQuestionIndex - 1);
       }
     }
@@ -457,427 +466,412 @@ function SscTestWorkspaceContent() {
   const handleGridQuestionClick = (questionId: string) => {
     const idx = questions.findIndex(q => q.id === questionId);
     if (idx !== -1) {
-      const q = questions[idx];
-      if (q && q.subject === selectedSubject) {
+      const targetQ = questions[idx];
+      if (targetQ && targetQ.subject.toLowerCase() === selectedSubject.toLowerCase()) {
         setCurrentQuestionIndex(idx);
+      } else {
+        setToastNotice(`Question belongs to another section which is currently locked.`);
+        setTimeout(() => setToastNotice(null), 3000);
       }
     }
   };
 
+  const handlePartTabClick = (partConfig: PartConfig, targetIdx: number) => {
+    if (targetIdx !== currentActivePartIdx) {
+      if (targetIdx > currentActivePartIdx) {
+        setToastNotice(`Section locked! You must complete ${PARTS[currentActivePartIdx].partLabel} (15 mins) before moving to ${partConfig.partLabel}.`);
+      } else {
+        setToastNotice(`Section completed! You cannot revisit previously submitted sections.`);
+      }
+      setTimeout(() => setToastNotice(null), 4000);
+    }
+  };
+
+  const handleMarkForReviewAndNext = () => {
+    if (currentQuestion) {
+      setMarkedForReview(prev => new Set(prev).add(currentQuestion.id));
+      handleNextQuestion();
+    }
+  };
+
+  const handleClearResponse = () => {
+    if (currentQuestion) {
+      selectOption(currentQuestion.id, "");
+      setMarkedForReview(prev => {
+        const next = new Set(prev);
+        next.delete(currentQuestion.id);
+        return next;
+      });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col select-none overflow-hidden h-screen relative">
-      {/* Toast Notification Banner for Section Transitions & Warnings (Non-blocking to avoid proctoring blur) */}
+    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans flex flex-col select-none overflow-hidden h-screen relative" style={{ zoom: `${zoomLevel}%` }}>
+      {/* System Toast Notice */}
       {toastNotice && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 border border-emerald-500/50 text-emerald-400 font-bold px-6 py-3 rounded-xl shadow-2xl flex items-center space-x-3 backdrop-blur-md animate-bounce">
-          <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="text-sm">{toastNotice}</span>
+        <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 bg-yellow-100 border border-yellow-400 text-yellow-900 font-bold px-6 py-2 rounded shadow-lg flex items-center space-x-2 text-xs">
+          <span>⚠️ {toastNotice}</span>
         </div>
       )}
-      {/* System Hardware & Security Check Dialog */}
+
+      {/* Hardware & Security Check Dialog */}
       {showPreCheck && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-955 bg-opacity-90 backdrop-blur-md">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+          <div className="bg-white border border-slate-300 rounded-lg max-w-xl w-full p-6 shadow-2xl space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
               <div className="flex items-center space-x-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 font-bold">
+                <div className="flex h-10 w-10 items-center justify-center rounded bg-blue-600 text-white font-bold text-sm">
                   SSC
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-100">SSC CGL Environment Pre-Check</h3>
-                  <p className="text-xs text-slate-400">Verifying secure browser state and connectivity</p>
+                  <h3 className="text-lg font-bold text-slate-800">SSC CGL Mock Test Pre-Check</h3>
+                  <p className="text-xs text-slate-500">Verifying secure browser environment</p>
                 </div>
               </div>
               <button
                 onClick={runPreChecks}
-                className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center space-x-1"
+                className="text-xs font-semibold text-blue-600 hover:text-blue-800"
               >
-                <span>Re-check</span>
+                Re-check
               </button>
             </div>
 
-            <div className="space-y-4">
-              {/* Internet Check */}
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-lg ${internetStatus === 'connected' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10 10 0 0114.142 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-200">Network Connectivity</p>
-                    <p className="text-xs text-slate-400">Low-latency Redis synchronization active</p>
-                  </div>
-                </div>
-                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${internetStatus === 'connected' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
-                  {internetStatus === 'connected' ? 'CONNECTED' : 'CHECKING...'}
-                </span>
+            <div className="space-y-4 text-xs">
+              <div className="flex items-center justify-between p-3 rounded bg-slate-50 border border-slate-200">
+                <span>Network Connectivity</span>
+                <span className="font-bold text-emerald-600">{internetStatus === 'connected' ? 'CONNECTED' : 'CHECKING...'}</span>
               </div>
-
-              {/* Extension Check */}
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-200">Browser Security &amp; Fullscreen</p>
-                    <p className="text-xs text-slate-400">PrintScreen and Snipping Tool monitoring active</p>
-                  </div>
-                </div>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400">
-                  PASSED
-                </span>
+              <div className="flex items-center justify-between p-3 rounded bg-slate-50 border border-slate-200">
+                <span>Browser Security &amp; Fullscreen</span>
+                <span className="font-bold text-emerald-600">PASSED</span>
               </div>
-
-              {/* Asset Preloader check card */}
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-lg ${assetStatus === 'ready' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400 animate-pulse'}`}>
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-200">Paper Diagrams &amp; Assets</p>
-                    <p className="text-xs text-slate-400">
-                      {assetStatus === 'checking'
-                        ? `Preloading question diagrams (${assetProgress.loaded}/${assetProgress.total})...`
-                        : `${assetProgress.total > 0 ? `${assetProgress.total} question diagrams cached & ready for instant 0ms viewing.` : 'No diagram images required for this paper.'}`}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  {assetStatus === 'checking' ? (
-                    <span className="text-xs font-semibold text-slate-400 animate-pulse">Preloading...</span>
-                  ) : (
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400">
-                      READY
-                    </span>
-                  )}
-                </div>
+              <div className="flex items-center justify-between p-3 rounded bg-slate-50 border border-slate-200">
+                <span>Diagram Images &amp; Assets</span>
+                <span className="font-bold text-emerald-600">{assetStatus === 'ready' ? 'READY' : 'PRELOADING...'}</span>
               </div>
-            </div>
-
-            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl space-y-2">
-              <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider">SSC CGL Tier-I Instructions</h4>
-              <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
-                <li>Total Questions: 100 | Overall Duration: <strong>60 Minutes</strong></li>
-                <li>Per-Section Time Limit: <strong>15 Minutes</strong> per section (No skipping allowed once started)</li>
-                <li>Marking Scheme: <strong>+2.0 Marks</strong> for Correct, <strong>-0.5 Marks</strong> for Wrong</li>
-                <li>Full Screen mode &amp; Screenshot protection enforced.</li>
-              </ul>
             </div>
 
             <button
               onClick={handleStartExamFromCheck}
               disabled={assetStatus === 'checking'}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/20 transition duration-150 transform active:translate-y-0.5"
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2.5 px-4 rounded shadow transition"
             >
-              {assetStatus === 'checking' ? 'Preloading Question Assets...' : 'Start Official SSC CGL Exam (Fullscreen) \u2192'}
+              Start SSC CGL Mock Test (Fullscreen) →
             </button>
           </div>
         </div>
       )}
 
-      {/* Top Bar */}
-      <header className="h-16 border-b border-slate-800 bg-slate-900 px-6 flex items-center justify-between sticky top-0 z-30 shrink-0">
-        <div className="flex items-center space-x-4">
-          <button 
-            onClick={() => {
-              if (confirm("Are you sure you want to exit the exam? Your progress is saved.")) {
-                if (document.fullscreenElement) {
-                  document.exitFullscreen().catch(err => console.error(err));
-                }
-                router.push('/pages/dashboard/ssc-cgl');
-              }
-            }} 
-            className="text-slate-400 hover:text-white transition text-xs font-semibold uppercase tracking-wider flex items-center space-x-1"
-          >
-            <span>&larr; Exit Exam</span>
-          </button>
-          <span className="text-slate-700">|</span>
-          <span className="text-xs font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-md border border-emerald-500/20">
-            SSC CGL Tier-I
-          </span>
-          <h1 className="text-sm font-bold text-slate-200 hidden md:block">{name}</h1>
+      {/* TOP HEADER BAR */}
+      <header className="bg-white border-b border-slate-300 px-6 py-2 flex items-center justify-between shrink-0 shadow-sm">
+        {/* Left Title */}
+        <div className="flex items-center space-x-3">
+          <h1 className="text-lg font-extrabold text-slate-800 tracking-tight">SSC CGL MOCK TEST</h1>
         </div>
 
-        {/* Live Timers Display (Overall 60m + Active Section 15m) */}
-        <div className="flex items-center space-x-4 sm:space-x-6">
-          {/* Active Section Timer */}
-          <div className="hidden sm:flex items-center space-x-2 bg-slate-950 px-3.5 py-1.5 rounded-lg border border-slate-800 shadow-inner">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Section:</span>
-            <span className={`font-mono text-sm font-extrabold tracking-wider ${activeSectionRemSeconds < 180 ? 'text-amber-400 animate-pulse' : 'text-teal-400'}`}>
+        {/* Center Clocks: 15-Min Section Timer & 60-Min Overall Timer */}
+        <div className="flex items-center space-x-6">
+          {/* Section Timer (15 Min) */}
+          <div className="flex flex-col items-center bg-red-50 border border-red-200 px-3.5 py-1 rounded shadow-xs">
+            <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider">
+              Section Time ({activePart.partLabel})
+            </span>
+            <span className="font-mono text-xl font-extrabold text-red-600 tracking-widest">
               {formatTime(activeSectionRemSeconds)}
             </span>
           </div>
 
-          {/* Overall Exam Timer */}
-          <div className="flex items-center space-x-2 bg-slate-950 px-4 py-1.5 rounded-lg border border-slate-800 shadow-inner">
-            <svg className="h-4 w-4 text-emerald-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="font-mono text-base font-extrabold text-emerald-400 tracking-wider">
+          {/* Overall Exam Timer (60 Min) */}
+          <div className="flex flex-col items-center bg-slate-50 border border-slate-300 px-3.5 py-1 rounded shadow-xs">
+            <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">
+              Overall Exam Time (60 Min)
+            </span>
+            <span className="font-mono text-xl font-extrabold text-slate-800 tracking-widest">
               {formatTime(overallTimeLeft)}
             </span>
           </div>
+        </div>
 
-          {!isFullscreen && (
-            <button 
-              onClick={handleToggleFullscreen}
-              className="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white rounded-lg transition flex items-center justify-center"
-              title="Enter Fullscreen Mode"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 20v-4m0 4h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-              </svg>
-            </button>
-          )}
-
-          <button
-            onClick={() => setShowSubmitModal(true)}
-            className="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-md transition duration-150"
-          >
-            Submit Test
-          </button>
+        {/* Right Candidate Details */}
+        <div className="flex items-center space-x-4 text-xs text-slate-600">
+          <div className="flex items-center space-x-2">
+            <span className="w-7 h-7 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center font-bold text-slate-500">
+              👤
+            </span>
+            <span className="font-semibold text-slate-800">{candidateName}</span>
+          </div>
         </div>
       </header>
 
-      {/* Main Workspace Layout */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Area: Questions & Options */}
-        <main className="flex-1 flex flex-col bg-slate-950 overflow-y-auto">
-          {/* Subject Navigation Tabs with per-section timer badge */}
-          <div className="flex items-center space-x-2 border-b border-slate-800 bg-slate-900/50 px-6 py-2 shrink-0 overflow-x-auto">
-            {currentSubjectList.map((subject) => {
-              const count = questions.filter(q => q.subject === subject).length;
-              const secRem = sectionTimeLeft[subject] ?? 900;
-              const isSelected = selectedSubject === subject;
-
-              return (
-                <button
-                  key={subject}
-                  disabled={!isSelected}
-                  className={`px-4 py-2 rounded-lg text-xs font-bold transition duration-150 flex items-center space-x-2 shrink-0 ${
-                    isSelected
-                      ? 'bg-emerald-600 text-white shadow-md cursor-default'
-                      : 'text-slate-500 bg-slate-900/40 opacity-50 cursor-not-allowed'
-                  }`}
-                >
-                  <span>{subject} ({count})</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
-                    isSelected ? 'bg-emerald-700 text-emerald-100' : 'bg-slate-800 text-slate-400'
-                  }`}>
-                    {formatTime(secRem)}
-                  </span>
-                </button>
-              );
-            })}
+      {/* SUB HEADER / CONTROLS & NOTICE STRIP */}
+      <div className="bg-slate-100 border-b border-slate-300 text-xs shrink-0">
+        {/* Controls row */}
+        <div className="px-6 py-1.5 flex items-center justify-between border-b border-slate-200 bg-white">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setZoomLevel(prev => Math.min(prev + 10, 140))}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition"
+            >
+              Zoom (+)
+            </button>
+            <button
+              onClick={() => setZoomLevel(prev => Math.max(prev - 10, 80))}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition"
+            >
+              Zoom (-)
+            </button>
+            <span className="ml-3 font-semibold text-slate-700">SSC-CGL Tier 1</span>
           </div>
 
-          {/* Question Box */}
-          {currentQuestion ? (
-            <div className="flex-1 p-6 max-w-4xl w-full mx-auto space-y-6">
-              <div className="flex items-center justify-between border-b border-slate-850 pb-4">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Question {currentQuestionIndex + 1} of {questions.length}
-                </span>
-                <div className="flex items-center space-x-3 text-xs text-slate-500 font-medium">
-                  <span>Marks: <span className="text-emerald-400 font-bold">+2.0</span> / <span className="text-rose-400 font-bold">-0.5</span></span>
-                  <span>•</span>
-                  <ReportErrorButton questionId={currentQuestion.id} questionTextSnippet={currentQuestion.questionText} />
-                </div>
-              </div>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={handleToggleFullscreen}
+              className="text-xs text-blue-600 hover:underline font-semibold"
+            >
+              {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+            </button>
+          </div>
+        </div>
 
-              {/* Question Text */}
-              <div className="text-base text-slate-100 font-medium leading-relaxed bg-slate-900/40 p-5 rounded-xl border border-slate-850">
-                <LatexRenderer text={currentQuestion.questionText} />
-              </div>
+        {/* Yellow Instructions Banner */}
+        <div className="bg-[#fffde7] border-b border-yellow-200 px-6 py-1 text-slate-800 text-[11px] flex items-center space-x-4">
+          <span className="font-bold text-yellow-900 cursor-pointer hover:underline">SYMBOLS</span>
+          <span className="font-bold text-yellow-900 cursor-pointer hover:underline">INSTRUCTIONS</span>
+          <span className="text-slate-700">Please note that this is a mock test for practice purposes.</span>
+        </div>
+      </div>
 
-              {currentQuestion.imageUrl && (
-                <div className="mt-3 border border-slate-800 rounded-xl p-4 bg-slate-900/80 flex justify-center shadow-inner">
-                  <QuestionImage
-                    imageUrl={currentQuestion.imageUrl}
-                    examName="SSC CGL"
-                    year={year}
-                    alt="Question Figure / Diagram"
-                    className="max-h-80 object-contain rounded-lg"
-                  />
-                </div>
-              )}
+      {/* MAIN CONTENT WORKSPACE */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* LEFT COLUMN: PARTS + GRID PALETTE + ANALYSIS */}
+        <aside className="w-80 bg-white border-r border-slate-300 flex flex-col justify-between shrink-0 overflow-y-auto">
+          <div>
+            {/* PART Navigation Buttons */}
+            <div className="p-2 border-b border-slate-200 flex items-center justify-between bg-slate-50 gap-1">
+              {PARTS.map((part, pIdx) => {
+                const isActive = pIdx === currentActivePartIdx;
+                const isPast = pIdx < currentActivePartIdx;
+                const isFuture = pIdx > currentActivePartIdx;
 
-              {/* Options List (Supports rendered latex or option images) */}
-              <div className="space-y-3 pt-2">
-                {[
-                  { key: 'A', text: currentQuestion.optionA },
-                  { key: 'B', text: currentQuestion.optionB },
-                  { key: 'C', text: currentQuestion.optionC },
-                  { key: 'D', text: currentQuestion.optionD }
-                ].map(({ key, text }) => {
-                  const isSelected = answers[currentQuestion.id] === key;
-                  const isImageOption = text && (text.startsWith('data:image') || text.startsWith('http') || text.startsWith('/'));
+                let btnStyle = "bg-white text-slate-400 border border-slate-200 cursor-not-allowed opacity-60";
+                let statusIcon = "🔒";
+
+                if (isActive) {
+                  btnStyle = "bg-blue-600 text-white font-bold shadow-sm cursor-default";
+                  statusIcon = "⏱️";
+                } else if (isPast) {
+                  btnStyle = "bg-slate-100 text-slate-500 border border-slate-300 cursor-not-allowed opacity-70";
+                  statusIcon = "✓";
+                }
+
+                return (
+                  <button
+                    key={part.id}
+                    disabled={!isActive}
+                    onClick={() => handlePartTabClick(part, pIdx)}
+                    className={`flex-1 py-1.5 px-1 rounded text-[11px] font-bold transition text-center flex items-center justify-center space-x-0.5 ${btnStyle}`}
+                    title={isFuture ? "Locked: Unlocks after 15 minutes" : isPast ? "Section Completed" : "Current Active Section (15 Mins)"}
+                  >
+                    <span>{part.partLabel}</span>
+                    <span className="text-[9px]">{statusIcon}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active Subject Section Heading */}
+            <div className="py-2 px-4 text-center border-b border-slate-200 bg-slate-100">
+              <h2 className="text-xs font-bold text-slate-800">{selectedSubject}</h2>
+            </div>
+
+            {/* Question Palette Grid */}
+            <div className="p-4">
+              <div className="grid grid-cols-5 gap-2 justify-items-center">
+                {subjectQuestions.map((q, idx) => {
+                  const globalIdx = questions.findIndex(item => item.id === q.id);
+                  const isCurrent = currentQuestionIndex === globalIdx;
+                  const isAns = Boolean(answers[q.id]);
+                  const isMarked = markedForReview.has(q.id);
+
+                  let bgStyle = "bg-blue-600 text-white"; // Unanswered default blue
+                  if (isAns) {
+                    bgStyle = "bg-emerald-600 text-white"; // Answered green
+                  } else if (isMarked) {
+                    bgStyle = "bg-amber-500 text-white"; // Marked yellow/orange
+                  }
+
+                  let borderStyle = isCurrent ? "ring-2 ring-blue-700 ring-offset-1 font-extrabold" : "";
 
                   return (
                     <button
-                      key={key}
-                      onClick={() => handleOptionClick(key)}
-                      className={`w-full text-left p-4 rounded-xl border transition-all duration-150 flex items-center space-x-4 cursor-pointer ${
-                        isSelected
-                          ? 'bg-emerald-600/15 border-emerald-500 text-emerald-300 ring-1 ring-emerald-500/50'
-                          : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 text-slate-300'
-                      }`}
+                      key={q.id}
+                      onClick={() => handleGridQuestionClick(q.id)}
+                      className={`w-9 h-9 rounded text-xs font-bold flex items-center justify-center transition shadow-sm cursor-pointer ${bgStyle} ${borderStyle}`}
                     >
-                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 ${
-                        isSelected ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-400'
-                      }`}>
-                        {key}
-                      </div>
-                      <div className="text-sm font-medium flex-1">
-                        {isImageOption ? (
-                          <img src={text} alt={`Option ${key}`} className="max-h-24 object-contain rounded" />
-                        ) : (
-                          <LatexRenderer text={text} />
-                        )}
-                      </div>
+                      {idx + 1}
                     </button>
                   );
                 })}
               </div>
             </div>
-          ) : (
-            <div className="p-10 text-center text-slate-500">No question selected.</div>
-          )}
-
-          {/* Bottom Bar */}
-          <footer className="border-t border-slate-850 bg-slate-900/80 px-6 py-4 flex items-center justify-between mt-auto shrink-0">
-            <button
-              onClick={handlePrevQuestion}
-              disabled={currentQuestionIndex === 0}
-              className={`px-5 py-2 rounded-lg text-xs font-bold border transition ${
-                currentQuestionIndex === 0
-                  ? 'bg-slate-955 text-slate-600 border-slate-900 cursor-not-allowed'
-                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
-              }`}
-            >
-              Previous
-            </button>
-
-            <div className="flex space-x-3">
-              {currentQuestion && answers[currentQuestion.id] && (
-                <button
-                  onClick={() => selectOption(currentQuestion.id, "")}
-                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-slate-200 border border-slate-800 hover:bg-slate-800 transition"
-                >
-                  Clear Selection
-                </button>
-              )}
-
-              <button
-                onClick={handleNextQuestion}
-                disabled={currentQuestionIndex === questions.length - 1}
-                className="px-6 py-2 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition"
-              >
-                Save &amp; Next
-              </button>
-            </div>
-          </footer>
-        </main>
-
-        {/* Right Sidebar: Palette */}
-        <aside className="w-80 border-l border-slate-800 bg-slate-900 flex flex-col hidden lg:flex shrink-0">
-          <div className="p-4 border-b border-slate-800 space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Palette Summary</h3>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-850 text-center">
-                <p className="text-xl font-black text-emerald-400">{subjectCounters.answered}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Answered</p>
-              </div>
-              <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-850 text-center">
-                <p className="text-xl font-black text-rose-400">{subjectCounters.notAnswered}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Not Answered</p>
-              </div>
-              <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-850 text-center">
-                <p className="text-xl font-black text-slate-400">{subjectCounters.notVisited}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Not Visited</p>
-              </div>
-            </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Questions Navigation</h4>
-            <div className="grid grid-cols-4 gap-2.5">
-              {subjectQuestions.map((q, idx) => {
-                const globalIdx = questions.findIndex(item => item.id === q.id);
-                const isCurrent = currentQuestionIndex === globalIdx;
-                const isAnswered = !!answers[q.id];
-                const isVisited = visitedQuestions.has(q.id);
-
-                let bgClass = "bg-slate-950 text-slate-400 border border-slate-800 hover:bg-slate-800";
-                if (isAnswered) {
-                  bgClass = "bg-emerald-600 text-white font-bold border-emerald-500";
-                } else if (isVisited) {
-                  bgClass = "bg-rose-600 text-white font-bold border-rose-500";
-                }
-
-                if (isCurrent) {
-                  bgClass += " ring-2 ring-emerald-400 ring-offset-2 ring-offset-slate-900";
-                }
-
-                return (
-                  <button
-                    key={q.id}
-                    onClick={() => handleGridQuestionClick(q.id)}
-                    className={`h-10 rounded-lg text-xs font-bold flex items-center justify-center transition cursor-pointer ${bgClass}`}
-                  >
-                    {idx + 1}
-                  </button>
-                );
-              })}
+          {/* Bottom Analysis Box & Clear Response */}
+          <div className="p-4 border-t border-slate-300 bg-slate-50 space-y-3">
+            <div className="border border-slate-300 rounded overflow-hidden">
+              <div className="bg-slate-200 px-3 py-1 text-xs font-bold text-slate-700">
+                {activePart.partLabel} Analysis
+              </div>
+              <div className="p-3 bg-white space-y-1 text-xs text-slate-700">
+                <div className="flex justify-between">
+                  <span>Answered</span>
+                  <span className="font-bold text-slate-900">{subjectCounters.answered}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Not Answered</span>
+                  <span className="font-bold text-slate-900">{subjectCounters.notAnswered + subjectCounters.notVisited}</span>
+                </div>
+              </div>
             </div>
+
+            <button
+              onClick={handleClearResponse}
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded text-xs shadow transition cursor-pointer"
+            >
+              Clear Response
+            </button>
           </div>
         </aside>
+
+        {/* RIGHT COLUMN: QUESTION CONTENT + ACTIONS + SUBMIT */}
+        <main className="flex-1 bg-white flex flex-col justify-between overflow-y-auto">
+          <div className="p-6 space-y-4 max-w-5xl mx-auto w-full">
+            {/* Top Action Bar & Language Select */}
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={handleMarkForReviewAndNext}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded shadow transition cursor-pointer"
+                >
+                  Mark for Review &amp; Next
+                </button>
+                <button
+                  onClick={handleNextQuestion}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded shadow transition cursor-pointer"
+                >
+                  Save &amp; Next
+                </button>
+              </div>
+
+              <div className="flex items-center space-x-4 text-xs text-slate-700">
+                <span className="font-medium">Total Questions Answered: <strong className="text-slate-900">{answeredQuestionsCount}</strong></span>
+                <div className="flex items-center space-x-1">
+                  <span>View in:</span>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="border border-slate-300 rounded px-2 py-1 bg-white text-xs text-slate-800 font-semibold focus:outline-none"
+                  >
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Question Display */}
+            {currentQuestion ? (
+              <div className="space-y-6 pt-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-slate-800">
+                    Question : {currentQuestionIndex + 1}
+                  </h3>
+                  <ReportErrorButton questionId={currentQuestion.id} questionTextSnippet={currentQuestion.questionText} />
+                </div>
+
+                {/* Question Text */}
+                <div className="text-sm text-slate-800 font-medium leading-relaxed">
+                  <LatexRenderer text={currentQuestion.questionText} />
+                </div>
+
+                {/* Question Image Diagram */}
+                {currentQuestion.imageUrl && (
+                  <div className="my-3 border border-slate-200 rounded p-3 bg-slate-50 flex justify-start">
+                    <QuestionImage
+                      imageUrl={currentQuestion.imageUrl}
+                      examName="SSC CGL"
+                      year={year}
+                      alt="Question Figure"
+                      className="max-h-72 object-contain rounded"
+                    />
+                  </div>
+                )}
+
+                {/* Options List (Radio Button Style) */}
+                <div className="space-y-3 pt-4">
+                  {[
+                    { key: 'A', text: currentQuestion.optionA },
+                    { key: 'B', text: currentQuestion.optionB },
+                    { key: 'C', text: currentQuestion.optionC },
+                    { key: 'D', text: currentQuestion.optionD }
+                  ].map(({ key, text }) => {
+                    const isSelected = answers[currentQuestion.id] === key;
+                    const isImageOption = text && (text.startsWith('data:image') || text.startsWith('http') || text.startsWith('/'));
+
+                    return (
+                      <label
+                        key={key}
+                        onClick={() => handleOptionClick(key)}
+                        className={`flex items-start space-x-3 text-xs text-slate-800 p-2.5 rounded cursor-pointer transition ${
+                          isSelected ? 'bg-blue-50 font-semibold' : 'hover:bg-slate-50'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name={`question_${currentQuestion.id}`}
+                          checked={isSelected}
+                          onChange={() => handleOptionClick(key)}
+                          className="mt-0.5 h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer"
+                        />
+                        <div className="flex-1">
+                          {isImageOption ? (
+                            <img src={text} alt={`Option ${key}`} className="max-h-20 object-contain rounded" />
+                          ) : (
+                            <LatexRenderer text={text} />
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="p-10 text-center text-slate-500 text-xs">No question selected.</div>
+            )}
+          </div>
+
+          {/* Footer Submit Bar */}
+          <footer className="border-t border-slate-300 bg-slate-50 px-6 py-3 flex items-center justify-end shrink-0">
+            <button
+              onClick={() => setShowSubmitModal(true)}
+              className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-6 py-2 rounded shadow transition cursor-pointer"
+            >
+              Submit
+            </button>
+          </footer>
+        </main>
       </div>
 
-      {/* Security Violation Warning Modal */}
+      {/* Security Violation Modal */}
       {showViolationModal && isExamActive && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-955/90 backdrop-blur-md">
-          <div className="bg-slate-900 border-2 border-rose-500 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-6 text-center">
-            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-500/10 text-rose-500 animate-pulse">
-              <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-xl font-black text-rose-500 tracking-wider uppercase">Security Violation Warning</h3>
-              <p className="text-sm text-slate-300 font-medium">
-                Security Policy Action Detected!
-              </p>
-            </div>
-
-            <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-2.5 text-left text-xs text-slate-300">
-              <div className="flex justify-between">
-                <span className="text-slate-400">Violation Reason:</span>
-                <span className="font-bold text-rose-400">{violationReason}</span>
-              </div>
-              <div className="flex justify-between border-t border-slate-800/80 pt-2">
-                <span className="text-slate-400 font-semibold">Total Violations Count:</span>
-                <span className="font-black text-rose-500 text-sm bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">{violationsCount} / 5</span>
-              </div>
-            </div>
-
-            <p className="text-xs text-slate-400 leading-relaxed">
-              PrintScreen, Snipping Tools, Window Focus loss, and shortcuts are strictly prohibited during the examination. Please click below to resume.
-            </p>
-
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+          <div className="bg-white border border-red-300 rounded-lg max-w-md w-full p-6 shadow-2xl space-y-4 text-center">
+            <h3 className="text-base font-bold text-red-600 uppercase">Security Violation Warning</h3>
+            <p className="text-xs text-slate-600">Reason: {violationReason}</p>
+            <p className="text-xs font-bold text-red-700">Violations Count: {violationsCount} / 5</p>
             <button
               onClick={handleResumeFullscreen}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/20 transition duration-150 transform active:translate-y-0.5"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded text-xs shadow"
             >
               Resume Exam &amp; Re-enable Fullscreen
             </button>
@@ -885,76 +879,34 @@ function SscTestWorkspaceContent() {
         </div>
       )}
 
-      {/* Auto-Submit Warning Modal */}
-      {showAutoSubmitModal && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-955 bg-opacity-95 backdrop-blur-md">
-          <div className="bg-slate-900 border-2 border-rose-500 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-6 text-center animate-pulse">
-            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-500/10 text-rose-500">
-              <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-black text-rose-500 tracking-wider uppercase">Exam Terminated</h3>
-              <p className="text-sm text-slate-300 font-medium">
-                Maximum security violations limit (5) exceeded.
-              </p>
-            </div>
-            <p className="text-xs text-slate-400">
-              Your exam responses are being automatically submitted. Please wait...
-            </p>
-            <div className="flex items-center justify-center space-x-2 text-emerald-400 font-bold text-sm">
-              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-emerald-500"></div>
-              <span>Submitting SSC exam...</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Submit Confirmation & Result Modal */}
+      {/* Submit Confirmation Modal */}
       {showSubmitModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-955/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+          <div className="bg-white border border-slate-300 rounded-lg max-w-md w-full p-6 shadow-2xl space-y-4 text-slate-800">
             {submitSuccess ? (
-              <div className="text-center space-y-4 py-2">
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-emerald-500/10 text-emerald-400">
-                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-extrabold text-slate-100">SSC CGL Exam Submitted!</h3>
-                <p className="text-xs text-slate-400">
-                  Your final performance evaluation report:
-                </p>
-
+              <div className="text-center space-y-4">
+                <h3 className="text-lg font-bold text-slate-800">SSC CGL Exam Submitted!</h3>
                 {submitResult && (
-                  <div className="bg-slate-955/70 border border-slate-800 rounded-xl divide-y divide-slate-800 text-sm text-left">
-                    <div className="flex justify-between items-center p-3">
-                      <span className="text-slate-400 font-semibold">Total Score:</span>
-                      <span className="font-extrabold text-emerald-400 text-lg">
-                        {submitResult.finalScore} / {submitResult.totalQuestions * 2}
-                      </span>
+                  <div className="bg-slate-50 p-4 rounded border border-slate-200 text-xs space-y-2 text-left">
+                    <div className="flex justify-between">
+                      <span>Total Score:</span>
+                      <span className="font-bold text-emerald-600">{submitResult.finalScore} / {submitResult.totalQuestions * 2}</span>
                     </div>
-                    <div className="flex justify-between items-center p-3">
-                      <span className="text-slate-400">Correct Answers (+2 ea):</span>
-                      <span className="font-extrabold text-emerald-400 text-base">{submitResult.correctCount}</span>
+                    <div className="flex justify-between">
+                      <span>Correct:</span>
+                      <span className="font-bold text-emerald-600">{submitResult.correctCount}</span>
                     </div>
-                    <div className="flex justify-between items-center p-3">
-                      <span className="text-slate-400">Incorrect Answers (-0.5 ea):</span>
-                      <span className="font-extrabold text-rose-400 text-base">{submitResult.incorrectCount}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3">
-                      <span className="text-slate-400">Unattempted Questions:</span>
-                      <span className="font-extrabold text-slate-400 text-base">{submitResult.unattemptedCount}</span>
+                    <div className="flex justify-between">
+                      <span>Incorrect:</span>
+                      <span className="font-bold text-red-600">{submitResult.incorrectCount}</span>
                     </div>
                   </div>
                 )}
-
                 <div className="pt-2 flex flex-col sm:flex-row gap-3">
                   {submitResult?.attemptId && (
                     <button
                       onClick={() => setReviewAttemptId(submitResult.attemptId)}
-                      className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-4 rounded-xl transition duration-150 shadow-lg shadow-indigo-600/10 flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded text-xs shadow transition flex items-center justify-center space-x-1 cursor-pointer"
                     >
                       <span>Review Answers</span>
                       <span>→</span>
@@ -965,50 +917,29 @@ function SscTestWorkspaceContent() {
                       setShowSubmitModal(false);
                       router.replace('/pages/dashboard/ssc-cgl');
                     }}
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded text-xs shadow"
                   >
-                    Back to SSC Dashboard
+                    Back to Dashboard
                   </button>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex items-center space-x-3 text-rose-400">
-                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                  <h3 className="text-lg font-bold text-slate-100">Submit SSC CGL Exam?</h3>
-                </div>
-
-                <p className="text-xs text-slate-400">
-                  Are you sure you want to finalize your exam submission? You will receive your evaluated scorecard based on official answer keys.
-                </p>
-
-                <div className="bg-slate-955/60 border border-slate-800 rounded-xl divide-y divide-slate-800">
-                  <div className="flex justify-between items-center p-3 text-sm">
-                    <span className="text-slate-400">Answered Questions:</span>
-                    <span className="font-bold text-emerald-400">{answeredQuestionsCount}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 text-sm">
-                    <span className="text-slate-400">Unattempted Questions:</span>
-                    <span className="font-bold text-slate-400">{unattemptedQuestionsCount}</span>
-                  </div>
-                </div>
-
-                <div className="flex space-x-3 pt-3">
+                <h3 className="text-base font-bold text-slate-800">Submit SSC CGL Exam?</h3>
+                <p className="text-xs text-slate-600">Are you sure you want to finalize your exam submission?</p>
+                <div className="flex space-x-3 pt-2">
                   <button
                     onClick={() => setShowSubmitModal(false)}
-                    disabled={isSubmitting}
-                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-4 rounded-xl border border-slate-700 transition"
+                    className="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded text-xs"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleFinalSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center space-x-2"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded text-xs shadow"
                   >
-                    {isSubmitting ? <span>Submitting...</span> : <span>Confirm Submit</span>}
+                    {isSubmitting ? "Submitting..." : "Confirm Submit"}
                   </button>
                 </div>
               </div>
@@ -1030,7 +961,7 @@ function SscTestWorkspaceContent() {
 
 export default function SscTestWorkspacePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-955 flex items-center justify-center text-slate-400">Loading SSC workspace...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-slate-100 flex items-center justify-center text-slate-500 text-xs">Loading SSC workspace...</div>}>
       <SscTestWorkspaceContent />
     </Suspense>
   );
