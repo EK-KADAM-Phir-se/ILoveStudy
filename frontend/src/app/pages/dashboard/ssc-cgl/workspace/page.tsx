@@ -93,6 +93,31 @@ function SscTestWorkspaceContent() {
   const [toastNotice, setToastNotice] = useState<string | null>(null);
   const [language, setLanguage] = useState<string>("English");
 
+  const cleanText = (str: string) => {
+    if (!str) return '';
+    return str
+      .replace(/Maths By Gagan Pratap Sir/gi, '')
+      .replace(/Click To Join Telegram - Maths By Gagan Pratap Sir/gi, '')
+      .replace(/Click To Join Telegram -/gi, '')
+      .replace(/Telegram -/gi, '')
+      .trim();
+  };
+
+  const checkIsImageOption = (val: string) => {
+    if (!val) return false;
+    const v = val.toLowerCase().trim();
+    return (
+      v.startsWith('data:image') ||
+      v.startsWith('http') ||
+      v.startsWith('/ssc-cgl') ||
+      v.startsWith('/images') ||
+      v.endsWith('.jpeg') ||
+      v.endsWith('.png') ||
+      v.endsWith('.jpg') ||
+      v.endsWith('.webp')
+    );
+  };
+
   // Overall time left dynamically calculated from all section timers
   const overallTimeLeft = Object.values(sectionTimeLeft).reduce((acc, curr) => acc + curr, 0);
 
@@ -791,7 +816,7 @@ function SscTestWorkspaceContent() {
 
                 {/* Question Text */}
                 <div className="text-sm text-slate-800 font-medium leading-relaxed">
-                  <LatexRenderer text={currentQuestion.questionText} />
+                  <LatexRenderer text={cleanText(currentQuestion.questionText)} />
                 </div>
 
                 {/* Question Image Diagram */}
@@ -815,8 +840,9 @@ function SscTestWorkspaceContent() {
                     { key: 'C', text: currentQuestion.optionC },
                     { key: 'D', text: currentQuestion.optionD }
                   ].map(({ key, text }) => {
+                    const cleanedOptText = cleanText(text);
                     const isSelected = answers[currentQuestion.id] === key;
-                    const isImageOption = text && (text.startsWith('data:image') || text.startsWith('http') || text.startsWith('/'));
+                    const isImg = checkIsImageOption(cleanedOptText);
 
                     return (
                       <label
@@ -834,10 +860,16 @@ function SscTestWorkspaceContent() {
                           className="mt-0.5 h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer"
                         />
                         <div className="flex-1">
-                          {isImageOption ? (
-                            <img src={text} alt={`Option ${key}`} className="max-h-20 object-contain rounded" />
+                          {isImg ? (
+                            <QuestionImage
+                              imageUrl={cleanedOptText}
+                              examName="SSC CGL"
+                              year={year}
+                              alt={`Option ${key}`}
+                              className="max-h-24 object-contain rounded"
+                            />
                           ) : (
-                            <LatexRenderer text={text} />
+                            <LatexRenderer text={cleanedOptText} />
                           )}
                         </div>
                       </label>

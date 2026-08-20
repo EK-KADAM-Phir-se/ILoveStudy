@@ -117,6 +117,31 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
   const positiveMultiplier = isSsc ? 2 : 4;
   const negativeMultiplier = isSsc ? 0.5 : 1;
 
+  const cleanText = (str: string) => {
+    if (!str) return '';
+    return str
+      .replace(/Maths By Gagan Pratap Sir/gi, '')
+      .replace(/Click To Join Telegram - Maths By Gagan Pratap Sir/gi, '')
+      .replace(/Click To Join Telegram -/gi, '')
+      .replace(/Telegram -/gi, '')
+      .trim();
+  };
+
+  const checkIsImageOption = (val: string) => {
+    if (!val) return false;
+    const v = val.toLowerCase().trim();
+    return (
+      v.startsWith('data:image') ||
+      v.startsWith('http') ||
+      v.startsWith('/ssc-cgl') ||
+      v.startsWith('/images') ||
+      v.endsWith('.jpeg') ||
+      v.endsWith('.png') ||
+      v.endsWith('.jpg') ||
+      v.endsWith('.webp')
+    );
+  };
+
   // Helper to extract numeric values from option strings
   const getNumericVal = (str: string) => {
     if (!str) return "";
@@ -376,7 +401,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
 
                     {/* QUESTION TEXT */}
                     <div className="text-sm text-slate-800 font-medium leading-relaxed bg-slate-50 p-4 rounded border border-slate-200">
-                      <LatexRenderer text={activeQuestion.questionText} />
+                      <LatexRenderer text={cleanText(activeQuestion.questionText)} />
                       {activeQuestion.imageUrl && (
                         <div className="mt-3">
                           <QuestionImage imageUrl={activeQuestion.imageUrl} examName={attempt?.examName} alt="Question Diagram" className="max-h-72 object-contain rounded" />
@@ -414,8 +439,9 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                             { key: "C", value: activeQuestion.optionC },
                             { key: "D", value: activeQuestion.optionD },
                           ].map((opt) => {
+                            const cleanedVal = cleanText(opt.value);
                             const isCorrectOption = activeQuestion.correctOption?.toUpperCase() === opt.key;
-                            const isUserSelected = activeQuestion.userAnswer?.toUpperCase() === opt.key || activeQuestion.userAnswer === getNumericVal(opt.value);
+                            const isUserSelected = activeQuestion.userAnswer?.toUpperCase() === opt.key || activeQuestion.userAnswer === getNumericVal(cleanedVal);
 
                             let optionCardStyle = "border-slate-200 bg-white text-slate-800";
                             let badge = null;
@@ -431,7 +457,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                               badge = <span className="text-xs font-bold bg-rose-600 text-white px-2.5 py-0.5 rounded">✕ Your Choice (Incorrect)</span>;
                             }
 
-                            const isImageOption = opt.value && (opt.value.startsWith("data:image") || opt.value.startsWith("http") || opt.value.startsWith("/"));
+                            const isImg = checkIsImageOption(cleanedVal);
 
                             return (
                               <div
@@ -445,10 +471,10 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                                     {opt.key}
                                   </span>
                                   <div className="flex-1 font-medium">
-                                    {isImageOption ? (
-                                      <img src={opt.value} alt={`Option ${opt.key}`} className="max-h-20 object-contain rounded" />
+                                    {isImg ? (
+                                      <QuestionImage imageUrl={cleanedVal} examName={attempt?.examName} alt={`Option ${opt.key}`} className="max-h-24 object-contain rounded" />
                                     ) : (
-                                      <LatexRenderer text={opt.value} />
+                                      <LatexRenderer text={cleanedVal} />
                                     )}
                                   </div>
                                 </div>

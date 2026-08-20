@@ -46,12 +46,35 @@ const getShiftDetails = async (req, res) => {
       maths: 4,
       math: 4,
       "general intelligence & reasoning": 1,
+      "general intelligence and reasoning": 1,
+      "reasoning": 1,
+      "general intelligence": 1,
       "general awareness": 2,
+      "gk": 2,
       "quantitative aptitude": 3,
-      "english comprehension": 4
+      "english comprehension": 4,
+      "english": 4
+    };
+
+    const cleanStr = (str) => {
+      if (typeof str !== 'string') return str;
+      return str
+        .replace(/Maths By Gagan Pratap Sir/gi, '')
+        .replace(/Click To Join Telegram - Maths By Gagan Pratap Sir/gi, '')
+        .replace(/Click To Join Telegram - /gi, '')
+        .replace(/Telegram - /gi, '')
+        .trim();
     };
 
     if (shift.questions && Array.isArray(shift.questions)) {
+      shift.questions.forEach(q => {
+        if (q.questionText) q.questionText = cleanStr(q.questionText);
+        if (q.optionA) q.optionA = cleanStr(q.optionA);
+        if (q.optionB) q.optionB = cleanStr(q.optionB);
+        if (q.optionC) q.optionC = cleanStr(q.optionC);
+        if (q.optionD) q.optionD = cleanStr(q.optionD);
+      });
+
       shift.questions.sort((a, b) => {
         const orderA = subjectOrder[(a.subject || "").toLowerCase()] || 99;
         const orderB = subjectOrder[(b.subject || "").toLowerCase()] || 99;

@@ -45,7 +45,8 @@ export function getQuestionSupabaseUrl(
     folderExam = "Jee Mains";
   }
 
-  const folderYear = year ? String(year) : "2025";
+  const defaultYear = lowerExam.includes("ssc") ? "2024" : "2025";
+  const folderYear = year ? String(year) : defaultYear;
   const storagePath = `${folderExam}/${folderYear}/${cleanFileName}`;
 
   const { data } = supabase.storage
@@ -61,7 +62,7 @@ export function getQuestionSupabaseUrl(
 export const QuestionImage: React.FC<QuestionImageProps> = ({
   imageUrl,
   examName = "Jee Mains",
-  year = "2025",
+  year,
   alt = "Question Diagram",
   className = "max-h-72 object-contain",
 }) => {
