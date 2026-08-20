@@ -545,38 +545,38 @@ function TestWorkspacePageContent() {
 
   if (showPreCheck) {
     return (
-      <div className="min-h-screen bg-slate-955 text-slate-100 flex flex-col font-sans select-none items-center justify-center p-6 relative">
-        <div className="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-8">
+      <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans select-none items-center justify-center p-6 relative">
+        <div className="max-w-2xl w-full bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xl space-y-8 text-slate-900">
           
           {/* Header */}
           <div className="text-center space-y-2">
-            <div className="inline-flex p-3 bg-indigo-500/10 text-indigo-400 rounded-2xl border border-indigo-500/20 mb-2">
+            <div className="inline-flex p-3.5 bg-indigo-50 text-indigo-600 rounded-2xl border border-indigo-200/80 mb-2 shadow-xs">
               <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-black tracking-wide text-slate-100 uppercase">System Readiness Check</h1>
-            <p className="text-sm text-slate-400">Please complete the required system checks to start the exam.</p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 uppercase">SYSTEM READINESS CHECK</h1>
+            <p className="text-sm text-slate-600 font-medium">Please complete the required system checks to start the exam.</p>
           </div>
 
           {/* Cards for checks */}
           <div className="space-y-4">
             
             {/* Internet connection check card */}
-            <div className="bg-slate-950/60 border border-slate-850 p-4 rounded-xl flex items-center justify-between">
+            <div className="bg-slate-50 border border-slate-200/90 p-4 sm:p-4.5 rounded-2xl flex items-center justify-between shadow-xs">
               <div className="flex items-center space-x-4">
-                <div className={`p-2.5 rounded-lg ${
-                  internetStatus === 'connected' ? 'bg-emerald-500/10 text-emerald-400' :
-                  internetStatus === 'checking' ? 'bg-slate-800 text-slate-400 animate-pulse' :
-                  'bg-rose-500/10 text-rose-400'
+                <div className={`p-2.5 rounded-xl border ${
+                  internetStatus === 'connected' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
+                  internetStatus === 'checking' ? 'bg-slate-100 text-slate-400 animate-pulse border-slate-200' :
+                  'bg-rose-50 text-rose-600 border-rose-200'
                 }`}>
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-200">Internet Connectivity</h3>
-                  <p className="text-xs text-slate-500">
+                  <h3 className="text-sm font-extrabold text-slate-900">Internet Connectivity</h3>
+                  <p className="text-xs text-slate-600 font-medium">
                     {internetStatus === 'checking' && 'Checking connection status...'}
                     {internetStatus === 'connected' && 'Secure internet connection established.'}
                     {internetStatus === 'limited' && 'Connection detected, but server response is slow.'}
@@ -586,36 +586,36 @@ function TestWorkspacePageContent() {
               </div>
               <div className="flex items-center">
                 {internetStatus === 'checking' && (
-                  <span className="text-xs font-semibold text-slate-400 animate-pulse">Checking...</span>
+                  <span className="text-xs font-semibold text-slate-500 animate-pulse">Checking...</span>
                 )}
                 {internetStatus === 'connected' && (
-                  <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Passed</span>
+                  <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Passed</span>
                 )}
                 {internetStatus === 'limited' && (
-                  <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">Slow</span>
+                  <span className="text-xs font-extrabold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">Slow</span>
                 )}
                 {internetStatus === 'disconnected' && (
-                  <span className="text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/20">Failed</span>
+                  <span className="text-xs font-extrabold text-rose-700 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">Failed</span>
                 )}
               </div>
             </div>
 
             {/* Extension check card */}
-            <div className="bg-slate-950/60 border border-slate-850 p-4 rounded-xl flex flex-col space-y-3">
+            <div className="bg-slate-50 border border-slate-200/90 p-4 sm:p-4.5 rounded-2xl flex flex-col space-y-3 shadow-xs">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <div className={`p-2.5 rounded-lg ${
-                    extensionStatus === 'clean' ? 'bg-emerald-500/10 text-emerald-400' :
-                    extensionStatus === 'checking' ? 'bg-slate-800 text-slate-400 animate-pulse' :
-                    'bg-amber-500/10 text-amber-400'
+                  <div className={`p-2.5 rounded-xl border ${
+                    extensionStatus === 'clean' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
+                    extensionStatus === 'checking' ? 'bg-slate-100 text-slate-400 animate-pulse border-slate-200' :
+                    'bg-amber-50 text-amber-600 border-amber-200'
                   }`}>
                     <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H4a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-200">Browser Integrity (Extensions)</h3>
-                    <p className="text-xs text-slate-500">
+                    <h3 className="text-sm font-extrabold text-slate-900">Browser Integrity (Extensions)</h3>
+                    <p className="text-xs text-slate-600 font-medium">
                       {extensionStatus === 'checking' && 'Scanning injected styles/scripts...'}
                       {extensionStatus === 'clean' && 'No suspicious extension styles/injectors detected.'}
                       {extensionStatus === 'warning' && `Detected ${detectedExts.length} extensions active.`}
@@ -624,46 +624,46 @@ function TestWorkspacePageContent() {
                 </div>
                 <div className="flex items-center">
                   {extensionStatus === 'checking' && (
-                    <span className="text-xs font-semibold text-slate-400 animate-pulse">Scanning...</span>
+                    <span className="text-xs font-semibold text-slate-500 animate-pulse">Scanning...</span>
                   )}
                   {extensionStatus === 'clean' && (
-                    <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Passed</span>
+                    <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Passed</span>
                   )}
                   {extensionStatus === 'warning' && (
-                    <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">Warning</span>
+                    <span className="text-xs font-extrabold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">Warning</span>
                   )}
                 </div>
               </div>
 
               {extensionStatus === 'warning' && (
-                <div className="bg-slate-900 border border-slate-800 rounded-lg p-3 text-xs space-y-2">
+                <div className="bg-amber-50/60 border border-amber-200 rounded-xl p-3 text-xs space-y-2">
                   <div className="flex flex-wrap gap-1.5">
                     {detectedExts.map((ext, idx) => (
-                      <span key={idx} className="bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-slate-300 font-mono text-[10px]">
+                      <span key={idx} className="bg-white px-2 py-0.5 rounded border border-amber-300 text-amber-900 font-mono text-[10px] font-bold">
                         {ext}
                       </span>
                     ))}
                   </div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
-                    <strong>Notice:</strong> Browser security sandboxing prevents regular websites from disabling extensions automatically. To ensure exam integrity and prevent interference, please manually disable active extensions (like Grammarly, Adblockers, PDF tools) by opening your browser extension settings (e.g. <code>chrome://extensions</code>) and click the refresh button below.
+                  <p className="text-[11px] text-slate-700 leading-relaxed font-medium">
+                    <strong>Notice:</strong> Browser security sandboxing prevents regular websites from disabling extensions automatically. To ensure exam integrity, please manually disable active extensions (like Grammarly, Adblockers, PDF tools) in browser settings (e.g. <code>chrome://extensions</code>) and click refresh below.
                   </p>
                 </div>
               )}
             </div>
 
             {/* Asset Preloader check card */}
-            <div className="bg-slate-950/60 border border-slate-850 p-4 rounded-xl flex items-center justify-between">
+            <div className="bg-slate-50 border border-slate-200/90 p-4 sm:p-4.5 rounded-2xl flex items-center justify-between shadow-xs">
               <div className="flex items-center space-x-4">
-                <div className={`p-2.5 rounded-lg ${
-                  assetStatus === 'ready' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400 animate-pulse'
+                <div className={`p-2.5 rounded-xl border ${
+                  assetStatus === 'ready' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-100 text-slate-400 animate-pulse border-slate-200'
                 }`}>
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-200">Paper Diagrams &amp; Assets</h3>
-                  <p className="text-xs text-slate-500">
+                  <h3 className="text-sm font-extrabold text-slate-900">Paper Diagrams &amp; Assets</h3>
+                  <p className="text-xs text-slate-600 font-medium">
                     {assetStatus === 'checking'
                       ? `Preloading question diagrams (${assetProgress.loaded}/${assetProgress.total})...`
                       : `${assetProgress.total > 0 ? `${assetProgress.total} question diagrams cached & ready for instant 0ms viewing.` : 'No diagram images required for this paper.'}`}
@@ -672,37 +672,37 @@ function TestWorkspacePageContent() {
               </div>
               <div className="flex items-center">
                 {assetStatus === 'checking' ? (
-                  <span className="text-xs font-semibold text-slate-400 animate-pulse">Preloading...</span>
+                  <span className="text-xs font-semibold text-slate-500 animate-pulse">Preloading...</span>
                 ) : (
-                  <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Ready</span>
+                  <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Ready</span>
                 )}
               </div>
             </div>
 
             {/* Fullscreen check card */}
-            <div className="bg-slate-950/60 border border-slate-850 p-4 rounded-xl flex items-center justify-between">
+            <div className="bg-slate-50 border border-slate-200/90 p-4 sm:p-4.5 rounded-2xl flex items-center justify-between shadow-xs">
               <div className="flex items-center space-x-4">
-                <div className="p-2.5 bg-indigo-500/10 text-indigo-400 rounded-lg">
+                <div className="p-2.5 bg-indigo-50 text-indigo-600 border border-indigo-200 rounded-xl">
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 20v-4m0 4h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-200">Fullscreen Mode</h3>
-                  <p className="text-xs text-slate-500">Will automatically transition to full screen on exam start.</p>
+                  <h3 className="text-sm font-extrabold text-slate-900">Fullscreen Mode</h3>
+                  <p className="text-xs text-slate-600 font-medium">Will automatically transition to full screen on exam start.</p>
                 </div>
               </div>
-              <span className="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-full border border-indigo-500/20">Auto-Enable</span>
+              <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">Auto-Enable</span>
             </div>
 
           </div>
 
           {/* Action buttons */}
-          <div className="flex space-x-4 pt-4 border-t border-slate-800">
+          <div className="flex space-x-4 pt-4 border-t border-slate-200">
             <button
               onClick={runPreChecks}
               disabled={internetStatus === 'checking' || extensionStatus === 'checking' || assetStatus === 'checking'}
-              className="flex-1 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-300 font-semibold py-3 px-4 rounded-xl border border-slate-700 transition flex items-center justify-center space-x-2"
+              className="flex-1 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-extrabold py-3.5 px-4 rounded-2xl shadow-xs transition flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3m-3-3v12" />
@@ -713,7 +713,7 @@ function TestWorkspacePageContent() {
             <button
               onClick={startExamAndEnableFullscreen}
               disabled={internetStatus === 'disconnected' || countdown !== null}
-              className="flex-[2] bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/20 transition flex items-center justify-center space-x-2"
+              className="flex-[2] bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-extrabold py-3.5 px-6 rounded-2xl shadow-md transition flex items-center justify-center space-x-2 cursor-pointer"
             >
               <span>{countdown !== null ? `Starting in ${countdown}...` : 'Proceed & Start Exam \u2192'}</span>
             </button>
@@ -721,10 +721,10 @@ function TestWorkspacePageContent() {
 
           {/* Countdown Overlay */}
           {countdown !== null && (
-            <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center text-white">
+            <div className="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md flex flex-col items-center justify-center text-white">
               <p className="text-sm font-bold text-indigo-400 uppercase tracking-widest mb-4">Starting Exam In</p>
-              <div className="text-8xl font-black font-mono text-indigo-500 animate-pulse">{countdown}</div>
-              <p className="text-xs text-slate-400 mt-6">All paper assets 100% preloaded &amp; cached. Securing workspace...</p>
+              <div className="text-8xl font-black font-mono text-indigo-400 animate-pulse">{countdown}</div>
+              <p className="text-xs text-slate-300 mt-6">All paper assets 100% preloaded &amp; cached. Securing workspace...</p>
             </div>
           )}
 
@@ -853,9 +853,9 @@ function TestWorkspacePageContent() {
   const activeSubjectIndex = subjectQuestions.findIndex(q => q.id === activeQuestion.id);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans select-none overflow-hidden h-screen">
-      {/* 1. NTA Topmost Dark Banner */}
-      <div className="bg-[#1a1d20] text-yellow-400 font-bold text-xs sm:text-sm px-4 py-2 flex items-center justify-between border-b border-slate-800 shrink-0">
+    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans select-none overflow-hidden h-screen">
+      {/* 1. NTA Topmost Dark/Contrast Banner */}
+      <div className="bg-[#1e293b] text-amber-300 font-bold text-xs sm:text-sm px-4 py-2 flex items-center justify-between border-b border-slate-700 shrink-0 shadow-sm">
         <div className="flex items-center gap-2">
           <span>JEE Main Mock Test UPDATED AS PER LATEST NTA PATTERN</span>
         </div>
@@ -887,29 +887,29 @@ function TestWorkspacePageContent() {
       )}
 
       {/* 2. Sub-Header Bar (Paper Badge + Timer) */}
-      <div className="bg-[#e8edf2] dark:bg-[#1e232a] text-slate-800 dark:text-slate-100 px-4 py-2 flex items-center justify-between text-xs border-b border-slate-300 dark:border-slate-800 shrink-0">
+      <div className="bg-slate-200/90 text-slate-800 px-4 py-2 flex items-center justify-between text-xs border-b border-slate-300 shrink-0 font-medium">
         <div className="flex items-center gap-3">
           <span className="bg-[#31708f] text-white px-3 py-1 rounded-md font-bold text-xs shadow-sm">
             Jee Main {year}
           </span>
           <button
             onClick={() => setShowExitConfirmModal(true)}
-            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-semibold cursor-pointer"
+            className="text-slate-700 hover:text-slate-900 text-xs font-bold cursor-pointer"
           >
             &larr; Exit Exam
           </button>
         </div>
 
         <div className="flex items-center gap-4 font-bold text-sm">
-          <span className="text-slate-600 dark:text-slate-400 text-xs uppercase tracking-wide">Sections</span>
-          <div className="bg-white dark:bg-slate-900 px-3 py-1 rounded border border-slate-300 dark:border-slate-700 shadow-inner">
-            Time Left : <span className={`font-mono text-base font-bold ${examTimeLeft < 600 ? 'text-red-600 animate-pulse' : 'text-blue-600 dark:text-blue-400'}`}>{formatTime(examTimeLeft)}</span>
+          <span className="text-slate-600 text-xs uppercase tracking-wide">Sections</span>
+          <div className="bg-white px-3 py-1 rounded border border-slate-300 shadow-inner">
+            Time Left : <span className={`font-mono text-base font-bold ${examTimeLeft < 600 ? 'text-red-600 animate-pulse' : 'text-blue-700'}`}>{formatTime(examTimeLeft)}</span>
           </div>
         </div>
       </div>
 
       {/* 3. NTA Section Tabs Bar */}
-      <div className="bg-[#f5f5f5] dark:bg-[#181b20] border-b border-slate-300 dark:border-slate-800 px-4 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0">
+      <div className="bg-[#f1f5f9] border-b border-slate-300 px-4 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0">
         {subjects.map((sub) => {
           const subName = sub === 'Math' ? 'Mathematics' : sub;
           return (
@@ -918,8 +918,8 @@ function TestWorkspacePageContent() {
                 onClick={() => handleSubjectTabClick(sub)}
                 className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                   selectedSubject === sub
-                    ? "bg-[#337ab7] text-white shadow"
-                    : "bg-white dark:bg-slate-800 text-[#337ab7] dark:text-blue-400 border border-slate-300 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-700"
+                    ? "bg-[#337ab7] text-white shadow-sm"
+                    : "bg-white text-[#337ab7] border border-slate-300 hover:bg-blue-50"
                 }`}
               >
                 <span>{subName} (Section A)</span>
@@ -929,8 +929,8 @@ function TestWorkspacePageContent() {
                 onClick={() => handleSubjectTabClick(sub)}
                 className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                   selectedSubject === sub
-                    ? "bg-white dark:bg-slate-800 text-[#337ab7] dark:text-blue-400 border border-slate-300 dark:border-slate-700"
-                    : "bg-white dark:bg-slate-800 text-[#337ab7] dark:text-blue-400 border border-slate-300 dark:border-slate-700 opacity-70"
+                    ? "bg-white text-[#337ab7] border border-slate-300 font-bold"
+                    : "bg-white text-[#337ab7] border border-slate-300 opacity-75 hover:opacity-100"
                 }`}
               >
                 <span>{subName} (Section B)</span>
@@ -942,27 +942,27 @@ function TestWorkspacePageContent() {
       </div>
 
       {/* 4. Question Metadata Bar */}
-      <div className="bg-[#f8f9fa] dark:bg-[#1e2229] border-b border-slate-300 dark:border-slate-800 px-4 py-1.5 flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 shrink-0">
-        <span className="font-semibold">Question Type: <strong className="text-slate-900 dark:text-white">Multiple Choice</strong></span>
-        <span>Marks for correct answer: <strong className="text-emerald-600 dark:text-emerald-400">+4</strong> | Negative Marks: <strong className="text-rose-600 dark:text-rose-400">1</strong></span>
+      <div className="bg-white border-b border-slate-300 px-4 py-1.5 flex items-center justify-between text-xs text-slate-700 shrink-0 font-medium">
+        <span className="font-semibold">Question Type: <strong className="text-slate-900">Multiple Choice</strong></span>
+        <span>Marks for correct answer: <strong className="text-emerald-700">+4</strong> | Negative Marks: <strong className="text-rose-600">1</strong></span>
       </div>
 
       {/* Main Body Grid */}
-      <div className="flex-1 flex overflow-hidden w-full relative">
+      <div className="flex-1 flex overflow-hidden w-full relative bg-slate-100">
         
         {/* Left Side Panel: Question view & options */}
-        <main className="flex-1 flex flex-col bg-slate-950 overflow-hidden border-r-0 lg:border-r border-slate-900 w-full min-w-0">
+        <main className="flex-1 flex flex-col bg-white overflow-hidden border-r border-slate-300 w-full min-w-0">
           
           {/* Question No & Bookmark bar */}
-          <div className="bg-slate-900 border-b border-slate-800 px-4 sm:px-6 py-2 flex items-center justify-between shrink-0">
+          <div className="bg-slate-100 border-b border-slate-300 px-4 sm:px-6 py-2 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
-              <span className="font-bold text-slate-100 text-xs sm:text-sm">Question No. {activeSubjectIndex + 1}</span>
+              <span className="font-bold text-slate-900 text-xs sm:text-sm">Question No. {activeSubjectIndex + 1}</span>
               <button
                 onClick={handleToggleBookmark}
                 className={`px-2.5 py-1 text-xs font-bold rounded-lg border flex items-center gap-1 transition cursor-pointer ${
                   bookmarkedQuestions.has(activeQuestion.id)
-                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                    : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                    ? 'bg-amber-100 text-amber-900 border-amber-300'
+                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
                 }`}
               >
                 <span>🔖</span> <span className="hidden sm:inline">Bookmark</span>
@@ -978,7 +978,7 @@ function TestWorkspacePageContent() {
               </button>
               <button
                 onClick={() => setShowInstructionBox(!showInstructionBox)}
-                className="p-1 rounded bg-slate-800 text-slate-300 hover:bg-slate-700 transition"
+                className="p-1 rounded bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 transition"
                 title="Toggle Instructions"
               >
                 {showInstructionBox ? "▲" : "▼"}
@@ -988,12 +988,12 @@ function TestWorkspacePageContent() {
 
           {/* Section Instruction Box (Collapsible Card) */}
           {showInstructionBox && (
-            <div className="bg-slate-900/90 border border-slate-800 rounded-xl m-2 sm:m-4 p-3 sm:p-4 text-xs text-slate-200 space-y-2 shrink-0 shadow-lg">
-              <div className="flex justify-between items-center font-bold border-b border-slate-800 pb-2">
-                <span className="text-indigo-400 text-sm">{selectedSubject === 'Math' ? 'Mathematics' : selectedSubject} (Section A) (Maximum Marks: 80)</span>
-                <button onClick={() => setShowInstructionBox(false)} className="text-slate-400 hover:text-white">▲</button>
+            <div className="bg-blue-50/80 border border-blue-200 rounded-xl m-2 sm:m-4 p-3 sm:p-4 text-xs text-slate-800 space-y-2 shrink-0 shadow-sm">
+              <div className="flex justify-between items-center font-bold border-b border-blue-200 pb-2">
+                <span className="text-blue-900 text-sm font-extrabold">{selectedSubject === 'Math' ? 'Mathematics' : selectedSubject} (Section A) (Maximum Marks: 80)</span>
+                <button onClick={() => setShowInstructionBox(false)} className="text-slate-500 hover:text-slate-800">▲</button>
               </div>
-              <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed text-[11px] sm:text-xs">
+              <ul className="list-disc list-inside space-y-1 text-slate-700 leading-relaxed text-[11px] sm:text-xs">
                 <li>This section contains <strong>TWENTY (20)</strong> questions.</li>
                 <li>Each question has <strong>FOUR</strong> options (A), (B), (C) and (D). <strong>ONLY ONE</strong> of these four options is the correct answer.</li>
                 <li>For each question, choose the option corresponding to the correct answer.</li>
@@ -1003,7 +1003,7 @@ function TestWorkspacePageContent() {
           )}
 
           {/* Question and Option Display */}
-          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 bg-white">
             <div 
               className="max-w-4xl mx-auto space-y-4 sm:space-y-6 transition-all duration-150 w-full min-w-0"
               style={zoomLevel !== 100 ? { zoom: `${zoomLevel}%` } : undefined}
@@ -1013,11 +1013,9 @@ function TestWorkspacePageContent() {
               <div className={`rounded-xl p-4 sm:p-6 transition-all break-words min-w-0 ${
                 accessSettings.highContrast === 'yellow-on-black'
                   ? 'bg-black border-2 border-yellow-400 text-yellow-300 font-mono shadow-2xl'
-                  : accessSettings.highContrast === 'high-contrast-light'
-                  ? 'bg-white border-2 border-slate-900 text-black shadow-2xl'
-                  : 'bg-slate-900 border border-slate-800 text-slate-100 shadow-md'
+                  : 'bg-white border border-slate-300 text-slate-900 shadow-sm'
               }`}>
-                <div className={`whitespace-pre-line break-words overflow-x-auto ${
+                <div className={`whitespace-pre-line break-words overflow-x-auto text-slate-900 font-medium ${
                   accessSettings.fontSize === 'large' ? 'text-base sm:text-xl' :
                   accessSettings.fontSize === 'xlarge' ? 'text-lg sm:text-2xl' : 'text-sm sm:text-base'
                 } ${accessSettings.dyslexicFont ? 'tracking-wider leading-loose font-mono' : 'leading-relaxed'}`}>
@@ -1025,7 +1023,7 @@ function TestWorkspacePageContent() {
                 </div>
 
                 {activeQuestion.imageUrl && (
-                  <div className="mt-4 border border-slate-800 rounded-lg p-2 sm:p-4 bg-slate-950 flex justify-center">
+                  <div className="mt-4 border border-slate-200 rounded-lg p-2 sm:p-4 bg-slate-50 flex justify-center">
                     <QuestionImage
                       imageUrl={activeQuestion.imageUrl}
                       examName="Jee Mains"
@@ -1054,14 +1052,14 @@ function TestWorkspacePageContent() {
 
                 if (isNumerical) {
                   return (
-                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 space-y-4 shadow-sm">
+                    <div className="bg-slate-50 border border-slate-300 rounded-2xl p-4 sm:p-6 space-y-4 shadow-xs">
                       <div className="flex items-center space-x-2">
-                        <span className="h-3 w-3 rounded-full bg-indigo-500 animate-pulse"></span>
-                        <label className="text-xs sm:text-sm font-bold text-indigo-300 uppercase tracking-wider">
+                        <span className="h-3 w-3 rounded-full bg-blue-600 animate-pulse"></span>
+                        <label className="text-xs sm:text-sm font-bold text-blue-900 uppercase tracking-wider">
                           Numerical Answer Input
                         </label>
                       </div>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-slate-600">
                         This is a Section B Numerical Question. Enter your calculated integer or decimal value below.
                       </p>
                       <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -1070,12 +1068,12 @@ function TestWorkspacePageContent() {
                           value={answers[activeQuestion.id] || ''}
                           onChange={(e) => selectOption(activeQuestion.id, e.target.value)}
                           placeholder="Enter numerical response (e.g., 5120, 14)..."
-                          className="w-full sm:w-80 bg-slate-950 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-slate-100 text-base sm:text-lg font-mono focus:ring-2 focus:ring-indigo-500/20 outline-none transition"
+                          className="w-full sm:w-80 bg-white border border-slate-300 focus:border-blue-600 rounded-xl px-4 py-3 text-slate-900 text-base sm:text-lg font-mono focus:ring-2 focus:ring-blue-500/20 outline-none transition shadow-inner"
                         />
                         {answers[activeQuestion.id] && (
                           <button
                             onClick={() => selectOption(activeQuestion.id, '')}
-                            className="px-4 py-3 border border-slate-700 hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+                            className="px-4 py-3 border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer"
                           >
                             Clear Value
                           </button>
@@ -1095,40 +1093,36 @@ function TestWorkspacePageContent() {
                     ].map((opt) => {
                       const isSelected = answers[activeQuestion.id] === opt.key;
 
-                      let optionBg = 'bg-slate-900 border-slate-800/80 hover:border-slate-700/80 hover:bg-slate-850/50';
+                      let optionBg = 'bg-white border-slate-300 text-slate-900 hover:border-blue-400 hover:bg-blue-50/40 shadow-xs';
                       if (isSelected) {
-                        optionBg = 'bg-indigo-950/40 border-indigo-500 shadow-md shadow-indigo-500/5';
+                        optionBg = 'bg-blue-50 border-2 border-blue-600 text-blue-950 font-semibold shadow-sm';
                       }
 
                       if (accessSettings.highContrast === 'yellow-on-black') {
                         optionBg = isSelected
                           ? 'bg-yellow-400 text-black font-extrabold border-2 border-yellow-300 shadow-lg'
                           : 'bg-black text-yellow-300 border-2 border-yellow-500/80 hover:bg-yellow-950/40';
-                      } else if (accessSettings.highContrast === 'high-contrast-light') {
-                        optionBg = isSelected
-                          ? 'bg-blue-600 text-white font-bold border-2 border-blue-900 shadow-lg'
-                          : 'bg-slate-100 text-black border-2 border-slate-900 hover:bg-slate-200';
                       }
 
                       return (
                         <div
                           key={opt.key}
                           onClick={() => selectOption(activeQuestion.id, opt.key)}
-                          className={`group flex items-start sm:items-center p-3 sm:p-4 rounded-xl border cursor-pointer transition-all duration-200 ${optionBg} ${
+                          className={`group flex items-start sm:items-center p-3.5 sm:p-4 rounded-xl border cursor-pointer transition-all duration-150 ${optionBg} ${
                             accessSettings.highFocusOutline ? 'focus:ring-4 focus:ring-emerald-400' : ''
                           }`}
                         >
                           <span className={`h-7 w-7 sm:h-8 sm:w-8 rounded-lg font-bold flex items-center justify-center mr-3 shrink-0 text-xs sm:text-sm transition ${
                             isSelected
-                              ? (accessSettings.highContrast === 'yellow-on-black' ? 'bg-black text-yellow-400' : 'bg-indigo-600 text-white')
-                              : 'bg-slate-955 text-slate-400 group-hover:bg-slate-800 group-hover:text-slate-200'
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'bg-slate-100 text-slate-700 border border-slate-300 group-hover:bg-blue-100 group-hover:text-blue-900'
                           }`}>
                             {opt.key}
                           </span>
-                          <div className={`text-xs sm:text-sm break-words min-w-0 flex-1 ${
+                          <div className={`text-xs sm:text-sm break-words min-w-0 flex-1 text-slate-900 ${
                             accessSettings.fontSize === 'large' ? 'text-sm sm:text-base' :
                             accessSettings.fontSize === 'xlarge' ? 'text-base sm:text-lg' : 'text-xs sm:text-sm'
-                          } ${isSelected ? 'text-indigo-200 font-semibold' : 'text-slate-300'}`}>
+                          } ${isSelected ? 'text-blue-950 font-semibold' : 'text-slate-900'}`}>
                             <LatexRenderer text={opt.value} />
                           </div>
                         </div>
@@ -1142,18 +1136,18 @@ function TestWorkspacePageContent() {
           </div>
 
           {/* 5. NTA Bottom Control Bar */}
-          <footer className="bg-slate-900 border-t border-slate-800 px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <footer className="bg-slate-100 border-t border-slate-300 px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={handleMarkForReviewAndNext}
-                className="px-3 sm:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs transition cursor-pointer shadow-sm"
+                className="px-3 sm:px-4 py-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold text-xs transition cursor-pointer shadow-xs"
               >
                 Mark for Review &amp; Next
               </button>
               <button
                 onClick={handleClearResponse}
                 disabled={!answers[activeQuestion.id]}
-                className="px-3 sm:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 disabled:opacity-40 font-semibold text-xs transition cursor-pointer shadow-sm"
+                className="px-3 sm:px-4 py-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 disabled:opacity-40 font-bold text-xs transition cursor-pointer shadow-xs"
               >
                 Clear Response
               </button>
@@ -1184,97 +1178,93 @@ function TestWorkspacePageContent() {
         {/* Mobile Backdrop Overlay */}
         {showMobilePalette && (
           <div 
-            className="fixed inset-0 z-40 bg-slate-955/80 backdrop-blur-sm lg:hidden animate-fadeIn"
+            className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden animate-fadeIn"
             onClick={() => setShowMobilePalette(false)}
           />
         )}
 
         {/* 6. NTA Right Sidebar (Profile + Legend + Palette Grid) */}
         <aside className={`
-          fixed inset-y-0 right-0 z-50 w-80 bg-slate-900 border-l border-slate-800 flex flex-col h-full 
+          fixed inset-y-0 right-0 z-50 w-80 bg-white border-l border-slate-300 flex flex-col h-full 
           transition-transform duration-300 transform 
           lg:static lg:translate-x-0 lg:z-auto shrink-0
           ${showMobilePalette ? 'translate-x-0 shadow-2xl' : 'translate-x-full lg:translate-x-0'}
         `}>
           
           {/* Mobile Drawer Close Header */}
-          <div className="lg:hidden p-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0">
-            <span className="font-bold text-xs text-white flex items-center gap-1.5">
+          <div className="lg:hidden p-3 bg-slate-100 border-b border-slate-300 flex items-center justify-between shrink-0">
+            <span className="font-bold text-xs text-slate-900 flex items-center gap-1.5">
               <span>🔢</span> Question Palette ({totalCounters.answered}/{questions.length})
             </span>
             <button 
               onClick={() => setShowMobilePalette(false)}
-              className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold"
+              className="px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold"
             >
               ✕ Close
             </button>
           </div>
 
           {/* Candidate Profile Box */}
-          <div className="p-3 bg-slate-950 border-b border-slate-800 flex items-center gap-3 shrink-0">
-            <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 overflow-hidden shrink-0">
-              <svg className="w-8 h-8 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+          <div className="p-3 bg-slate-100 border-b border-slate-300 flex items-center gap-3 shrink-0">
+            <div className="w-12 h-12 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-500 overflow-hidden shrink-0">
+              <svg className="w-8 h-8 text-slate-500" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
               </svg>
             </div>
             <div>
-              <p className="font-bold text-slate-100 text-sm truncate max-w-[170px]">{displayName}</p>
-              <p className="text-[11px] text-slate-400 font-medium">Candidate</p>
+              <p className="font-bold text-slate-900 text-sm truncate max-w-[170px]">{displayName}</p>
+              <p className="text-[11px] text-slate-500 font-medium">Candidate</p>
             </div>
           </div>
 
           {/* NTA Status Legend Box */}
-          <div className="p-3 bg-slate-900/90 border-b border-slate-800 text-xs space-y-2 shrink-0">
+          <div className="p-3 bg-slate-50 border-b border-slate-300 text-xs space-y-2 shrink-0">
             <div className="grid grid-cols-2 gap-2">
               <div className="flex items-center gap-2">
                 <NtaQuestionButton questionNumber={totalCounters.answered} status="answered" size="sm" />
-                <span className="text-slate-300 text-[11px]">Answered</span>
+                <span className="text-slate-700 text-[11px] font-semibold">Answered</span>
               </div>
               <div className="flex items-center gap-2">
                 <NtaQuestionButton questionNumber={totalCounters.notAnswered} status="not_answered" size="sm" />
-                <span className="text-slate-300 text-[11px]">Not Answered</span>
+                <span className="text-slate-700 text-[11px] font-semibold">Not Answered</span>
               </div>
               <div className="flex items-center gap-2">
                 <NtaQuestionButton questionNumber={totalCounters.notVisited} status="not_visited" size="sm" />
-                <span className="text-slate-300 text-[11px]">Not Visited</span>
+                <span className="text-slate-700 text-[11px] font-semibold">Not Visited</span>
               </div>
               <div className="flex items-center gap-2">
                 <NtaQuestionButton questionNumber={totalCounters.marked} status="marked" size="sm" />
-                <span className="text-slate-300 text-[11px]">Marked for Review</span>
+                <span className="text-slate-700 text-[11px] font-semibold">Marked for Review</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 pt-1 border-t border-slate-800">
+            <div className="flex items-center gap-2 pt-1 border-t border-slate-200">
               <NtaQuestionButton questionNumber={totalCounters.answeredMarked} status="answered_marked" size="sm" />
-              <span className="text-slate-300 text-[10px] leading-tight">
+              <span className="text-slate-700 text-[10px] leading-tight font-semibold">
                 Answered &amp; Marked for Review (will be evaluated)
               </span>
             </div>
           </div>
 
-          {/* NTA Section Header */}
-          <div className="bg-[#337ab7] text-white px-3 py-2 text-xs font-bold shrink-0">
-            <p>{selectedSubject === 'Math' ? 'Mathematics' : selectedSubject} (Section A)</p>
-            <p className="text-[10px] font-normal opacity-90">Choose a Question</p>
+          {/* Active Subject Palette Header */}
+          <div className="bg-[#337ab7] text-white p-2.5 text-xs font-bold shrink-0">
+            {selectedSubject === 'Math' ? 'Mathematics' : selectedSubject} (Section A)
+            <div className="text-[10px] text-blue-100 font-normal">Choose a Question</div>
           </div>
 
-          {/* NTA Question Grid Palette */}
-          <div className="flex-1 overflow-y-auto p-3">
-            <div className="grid grid-cols-4 gap-2.5 justify-items-center">
+          {/* Question Number Palette Grid */}
+          <div className="flex-1 overflow-y-auto p-3 bg-white">
+            <div className="grid grid-cols-4 gap-2.5">
               {subjectQuestions.map((q, idx) => {
-                const globalIdx = questions.findIndex(item => item.id === q.id);
-                const isCurrent = currentQuestionIndex === globalIdx;
-                const qStatus = getQuestionStatus(q.id);
+                const isCurrent = q.id === activeQuestion.id;
+                const status = getQuestionStatus(q.id);
 
                 return (
                   <NtaQuestionButton
                     key={q.id}
                     questionNumber={idx + 1}
-                    status={qStatus}
+                    status={status}
                     isSelected={isCurrent}
-                    onClick={() => {
-                      handleGridQuestionClick(q.id);
-                      setShowMobilePalette(false);
-                    }}
+                    onClick={() => handleGridQuestionClick(q.id)}
                   />
                 );
               })}
@@ -1284,7 +1274,6 @@ function TestWorkspacePageContent() {
         </aside>
 
       </div>
-
 
       {/* Submit Confirmation Modal */}
       {showSubmitModal && (

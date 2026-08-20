@@ -196,22 +196,22 @@ function JeeExamPageContent() {
           className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={e => { if (e.target === e.currentTarget) setSelectedYear(null); }}
         >
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto border border-gray-200 dark:border-slate-800">
 
             {/* Modal header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 rounded-t-2xl z-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-sm">
                   <Calendar size={18} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-gray-900 text-lg">{selectedYear} Papers</h2>
-                  <p className="text-xs text-gray-400">
+                  <h2 className="font-bold text-gray-900 dark:text-white text-lg">{selectedYear} Papers</h2>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">
                     {isAdvanced ? "JEE Advanced" : "JEE Mains"} — Select a paper to start
                   </p>
                 </div>
               </div>
-              <button onClick={() => setSelectedYear(null)} className="text-gray-400 hover:text-gray-700 transition cursor-pointer">
+              <button onClick={() => setSelectedYear(null)} className="text-gray-400 hover:text-gray-700 dark:hover:text-white transition cursor-pointer">
                 <X size={20} />
               </button>
             </div>
@@ -222,17 +222,17 @@ function JeeExamPageContent() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {["Paper 1 (PCM)", "Paper 2 (PCM)"].map(paper => (
                     <button key={paper} onClick={() => handleStart(paper, selectedYear)}
-                      className="group bg-white border border-gray-200 hover:border-indigo-300 hover:shadow-md rounded-xl p-4 text-left flex items-center justify-between transition cursor-pointer">
+                      className="group bg-white dark:bg-slate-950 border border-gray-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-md rounded-xl p-4 text-left flex items-center justify-between transition cursor-pointer">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <div className="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
                           <FileText size={16} />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-800 text-sm">JEE Advanced {selectedYear}</p>
-                          <p className="text-xs text-gray-400">{paper}</p>
+                          <p className="font-semibold text-gray-800 dark:text-slate-100 text-sm">JEE Advanced {selectedYear}</p>
+                          <p className="text-xs text-gray-400 dark:text-slate-400">{paper}</p>
                         </div>
                       </div>
-                      <Play size={14} className="text-gray-300 group-hover:text-indigo-600 transition" />
+                      <Play size={14} className="text-gray-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition" />
                     </button>
                   ))}
                 </div>
@@ -244,8 +244,8 @@ function JeeExamPageContent() {
                       <button key={attempt} onClick={() => setActiveAttempt(attempt)}
                         className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition cursor-pointer capitalize ${
                           activeAttempt === attempt
-                            ? "bg-gray-900 text-white border-gray-900"
-                            : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
+                            ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
+                            : "bg-white text-gray-500 border-gray-200 hover:border-gray-400 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
                         }`}>
                         {attempt === "january" ? "🔵 January" : "🟠 April"}
                       </button>
@@ -254,7 +254,7 @@ function JeeExamPageContent() {
 
                   {/* Paper cards */}
                   {modalShifts.length === 0 ? (
-                    <div className="border-2 border-dashed border-gray-200 rounded-xl py-10 text-center text-gray-400 text-sm">
+                    <div className="border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-xl py-10 text-center text-gray-400 dark:text-slate-500 text-sm">
                       No {activeAttempt} papers available for {selectedYear}
                     </div>
                   ) : (
@@ -262,23 +262,23 @@ function JeeExamPageContent() {
                       {modalShifts.map((shift, idx) => (
                         <button key={`${shift.name}-${idx}`}
                           onClick={() => handleStart(shift.name, selectedYear, shift.id)}
-                          className="group bg-white border border-gray-200 hover:border-indigo-300 hover:shadow-md rounded-xl p-4 text-left flex items-center justify-between transition cursor-pointer">
+                          className="group bg-white dark:bg-slate-950 border border-gray-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-md rounded-xl p-4 text-left flex items-center justify-between transition cursor-pointer">
                           <div className="flex items-center gap-3 min-w-0">
                             <div className={`w-9 h-9 shrink-0 rounded-lg flex items-center justify-center transition ${
                               shift.id
-                                ? "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white"
-                                : "bg-gray-100 text-gray-500 group-hover:bg-indigo-600 group-hover:text-white"
+                                ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white"
+                                : "bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400 group-hover:bg-indigo-600 group-hover:text-white"
                             }`}>
                               <FileText size={15} />
                             </div>
                             <div className="min-w-0">
-                              <p className="font-semibold text-gray-800 text-sm truncate">{shift.name}</p>
-                              <p className={`text-xs mt-0.5 ${shift.id ? "text-emerald-500 font-medium" : "text-gray-400"}`}>
+                              <p className="font-semibold text-gray-800 dark:text-slate-100 text-sm truncate">{shift.name}</p>
+                              <p className={`text-xs mt-0.5 ${shift.id ? "text-emerald-500 dark:text-emerald-400 font-semibold" : "text-gray-400 dark:text-slate-500"}`}>
                                 {shift.id ? "✓ Full paper with answers" : "Mock paper"}
                               </p>
                             </div>
                           </div>
-                          <Play size={14} className="text-gray-300 group-hover:text-indigo-600 transition shrink-0 ml-2" />
+                          <Play size={14} className="text-gray-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition shrink-0" />
                         </button>
                       ))}
                     </div>

@@ -327,19 +327,7 @@ export default function GeneralDashboard() {
         </p>
       </div>
 
-      {/* ── Category Pills ── */}
-      <div className="flex justify-center gap-2 flex-wrap px-4 py-8 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-colors">
-        {CATEGORIES.map(cat => (
-          <button key={cat} onClick={() => setActiveCategory(cat)}
-            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 cursor-pointer ${
-              activeCategory === cat
-                ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
-                : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 hover:text-gray-900 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:border-slate-500 dark:hover:text-slate-100"
-            }`}>
-            {cat}
-          </button>
-        ))}
-      </div>
+
 
       {/* ── Card Grid ── */}
       <main className="flex-grow max-w-5xl w-full mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 content-start">

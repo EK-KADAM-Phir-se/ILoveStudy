@@ -304,20 +304,20 @@ export default function OrganisationStudentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 font-sans flex flex-col transition-colors duration-200">
       <NavBar />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 flex flex-col items-center">
         {/* Top Badges & Navigation Bar */}
         <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
           {/* View Mode Switcher Tabs */}
-          <div className="flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+          <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <button
               onClick={() => handleTabSwitch("student")}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-2 ${
                 activeTab === "student"
                   ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                  : "text-slate-400 hover:text-slate-200"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
               }`}
             >
               <GraduationCap size={15} />
@@ -328,7 +328,7 @@ export default function OrganisationStudentPage() {
               className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-2 ${
                 activeTab === "organiser"
                   ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
-                  : "text-slate-400 hover:text-slate-200"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
               }`}
             >
               <Building2 size={15} />
@@ -340,9 +340,9 @@ export default function OrganisationStudentPage() {
           {isAdmin && (
             <button
               onClick={() => router.push("/admin/organisation")}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white border border-purple-500/40 text-xs font-bold transition shadow-md cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-50 dark:bg-purple-600/20 hover:bg-purple-600 text-purple-700 dark:text-purple-300 hover:text-white border border-purple-200 dark:border-purple-500/40 text-xs font-bold transition shadow-sm cursor-pointer"
             >
-              <ShieldCheck size={15} className="text-purple-400" />
+              <ShieldCheck size={15} className="text-purple-600 dark:text-purple-400" />
               <span>Admin Management Portal</span>
               <ArrowRight size={13} />
             </button>
@@ -354,16 +354,16 @@ export default function OrganisationStudentPage() {
           <div className="w-full flex flex-col items-center">
             {/* Hero Section */}
             <div className="text-center max-w-2xl mx-auto mb-8">
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3">
                 Access Your Institutional Exam
               </h1>
-              <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
                 Enter the unique test code provided by your school, college, or coaching institute to start your examination.
               </p>
             </div>
 
             {/* Code Entry Card / Verification Flow */}
-            <div className="w-full max-w-xl bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-md relative overflow-hidden">
+            <div className="w-full max-w-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl dark:shadow-2xl backdrop-blur-md relative overflow-hidden">
               <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -371,11 +371,11 @@ export default function OrganisationStudentPage() {
                 /* STEP 1: Enter Access Code */
                 <form onSubmit={handleVerifyCode} className="space-y-6 relative z-10">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">
                       Examination Access Code
                     </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                         <KeyRound size={18} />
                       </div>
                       <input
@@ -383,7 +383,7 @@ export default function OrganisationStudentPage() {
                         value={accessCode}
                         onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
                         placeholder="e.g. DPS-MATH-8821"
-                        className="w-full pl-11 pr-4 py-3.5 bg-slate-950/80 border border-slate-700 rounded-2xl text-white font-mono text-base tracking-wider placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 uppercase transition"
+                        className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white font-mono text-base tracking-wider placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 uppercase transition"
                         required
                       />
                     </div>

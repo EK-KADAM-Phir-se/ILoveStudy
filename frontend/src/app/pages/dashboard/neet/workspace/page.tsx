@@ -529,10 +529,10 @@ function NeetWorkspacePageContent() {
 
   if (loading || questions.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center text-slate-900 font-sans">
         <div className="text-center space-y-4">
-          <div className="w-10 h-10 border-2 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm font-semibold text-slate-300">Setting up your {name || `NEET ${year}`} Examination...</p>
+          <div className="w-10 h-10 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm font-semibold text-slate-600">Setting up your {name || `NEET ${year}`} Examination...</p>
         </div>
       </div>
     );
@@ -541,27 +541,28 @@ function NeetWorkspacePageContent() {
   // ── PRE-CHECK INTEGRITY MODAL ──
   if (showPreCheck) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 text-slate-100 font-sans">
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6">
+      <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans select-none items-center justify-center p-6 relative">
+        <div className="max-w-2xl w-full bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xl space-y-8 text-slate-900">
           <div className="text-center space-y-2">
-            <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto shadow-inner">
+            <div className="inline-flex p-3.5 bg-indigo-50 text-indigo-600 rounded-2xl border border-indigo-200/80 mb-2 shadow-xs">
               <ShieldCheck size={28} />
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-white">NEET Exam Environment Check</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 uppercase">NEET EXAM READINESS CHECK</h2>
+            <p className="text-sm text-slate-600 font-medium">
               Verifying system requirements, anti-cheat guards, and full-screen security.
             </p>
           </div>
 
-          <div className="space-y-3">
-            {/* 1. Fullscreen Notice */}
+          <div className="space-y-4">
             {/* 0. Diagrams & Assets Preloading Status */}
-            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Puzzle size={18} className="text-purple-400 shrink-0" />
+            <div className="bg-slate-50 border border-slate-200/90 p-4 sm:p-4.5 rounded-2xl flex items-center justify-between shadow-xs">
+              <div className="flex items-center space-x-4">
+                <div className="p-2.5 rounded-xl border bg-purple-50 text-purple-600 border-purple-200">
+                  <Puzzle size={20} />
+                </div>
                 <div>
-                  <p className="text-xs font-bold text-white">Paper Diagrams & Assets</p>
-                  <p className="text-[11px] text-slate-400">
+                  <h3 className="text-sm font-extrabold text-slate-900">Paper Diagrams &amp; Assets</h3>
+                  <p className="text-xs text-slate-600 font-medium">
                     {assetStatus === 'checking'
                       ? `Preloading question diagrams (${assetProgress.loaded}/${assetProgress.total})...`
                       : `${assetProgress.total > 0 ? `${assetProgress.total} question diagrams cached & ready for instant viewing.` : 'No diagram images required for this paper.'}`}
@@ -570,44 +571,48 @@ function NeetWorkspacePageContent() {
               </div>
               <div>
                 {assetStatus === 'checking' ? (
-                  <span className="text-xs font-semibold text-slate-400 animate-pulse">Preloading...</span>
+                  <span className="text-xs font-semibold text-slate-500 animate-pulse">Preloading...</span>
                 ) : (
-                  <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">✓ Ready</span>
+                  <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Passed</span>
                 )}
               </div>
             </div>
 
             {/* 1. Full Screen Mode Enforced */}
-            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Maximize2 size={18} className="text-rose-400 shrink-0" />
+            <div className="bg-slate-50 border border-slate-200/90 p-4 sm:p-4.5 rounded-2xl flex items-center justify-between shadow-xs">
+              <div className="flex items-center space-x-4">
+                <div className="p-2.5 rounded-xl border bg-indigo-50 text-indigo-600 border-indigo-200">
+                  <Maximize2 size={20} />
+                </div>
                 <div>
-                  <p className="text-xs font-bold text-white">Full Screen Mode Enforced</p>
-                  <p className="text-[11px] text-slate-400">Exiting fullscreen or taking screenshots will trigger security violations.</p>
+                  <h3 className="text-sm font-extrabold text-slate-900">Fullscreen Security Mode</h3>
+                  <p className="text-xs text-slate-600 font-medium">Exiting fullscreen or taking screenshots will trigger security violations.</p>
                 </div>
               </div>
-              <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 text-[10px] font-bold">Required</span>
+              <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">Auto-Enable</span>
             </div>
 
             {/* 2. Network Check */}
-            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Wifi size={18} className="text-blue-400 shrink-0" />
+            <div className="bg-slate-50 border border-slate-200/90 p-4 sm:p-4.5 rounded-2xl flex items-center justify-between shadow-xs">
+              <div className="flex items-center space-x-4">
+                <div className="p-2.5 rounded-xl border bg-emerald-50 text-emerald-600 border-emerald-200">
+                  <Wifi size={20} />
+                </div>
                 <div>
-                  <p className="text-xs font-bold text-white">Internet Connection</p>
-                  <p className="text-[11px] text-slate-400">Real-time sync to answer database</p>
+                  <h3 className="text-sm font-extrabold text-slate-900">Internet Connection</h3>
+                  <p className="text-xs text-slate-600 font-medium">Real-time sync to answer database</p>
                 </div>
               </div>
-              <span className="text-xs font-bold text-emerald-400">✓ Connected</span>
+              <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Connected</span>
             </div>
 
             {/* 3. Anti-cheat guidelines */}
-            <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/20 text-xs text-rose-300 space-y-1">
-              <p className="font-bold flex items-center gap-1.5 text-rose-400">
-                <AlertCircle size={14} />
+            <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 text-xs text-slate-700 space-y-1.5">
+              <p className="font-bold flex items-center gap-1.5 text-amber-900 text-sm">
+                <AlertCircle size={15} />
                 <span>Anti-Cheating Rules:</span>
               </p>
-              <ul className="list-disc list-inside space-y-0.5 text-[11px] text-slate-300">
+              <ul className="list-disc list-inside space-y-1 text-xs text-slate-700 font-medium">
                 <li>Right-click and copy-paste are strictly disabled.</li>
                 <li>Screenshots (PrintScreen / Win+Shift+S / Snipping Tool) trigger a violation.</li>
                 <li>Switching windows or tabs will record a violation.</li>
@@ -618,10 +623,10 @@ function NeetWorkspacePageContent() {
 
           <button
             onClick={handleStartExamFlow}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white text-xs sm:text-sm font-black uppercase tracking-wider shadow-lg shadow-rose-500/25 transition flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
           >
             <Maximize2 size={16} />
-            <span>Enter Full Screen & Start NEET Exam</span>
+            <span>Enter Full Screen &amp; Start NEET Exam</span>
           </button>
         </div>
       </div>
@@ -676,7 +681,7 @@ function NeetWorkspacePageContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans select-none overflow-hidden h-screen">
+    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans select-none overflow-hidden h-screen">
       {/* 1. NTA Topmost Dark Banner */}
       <div className="bg-[#1a1d20] text-yellow-400 font-bold text-xs sm:text-sm px-4 py-2 flex items-center justify-between border-b border-slate-800 shrink-0">
         <div className="flex items-center gap-2">
@@ -710,37 +715,37 @@ function NeetWorkspacePageContent() {
       )}
 
       {/* 2. Sub-Header Bar (Paper Badge + Timer) */}
-      <div className="bg-[#e8edf2] dark:bg-[#1e232a] text-slate-800 dark:text-slate-100 px-4 py-2 flex items-center justify-between text-xs border-b border-slate-300 dark:border-slate-800 shrink-0">
+      <div className="bg-[#e2e8f0] text-slate-800 px-4 py-2 flex items-center justify-between text-xs border-b border-slate-300 shrink-0">
         <div className="flex items-center gap-3">
           <span className="bg-[#31708f] text-white px-3 py-1 rounded-md font-bold text-xs shadow-sm">
             NEET {year}
           </span>
           <button
             onClick={() => setShowExitConfirmModal(true)}
-            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-semibold cursor-pointer"
+            className="text-slate-600 hover:text-slate-900 text-xs font-semibold cursor-pointer"
           >
             &larr; Exit Exam
           </button>
         </div>
 
         <div className="flex items-center gap-4 font-bold text-sm">
-          <span className="text-slate-600 dark:text-slate-400 text-xs uppercase tracking-wide">Sections</span>
-          <div className="bg-white dark:bg-slate-900 px-3 py-1 rounded border border-slate-300 dark:border-slate-700 shadow-inner">
-            Time Left : <span className={`font-mono text-base font-bold ${examTimeLeft < 600 ? 'text-red-600 animate-pulse' : 'text-blue-600 dark:text-blue-400'}`}>{formatTime(examTimeLeft)}</span>
+          <span className="text-slate-600 text-xs uppercase tracking-wide">Sections</span>
+          <div className="bg-white px-3 py-1 rounded border border-slate-300 shadow-inner">
+            Time Left : <span className={`font-mono text-base font-bold ${examTimeLeft < 600 ? 'text-red-600 animate-pulse' : 'text-blue-600'}`}>{formatTime(examTimeLeft)}</span>
           </div>
         </div>
       </div>
 
       {/* 3. NTA Section Tabs Bar */}
-      <div className="bg-[#f5f5f5] dark:bg-[#181b20] border-b border-slate-300 dark:border-slate-800 px-4 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0">
+      <div className="bg-[#f1f5f9] border-b border-slate-300 px-4 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0">
         {neetSubjects.map((subj) => (
           <button
             key={subj.name}
             onClick={() => handleSelectSubject(subj.name)}
             className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
               selectedSubject === subj.name
-                ? "bg-[#337ab7] text-white shadow"
-                : "bg-white dark:bg-slate-800 text-[#337ab7] dark:text-blue-400 border border-slate-300 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-700"
+                ? "bg-[#337ab7] text-white shadow-sm"
+                : "bg-white text-[#337ab7] border border-slate-300 hover:bg-blue-50 font-bold"
             }`}
           >
             <span>{subj.name}</span>
@@ -750,28 +755,28 @@ function NeetWorkspacePageContent() {
       </div>
 
       {/* 4. Question Metadata Bar */}
-      <div className="bg-[#f8f9fa] dark:bg-[#1e2229] border-b border-slate-300 dark:border-slate-800 px-4 py-1.5 flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 shrink-0">
-        <span className="font-semibold">Question Type: <strong className="text-slate-900 dark:text-white">Multiple Choice</strong></span>
-        <span>Marks for correct answer: <strong className="text-emerald-600 dark:text-emerald-400">+4</strong> | Negative Marks: <strong className="text-rose-600 dark:text-rose-400">1</strong></span>
+      <div className="bg-white border-b border-slate-200 px-4 py-1.5 flex items-center justify-between text-xs text-slate-700 shrink-0">
+        <span className="font-semibold">Question Type: <strong className="text-slate-900">Multiple Choice</strong></span>
+        <span>Marks for correct answer: <strong className="text-emerald-600">+4</strong> | Negative Marks: <strong className="text-rose-600">1</strong></span>
       </div>
 
       {/* Main Body Grid */}
       <div className="flex-1 flex overflow-hidden w-full relative">
         
         {/* Left Side Panel: Question view & options */}
-        <main className="flex-1 flex flex-col bg-slate-950 overflow-hidden border-r-0 lg:border-r border-slate-900 w-full min-w-0">
+        <main className="flex-1 flex flex-col bg-white overflow-hidden border-r-0 lg:border-r border-slate-300 w-full min-w-0">
           
           {/* Question No & Bookmark bar */}
-          <div className="bg-slate-900 border-b border-slate-800 px-4 sm:px-6 py-2 flex items-center justify-between shrink-0">
+          <div className="bg-[#f8fafc] border-b border-slate-200 px-4 sm:px-6 py-2 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
-              <span className="font-bold text-slate-100 text-xs sm:text-sm">Question No. {currentQuestionIndex + 1}</span>
+              <span className="font-extrabold text-slate-900 text-xs sm:text-sm">Question No. {currentQuestionIndex + 1}</span>
               {currentQ && (
                 <button
                   onClick={handleToggleBookmark}
                   className={`px-2.5 py-1 text-xs font-bold rounded-lg border flex items-center gap-1 transition cursor-pointer ${
                     bookmarkedQuestions.has(currentQ.id)
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                      : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                      ? 'bg-amber-100 text-amber-800 border-amber-300'
+                      : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
                   }`}
                 >
                   <span>🔖</span> <span className="hidden sm:inline">Bookmark</span>
@@ -782,13 +787,13 @@ function NeetWorkspacePageContent() {
               {currentQ && <ReportErrorButton questionId={currentQ.id} questionTextSnippet={currentQ.questionText} />}
               <button
                 onClick={() => setShowMobilePalette(true)}
-                className="lg:hidden px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1 cursor-pointer shadow"
+                className="lg:hidden px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1 cursor-pointer shadow"
               >
                 <span>🔢</span> <span className="hidden sm:inline">Palette</span> ({totalCounters.answered}/{questions.length})
               </button>
               <button
                 onClick={() => setShowInstructionBox(!showInstructionBox)}
-                className="p-1 rounded bg-slate-800 text-slate-300 hover:bg-slate-700 transition"
+                className="p-1 rounded bg-slate-200 text-slate-700 hover:bg-slate-300 transition"
                 title="Toggle Instructions"
               >
                 {showInstructionBox ? "▲" : "▼"}
@@ -798,12 +803,12 @@ function NeetWorkspacePageContent() {
 
           {/* Section Instruction Box (Collapsible Card) */}
           {showInstructionBox && (
-            <div className="bg-slate-900/90 border border-slate-800 rounded-xl m-2 sm:m-4 p-3 sm:p-4 text-xs text-slate-200 space-y-2 shrink-0 shadow-lg">
-              <div className="flex justify-between items-center font-bold border-b border-slate-800 pb-2">
-                <span className="text-rose-400 text-sm">{selectedSubject} (Maximum Marks: 720)</span>
-                <button onClick={() => setShowInstructionBox(false)} className="text-slate-400 hover:text-white">▲</button>
+            <div className="bg-blue-50/60 border border-blue-200 rounded-xl m-2 sm:m-4 p-3 sm:p-4 text-xs text-slate-800 space-y-2 shrink-0 shadow-xs">
+              <div className="flex justify-between items-center font-bold border-b border-blue-200 pb-2">
+                <span className="text-blue-900 text-sm font-extrabold">{selectedSubject} (Maximum Marks: 720)</span>
+                <button onClick={() => setShowInstructionBox(false)} className="text-slate-500 hover:text-slate-900">▲</button>
               </div>
-              <ul className="list-disc list-inside space-y-1 text-slate-300 leading-relaxed text-[11px] sm:text-xs">
+              <ul className="list-disc list-inside space-y-1 text-slate-700 leading-relaxed text-[11px] sm:text-xs font-medium">
                 <li>This section contains questions for <strong>{selectedSubject}</strong>.</li>
                 <li>Each question has <strong>FOUR</strong> options (A), (B), (C) and (D). <strong>ONLY ONE</strong> option is correct.</li>
                 <li>Marking Scheme: <strong>+4</strong> for correct answer, <strong>0</strong> if unattempted, <strong>-1</strong> for incorrect.</li>
@@ -812,7 +817,7 @@ function NeetWorkspacePageContent() {
           )}
 
           {/* Question and Option Display */}
-          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 bg-white">
             <div 
               className="max-w-4xl mx-auto space-y-4 sm:space-y-6 transition-all duration-150 w-full min-w-0"
               style={zoomLevel !== 100 ? { zoom: `${zoomLevel}%` } : undefined}
@@ -820,14 +825,14 @@ function NeetWorkspacePageContent() {
               {currentQ && (
                 <>
                   {/* Question card */}
-                  <div className={`rounded-xl p-4 sm:p-6 transition-all break-words min-w-0 ${
+                  <div className={`rounded-2xl p-4 sm:p-6 transition-all break-words min-w-0 ${
                     accessSettings.highContrast === 'yellow-on-black'
                       ? 'bg-black border-2 border-yellow-400 text-yellow-300 font-mono shadow-2xl'
                       : accessSettings.highContrast === 'high-contrast-light'
                       ? 'bg-white border-2 border-slate-900 text-black shadow-2xl'
-                      : 'bg-slate-900 border border-slate-800 text-slate-100 shadow-md'
+                      : 'bg-white border border-slate-200/90 text-slate-900 shadow-xs'
                   }`}>
-                    <div className={`whitespace-pre-line break-words overflow-x-auto ${
+                    <div className={`whitespace-pre-line break-words overflow-x-auto text-slate-900 font-medium ${
                       accessSettings.fontSize === 'large' ? 'text-base sm:text-xl' :
                       accessSettings.fontSize === 'xlarge' ? 'text-lg sm:text-2xl' : 'text-sm sm:text-base'
                     } ${accessSettings.dyslexicFont ? 'tracking-wider leading-loose font-mono' : 'leading-relaxed'}`}>
@@ -835,7 +840,7 @@ function NeetWorkspacePageContent() {
                     </div>
 
                     {currentQ.imageUrl && (
-                      <div className="mt-4 border border-slate-800 rounded-lg p-2 sm:p-4 bg-slate-950 flex justify-center">
+                      <div className="mt-4 border border-slate-200 rounded-xl p-2 sm:p-4 bg-slate-50 flex justify-center">
                         <QuestionImage
                           imageUrl={currentQ.imageUrl}
                           examName="neet"
@@ -857,9 +862,9 @@ function NeetWorkspacePageContent() {
                       if (!text) return null;
                       const isSelected = answers[currentQ.id] === key;
                       
-                      let optionBg = 'bg-slate-900 border-slate-800/80 hover:border-slate-700/80 hover:bg-slate-850/50';
+                      let optionBg = 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/80 text-slate-800 shadow-xs';
                       if (isSelected) {
-                        optionBg = 'bg-[#337ab7]/20 border-[#337ab7] shadow-md shadow-blue-500/5';
+                        optionBg = 'bg-blue-50/80 border-2 border-blue-600 text-blue-950 font-bold shadow-xs';
                       }
 
                       if (accessSettings.highContrast === 'yellow-on-black') {
@@ -882,15 +887,15 @@ function NeetWorkspacePageContent() {
                         >
                           <span className={`h-7 w-7 sm:h-8 sm:w-8 rounded-lg font-bold flex items-center justify-center mr-3 shrink-0 text-xs sm:text-sm transition ${
                             isSelected
-                              ? (accessSettings.highContrast === 'yellow-on-black' ? 'bg-black text-yellow-400' : 'bg-[#337ab7] text-white')
-                              : 'bg-slate-955 text-slate-400 group-hover:bg-slate-800 group-hover:text-slate-200'
+                              ? 'bg-[#337ab7] text-white shadow-xs'
+                              : 'bg-slate-100 text-slate-700 group-hover:bg-slate-200'
                           }`}>
                             {key}
                           </span>
                           <div className={`text-xs sm:text-sm break-words min-w-0 flex-1 ${
                             accessSettings.fontSize === 'large' ? 'text-sm sm:text-base' :
                             accessSettings.fontSize === 'xlarge' ? 'text-base sm:text-lg' : 'text-xs sm:text-sm'
-                          } ${isSelected ? 'text-blue-200 font-semibold' : 'text-slate-300'}`}>
+                          } ${isSelected ? 'text-blue-950 font-bold' : 'text-slate-800 font-medium'}`}>
                             <LatexRenderer text={text} />
                           </div>
                         </div>
@@ -903,24 +908,24 @@ function NeetWorkspacePageContent() {
           </div>
 
           {/* 5. NTA Bottom Control Bar */}
-          <footer className="bg-slate-900 border-t border-slate-800 px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
+          <footer className="bg-[#e2e8f0] border-t border-slate-300 px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 shrink-0">
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={handleMarkForReviewAndNext}
-                className="px-3 sm:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs transition cursor-pointer shadow-sm"
+                className="px-3 sm:px-4 py-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold text-xs transition cursor-pointer shadow-xs"
               >
                 Mark for Review &amp; Next
               </button>
               <button
                 onClick={handleClearResponse}
                 disabled={!currentQ || !answers[currentQ.id]}
-                className="px-3 sm:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 disabled:opacity-40 font-semibold text-xs transition cursor-pointer shadow-sm"
+                className="px-3 sm:px-4 py-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 disabled:opacity-40 font-bold text-xs transition cursor-pointer shadow-xs"
               >
                 Clear Response
               </button>
               <button
                 onClick={() => setShowMobilePalette(true)}
-                className="lg:hidden px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow"
+                className="lg:hidden px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow"
               >
                 <span>🔢</span> Palette ({totalCounters.answered}/{questions.length})
               </button>
@@ -928,13 +933,13 @@ function NeetWorkspacePageContent() {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={handleNextQuestion}
-                className="px-4 sm:px-5 py-2 rounded-lg bg-[#337ab7] hover:bg-[#286090] text-white font-bold text-xs transition cursor-pointer shadow"
+                className="px-4 sm:px-5 py-2 rounded-lg bg-[#337ab7] hover:bg-[#286090] text-white font-bold text-xs transition cursor-pointer shadow-sm"
               >
                 Save &amp; Next
               </button>
               <button
                 onClick={() => setShowSubmitModal(true)}
-                className="px-4 sm:px-5 py-2 rounded-lg bg-[#2e6da4] hover:bg-[#204d74] text-white font-bold text-xs transition cursor-pointer shadow"
+                className="px-4 sm:px-5 py-2 rounded-lg bg-[#5cb85c] hover:bg-[#449d44] text-white font-bold text-xs transition cursor-pointer shadow-sm"
               >
                 Submit
               </button>
@@ -945,68 +950,68 @@ function NeetWorkspacePageContent() {
         {/* Mobile Backdrop Overlay */}
         {showMobilePalette && (
           <div 
-            className="fixed inset-0 z-40 bg-slate-955/80 backdrop-blur-sm lg:hidden animate-fadeIn"
+            className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden animate-fadeIn"
             onClick={() => setShowMobilePalette(false)}
           />
         )}
 
         {/* 6. NTA Right Sidebar (Profile + Legend + Palette Grid) */}
         <aside className={`
-          fixed inset-y-0 right-0 z-50 w-80 bg-slate-900 border-l border-slate-800 flex flex-col h-full 
+          fixed inset-y-0 right-0 z-50 w-80 bg-[#f8fafc] border-l border-slate-300 flex flex-col h-full 
           transition-transform duration-300 transform 
           lg:static lg:translate-x-0 lg:z-auto shrink-0
           ${showMobilePalette ? 'translate-x-0 shadow-2xl' : 'translate-x-full lg:translate-x-0'}
         `}>
           
           {/* Mobile Drawer Close Header */}
-          <div className="lg:hidden p-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0">
-            <span className="font-bold text-xs text-white flex items-center gap-1.5">
+          <div className="lg:hidden p-3 bg-white border-b border-slate-200 flex items-center justify-between shrink-0">
+            <span className="font-bold text-xs text-slate-900 flex items-center gap-1.5">
               <span>🔢</span> Question Palette ({totalCounters.answered}/{questions.length})
             </span>
             <button 
               onClick={() => setShowMobilePalette(false)}
-              className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold"
+              className="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold"
             >
               ✕ Close
             </button>
           </div>
 
           {/* Candidate Profile Box */}
-          <div className="p-3 bg-slate-950 border-b border-slate-800 flex items-center gap-3 shrink-0">
-            <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 overflow-hidden shrink-0">
+          <div className="p-3 bg-white border-b border-slate-200 flex items-center gap-3 shrink-0">
+            <div className="w-12 h-12 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-500 overflow-hidden shrink-0">
               <svg className="w-8 h-8 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
               </svg>
             </div>
             <div>
-              <p className="font-bold text-slate-100 text-sm truncate max-w-[170px]">{displayName}</p>
-              <p className="text-[11px] text-slate-400 font-medium">Candidate</p>
+              <p className="font-extrabold text-slate-900 text-sm truncate max-w-[170px]">{displayName}</p>
+              <p className="text-[11px] text-slate-500 font-semibold">Candidate</p>
             </div>
           </div>
 
           {/* NTA Status Legend Box */}
-          <div className="p-3 bg-slate-900/90 border-b border-slate-800 text-xs space-y-2 shrink-0">
+          <div className="p-3 bg-white border-b border-slate-200 text-xs space-y-2 shrink-0">
             <div className="grid grid-cols-2 gap-2">
               <div className="flex items-center gap-2">
                 <NtaQuestionButton questionNumber={totalCounters.answered} status="answered" size="sm" />
-                <span className="text-slate-300 text-[11px]">Answered</span>
+                <span className="text-slate-700 text-[11px] font-medium">Answered</span>
               </div>
               <div className="flex items-center gap-2">
                 <NtaQuestionButton questionNumber={totalCounters.notAnswered} status="not_answered" size="sm" />
-                <span className="text-slate-300 text-[11px]">Not Answered</span>
+                <span className="text-slate-700 text-[11px] font-medium">Not Answered</span>
               </div>
               <div className="flex items-center gap-2">
                 <NtaQuestionButton questionNumber={totalCounters.notVisited} status="not_visited" size="sm" />
-                <span className="text-slate-300 text-[11px]">Not Visited</span>
+                <span className="text-slate-700 text-[11px] font-medium">Not Visited</span>
               </div>
               <div className="flex items-center gap-2">
                 <NtaQuestionButton questionNumber={totalCounters.marked} status="marked" size="sm" />
-                <span className="text-slate-300 text-[11px]">Marked for Review</span>
+                <span className="text-slate-700 text-[11px] font-medium">Marked for Review</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 pt-1 border-t border-slate-800">
+            <div className="flex items-center gap-2 pt-1 border-t border-slate-200">
               <NtaQuestionButton questionNumber={totalCounters.answeredMarked} status="answered_marked" size="sm" />
-              <span className="text-slate-300 text-[10px] leading-tight">
+              <span className="text-slate-700 text-[10px] leading-tight font-medium">
                 Answered &amp; Marked for Review (will be evaluated)
               </span>
             </div>
@@ -1044,9 +1049,7 @@ function NeetWorkspacePageContent() {
               })}
             </div>
           </div>
-
         </aside>
-
       </div>
 
 
