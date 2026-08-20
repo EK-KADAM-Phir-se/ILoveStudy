@@ -52,8 +52,8 @@ export function getQuestionSupabaseUrl(
     .from("QuestionBank")
     .getPublicUrl(storagePath);
 
-  const supabaseUrl = data?.publicUrl || `/${cleanFileName}`;
-  const localFallbackUrl = `/${cleanFileName}`;
+  const supabaseUrl = data?.publicUrl || imageUrl;
+  const localFallbackUrl = imageUrl;
 
   return { supabaseUrl, localFallbackUrl };
 }

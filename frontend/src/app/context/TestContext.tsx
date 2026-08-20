@@ -13,6 +13,9 @@ interface Question {
   optionC: string;
   optionD: string;
   imageUrl?: string | null;
+  orderIndex?: number;
+  positiveMarks?: number;
+  negativeMarks?: number;
 }
 
 interface TestContextType {
@@ -106,7 +109,11 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
         const orderA = subjectOrder[(a.subject || "").toLowerCase()] || 99;
         const orderB = subjectOrder[(b.subject || "").toLowerCase()] || 99;
         if (orderA !== orderB) return orderA - orderB;
-        return 0;
+        
+        // Sort by orderIndex within the same subject
+        const indexA = a.orderIndex !== undefined && a.orderIndex !== null ? a.orderIndex : 0;
+        const indexB = b.orderIndex !== undefined && b.orderIndex !== null ? b.orderIndex : 0;
+        return indexA - indexB;
       });
 
       setQuestions(rawQs);

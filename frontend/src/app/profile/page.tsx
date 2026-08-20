@@ -832,6 +832,7 @@ export default function ProfilePage() {
                     <div className="space-y-4 pt-4">
 
                       {/* Selected exam information */}
+                      {/* Selected exam information */}
                       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3">
                         <div>
                           <p className="text-sm font-bold text-white">
@@ -854,11 +855,25 @@ export default function ProfilePage() {
                             </strong>
                           </span>
 
-                          <span className="text-slate-400">
+                          <span className="text-slate-400 flex items-center gap-1">
                             Peak:
-                            <strong className="ml-1 text-amber-400">
-                              {highestScoreInFilter}/{maxMarksInFilter}
-                            </strong>
+                            {(() => {
+                              const score = highestScoreInFilter;
+                              const max = maxMarksInFilter || 300;
+                              const pct = score / max;
+                              let color = "text-slate-400";
+                              if (pct >= 0.8) color = "text-red-500";
+                              else if (pct >= 0.55) color = "text-amber-500";
+                              else if (pct >= 0.45) color = "text-fuchsia-400";
+                              else if (pct >= 0.3) color = "text-blue-400";
+                              else if (pct >= 0.2) color = "text-cyan-400";
+                              else if (pct >= 0.1) color = "text-emerald-400";
+                              return (
+                                <strong className={`ml-1 font-bold ${color}`}>
+                                  {score}/{max}
+                                </strong>
+                              );
+                            })()}
                           </span>
                         </div>
                       </div>
@@ -878,9 +893,22 @@ export default function ProfilePage() {
                               300
                             );
 
-                          const highestScore = Math.max(
-                            ...chartAttempts.map((item) => item.score)
-                          );
+                          const yMin = 15.15;
+                          const yMax = 219.7;
+
+                          // Helper to get hex colors for score percentages
+                          const getScoreHexColor = (score: number, max: number) => {
+                            const pct = score / (max || 300);
+                            if (pct >= 0.8) return "#ff3333"; // Red
+                            if (pct >= 0.7) return "#ff7777"; // Light red
+                            if (pct >= 0.65) return "#ffbb55"; // Orange
+                            if (pct >= 0.55) return "#ffcc88"; // Master orange/yellow
+                            if (pct >= 0.45) return "#e040fb"; // Candidate Master purple
+                            if (pct >= 0.3) return "#4a90e2"; // Expert blue
+                            if (pct >= 0.2) return "#26a69a"; // Specialist teal
+                            if (pct >= 0.1) return "#9ccc65"; // Pupil green
+                            return "#b0bec5"; // Newbie grey
+                          };
 
                           const points = chartAttempts.map((item, index) => {
                             const x =
@@ -890,17 +918,21 @@ export default function ProfilePage() {
                                 (chartWidth - 40) +
                                 20;
 
-                            const y =
-                              chartHeight -
-                              ((item.score / maxMarks) * (chartHeight - 30));
+                            const y = yMax - (item.score / maxMarks) * (yMax - yMin);
+                            const hexColor = getScoreHexColor(item.score, item.maxMarks);
 
                             return {
                               x,
                               y,
                               item,
                               index,
+                              hexColor
                             };
                           });
+
+                          const highestScore = Math.max(
+                            ...chartAttempts.map((item) => item.score)
+                          );
 
                           const linePath = points
                             .map(
@@ -910,28 +942,76 @@ export default function ProfilePage() {
                             .join(" ");
 
                           const areaPath = `
-          ${linePath}
-          L ${points[points.length - 1].x} ${chartHeight}
-          L ${points[0].x} ${chartHeight}
-          Z
-        `;
+                            ${linePath}
+                            L ${points[points.length - 1].x} ${chartHeight}
+                            L ${points[0].x} ${chartHeight}
+                            Z
+                          `;
+
+                          // Rating bands definitions matching the Codeforces graph colors exactly, scaled to score percentages
+                          const ratingBands = [
+                            { min: 0.8, max: 1.0, color: "#e74c3c" }, // Red
+                            { min: 0.7, max: 0.8, color: "#ff7777" }, // Light red
+                            { min: 0.65, max: 0.7, color: "#ffbb55" }, // Orange
+                            { min: 0.55, max: 0.65, color: "#f39c12" }, // Master yellow
+                            { min: 0.45, max: 0.55, color: "#e040fb" }, // Candidate Master purple
+                            { min: 0.3, max: 0.45, color: "#4a90e2" }, // Expert blue
+                            { min: 0.2, max: 0.3, color: "#26a69a" }, // Specialist teal
+                            { min: 0.1, max: 0.2, color: "#9ccc65" }, // Pupil green
+                            { min: 0.0, max: 0.1, color: "#b0bec5" }, // Newbie grey
+                          ];
+
+                          const divisionPcts = [0.1, 0.2, 0.3, 0.45, 0.55, 0.65, 0.7, 0.8, 1.0];
 
                           return (
                             <>
-                              {/* Grid lines */}
-                              <div className="pointer-events-none absolute inset-x-4 top-5 bottom-10 flex flex-col justify-between">
-                                {[100, 75, 50, 25, 0].map((value) => (
-                                  <div
-                                    key={value}
-                                    className="flex items-center gap-2"
-                                  >
-                                    <span className="w-8 text-right text-[10px] text-slate-500">
-                                      {Math.round((value / 100) * maxMarks)}
-                                    </span>
+                              {/* Background color bands */}
+                              <div className="absolute inset-0 pointer-events-none opacity-[0.08]">
+                                {ratingBands.map((band, idx) => {
+                                  const topPct = 100 - band.max * 100;
+                                  const bottomPct = 100 - band.min * 100;
+                                  return (
+                                    <div
+                                      key={idx}
+                                      className="absolute left-0 right-0"
+                                      style={{
+                                        top: `${(topPct * 270) / 330 + (20 * 100) / 330}%`,
+                                        height: `${((bottomPct - topPct) * 270) / 330}%`,
+                                        backgroundColor: band.color,
+                                      }}
+                                    />
+                                  );
+                                })}
+                              </div>
 
-                                    <div className="h-px flex-1 border-t border-dashed border-slate-800" />
-                                  </div>
-                                ))}
+                              {/* Grid lines and score ticks based on maxMarks */}
+                              <div className="pointer-events-none absolute inset-x-4 top-[20px] bottom-[40px]">
+                                {divisionPcts.map((pct) => {
+                                  const rating = Math.round(pct * maxMarks);
+                                  const pctPosition = pct * 100;
+                                  // Get label color corresponding to the bracket
+                                  let labelColor = "text-slate-400";
+                                  if (pct >= 0.8) labelColor = "text-red-500";
+                                  else if (pct >= 0.55) labelColor = "text-amber-500 font-semibold";
+                                  else if (pct >= 0.45) labelColor = "text-fuchsia-400";
+                                  else if (pct >= 0.3) labelColor = "text-blue-400";
+                                  else if (pct >= 0.2) labelColor = "text-cyan-400";
+                                  else if (pct >= 0.1) labelColor = "text-emerald-400";
+
+                                  return (
+                                    <div
+                                      key={pct}
+                                      className="absolute left-0 right-0 flex items-center gap-2 -translate-y-1/2"
+                                      style={{ bottom: `${pctPosition}%` }}
+                                    >
+                                      <span className={`w-8 text-right text-[10px] font-bold ${labelColor}`}>
+                                        {rating}
+                                      </span>
+
+                                      <div className="h-px flex-1 border-t border-dashed border-slate-800/80" />
+                                    </div>
+                                  );
+                                })}
                               </div>
 
                               {/* SVG Chart */}
@@ -951,13 +1031,13 @@ export default function ProfilePage() {
                                   >
                                     <stop
                                       offset="0%"
-                                      stopColor="#3b82f6"
-                                      stopOpacity="0.35"
+                                      stopColor="#e5c158"
+                                      stopOpacity="0.25"
                                     />
 
                                     <stop
                                       offset="100%"
-                                      stopColor="#3b82f6"
+                                      stopColor="#e5c158"
                                       stopOpacity="0"
                                     />
                                   </linearGradient>
@@ -967,16 +1047,8 @@ export default function ProfilePage() {
                                 <line
                                   x1="20"
                                   x2={chartWidth - 20}
-                                  y1={
-                                    chartHeight -
-                                    (highestScore / maxMarks) *
-                                    (chartHeight - 30)
-                                  }
-                                  y2={
-                                    chartHeight -
-                                    (highestScore / maxMarks) *
-                                    (chartHeight - 30)
-                                  }
+                                  y1={yMax - (highestScore / maxMarks) * (yMax - yMin)}
+                                  y2={yMax - (highestScore / maxMarks) * (yMax - yMin)}
                                   stroke="#fbbf24"
                                   strokeWidth="1.5"
                                   strokeDasharray="7 6"
@@ -986,12 +1058,7 @@ export default function ProfilePage() {
                                 {/* Peak label */}
                                 <text
                                   x={chartWidth - 25}
-                                  y={
-                                    chartHeight -
-                                    (highestScore / maxMarks) *
-                                    (chartHeight - 30) -
-                                    8
-                                  }
+                                  y={yMax - (highestScore / maxMarks) * (yMax - yMin) - 8}
                                   textAnchor="end"
                                   fill="#fbbf24"
                                   fontSize="11"
@@ -1006,11 +1073,11 @@ export default function ProfilePage() {
                                   fill="url(#scoreAreaGradient)"
                                 />
 
-                                {/* Main score line */}
+                                {/* Main score line - Codeforces styled */}
                                 <path
                                   d={linePath}
                                   fill="none"
-                                  stroke="#3b82f6"
+                                  stroke="#e5c158"
                                   strokeWidth="3"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
@@ -1023,9 +1090,9 @@ export default function ProfilePage() {
                                       cx={point.x}
                                       cy={point.y}
                                       r="6"
-                                      fill="#080f23"
-                                      stroke="#60a5fa"
-                                      strokeWidth="3"
+                                      fill={point.hexColor}
+                                      stroke="#ffffff"
+                                      strokeWidth="2"
                                       className="cursor-pointer transition-all duration-200 hover:r-8"
                                       onMouseEnter={() =>
                                         setHoveredAttempt(point.item)
@@ -1043,7 +1110,7 @@ export default function ProfilePage() {
                                           x={point.x}
                                           y={point.y - 12}
                                           textAnchor="middle"
-                                          fill="white"
+                                          fill={point.hexColor}
                                           fontSize="11"
                                           fontWeight="700"
                                         >
@@ -1092,33 +1159,48 @@ export default function ProfilePage() {
                       {/* Hover details */}
                       <div className="min-h-[42px] rounded-xl border border-slate-800 bg-slate-950/80 px-4 py-2.5 text-xs">
                         {hoveredAttempt ? (
-                          <div className="flex flex-wrap items-center justify-between gap-3">
-                            <span className="font-bold text-indigo-300">
-                              {hoveredAttempt.shiftName}
-                            </span>
+                          (() => {
+                            const score = hoveredAttempt.score;
+                            const max = hoveredAttempt.maxMarks || 300;
+                            const pct = score / max;
+                            let scoreColor = "text-slate-400";
+                            if (pct >= 0.8) scoreColor = "text-red-500";
+                            else if (pct >= 0.55) scoreColor = "text-amber-500";
+                            else if (pct >= 0.45) scoreColor = "text-fuchsia-400";
+                            else if (pct >= 0.3) scoreColor = "text-blue-400";
+                            else if (pct >= 0.2) scoreColor = "text-cyan-400";
+                            else if (pct >= 0.1) scoreColor = "text-emerald-400";
 
-                            <span className="text-slate-300">
-                              Score:
-                              <strong className="ml-1 text-emerald-400">
-                                {hoveredAttempt.score}
-                              </strong>
-                              {" / "}
-                              {hoveredAttempt.maxMarks}
-                            </span>
+                            return (
+                              <div className="flex flex-wrap items-center justify-between gap-3">
+                                <span className="font-bold text-indigo-300">
+                                  {hoveredAttempt.shiftName}
+                                </span>
 
-                            <span className="text-slate-300">
-                              Accuracy:
-                              <strong className="ml-1 text-blue-400">
-                                {hoveredAttempt.percentage}%
-                              </strong>
-                            </span>
+                                <span className="text-slate-300">
+                                  Score:
+                                  <strong className={`ml-1 font-bold ${scoreColor}`}>
+                                    {score}
+                                  </strong>
+                                  {" / "}
+                                  {max}
+                                </span>
 
-                            <span className="text-slate-400">
-                              Correct: {hoveredAttempt.correctCount}
-                              {" | "}
-                              Wrong: {hoveredAttempt.incorrectCount}
-                            </span>
-                          </div>
+                                <span className="text-slate-300">
+                                  Accuracy:
+                                  <strong className="ml-1 text-blue-400">
+                                    {hoveredAttempt.percentage}%
+                                  </strong>
+                                </span>
+
+                                <span className="text-slate-400">
+                                  Correct: {hoveredAttempt.correctCount}
+                                  {" | "}
+                                  Wrong: {hoveredAttempt.incorrectCount}
+                                </span>
+                              </div>
+                            );
+                          })()
                         ) : (
                           <div className="flex items-center justify-between">
                             <span className="text-slate-500">

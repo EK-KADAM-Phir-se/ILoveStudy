@@ -106,7 +106,8 @@ async function main() {
       optionD: q.optionD,
       correctOption: q.correctOption || 'A', // Fallback to 'A' as correctOption is required by schema
       positiveMarks: q.positiveMarks ?? (examName === 'SSC CGL' ? 2 : 4),
-      negativeMarks: q.negativeMarks ?? (examName === 'SSC CGL' ? -0.5 : -1)
+      negativeMarks: q.negativeMarks ?? (examName === 'SSC CGL' ? -0.5 : -1),
+      orderIndex: q.orderIndex !== undefined ? q.orderIndex : 0
     };
   });
 
