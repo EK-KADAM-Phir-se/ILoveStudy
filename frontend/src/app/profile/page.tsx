@@ -312,7 +312,7 @@ export default function ProfilePage() {
         {/* =========================================================
             LEFT SIDEBAR
         ========================================================= */}
-        <aside className="relative overflow-hidden rounded-[28px] border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_10px_40px_rgba(15,23,42,0.06)]">
+        <aside className="h-fit self-start relative overflow-hidden rounded-[28px] border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_10px_40px_rgba(15,23,42,0.06)]">
 
           {/* Top profile */}
           <div className="px-6 pb-6 pt-8 text-center">
@@ -390,9 +390,9 @@ export default function ProfilePage() {
 
               <div className="min-w-0">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                  School
+                  School / College
                 </p>
-                <p className="mt-0.5 truncate text-sm font-semibold text-slate-800">
+                <p className="mt-0.5 truncate text-sm font-semibold text-slate-800 dark:text-slate-200">
                   {profile?.school || "Not set"}
                 </p>
               </div>
@@ -403,7 +403,7 @@ export default function ProfilePage() {
           <div className="px-6 pb-6">
             <button
               onClick={() => setIsEditing(true)}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_6px_18px_rgba(37,99,235,0.25)] transition hover:bg-blue-700 hover:shadow-[0_8px_22px_rgba(37,99,235,0.3)]"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_6px_18px_rgba(37,99,235,0.25)] transition hover:bg-blue-700 hover:shadow-[0_8px_22px_rgba(37,99,235,0.3)] cursor-pointer"
             >
               <EditIcon />
               Edit Profile
@@ -411,7 +411,7 @@ export default function ProfilePage() {
 
             <button
               onClick={handleLogout}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-semibold text-red-500 transition hover:border-red-100 hover:bg-red-50"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/80 px-4 py-3.5 text-sm font-semibold text-red-500 transition hover:border-red-100 hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer"
             >
               <LogoutIcon />
               Log Out
@@ -419,18 +419,11 @@ export default function ProfilePage() {
 
             <button
               onClick={() => router.push("/pages/dashboard")}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 dark:bg-slate-800 border border-transparent dark:border-slate-700 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:hover:bg-slate-700 cursor-pointer"
             >
               <ArrowLeftIcon />
               Back to Dashboard
             </button>
-          </div>
-
-          {/* Decorative bottom */}
-          <div className="relative h-24 overflow-hidden bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50">
-            <div className="absolute -bottom-12 left-[-20px] h-28 w-40 rotate-[-8deg] rounded-[50%] bg-blue-100" />
-            <div className="absolute -bottom-14 left-24 h-32 w-48 rotate-[8deg] rounded-[50%] bg-indigo-100" />
-            <div className="absolute -bottom-16 right-[-30px] h-36 w-48 rotate-[-5deg] rounded-[50%] bg-blue-200/50" />
           </div>
         </aside>
 
@@ -454,7 +447,7 @@ export default function ProfilePage() {
                   Profile & Performance Analytics
                 </p>
 
-                <h2 className="mt-1 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+                <h2 className="mt-1 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
                   {isEditing ? "Edit your profile" : "Student Dashboard & Test History"}
                 </h2>
 
@@ -647,43 +640,6 @@ export default function ProfilePage() {
             </form>
           ) : (
             <>
-              {/* READ MODE: PROFILE CARDS */}
-              <div className="grid gap-5 md:grid-cols-2">
-                <ProfileCard
-                  icon={<UserIcon />}
-                  iconBg="bg-blue-50"
-                  iconColor="text-blue-600"
-                  label="Full Name"
-                  value={profile?.fullName || "Not available"}
-                />
-
-                <ProfileCard
-                  icon={<CalendarIcon />}
-                  iconBg="bg-emerald-50"
-                  iconColor="text-emerald-600"
-                  label="Age"
-                  value={profile?.age != null ? String(profile.age) : "Not set"}
-                />
-
-                <ProfileCard
-                  icon={<BookIcon />}
-                  iconBg="bg-violet-50"
-                  iconColor="text-violet-600"
-                  label="Exam Focus"
-                  value={profile?.targetExam || "Not set"}
-                />
-
-                <ProfileCard
-                  icon={<SchoolIcon />}
-                  iconBg="bg-orange-50"
-                  iconColor="text-orange-500"
-                  label="School / College"
-                  value={profile?.school || "Not set"}
-                />
-              </div>
-
-              
-
               {/* Error Reports History Section */}
               <MyErrorReports />
 

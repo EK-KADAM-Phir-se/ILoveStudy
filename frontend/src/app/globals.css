@@ -19,6 +19,30 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* ── Responsive Fluid Typography & Device Text Auto-Scaling ── */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13.5px; /* Automatically scales down all rem fonts & elements on compact mobile phones */
+  }
+}
+
+@media (min-width: 481px) and (max-width: 640px) {
+  html {
+    font-size: 14.5px; /* Scales down typography on mid-size smartphones */
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  html {
+    font-size: 15.5px; /* Optimized typography scaling for tablets */
+  }
+}
+
 /* Hide Next.js Dev Indicator Badge ("N" icon) */
 nextjs-portal {
   display: none !important;

@@ -182,21 +182,6 @@ export default function NavBar({
               <span className="hidden sm:inline">{displayName || "Profile"}</span>
             </button>
           )}
-
-          {/* Grid dots — apps menu */}
-          <button className="h-8 w-8 flex items-center justify-center rounded-full border border-gray-200 bg-gray-50 hover:bg-gray-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 transition cursor-pointer text-gray-500 dark:text-slate-400">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="5"  cy="5"  r="2" />
-              <circle cx="12" cy="5"  r="2" />
-              <circle cx="19" cy="5"  r="2" />
-              <circle cx="5"  cy="12" r="2" />
-              <circle cx="12" cy="12" r="2" />
-              <circle cx="19" cy="12" r="2" />
-              <circle cx="5"  cy="19" r="2" />
-              <circle cx="12" cy="19" r="2" />
-              <circle cx="19" cy="19" r="2" />
-            </svg>
-          </button>
         </div>
       </div>
     </header>
