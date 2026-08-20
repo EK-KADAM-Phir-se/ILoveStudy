@@ -15,7 +15,7 @@ import { API_BASE_URL } from "@/src/lib/apiConfig";
 /* ─────────────────────────── Static data ─────────────────────────── */
 const janExamDays = [22, 23, 24, 28, 29];
 
-const mainsPapersData: Record<number, { january: string[]; april: string[] }> = {
+const mainsPapersData: Record<number, { january?: string[]; february?: string[]; april?: string[] }> = {
   2026: {
     january: Array.from({ length: 10 }, (_, i) => {
       const day = janExamDays[Math.floor(i / 2)];
@@ -51,7 +51,7 @@ function JeeExamPageContent() {
 
   const [dbShifts,      setDbShifts]      = useState<any[]>([]);
   const [selectedYear,  setSelectedYear]  = useState<number | null>(null);
-  const [activeAttempt, setActiveAttempt] = useState<"january" | "april">("january");
+  const [activeAttempt, setActiveAttempt] = useState<"january" | "february" | "april">("january");
   const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
 
   const years = Array.from({ length: 6 }, (_, i) => 2026 - i);
@@ -67,13 +67,14 @@ function JeeExamPageContent() {
   }, []);
 
   /* ── helpers ── */
-  const getShifts = (year: number, attempt: "january" | "april") => {
+  const getShifts = (year: number, attempt: "january" | "february" | "april") => {
     const staticNames = mainsPapersData[year]?.[attempt] || [];
     const dbMatched   = dbShifts.filter((s: any) => {
       const d = new Date(s.date);
       return d.getUTCFullYear() === year &&
-        ((attempt === "january" && d.getUTCMonth() === 0) ||
-         (attempt === "april"   && d.getUTCMonth() === 3));
+        ((attempt === "january"  && d.getUTCMonth() === 0) ||
+         (attempt === "february" && d.getUTCMonth() === 1) ||
+         (attempt === "april"    && d.getUTCMonth() === 3));
     });
     const combined: { name: string; id?: string }[] = [];
     dbMatched.forEach((s: any)  => combined.push({ name: s.name, id: s.id }));
@@ -104,9 +105,10 @@ function JeeExamPageContent() {
   };
 
   /* modal data */
-  const modalJan = selectedYear ? getShifts(selectedYear, "january") : [];
-  const modalApr = selectedYear ? getShifts(selectedYear, "april")   : [];
-  const modalShifts = activeAttempt === "january" ? modalJan : modalApr;
+  const modalJan = selectedYear ? getShifts(selectedYear, "january")  : [];
+  const modalFeb = selectedYear ? getShifts(selectedYear, "february") : [];
+  const modalApr = selectedYear ? getShifts(selectedYear, "april")    : [];
+  const modalShifts = activeAttempt === "january" ? modalJan : activeAttempt === "february" ? modalFeb : modalApr;
 
   /* ───────────────────────────── RENDER ───────────────────────────── */
   return (
@@ -138,9 +140,10 @@ function JeeExamPageContent() {
         {years.map((year, idx) => {
           const col        = YEAR_COLORS[idx % YEAR_COLORS.length];
           const janShifts  = getShifts(year, "january");
+          const febShifts  = getShifts(year, "february");
           const aprShifts  = getShifts(year, "april");
-          const total      = isAdvanced ? 2 : janShifts.length + aprShifts.length;
-          const dbCount    = [...janShifts, ...aprShifts].filter(s => s.id).length;
+          const total      = isAdvanced ? 2 : janShifts.length + febShifts.length + aprShifts.length;
+          const dbCount    = [...janShifts, ...febShifts, ...aprShifts].filter(s => s.id).length;
 
           return (
             <button
@@ -205,7 +208,7 @@ function JeeExamPageContent() {
                   <Calendar size={18} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-gray-900 dark:text-white text-lg">{selectedYear} Papers</h2>
+                  <h2 className="font-bold text-gray-900 dark:text-slate-100 text-lg">{selectedYear} Papers</h2>
                   <p className="text-xs text-gray-500 dark:text-slate-400">
                     {isAdvanced ? "JEE Advanced" : "JEE Mains"} — Select a paper to start
                   </p>
@@ -240,14 +243,14 @@ function JeeExamPageContent() {
                 <>
                   {/* Attempt tab pills */}
                   <div className="flex gap-2">
-                    {(["january", "april"] as const).map(attempt => (
+                    {(["january", "february", "april"] as const).map(attempt => (
                       <button key={attempt} onClick={() => setActiveAttempt(attempt)}
                         className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition cursor-pointer capitalize ${
                           activeAttempt === attempt
                             ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
                             : "bg-white text-gray-500 border-gray-200 hover:border-gray-400 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
                         }`}>
-                        {attempt === "january" ? "🔵 January" : "🟠 April"}
+                        {attempt === "january" ? "🔵 January" : attempt === "february" ? "🟣 February" : "🟠 April"}
                       </button>
                     ))}
                   </div>

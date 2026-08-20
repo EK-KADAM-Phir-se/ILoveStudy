@@ -30,9 +30,10 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [selectedFilterExam, setSelectedFilterExam] = useState<string>("All");
+  const [selectedFilterExam, setSelectedFilterExam] = useState<string>("JEE Main");
   const [hoveredAttempt, setHoveredAttempt] = useState<TestAttemptItem | null>(null);
   const [reviewAttemptId, setReviewAttemptId] = useState<string | null>(null);
+  const [showAllAttempts, setShowAllAttempts] = useState<boolean>(false);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -171,7 +172,7 @@ export default function ProfilePage() {
 
   // Dynamically generate filter tabs (includes default exams plus any attended exams like SSC, UPSC, GATE etc.)
   const dynamicFilterTabs = React.useMemo(() => {
-    const baseTabs = ["All", "JEE Main", "JEE Advanced", "NEET"];
+    const baseTabs = ["JEE Main", "JEE Advanced", "NEET"];
     const extraExams: string[] = [];
 
     const normBase = baseTabs.map((t) => t.toLowerCase().replace(/s$/, "").trim());
@@ -207,19 +208,19 @@ export default function ProfilePage() {
     return [...baseTabs, ...extraExams];
   }, [performance]);
 
-  // Filter attempts strictly by selected exam
+  // Filter attempts strictly by selected exam and sort most recent first
   const filteredAttempts = React.useMemo(() => {
     if (!performance?.attempts) return [];
 
-    if (selectedFilterExam === "All") {
-      return performance.attempts;
+    let list = performance.attempts;
+    if (selectedFilterExam !== "All") {
+      const selectedExam = normalizeExamName(selectedFilterExam);
+      list = list.filter((item) => normalizeExamName(item.examName) === selectedExam);
     }
 
-    const selectedExam = normalizeExamName(selectedFilterExam);
-
-    return performance.attempts.filter((item) => {
-      return normalizeExamName(item.examName) === selectedExam;
-    });
+    return [...list].sort(
+      (a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
+    );
   }, [performance, selectedFilterExam]);
 
   // Calculate highest score & max marks in filtered view
@@ -838,7 +839,9 @@ export default function ProfilePage() {
                       <div className="relative h-[330px] w-full overflow-hidden rounded-2xl border border-slate-800 bg-[#080f23] px-2 pt-5 sm:px-4">
 
                         {(() => {
-                          const chartAttempts = filteredAttempts;
+                          const chartAttempts = [...filteredAttempts].sort(
+                            (a, b) => new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime()
+                          );
 
                           const chartWidth = 1000;
                           const chartHeight = 250;
@@ -1204,64 +1207,77 @@ export default function ProfilePage() {
                     </div>
 
                     {filteredAttempts.length > 0 ? (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs">
-                          <thead className="bg-slate-50 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
-                            <tr>
-                              <th className="px-6 py-3">Test Name / Shift</th>
-                              <th className="px-6 py-3">Exam Type</th>
-                              <th className="px-6 py-3">Date</th>
-                              <th className="px-6 py-3">Score / Max</th>
-                              <th className="px-6 py-3">Accuracy %</th>
-                              <th className="px-6 py-3 text-right">Action</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-200">
-                            {filteredAttempts.map((item) => (
-                              <tr key={item.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition">
-                                <td className="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">
-                                  {item.shiftName}
-                                </td>
-                                <td className="px-6 py-4">
-                                  <span className="rounded-lg bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 text-[11px] font-bold text-blue-600 dark:text-blue-400">
-                                    {item.examName}
-                                  </span>
-                                </td>
-                                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">
-                                  {new Date(item.submittedAt).toLocaleDateString("en-IN", {
-                                    day: "numeric",
-                                    month: "short",
-                                    year: "numeric",
-                                  })}
-                                </td>
-                                <td className="px-6 py-4 font-extrabold text-slate-900 dark:text-slate-100">
-                                  {item.score} <span className="text-slate-400 font-normal">/ {item.maxMarks}</span>
-                                </td>
-                                <td className="px-6 py-4">
-                                  <span
-                                    className={`rounded-full px-3 py-1 text-[11px] font-bold ${item.percentage >= 70
-                                        ? "bg-emerald-50 text-emerald-600"
-                                        : item.percentage >= 40
-                                          ? "bg-amber-50 text-amber-600"
-                                          : "bg-rose-50 text-rose-600"
-                                      }`}
-                                  >
-                                    {item.percentage}%
-                                  </span>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                  <button
-                                    onClick={() => setReviewAttemptId(item.id)}
-                                    className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition cursor-pointer"
-                                  >
-                                    Review &rarr;
-                                  </button>
-                                </td>
+                      <>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left text-xs">
+                            <thead className="bg-slate-50 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                              <tr>
+                                <th className="px-6 py-3">Test Name / Shift</th>
+                                <th className="px-6 py-3">Exam Type</th>
+                                <th className="px-6 py-3">Date</th>
+                                <th className="px-6 py-3">Score / Max</th>
+                                <th className="px-6 py-3">Accuracy %</th>
+                                <th className="px-6 py-3 text-right">Action</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-200">
+                              {(showAllAttempts ? filteredAttempts : filteredAttempts.slice(0, 5)).map((item) => (
+                                <tr key={item.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition">
+                                  <td className="px-6 py-4 font-bold text-slate-900 dark:text-slate-100">
+                                    {item.shiftName}
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <span className="rounded-lg bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 text-[11px] font-bold text-blue-600 dark:text-blue-400">
+                                      {item.examName}
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 text-slate-500 dark:text-slate-400">
+                                    {new Date(item.submittedAt).toLocaleDateString("en-IN", {
+                                      day: "numeric",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
+                                  </td>
+                                  <td className="px-6 py-4 font-extrabold text-slate-900 dark:text-slate-100">
+                                    {item.score} <span className="text-slate-400 font-normal">/ {item.maxMarks}</span>
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <span
+                                      className={`rounded-full px-3 py-1 text-[11px] font-bold ${item.percentage >= 70
+                                          ? "bg-emerald-50 text-emerald-600"
+                                          : item.percentage >= 40
+                                            ? "bg-amber-50 text-amber-600"
+                                            : "bg-rose-50 text-rose-600"
+                                        }`}
+                                    >
+                                      {item.percentage}%
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 text-right">
+                                    <button
+                                      onClick={() => setReviewAttemptId(item.id)}
+                                      className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition cursor-pointer"
+                                    >
+                                      Review &rarr;
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {filteredAttempts.length > 5 && (
+                          <div className="px-6 py-3.5 bg-slate-50/80 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 text-center">
+                            <button
+                              onClick={() => setShowAllAttempts(prev => !prev)}
+                              className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition cursor-pointer inline-flex items-center gap-1.5 py-1.5 px-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs hover:shadow-sm"
+                            >
+                              <span>{showAllAttempts ? "Show Less ▲" : `Show More (${filteredAttempts.length - 5} More Tests) ▼`}</span>
+                            </button>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="p-8 text-center text-slate-400 text-xs">
                         No test history found. Attend an exam from the dashboard to start tracking!
