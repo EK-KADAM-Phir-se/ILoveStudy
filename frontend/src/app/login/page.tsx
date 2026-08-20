@@ -1,11 +1,22 @@
 "use client";
 
+import { useEffect } from 'react';
 import Login from '../components/Login';
 import { useRouter } from 'next/navigation';
-import { enableGuestMode } from '@/src/lib/authUtils';
+import { enableGuestMode, isGuestUser } from '@/src/lib/authUtils';
 
 export default function LoginPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      const isGuest = isGuestUser();
+      if (token || isGuest) {
+        router.push("/pages/dashboard");
+      }
+    }
+  }, [router]);
 
   const handleSkip = () => {
     enableGuestMode();
