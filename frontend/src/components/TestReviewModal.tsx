@@ -440,8 +440,18 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                             { key: "D", value: activeQuestion.optionD },
                           ].map((opt) => {
                             const cleanedVal = cleanText(opt.value);
-                            const isCorrectOption = activeQuestion.correctOption?.toUpperCase() === opt.key;
-                            const isUserSelected = activeQuestion.userAnswer?.toUpperCase() === opt.key || activeQuestion.userAnswer === getNumericVal(cleanedVal);
+                            const correctKeys = (activeQuestion.correctOption || "")
+                              .toUpperCase()
+                              .split(";")
+                              .map((k: string) => k.trim())
+                              .filter(Boolean);
+                            const isCorrectOption = correctKeys.includes(opt.key);
+                            const userSelectedKeys = (activeQuestion.userAnswer || "")
+                              .toUpperCase()
+                              .split(";")
+                              .map((k: string) => k.trim())
+                              .filter(Boolean);
+                            const isUserSelected = userSelectedKeys.includes(opt.key) || userSelectedKeys.includes(getNumericVal(cleanedVal));
 
                             let optionCardStyle = "border-slate-200 bg-white text-slate-800";
                             let badge = null;

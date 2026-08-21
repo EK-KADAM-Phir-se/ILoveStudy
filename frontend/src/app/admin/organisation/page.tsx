@@ -912,9 +912,9 @@ export default function AdminOrganisationPage() {
 
               {testRequests.length === 0 ? (
                 <div className="py-16 text-center text-slate-400 space-y-3">
-                  <Inbox size={40} className="mx-auto text-slate-600" />
-                  <p className="text-sm font-semibold">No test requests submitted yet.</p>
-                  <p className="text-xs text-slate-500">School and college organisers can submit test requests with PDF attachments from their portal.</p>
+                  <Inbox size={40} className="mx-auto text-indigo-400/80" />
+                  <p className="text-base font-bold text-white">No test requests submitted yet.</p>
+                  <p className="text-xs text-slate-300 max-w-md mx-auto font-medium leading-relaxed">School and college organisers can submit test requests with PDF attachments from their portal.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

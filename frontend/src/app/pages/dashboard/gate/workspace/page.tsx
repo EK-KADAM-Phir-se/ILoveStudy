@@ -294,6 +294,9 @@ function GateWorkspaceContent() {
   useEffect(() => {
     if (currentQ) {
       setVisitedQuestions((prev) => new Set(prev).add(currentQ.id));
+      if (currentQ.subject) {
+        setSelectedSection(currentQ.subject);
+      }
     }
   }, [currentQuestionIndex, currentQ]);
 
@@ -548,12 +551,19 @@ function GateWorkspaceContent() {
   const isNumerical = currentQ && (!currentQ.optionA || !currentQ.optionB);
   const isMsq = currentQ && currentQ.correctOption && currentQ.correctOption.includes(";");
 
+  const sectionNames = Array.from(new Set(questions.map((q: any) => q.subject))).filter(Boolean) as string[];
+  const defaultSecondSection = branch === 'CS' ? "Computer Science & IT" : branch === 'ME' ? "Mechanical Engineering" : branch;
+  const sectionsToDisplay = sectionNames.length > 0
+    ? sectionNames
+    : ["General Aptitude", defaultSecondSection];
+
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans select-none overflow-hidden h-screen">
       
       {/* 1. Official TCS iON Top Bar */}
       <header className="bg-[#1c1f24] text-white px-4 py-1.5 flex items-center justify-between text-xs border-b border-slate-800 shrink-0">
         <div className="flex items-center gap-2">
+          <img src="/logo.jpeg" alt="ILoveStudy Logo" className="w-5 h-5 rounded object-cover border border-slate-700" />
           <span className="text-[#fbbf24] font-bold text-xs tracking-tight">Gate Pattern</span>
         </div>
 
@@ -585,7 +595,7 @@ function GateWorkspaceContent() {
       <div className="bg-[#e5e7eb] border-b border-slate-300 px-4 py-1.5 flex items-center justify-between text-xs shrink-0">
         <div className="flex items-center gap-2">
           <span className="bg-[#3b82f6] text-white font-bold px-3 py-1 rounded text-xs inline-flex items-center gap-1 shadow-xs">
-            <span>{branch === 'ME' ? 'Mechanical Engineering' : branch}</span>
+            <span>{branch === 'CS' ? 'Computer Science & IT' : branch === 'ME' ? 'Mechanical Engineering' : branch}</span>
             <Info size={12} className="cursor-pointer" />
           </span>
         </div>
@@ -611,12 +621,18 @@ function GateWorkspaceContent() {
 
       {/* 3. Section Tabs Bar */}
       <div className="bg-[#f3f4f6] border-b border-slate-300 px-4 py-0 flex items-center shrink-0">
-        {["General Aptitude", "Mechanical Engineering"].map((sec) => {
+        {sectionsToDisplay.map((sec) => {
           const isActive = selectedSection === sec;
           return (
             <button
               key={sec}
-              onClick={() => setSelectedSection(sec)}
+              onClick={() => {
+                setSelectedSection(sec);
+                const firstIdx = questions.findIndex((q: any) => q.subject === sec);
+                if (firstIdx !== -1) {
+                  setCurrentQuestionIndex(firstIdx);
+                }
+              }}
               className={`px-4 py-2 text-xs font-bold transition border-r border-slate-300 cursor-pointer ${
                 isActive
                   ? "bg-[#3b82f6] text-white shadow-xs"
@@ -669,7 +685,7 @@ function GateWorkspaceContent() {
                   </div>
                 )}
 
-                {/* NAT vs MCQ Options */}
+                {/* NAT vs MSQ vs MCQ Options */}
                 {isNumerical ? (
                   <div className="pt-2 space-y-2">
                     <label className="text-xs font-bold text-slate-700 block">
@@ -685,6 +701,13 @@ function GateWorkspaceContent() {
                   </div>
                 ) : (
                   <div className="space-y-2.5 pt-2">
+                    {/* MSQ Notice */}
+                    {isMsq && (
+                      <div className="flex items-center gap-2 bg-teal-50 border border-teal-300 rounded px-3 py-1.5 text-xs font-semibold text-teal-800 mb-1">
+                        <span className="text-teal-600 font-bold text-sm">⊞</span>
+                        <span><strong>MSQ:</strong> Multiple answers may be correct. Select all that apply. Full marks only if all correct options are chosen.</span>
+                      </div>
+                    )}
                     {[
                       { key: 'A', text: currentQ.optionA },
                       { key: 'B', text: currentQ.optionB },
@@ -692,21 +715,46 @@ function GateWorkspaceContent() {
                       { key: 'D', text: currentQ.optionD },
                     ].map(({ key, text }) => {
                       if (!text) return null;
-                      const isSelected = answers[currentQ.id] === key;
+                      // For MSQ: answers stored as "A;C", for MCQ: stored as "A"
+                      const selectedKeys = isMsq
+                        ? (answers[currentQ.id] || '').split(';').map((k: string) => k.trim()).filter(Boolean)
+                        : [];
+                      const isSelected = isMsq ? selectedKeys.includes(key) : answers[currentQ.id] === key;
+
+                      const handleMsqToggle = () => {
+                        const current = (answers[currentQ.id] || '').split(';').map((k: string) => k.trim()).filter(Boolean);
+                        const next = current.includes(key)
+                          ? current.filter((k: string) => k !== key)
+                          : [...current, key].sort();
+                        selectOption(currentQ.id, next.join(';'));
+                      };
 
                       return (
                         <label
                           key={key}
-                          onClick={() => selectOption(currentQ.id, key)}
-                          className="flex items-start gap-3 p-2.5 rounded hover:bg-blue-50/50 cursor-pointer transition text-xs text-slate-800"
+                          onClick={isMsq ? handleMsqToggle : () => selectOption(currentQ.id, key)}
+                          className={`flex items-start gap-3 p-2.5 rounded cursor-pointer transition text-xs text-slate-800 ${
+                            isSelected
+                              ? 'bg-blue-50 border border-blue-400'
+                              : 'hover:bg-blue-50/50 border border-transparent'
+                          }`}
                         >
-                          <input
-                            type="radio"
-                            name={`q_${currentQ.id}`}
-                            checked={isSelected}
-                            onChange={() => {}}
-                            className="mt-0.5 accent-blue-600 h-4 w-4 shrink-0"
-                          />
+                          {isMsq ? (
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => {}}
+                              className="mt-0.5 accent-blue-600 h-4 w-4 shrink-0 rounded"
+                            />
+                          ) : (
+                            <input
+                              type="radio"
+                              name={`q_${currentQ.id}`}
+                              checked={isSelected}
+                              onChange={() => {}}
+                              className="mt-0.5 accent-blue-600 h-4 w-4 shrink-0"
+                            />
+                          )}
                           <div className="flex-1 font-medium">
                             <LatexRenderer text={text} />
                           </div>

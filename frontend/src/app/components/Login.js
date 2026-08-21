@@ -6,6 +6,7 @@ import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPass
 import { auth, googleProvider } from '../firebase';
 import { syncUserProfile } from '../../lib/profileApi';
 import { enableGuestMode, clearGuestMode } from '../../lib/authUtils';
+import { API_BASE_URL } from '../../lib/apiConfig';
 
 const Login = () => {
   const router = useRouter();
@@ -13,6 +14,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -21,25 +23,26 @@ const Login = () => {
     const userEmail = firebaseUser.email;
     if (!userEmail) throw new Error('No email found on account.');
 
-    const fullName = firebaseUser.displayName || userEmail.split('@')[0];
+    const displayName = firebaseUser.displayName || userEmail.split('@')[0];
 
     localStorage.setItem('token', token);
+    localStorage.setItem('backendToken', token);
+    localStorage.setItem('userEmail', userEmail);
+    localStorage.setItem('displayName', displayName);
+
     const synced = await syncUserProfile({
       email: userEmail,
-      fullName,
+      fullName: displayName,
       avatarUrl: firebaseUser.photoURL,
     });
     if (synced?.token) {
       localStorage.setItem('token', synced.token);
+      localStorage.setItem('backendToken', synced.token);
     }
   };
 
-  const handleGuestTour = () => {
-    enableGuestMode();
-    router.push('/pages/dashboard');
-  };
-
-  const handleSubmit = async (e) => {
+  // Password Login / Register
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -106,19 +109,20 @@ const Login = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm font-medium text-center">
-            {error}
-          </div>
-        )}
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm font-medium text-center mb-4">
+          {error}
+        </div>
+      )}
 
+      {/* PASSWORD AUTH FLOW */}
+      <form onSubmit={handlePasswordSubmit} className="flex flex-col space-y-4">
         <input
-          type="text"
+          type="email"
           placeholder="Email Address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-500 p-3 rounded-lg focus:outline-none focus:border-blue-500/80 focus:ring-1 focus:ring-blue-500/30 transition-all duration-200 w-full text-sm"
+          className="bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-500 p-3 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all duration-200 w-full text-sm"
           required
         />
 
@@ -127,29 +131,38 @@ const Login = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-500 p-3 rounded-lg focus:outline-none focus:border-blue-500/80 focus:ring-1 focus:ring-blue-500/30 transition-all duration-200 w-full text-sm"
+          className="bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-500 p-3 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all duration-200 w-full text-sm"
           required
         />
 
-        {/* Conditionally show Confirm Password if registering */}
         {isRegistering && (
           <input
             type="password"
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-500 p-3 rounded-lg focus:outline-none focus:border-blue-500/80 focus:ring-1 focus:ring-blue-500/30 transition-all duration-200 w-full text-sm"
+            className="bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-500 p-3 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all duration-200 w-full text-sm"
             required
           />
         )}
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading}
           className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:via-indigo-500 hover:to-violet-500 disabled:opacity-60 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 shadow-[0_0_15px_rgba(79,70,229,0.2)] hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] transform hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] cursor-pointer text-sm"
         >
           {loading ? 'Please wait...' : isRegistering ? 'Sign Up' : 'Sign In'}
         </button>
+
+        <div className="text-center mt-2">
+          <button
+            type="button"
+            onClick={() => { setIsRegistering(!isRegistering); setError(''); }}
+            className="text-indigo-400 hover:text-indigo-300 hover:underline text-xs font-semibold transition cursor-pointer"
+          >
+            {isRegistering ? 'Already have an account? Log In' : "Don't have an account? Register"}
+          </button>
+        </div>
       </form>
 
       <div className="flex items-center my-4">
@@ -172,17 +185,8 @@ const Login = () => {
             <path d="M12,7.35c1.32,0 2.5,0.45 3.44,1.35l2.58,-2.58c-1.57,-1.46 -3.61,-2.35 -6.02,-2.35c-3.56,0 -6.61,1.85 -8.1,4.81l4.06,3.16c0.71,-2.12 2.7,-3.7 5.04,-3.7z" fill="#EA4335" />
           </g>
         </svg>
-        Sign in with Google
+        Continue with Google
       </button>
-
-      <div className="text-center mt-5">
-        <button
-          onClick={() => { setIsRegistering(!isRegistering); setError(''); }}
-          className="text-indigo-400 hover:text-indigo-300 hover:underline text-sm font-semibold transition cursor-pointer"
-        >
-          {isRegistering ? 'Already have an account? Log In' : "Don't have an account? Register"}
-        </button>
-      </div>
     </div>
   );
 };

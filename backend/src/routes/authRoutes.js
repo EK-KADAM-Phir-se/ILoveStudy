@@ -6,6 +6,8 @@ const protect = require('../middleware/authMiddleware'); // Import your new midd
 // Public Routes
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.post('/send-otp', authController.sendOTP);
+router.post('/verify-otp', authController.verifyOTPAndLogin);
 
 // Protected Route (Only accessible with a valid JWT!)
 router.get('/me', protect, (req, res) => {

@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 860" width="100%" height="100%">
+  <rect width="700" height="860" fill="#ffffff"/>
+
+  <!-- ==================== TOP ROW: QUESTION FIGURES ==================== -->
+  <rect x="10" y="10" width="680" height="155" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- Figure (I): Plain square -->
+  <rect x="35" y="22" width="115" height="100" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"/>
+  <text x="92" y="148" font-family="serif" font-size="15" text-anchor="middle" fill="#1a1a1a">(I)</text>
+
+  <!-- Figure (II): Square with dashed diagonal TL→BR and fold arrow -->
+  <rect x="210" y="22" width="115" height="100" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="210" y1="22" x2="325" y2="122" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="6,5"/>
+  <!-- Curved counterclockwise arrow indicating fold -->
+  <path d="M 240,90 Q 252,58 278,62" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+  <polygon points="278,62 269,56 271,65" fill="#1a1a1a"/>
+  <text x="267" y="148" font-family="serif" font-size="15" text-anchor="middle" fill="#1a1a1a">(II)</text>
+
+  <!-- Figure (III): Triangle after first fold (right triangle, hyp TL-BR) with another fold arrow -->
+  <polygon points="395,22 520,22 520,122" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"/>
+  <line x1="395" y1="22" x2="520" y2="122" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="6,5"/>
+  <!-- Curved fold arrow inside -->
+  <path d="M 440,65 Q 448,43 468,50" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+  <polygon points="468,50 459,44 461,53" fill="#1a1a1a"/>
+  <text x="457" y="148" font-family="serif" font-size="15" text-anchor="middle" fill="#1a1a1a">(III)</text>
+
+  <!-- Figure (IV): Downward chevron / inverted-V with cut marks -->
+  <!-- Chevron shape: base at top, apex at bottom -->
+  <polygon points="563,22 668,22 615,90" fill="#ffffff" stroke="#1a1a1a" stroke-width="2"/>
+  <!-- ▲ solid triangle cut at top-center (pointing UP) -->
+  <polygon points="607,22 623,22 615,10" fill="#1a1a1a"/>
+  <!-- ■ small square cut near top-center-right -->
+  <rect x="632" y="27" width="11" height="11" fill="#1a1a1a"/>
+  <!-- small dash/rect at right side -->
+  <rect x="655" y="42" width="9" height="7" fill="#1a1a1a"/>
+  <text x="615" y="148" font-family="serif" font-size="15" text-anchor="middle" fill="#1a1a1a">(IV)</text>
+
+  <!-- ==================== OPTION (A) ==================== -->
+  <rect x="10" y="170" width="680" height="155" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- Option square -->
+  <rect x="35" y="183" width="155" height="135" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- ▲ Outward at top center -->
+  <polygon points="100,183 115,183 107,172" fill="#1a1a1a"/>
+  <!-- ▼ Outward at bottom center -->
+  <polygon points="100,318 115,318 107,330" fill="#1a1a1a"/>
+  <!-- ◄ Outward at left center -->
+  <polygon points="35,242 35,256 22,249" fill="#1a1a1a"/>
+  <!-- ► Outward at right center -->
+  <polygon points="190,242 190,256 203,249" fill="#1a1a1a"/>
+  <!-- ■ small square near top-LEFT (inside) -->
+  <rect x="43" y="191" width="13" height="13" fill="#1a1a1a"/>
+  <!-- ■ small square near bottom-RIGHT (inside) -->
+  <rect x="169" y="296" width="13" height="13" fill="#1a1a1a"/>
+  <!-- ⌐ L-bracket top-RIGHT corner -->
+  <polyline points="155,183 190,183 190,218" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+  <!-- └ L-bracket bottom-LEFT corner -->
+  <polyline points="35,283 35,318 70,318" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+  <text x="22" y="262" font-family="serif" font-size="16" font-weight="bold" fill="#1a1a1a">(A)</text>
+
+  <!-- ==================== OPTION (B) ==================== -->
+  <rect x="10" y="330" width="680" height="155" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <rect x="35" y="343" width="155" height="135" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- ▲ top -->
+  <polygon points="100,343 115,343 107,332" fill="#1a1a1a"/>
+  <!-- ▼ bottom -->
+  <polygon points="100,478 115,478 107,490" fill="#1a1a1a"/>
+  <!-- ◄ left -->
+  <polygon points="35,402 35,416 22,409" fill="#1a1a1a"/>
+  <!-- ► right -->
+  <polygon points="190,402 190,416 203,409" fill="#1a1a1a"/>
+  <!-- ◆ diamond near top-LEFT (inside) -->
+  <polygon points="52,348 62,358 52,368 42,358" fill="#1a1a1a"/>
+  <!-- ◆ diamond near bottom-RIGHT (inside) -->
+  <polygon points="173,452 183,462 173,472 163,462" fill="#1a1a1a"/>
+  <!-- ⌐ top-right bracket -->
+  <polyline points="155,343 190,343 190,378" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+  <!-- └ bottom-left bracket -->
+  <polyline points="35,443 35,478 70,478" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+  <text x="22" y="422" font-family="serif" font-size="16" font-weight="bold" fill="#1a1a1a">(B)</text>
+
+  <!-- ==================== OPTION (C) ==================== -->
+  <rect x="10" y="490" width="680" height="155" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <rect x="35" y="503" width="155" height="135" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- ▲ top -->
+  <polygon points="100,503 115,503 107,492" fill="#1a1a1a"/>
+  <!-- ▼ bottom -->
+  <polygon points="100,638 115,638 107,650" fill="#1a1a1a"/>
+  <!-- ◄ left -->
+  <polygon points="35,562 35,576 22,569" fill="#1a1a1a"/>
+  <!-- ► right -->
+  <polygon points="190,562 190,576 203,569" fill="#1a1a1a"/>
+  <!-- ■ small square near top-LEFT (inside) -->
+  <rect x="43" y="511" width="13" height="13" fill="#1a1a1a"/>
+  <!-- ■ small square near bottom-RIGHT (inside) -->
+  <rect x="169" y="616" width="13" height="13" fill="#1a1a1a"/>
+  <!-- ⌐ top-right bracket (same side as A) -->
+  <polyline points="155,503 190,503 190,538" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+  <!-- └ bottom-left bracket -->
+  <polyline points="35,603 35,638 70,638" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+  <text x="22" y="582" font-family="serif" font-size="16" font-weight="bold" fill="#1a1a1a">(C)</text>
+
+  <!-- ==================== OPTION (D) ==================== -->
+  <rect x="10" y="650" width="680" height="155" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- Option (D) square is SMALLER -->
+  <rect x="35" y="665" width="135" height="125" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <!-- ▲ top -->
+  <polygon points="94,665 107,665 100,654" fill="#1a1a1a"/>
+  <!-- ▼ bottom -->
+  <polygon points="94,790 107,790 100,802" fill="#1a1a1a"/>
+  <!-- ◄ left -->
+  <polygon points="35,720 35,733 23,726" fill="#1a1a1a"/>
+  <!-- ► right -->
+  <polygon points="170,720 170,733 182,726" fill="#1a1a1a"/>
+  <!-- ■ center-left (NOT at corner — positioned roughly center-left of square) -->
+  <rect x="60" y="718" width="13" height="13" fill="#1a1a1a"/>
+  <!-- ⌐ top-right bracket -->
+  <polyline points="135,665 170,665 170,700" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+  <!-- └ bottom-left bracket -->
+  <polyline points="35,755 35,790 70,790" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+  <text x="22" y="740" font-family="serif" font-size="16" font-weight="bold" fill="#1a1a1a">(D)</text>
+</svg>

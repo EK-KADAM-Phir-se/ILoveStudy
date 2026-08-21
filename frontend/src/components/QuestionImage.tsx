@@ -16,6 +16,15 @@ export function getQuestionSupabaseUrl(
   examName: string = "Jee Mains",
   year?: number | string | null
 ): { supabaseUrl: string; localFallbackUrl: string } {
+  if (
+    imageUrl.startsWith("/") ||
+    imageUrl.startsWith("http://") ||
+    imageUrl.startsWith("https://") ||
+    imageUrl.startsWith("data:")
+  ) {
+    return { supabaseUrl: imageUrl, localFallbackUrl: imageUrl };
+  }
+
   // Clean filename: extract just the file name (e.g. 9sep_shift2_q1_question.png)
   let cleanFileName = imageUrl;
   if (cleanFileName.includes("/")) {

@@ -19,14 +19,10 @@ export default function GateDashboard() {
 
   const branches = [
     { code: "CS", name: "Computer Science & IT", icon: "💻" },
-    { code: "DA", name: "Data Science & AI", icon: "🤖" },
-    { code: "ECE", name: "Electronics & Communication", icon: "📡" },
-    { code: "EE", name: "Electrical Engineering", icon: "⚡" },
     { code: "ME", name: "Mechanical Engineering", icon: "⚙️" },
-    { code: "CE", name: "Civil Engineering", icon: "🏗️" },
   ];
 
-  const years = [2026, 2025, 2024, 2023, 2022];
+  const years = [2025, 2024];
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/exams`)
@@ -39,11 +35,6 @@ export default function GateDashboard() {
   }, []);
 
   const getGatePapers = () => {
-    const defaultPapers = [
-      { id: `gate-${selectedBranch.toLowerCase()}-${selectedYear}-s1`, name: `GATE ${selectedYear} ${selectedBranch} - Set 1 (Morning Shift)`, questions: 65, duration: "3 Hours", totalMarks: 100 },
-      { id: `gate-${selectedBranch.toLowerCase()}-${selectedYear}-s2`, name: `GATE ${selectedYear} ${selectedBranch} - Set 2 (Afternoon Shift)`, questions: 65, duration: "3 Hours", totalMarks: 100 }
-    ];
-
     if (dbShifts.length > 0) {
       const matched = dbShifts.filter((s: any) => {
         const hasBranch = s.name.toUpperCase().includes(selectedBranch.toUpperCase()) || 
@@ -63,7 +54,7 @@ export default function GateDashboard() {
       }
     }
 
-    return defaultPapers;
+    return [];
   };
 
   const handleLaunchWorkspace = (paper: any) => {
@@ -105,7 +96,7 @@ export default function GateDashboard() {
           {/* Branch Selector Grid */}
           <div className="space-y-3">
             <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Select Engineering Discipline / Branch</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
+            <div className="grid grid-cols-2 gap-3 max-w-md">
               {branches.map(b => (
                 <button
                   key={b.code}

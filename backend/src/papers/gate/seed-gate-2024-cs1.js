@@ -3,7 +3,7 @@ const path = require('path');
 const prisma = require('../../lib/prisma');
 
 async function seed() {
-  const jsonPath = path.join(__dirname, 'GATE 2025 Mechanical Engineering (ME).json');
+  const jsonPath = path.join(__dirname, 'GATE 2024 Computer Science and Information Technology 1 (CS1).json');
   const paperData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 
   let gateExam = await prisma.exam.findFirst({

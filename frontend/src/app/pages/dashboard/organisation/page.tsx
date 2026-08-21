@@ -514,8 +514,8 @@ export default function OrganisationStudentPage() {
                         required
                       />
                     </div>
-                    <p className="text-xs text-slate-500 mt-2 flex items-center gap-1.5">
-                      <HelpCircle size={13} />
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
+                      <HelpCircle size={13} className="text-blue-500 shrink-0" />
                       Ask your teacher or institute administrator if you don&apos;t have an access code.
                     </p>
                   </div>
@@ -659,37 +659,37 @@ export default function OrganisationStudentPage() {
 
             {/* Feature Pillars */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl mt-12">
-              <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 flex items-start gap-3.5">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-start gap-3.5 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                   <KeyRound size={18} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Unique Code Access</h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Unique Code Access</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed font-medium">
                     Take scheduled exams securely created by your institution using dedicated access keys.
                   </p>
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 flex items-start gap-3.5">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-start gap-3.5 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
                   <Clock size={18} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Timed Proctored Exam</h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Timed Proctored Exam</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed font-medium">
                     Experience realistic CBT exam timers with LaTeX math formulas and full question palettes.
                   </p>
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 flex items-start gap-3.5">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+              <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-start gap-3.5 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                   <Award size={18} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Instant Marks & Analytics</h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Instant Marks & Analytics</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed font-medium">
                     Receive comprehensive scorecards, solutions, and reports automatically shared with your school.
                   </p>
                 </div>
@@ -761,9 +761,9 @@ export default function OrganisationStudentPage() {
                 </div>
               ) : organiserRequests.length === 0 ? (
                 <div className="py-16 text-center text-slate-400 space-y-3">
-                  <FileText size={40} className="mx-auto text-slate-600" />
-                  <p className="text-sm font-semibold text-slate-200">No test requests submitted by your account yet.</p>
-                  <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                  <FileText size={40} className="mx-auto text-indigo-400/80" />
+                  <p className="text-base font-bold text-white">No test requests submitted by your account yet.</p>
+                  <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed font-medium">
                     Test requests and access codes are strictly private to the organizer who created them and platform administrators. Click &quot;+ Request New Test (Upload PDF)&quot; above to submit a question paper.
                   </p>
                 </div>

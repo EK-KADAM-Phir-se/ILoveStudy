@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 380" width="100%" height="100%">
+  <rect width="500" height="380" fill="#ffffff"/>
+
+  <!-- Processor -->
+  <rect x="180" y="30" width="140" height="40" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="250" y="55" font-family="sans-serif" font-size="15" font-weight="bold" text-anchor="middle">Processor</text>
+
+  <!-- L1 Cache -->
+  <rect x="140" y="105" width="220" height="55" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="250" y="125" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">L1 cache</text>
+  <text x="250" y="142" font-family="sans-serif" font-size="12" text-anchor="middle">Hit rate = 95%, Access time = 10 ns</text>
+
+  <!-- L2 Cache -->
+  <rect x="100" y="195" width="300" height="55" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="250" y="215" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">L2 cache</text>
+  <text x="250" y="232" font-family="sans-serif" font-size="12" text-anchor="middle">Hit rate = 85%, Access time (L1 miss penalty) = 20 ns</text>
+
+  <!-- Main Memory -->
+  <rect x="100" y="285" width="300" height="55" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="250" y="305" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Main Memory</text>
+  <text x="250" y="322" font-family="sans-serif" font-size="12" text-anchor="middle">Access time (L1 &amp; L2 miss penalty) = 200 ns</text>
+
+  <!-- Connectors -->
+  <line x1="250" y1="70" x2="250" y2="105" stroke="#0f172a" stroke-width="2"/>
+  <line x1="250" y1="160" x2="250" y2="195" stroke="#0f172a" stroke-width="2"/>
+  <line x1="250" y1="250" x2="250" y2="285" stroke="#0f172a" stroke-width="2"/>
+</svg>

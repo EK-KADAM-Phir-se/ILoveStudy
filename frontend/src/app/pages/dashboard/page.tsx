@@ -319,13 +319,23 @@ export default function GeneralDashboard() {
 
       {/* ── Hero ── */}
       <div className="text-center pt-14 pb-10 px-4 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-colors">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-slate-100 leading-tight mb-4">
+        {/* Brand logo text */}
+        <div className="flex flex-col items-center mb-6">
+          <span className="text-5xl md:text-6xl font-extrabold tracking-tight leading-none">
+            <span className="text-[#1a2744] dark:text-white">ILove</span><span className="text-[#2563EB]">Study</span>
+          </span>
+          <span className="mt-1.5 text-[11px] md:text-xs font-bold tracking-[0.22em] uppercase text-[#1a2744]/60 dark:text-slate-400">
+            LEARN&nbsp;&bull;&nbsp;PRACTICE&nbsp;&bull;&nbsp;SUCCEED
+          </span>
+        </div>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-slate-100 leading-tight mb-4">
           Every exam tool you need<br />in one place
         </h1>
         <p className="text-gray-500 dark:text-slate-400 text-lg max-w-xl mx-auto leading-relaxed">
           Practice JEE, SSC and more with real past papers. Upload your own PDF for instant AI-powered custom tests.
         </p>
       </div>
+
 
 
 

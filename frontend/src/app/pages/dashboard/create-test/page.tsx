@@ -17,47 +17,26 @@ import { API_BASE_URL } from "@/src/lib/apiConfig";
 const TOOLS = [
   {
     id: "pdf",
-    category: "upload",
     icon: "/icons/pdf.svg",
     color: "from-red-500 to-rose-600",
-    bg: "bg-red-50",
-    border: "border-red-100",
     title: "Upload PDF",
     description: "Upload any question paper PDF. We extract text and diagrams automatically.",
   },
   {
     id: "json",
-    category: "import",
     icon: "/icons/json.svg",
     color: "from-indigo-500 to-blue-600",
-    bg: "bg-indigo-50",
-    border: "border-indigo-100",
     title: "Import JSON",
     description: "Drop a structured JSON file of questions for instant, offline test creation.",
   },
   {
     id: "text",
-    category: "ai",
     icon: "/icons/text.svg",
     color: "from-violet-500 to-purple-600",
-    bg: "bg-violet-50",
-    border: "border-violet-100",
     title: "Paste & Parse",
     description: "Paste raw question text. Groq Llama 3.1 extracts MCQs and formats LaTeX.",
   },
-  {
-    id: "jee",
-    category: "library",
-    icon: "/icons/jee.svg",
-    color: "from-amber-500 to-orange-600",
-    bg: "bg-amber-50",
-    border: "border-amber-100",
-    title: "JEE Main Papers",
-    description: "Pick from curated JEE Main 2025 question papers already in our library.",
-  },
 ];
-
-const CATEGORIES = ["All", "Upload", "Import", "AI", "Library"];
 
 const TOOL_ICONS: Record<string, React.ReactNode> = {
   pdf: (
@@ -86,7 +65,7 @@ const TOOL_ICONS: Record<string, React.ReactNode> = {
 export default function CreateTestPage() {
   const router = useRouter();
 
-  const [activeCategory, setActiveCategory] = useState("All");
+
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [showGuestModal, setShowGuestModal] = useState(false);
 
@@ -301,9 +280,7 @@ export default function CreateTestPage() {
     a.click();
   };
 
-  const filteredTools = activeCategory === "All"
-    ? TOOLS
-    : TOOLS.filter(t => t.category === activeCategory.toLowerCase());
+
 
   /* ─────────────────────────── RENDER ─────────────────────────── */
   return (
@@ -322,26 +299,18 @@ export default function CreateTestPage() {
         </p>
       </div>
 
-      {/* ── Category Pills ── */}
-      <div className="flex justify-center gap-2 flex-wrap px-4 py-8 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-colors mb-10">
-        {CATEGORIES.map(cat => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-150 cursor-pointer ${
-              activeCategory === cat
-                ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
-                : "bg-white text-gray-600 border-gray-200 hover:border-gray-400 hover:text-gray-900 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:border-slate-500 dark:hover:text-slate-100"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+      {/* ── Under Development Notice ── */}
+      <div className="max-w-3xl mx-auto mt-8 mb-4 mx-6 px-5 py-4 rounded-2xl bg-amber-50 border border-amber-200 dark:bg-amber-950/30 dark:border-amber-800 flex items-start gap-3">
+        <span className="text-amber-500 text-xl mt-0.5">⚠️</span>
+        <div>
+          <p className="text-amber-800 dark:text-amber-300 font-semibold text-sm">This feature is under active development</p>
+          <p className="text-amber-700 dark:text-amber-400 text-xs mt-0.5">The Custom Test builder is not fully ready. You may experience issues. We recommend using the official GATE / JEE / NEET exam workspaces instead.</p>
+        </div>
       </div>
 
       {/* ── Tool Cards Grid ── */}
-      <div className="max-w-5xl mx-auto px-6 pb-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {filteredTools.map(tool => (
+      <div className="max-w-5xl mx-auto px-6 pb-20 pt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {TOOLS.map(tool => (
           <button
             key={tool.id}
             onClick={() => { setActiveTool(tool.id); setError(""); setSuccess(""); }}

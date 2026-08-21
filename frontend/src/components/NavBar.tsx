@@ -89,13 +89,20 @@ export default function NavBar({
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => router.push("/pages/dashboard")}
-            className="flex items-center gap-2 cursor-pointer group"
+            className="flex items-center gap-2.5 cursor-pointer shrink-0"
           >
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition">
-              <GraduationCap size={19} strokeWidth={2.3} className="text-white" />
-            </div>
-            <span className="text-lg font-extrabold tracking-tight text-blue-600 dark:text-blue-400 hidden sm:block">
-              ILoveStudy
+            <img
+              src="/logo.jpeg"
+              alt="ILoveStudy"
+              className="block h-14 w-14 object-contain rounded-xl"
+            />
+            <span className="hidden sm:flex flex-col leading-none">
+              <span className="text-3xl font-extrabold tracking-tight leading-none">
+                <span style={{ color: isDark ? '#ffffff' : '#1a2744' }}>ILove</span><span style={{ color: '#2563EB' }}>Study</span>
+              </span>
+              <span className="mt-0.5 text-[8px] font-bold tracking-[0.08em] uppercase" style={{ color: isDark ? '#94a3b8' : '#1a2744', opacity: isDark ? 0.8 : 0.6, marginLeft: '-10px' }}>
+                LEARN&nbsp;&bull;&nbsp;PRACTICE&nbsp;&bull;&nbsp;SUCCEED
+              </span>
             </span>
           </button>
 

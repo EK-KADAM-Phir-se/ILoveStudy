@@ -24,7 +24,9 @@ const getShiftDetails = async (req, res) => {
     const shift = await prisma.shift.findUnique({
       where: { id: shiftId },
       include: {
-        questions: true, // Pulls all questions associated with this shift
+        questions: {
+          orderBy: { orderIndex: 'asc' }
+        },
       },
     });
 
@@ -33,10 +35,13 @@ const getShiftDetails = async (req, res) => {
     }
 
     // Sort questions strictly by standard subject section order:
-    // Section 1: Physics (1 - 50)
-    // Section 2: Chemistry (51 - 100)
-    // Section 3: Biology (101 - 200)
+    // Section 0: General Aptitude (1 - 10)
+    // Section 1: Physics / Computer Science / Mechanical / Reasoning
+    // Section 2: Chemistry / General Awareness
+    // Section 3: Biology / Quantitative Aptitude
+    // Section 4: Mathematics / English
     const subjectOrder = {
+      "general aptitude": 0,
       physics: 1,
       chemistry: 2,
       biology: 3,
@@ -53,7 +58,9 @@ const getShiftDetails = async (req, res) => {
       "gk": 2,
       "quantitative aptitude": 3,
       "english comprehension": 4,
-      "english": 4
+      "english": 4,
+      "computer science & it": 1,
+      "mechanical engineering": 1
     };
 
     const cleanStr = (str) => {
@@ -76,8 +83,8 @@ const getShiftDetails = async (req, res) => {
       });
 
       shift.questions.sort((a, b) => {
-        const orderA = subjectOrder[(a.subject || "").toLowerCase()] || 99;
-        const orderB = subjectOrder[(b.subject || "").toLowerCase()] || 99;
+        const orderA = subjectOrder[(a.subject || "").toLowerCase()] ?? 99;
+        const orderB = subjectOrder[(b.subject || "").toLowerCase()] ?? 99;
         if (orderA !== orderB) return orderA - orderB;
         
         // Sort by orderIndex within the same subject

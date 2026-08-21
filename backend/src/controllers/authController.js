@@ -64,7 +64,7 @@ exports.register = async (req, res) => {
 };
 
 // ==========================================
-// 2. SEND OTP (For verification/password resets)
+// 2. SEND OTP (For verification/login/password resets)
 // ==========================================
 exports.sendOTP = async (req, res) => {
   try {
@@ -74,34 +74,128 @@ exports.sendOTP = async (req, res) => {
       return res.status(400).json({ error: "Email is required." });
     }
 
+    const cleanEmail = email.trim().toLowerCase();
+
     // Generate a 6-digit random code
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     let otpSaved = false;
     try {
-      otpSaved = await redisClient.set(`otp:${email}`, otp, 'EX', 300);
+      otpSaved = await redisClient.set(`otp:${cleanEmail}`, otp, 'EX', 300);
     } catch (redisError) {
       console.error('Redis OTP Save Warning:', redisError);
     }
 
-    // Send the email
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Your verification code",
-      text: `Your verification code is: ${otp}. It will expire in 5 minutes.`,
-    };
+    // Always log OTP to terminal for easy debugging & fallback
+    console.log(`\n========================================`);
+    console.log(`🔑 [OTP CODE] Generated for ${cleanEmail}: ${otp}`);
+    console.log(`========================================\n`);
 
-    await transporter.sendMail(mailOptions);
+    // Attempt to send email if configured
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      const mailOptions = {
+        from: `"ILoveStudy" <${process.env.EMAIL_USER}>`,
+        to: cleanEmail,
+        subject: "Your ILoveStudy Verification Code",
+        text: `Your verification code is: ${otp}. It will expire in 5 minutes.`,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+            <h2 style="color: #4F46E5;">ILoveStudy Verification Code</h2>
+            <p>Use the 6-digit code below to log in or verify your account:</p>
+            <div style="font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #4F46E5; padding: 12px 0;">
+              ${otp}
+            </div>
+            <p style="color: #666; font-size: 13px;">This code will expire in 5 minutes. If you did not request this, please ignore this email.</p>
+          </div>
+        `,
+      };
 
-    if (!otpSaved) {
-      console.warn('OTP email sent, but Redis storage is unavailable.');
+      try {
+        await transporter.sendMail(mailOptions);
+      } catch (mailErr) {
+        console.warn("⚠️ Note: Gmail rejected the password (you need a 16-character Google App Password in backend/.env). Use the OTP printed above in the terminal.");
+      }
     }
 
     return res.status(200).json({ message: "Verification code sent to your email!" });
   } catch (error) {
     console.error("Error in sendOTP pipeline:", error);
     return res.status(500).json({ error: "Failed to send verification code." });
+  }
+};
+
+// ==========================================
+// 2.1 VERIFY OTP & LOGIN (Passwordless Flow)
+// ==========================================
+exports.verifyOTPAndLogin = async (req, res) => {
+  try {
+    const { email, otp, fullName } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ error: "Email and verification code are required." });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanOtp = otp.toString().trim();
+
+    // 1. Retrieve OTP from Redis (or mock memory store)
+    let savedOtp = null;
+    try {
+      savedOtp = await redisClient.get(`otp:${cleanEmail}`);
+    } catch (redisErr) {
+      console.error("Redis get OTP error:", redisErr);
+    }
+
+    if (!savedOtp || savedOtp !== cleanOtp) {
+      return res.status(400).json({ error: "Invalid or expired verification code." });
+    }
+
+    // 2. Find or create user in PostgreSQL
+    let user = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+      include: { profiles: true },
+    });
+
+    if (!user) {
+      const displayName = fullName?.trim() || cleanEmail.split('@')[0] || "User";
+      user = await prisma.user.create({
+        data: {
+          email: cleanEmail,
+          profiles: {
+            create: {
+              fullName: displayName,
+              targetExam: "JEE Mains",
+            },
+          },
+        },
+        include: { profiles: true },
+      });
+    }
+
+    // 3. Clear the OTP from Redis
+    try {
+      await redisClient.del(`otp:${cleanEmail}`);
+    } catch (e) {}
+
+    // 4. Generate JWT Token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET || 'fallback_secret',
+      { expiresIn: '7d' }
+    );
+
+    return res.json({
+      message: "Login successful!",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.profiles?.fullName || cleanEmail.split('@')[0] || "User",
+      },
+    });
+  } catch (error) {
+    console.error("OTP Login Error:", error);
+    return res.status(500).json({ error: "Internal server error during OTP verification." });
   }
 };
 

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%">
+  <rect width="600" height="450" fill="#ffffff"/>
+  <!-- Roads -->
+  <rect x="270" y="30" width="35" height="390" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <text x="287" y="220" font-family="sans-serif" font-size="13" font-weight="bold" fill="#334155" transform="rotate(-90 287 220)" text-anchor="middle">1st Main Road</text>
+  
+  <rect x="50" y="165" width="500" height="30" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+  <text x="300" y="185" font-family="sans-serif" font-size="13" font-weight="bold" fill="#334155" text-anchor="middle">5th Cross Road</text>
+
+  <!-- Buildings Top Left -->
+  <rect x="130" y="60" width="120" height="45" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+  <text x="190" y="87" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Library</text>
+
+  <rect x="130" y="115" width="120" height="45" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+  <text x="190" y="142" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Physics Lab</text>
+
+  <!-- Buildings Top Right -->
+  <rect x="315" y="60" width="120" height="45" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+  <text x="375" y="87" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Canteen</text>
+
+  <rect x="315" y="115" width="120" height="45" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+  <text x="375" y="142" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Hospital</text>
+
+  <!-- Buildings Bottom Left -->
+  <rect x="130" y="205" width="120" height="45" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+  <text x="190" y="232" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Hostels</text>
+
+  <rect x="130" y="260" width="120" height="45" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+  <text x="190" y="287" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Classrooms</text>
+
+  <!-- Buildings Bottom Right -->
+  <rect x="315" y="205" width="120" height="60" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+  <text x="375" y="233" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Chemistry</text>
+  <text x="375" y="252" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Lab</text>
+
+  <!-- Compass -->
+  <g transform="translate(480, 270)">
+    <line x1="0" y1="-35" x2="0" y2="35" stroke="#0f172a" stroke-width="2"/>
+    <line x1="-35" y1="0" x2="35" y2="0" stroke="#0f172a" stroke-width="2"/>
+    <polygon points="0,-35 -5,-25 5,-25" fill="#0f172a"/>
+    <polygon points="0,35 -5,25 5,25" fill="#0f172a"/>
+    <polygon points="-35,0 -25,-5 -25,5" fill="#0f172a"/>
+    <polygon points="35,0 25,-5 25,5" fill="#0f172a"/>
+    <text x="0" y="-42" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">N</text>
+    <text x="0" y="52" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">S</text>
+    <text x="-48" y="5" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">W</text>
+    <text x="48" y="5" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">E</text>
+  </g>
+</svg>

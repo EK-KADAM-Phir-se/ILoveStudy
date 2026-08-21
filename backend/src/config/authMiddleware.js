@@ -17,7 +17,7 @@ module.exports = async (req, res, next) => {
       if (!mockUser) {
         mockUser = await prisma.user.create({
           data: {
-            email: "mockuser@example.com",
+            email: "mockuser@example.com", 
             profiles: {
               create: {
                 fullName: "Mock User"

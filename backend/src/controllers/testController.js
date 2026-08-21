@@ -132,12 +132,20 @@ exports.submitTest = async (req, res) => {
         const isNumerical = !q.optionA || !q.optionB || !q.optionC || !q.optionD || 
                             (extractNumericValue(q.optionA) === extractNumericValue(q.optionB));
 
+        // Determine if this is an MSQ (Multiple Select Question)
+        const isMsq = !isNumerical && correctOptKey.includes(";");
+
         // Get target numerical answer from option text or correctOption key
         const targetOptionText = q[`option${correctOptKey}`] || q.optionA || "";
         const targetNumeric = extractNumericValue(targetOptionText);
 
         let isCorrect = false;
-        if (isNumerical) {
+        if (isMsq) {
+          // MSQ: exact set match — all correct keys selected, no extra keys
+          const correctSet = new Set(correctOptKey.toUpperCase().split(";").map(k => k.trim()).filter(Boolean));
+          const userSet = new Set(userAns.toUpperCase().split(";").map(k => k.trim()).filter(Boolean));
+          isCorrect = correctSet.size === userSet.size && [...userSet].every(k => correctSet.has(k));
+        } else if (isNumerical) {
           // Compare numerical user answer with correct numerical value
           isCorrect = userAns === targetNumeric || parseFloat(userAns) === parseFloat(targetNumeric) || userAns === correctOptKey;
         } else {
@@ -566,7 +574,29 @@ exports.getAttemptReview = async (req, res) => {
     }
 
     const officialQuestions = await prisma.question.findMany({
-      where: { shiftId: attempt.shiftId }
+      where: { shiftId: attempt.shiftId },
+      orderBy: { orderIndex: 'asc' }
+    });
+
+    // Apply same subject-group ordering as the test workspace (getShiftDetails)
+    const subjectOrder = {
+      "general aptitude": 0,
+      physics: 1, chemistry: 2, biology: 3, botany: 3, zoology: 3,
+      mathematics: 4, maths: 4, math: 4,
+      "general intelligence & reasoning": 1, "general intelligence and reasoning": 1,
+      reasoning: 1, "general intelligence": 1,
+      "general awareness": 2, gk: 2,
+      "quantitative aptitude": 3,
+      "english comprehension": 4, english: 4,
+      "computer science & it": 1, "mechanical engineering": 1
+    };
+    officialQuestions.sort((a, b) => {
+      const orderA = subjectOrder[(a.subject || "").toLowerCase()] ?? 99;
+      const orderB = subjectOrder[(b.subject || "").toLowerCase()] ?? 99;
+      if (orderA !== orderB) return orderA - orderB;
+      const idxA = a.orderIndex ?? 0;
+      const idxB = b.orderIndex ?? 0;
+      return idxA - idxB;
     });
 
     let answersMap = {};
@@ -611,7 +641,12 @@ exports.getAttemptReview = async (req, res) => {
           const targetNumeric = extractNumericValue(targetOptionText);
 
           let isCorrect = false;
-          if (isNumerical) {
+          const isMsqReview = !isNumerical && correctOptKey.includes(";");
+          if (isMsqReview) {
+            const correctSet = new Set(correctOptKey.toUpperCase().split(";").map(k => k.trim()).filter(Boolean));
+            const userSet = new Set(selectedOption.toUpperCase().split(";").map(k => k.trim()).filter(Boolean));
+            isCorrect = correctSet.size === userSet.size && [...userSet].every(k => correctSet.has(k));
+          } else if (isNumerical) {
             isCorrect = selectedOption === targetNumeric || parseFloat(selectedOption) === parseFloat(targetNumeric) || selectedOption === correctOptKey;
           } else {
             isCorrect = selectedOption.toUpperCase() === correctOptKey.toUpperCase() || selectedOption === targetNumeric;

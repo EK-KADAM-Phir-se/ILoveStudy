@@ -3,11 +3,24 @@ import Link from 'next/link';
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-between">
-      {/* Navbar Header */}
-      <header className="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
-        <h1 className="text-2xl font-bold tracking-wide">ILoveStudy</h1>
-        <nav className="space-x-4">
-          <Link href="/login" className="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition">
+      <header className="bg-white border-b border-gray-200 shadow-sm flex justify-between items-center px-6 h-16">
+        <div className="flex items-center gap-3">
+          <img
+            src="/logo.jpeg"
+            alt="ILoveStudy"
+            className="h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
+          />
+          <span className="flex flex-col leading-none">
+            <span className="text-3xl font-extrabold tracking-tight leading-none">
+              <span style={{ color: '#1a2744' }}>ILove</span><span style={{ color: '#2563EB' }}>Study</span>
+            </span>
+            <span className="mt-0.5 text-[8px] font-bold tracking-[0.08em] uppercase" style={{ color: '#1a2744', opacity: 0.6, marginLeft: '-10px' }}>
+              LEARN&nbsp;&bull;&nbsp;PRACTICE&nbsp;&bull;&nbsp;SUCCEED
+            </span>
+          </span>
+        </div>
+        <nav className="flex items-center space-x-4">
+          <Link href="/login" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-semibold transition shadow-sm">
             Login
           </Link>
         </nav>

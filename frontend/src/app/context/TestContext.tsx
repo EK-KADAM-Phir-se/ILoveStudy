@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '@/src/lib/apiConfig';
 
-interface Question {
+export interface Question {
   id: string;
   subject: string;
   questionText: string;
@@ -12,6 +12,7 @@ interface Question {
   optionB: string;
   optionC: string;
   optionD: string;
+  correctOption?: string;
   imageUrl?: string | null;
   orderIndex?: number;
   positiveMarks?: number;
