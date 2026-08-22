@@ -142,16 +142,15 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
     );
   };
 
-  // Helper to extract numeric values from option strings
-  const getNumericVal = (str: string) => {
-    if (!str) return "";
-    const match = str.toString().match(/\(?[1-4]?\)?\s*(-?\d+(\.\d+)?)/);
-    return match ? match[1] : str.toString().trim();
-  };
-
+  // Helper to check if a question is Numerical Answer Type (NAT)
   const isNumericalQuestion = (q: ReviewQuestion) => {
-    if (!q.optionA || !q.optionB || !q.optionC || !q.optionD) return true;
-    return getNumericVal(q.optionA) === getNumericVal(q.optionB);
+    const hasOptions = Boolean(
+      (q.optionA && q.optionA.trim()) ||
+      (q.optionB && q.optionB.trim()) ||
+      (q.optionC && q.optionC.trim()) ||
+      (q.optionD && q.optionD.trim())
+    );
+    return !hasOptions;
   };
 
   return (
@@ -423,7 +422,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                           <div className="p-3 rounded border bg-emerald-50 border-emerald-300 text-emerald-900">
                             <span className="text-xs text-emerald-700 block mb-1">Correct Answer:</span>
                             <span className="font-bold text-sm">
-                              {getNumericVal(activeQuestion.optionA) || activeQuestion.correctOption}
+                              {activeQuestion.correctOption}
                             </span>
                           </div>
                         </div>
@@ -451,7 +450,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                               .split(";")
                               .map((k: string) => k.trim())
                               .filter(Boolean);
-                            const isUserSelected = userSelectedKeys.includes(opt.key) || userSelectedKeys.includes(getNumericVal(cleanedVal));
+                            const isUserSelected = userSelectedKeys.includes(opt.key);
 
                             let optionCardStyle = "border-slate-200 bg-white text-slate-800";
                             let badge = null;

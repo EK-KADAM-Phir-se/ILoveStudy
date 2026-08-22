@@ -1037,18 +1037,11 @@ function TestWorkspacePageContent() {
 
               {/* Options or Numerical Input lists */}
               {(() => {
-                const getNumericVal = (str?: string | null) => {
-                  if (!str) return "";
-                  const match = str.toString().match(/\(?[1-4]?\)?\s*(-?\d+(\.\d+)?)/);
-                  return match ? match[1] : str.toString().trim();
-                };
-
                 const isNumerical =
-                  !activeQuestion.optionA ||
-                  !activeQuestion.optionB ||
-                  !activeQuestion.optionC ||
-                  !activeQuestion.optionD ||
-                  (getNumericVal(activeQuestion.optionA) === getNumericVal(activeQuestion.optionB));
+                  !activeQuestion.optionA?.trim() ||
+                  !activeQuestion.optionB?.trim() ||
+                  !activeQuestion.optionC?.trim() ||
+                  !activeQuestion.optionD?.trim();
 
                 if (isNumerical) {
                   return (

@@ -74,6 +74,76 @@ const LatexMathPart: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
+const MarkdownTablePart: React.FC<{ tableText: string }> = ({ tableText }) => {
+  const lines = tableText.trim().split("\n").map((l) => l.trim()).filter(Boolean);
+  if (lines.length < 2) return <LatexMathPart text={tableText} />;
+
+  const parseRow = (rowStr: string) => {
+    let s = rowStr;
+    if (s.startsWith("|")) s = s.slice(1);
+    if (s.endsWith("|")) s = s.slice(0, -1);
+    return s.split("|").map((cell) => cell.trim());
+  };
+
+  const headers = parseRow(lines[0]);
+  // Line 1 is header separator like |---|---|
+  const bodyLines = lines.slice(2);
+  const rows = bodyLines.map(parseRow);
+
+  return (
+    <div className="my-3 overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm max-w-full">
+      <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-xs">
+        <thead className="bg-slate-100 dark:bg-slate-800">
+          <tr>
+            {headers.map((h, i) => (
+              <th
+                key={i}
+                className="px-3.5 py-2 text-left font-semibold text-slate-700 dark:text-slate-200 border-r border-slate-200 dark:border-slate-700 last:border-r-0"
+              >
+                <LatexMathPart text={h} />
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-700">
+          {rows.map((row, rIdx) => (
+            <tr
+              key={rIdx}
+              className={rIdx % 2 === 0 ? "bg-white dark:bg-slate-900" : "bg-slate-50/50 dark:bg-slate-800/50"}
+            >
+              {row.map((cell, cIdx) => (
+                <td
+                  key={cIdx}
+                  className="px-3.5 py-2 text-slate-800 dark:text-slate-200 border-r border-slate-200 dark:border-slate-700 last:border-r-0"
+                >
+                  <LatexMathPart text={cell} />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const NonCodePart: React.FC<{ text: string }> = ({ text }) => {
+  // Regex to detect Markdown table blocks
+  const tableRegex = /(\|[^\n]+\|\r?\n\|[\s:-|-]+\|\r?\n(?:\|[^\n]+\|?\r?\n?)*)/g;
+  const parts = text.split(tableRegex);
+
+  return (
+    <>
+      {parts.map((part, index) => {
+        if (part.startsWith("|") && part.includes("\n|")) {
+          return <MarkdownTablePart key={index} tableText={part} />;
+        }
+        return <LatexMathPart key={index} text={part} />;
+      })}
+    </>
+  );
+};
+
 export const LatexRenderer: React.FC<LatexRendererProps> = ({ text }) => {
   if (!text) return null;
 
@@ -119,7 +189,7 @@ export const LatexRenderer: React.FC<LatexRendererProps> = ({ text }) => {
           );
         }
 
-        return <LatexMathPart key={idx} text={block} />;
+        return <NonCodePart key={idx} text={block} />;
       })}
     </>
   );

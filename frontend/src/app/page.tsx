@@ -8,7 +8,12 @@ export default function HomePage() {
           <img
             src="/logo.jpeg"
             alt="ILoveStudy"
-            className="h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
+            className="block dark:hidden h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
+          />
+          <img
+            src="/dark_mode_logo.png"
+            alt="ILoveStudy"
+            className="hidden dark:block h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
           />
           <span className="flex flex-col leading-none">
             <span className="text-3xl font-extrabold tracking-tight leading-none">

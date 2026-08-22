@@ -16,8 +16,11 @@ export function getQuestionSupabaseUrl(
   examName: string = "Jee Mains",
   year?: number | string | null
 ): { supabaseUrl: string; localFallbackUrl: string } {
+  if (!imageUrl) {
+    return { supabaseUrl: "", localFallbackUrl: "" };
+  }
+
   if (
-    imageUrl.startsWith("/") ||
     imageUrl.startsWith("http://") ||
     imageUrl.startsWith("https://") ||
     imageUrl.startsWith("data:")
@@ -32,23 +35,38 @@ export function getQuestionSupabaseUrl(
     cleanFileName = parts[parts.length - 1];
   }
 
+  const lowerExam = (examName || "").toLowerCase();
+  const lowerUrl = imageUrl.toLowerCase();
+
+  // Determine reliable local fallback URL
+  let localFallbackUrl = imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`;
+  if (lowerExam.includes("gate") || lowerUrl.includes("gate")) {
+    localFallbackUrl = `/GATE/${cleanFileName}`;
+  } else if (lowerExam.includes("neet") || lowerUrl.includes("neet")) {
+    localFallbackUrl = `/neetimages/${cleanFileName}`;
+  }
+
+  // If imageUrl starts with / (e.g. /GATE/q55_cs1_2025_gate.png), return it as local path
+  if (imageUrl.startsWith("/")) {
+    return { supabaseUrl: imageUrl, localFallbackUrl: imageUrl };
+  }
+
   // Determine exact folder name matching Supabase bucket structure:
   // "Jee Mains", "Jee Advance", "SSC CGL", "SSC CHSL", "Gate"
   let folderExam = "Jee Mains";
-  const lowerExam = examName.toLowerCase();
   if (lowerExam.includes("advance")) {
     folderExam = "Jee Advance";
   } else if (lowerExam.includes("ssc cgl") || lowerExam.includes("cgl")) {
     folderExam = "SSC CGL";
   } else if (lowerExam.includes("ssc chsl") || lowerExam.includes("chsl")) {
     folderExam = "SSC CHSL";
-  } else if (lowerExam.includes("neet")) {
+  } else if (lowerExam.includes("neet") || lowerUrl.includes("neet")) {
     const storagePath = `NEET/${cleanFileName}`;
     const { data } = supabase.storage
       .from("QuestionBank")
       .getPublicUrl(storagePath);
-    return { supabaseUrl: data?.publicUrl || imageUrl, localFallbackUrl: imageUrl };
-  } else if (lowerExam.includes("gate")) {
+    return { supabaseUrl: data?.publicUrl || localFallbackUrl, localFallbackUrl };
+  } else if (lowerExam.includes("gate") || lowerUrl.includes("gate")) {
     folderExam = "Gate";
   } else {
     folderExam = "Jee Mains";
@@ -62,8 +80,7 @@ export function getQuestionSupabaseUrl(
     .from("QuestionBank")
     .getPublicUrl(storagePath);
 
-  const supabaseUrl = data?.publicUrl || imageUrl;
-  const localFallbackUrl = imageUrl;
+  const supabaseUrl = data?.publicUrl || localFallbackUrl;
 
   return { supabaseUrl, localFallbackUrl };
 }
@@ -82,12 +99,19 @@ export const QuestionImage: React.FC<QuestionImageProps> = ({
 
   const { supabaseUrl, localFallbackUrl } = getQuestionSupabaseUrl(imageUrl, examName, year);
 
-  const [currentSrc, setCurrentSrc] = useState<string>(isDataUri ? imageUrl : supabaseUrl);
+  // If local fallback is a valid relative path starting with /, default to local path for dev
+  const initialSrc = isDataUri ? imageUrl : (localFallbackUrl.startsWith("/") ? localFallbackUrl : supabaseUrl);
+
+  const [currentSrc, setCurrentSrc] = useState<string>(initialSrc);
 
   useEffect(() => {
     if (!isDataUri) {
-      const { supabaseUrl: newUrl } = getQuestionSupabaseUrl(imageUrl, examName, year);
-      setCurrentSrc(newUrl);
+      const { supabaseUrl: newSupabaseUrl, localFallbackUrl: newLocalUrl } = getQuestionSupabaseUrl(
+        imageUrl,
+        examName,
+        year
+      );
+      setCurrentSrc(newLocalUrl.startsWith("/") ? newLocalUrl : newSupabaseUrl);
     } else {
       setCurrentSrc(imageUrl);
     }
@@ -96,7 +120,7 @@ export const QuestionImage: React.FC<QuestionImageProps> = ({
   const handleError = () => {
     if (!isDataUri && currentSrc !== localFallbackUrl) {
       console.warn(
-        `[QuestionImage] Failed to load image from Supabase (${currentSrc}). Falling back to local public image (${localFallbackUrl}).`
+        `[QuestionImage] Failed to load image (${currentSrc}). Falling back to (${localFallbackUrl}).`
       );
       setCurrentSrc(localFallbackUrl);
     }

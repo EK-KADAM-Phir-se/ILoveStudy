@@ -26,12 +26,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/logo.jpeg", type: "image/jpeg" },
+      { url: "/logo_card.jpeg", type: "image/jpeg" },
       { url: "/icon.jpeg", type: "image/jpeg" },
       { url: "/favicon.ico", sizes: "any" },
     ],
-    shortcut: "/logo.jpeg",
-    apple: "/apple-icon.jpeg",
+    shortcut: "/logo_card.jpeg",
+    apple: "/logo_card.jpeg",
   },
   openGraph: {
     title: "Love Study | PYQ Tests for JEE, NEET, SSC & GATE",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     siteName: "Love Study",
     images: [
       {
-        url: "/logo.jpeg",
+        url: "/logo_card.jpeg",
         width: 800,
         height: 800,
         alt: "Love Study Logo",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     title: "Love Study | PYQ Tests for JEE, NEET, SSC & GATE",
     description:
       "Prepare, practice, and excel in your exams with real-time analytics, official CBT mock test workspaces, and full PYQ papers on ilovestudy.in.",
-    images: ["/logo.jpeg"],
+    images: ["/logo_card.jpeg"],
   },
   robots: {
     index: true,
@@ -75,10 +75,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/logo.jpeg" type="image/jpeg" sizes="any" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="shortcut icon" href="/logo.jpeg" type="image/jpeg" />
-        <link rel="apple-touch-icon" href="/apple-icon.jpeg" />
+        <link rel="icon" href="/logo_card.jpeg?v=2" type="image/jpeg" sizes="any" />
+        <link rel="icon" href="/icon.jpeg?v=2" type="image/jpeg" sizes="any" />
+        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
+        <link rel="shortcut icon" href="/logo_card.jpeg?v=2" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/logo_card.jpeg?v=2" />
       </head>
       <body>
         <TestProvider>{children}</TestProvider>

@@ -92,7 +92,7 @@ export default function NavBar({
             className="flex items-center gap-2.5 cursor-pointer shrink-0"
           >
             <img
-              src="/logo.jpeg"
+              src={isDark ? "/dark_mode_logo.png" : "/logo.jpeg"}
               alt="ILoveStudy"
               className="block h-14 w-14 object-contain rounded-xl"
             />

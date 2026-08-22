@@ -20,7 +20,12 @@ export default function LoginPage() {
           <img
             src="/logo.jpeg"
             alt="ILoveStudy"
-            className="h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
+            className="block dark:hidden h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
+          />
+          <img
+            src="/dark_mode_logo.png"
+            alt="ILoveStudy"
+            className="hidden dark:block h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
           />
           <span className="flex flex-col leading-none">
             <span className="text-3xl font-extrabold tracking-tight leading-none">
@@ -44,7 +49,8 @@ export default function LoginPage() {
         <div className="max-w-md w-full bg-white border border-gray-200 p-8 rounded-2xl shadow-sm">
           {/* Logo + Brand */}
           <div className="text-center mb-7 flex flex-col items-center">
-            <img src="/logo_card.jpeg" alt="ILoveStudy Logo" className="w-16 h-16 object-contain mb-3" />
+            <img src="/logo_card.jpeg" alt="ILoveStudy Logo" className="block dark:hidden w-16 h-16 object-contain mb-3" />
+            <img src="/dark_mode_logo.png" alt="ILoveStudy Logo" className="hidden dark:block w-16 h-16 object-contain mb-3" />
             <span className="flex flex-col items-center leading-none">
               <span className="text-4xl font-extrabold tracking-tight leading-none">
                 <span style={{ color: '#1a2744' }}>ILove</span><span style={{ color: '#2563EB' }}>Study</span>

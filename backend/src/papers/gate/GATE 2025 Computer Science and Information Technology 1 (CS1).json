@@ -107,7 +107,7 @@
     {
       "subject": "General Aptitude",
       "questionText": "A square paper, shown in figure (I), is folded along the dotted lines as shown in the figures (II) and (III). Then a few cuts are made as shown in figure (IV). Which one of the following patterns will be obtained when the paper is unfolded?\n\nNote: The figures shown are representative.",
-      "imageUrl": "/GATE/q9_cs1_2025_gate.png",
+      "imageUrl": "/GATE/q9_cs1_2025_gate.svg",
       "optionA": "(A) Pattern (A)",
       "optionB": "(B) Pattern (B)",
       "optionC": "(C) Pattern (C)",
@@ -467,7 +467,7 @@
     {
       "subject": "Computer Science & IT",
       "questionText": "Consider two relations describing teams and players in a sports league:\n• teams(tid, tname): tid, tname are team-id and team-name, respectively\n• players(pid, pname, tid): pid, pname, and tid denote player-id, player-name and the team-id of the player, respectively\n\nWhich ONE of the following tuple relational calculus queries returns the name of the players who play for the team having tname as 'MI'?",
-      "imageUrl": null,
+      "imageUrl": "/GATE/q55_cs1_2025_gate.svg",
       "optionA": "(A) $\\{p.pname \\mid p \\in \\text{players} \\land \\exists t (t \\in \\text{teams} \\land p.tid = t.tid \\land t.tname = \\text{'MI'})\\}$",
       "optionB": "(B) $\\{p.pname \\mid p \\in \\text{teams} \\land \\exists t (t \\in \\text{players} \\land p.tid = t.tid \\land t.tname = \\text{'MI'})\\}$",
       "optionC": "(C) $\\{p.pname \\mid p \\in \\text{players} \\land \\exists t (t \\in \\text{teams} \\land t.tname = \\text{'MI'})\\}$",
@@ -658,8 +658,8 @@
     },
     {
       "subject": "Computer Science & IT",
-      "questionText": "Consider the database tables: player(pid, pname, age), coach(cid, cname), team(tid, tname, city, cid), members(pid, tid).\nSQL query:\n```sql\nSELECT MIN(P.age)\nFROM player P\nWHERE P.pid IN (\n    SELECT M.pid\n    FROM team T, coach C, members M\n    WHERE C.cname = 'Mark'\n      AND T.cid = C.cid \n      AND M.tid = T.tid \n)\n```\nData:\n- player: (1, Jasprit, 31), (2, Atharva, 24), (3, Ishan, 26), (4, Axar, 30)\n- coach: (101, Ricky), (102, Mark), (103, Trevor)\n- team: (10, MI, Mumbai, 102), (20, DC, Delhi, 101), (30, PK, Mohali, 103)\n- members: (1, 10), (2, 30), (3, 10), (4, 20)\nThe value returned by the given SQL query is ______ . (Answer in integer)",
-      "imageUrl": null,
+      "questionText": "Consider the database tables: player(pid, pname, age), coach(cid, cname), team(tid, tname, city, cid), members(pid, tid).\nSQL query:\n```sql\nSELECT MIN(P.age)\nFROM player P\nWHERE P.pid IN (\n    SELECT M.pid\n    FROM team T, coach C, members M\n    WHERE C.cname = 'Mark'\n      AND T.cid = C.cid \n      AND M.tid = T.tid \n)\n```\n\nThe value returned by the given SQL query is ______ . (Answer in integer)",
+      "imageUrl": "/GATE/q55_cs1_2025_gate.svg",
       "optionA": "(A) 26",
       "optionB": "(B) 24",
       "optionC": "(C) 31",
@@ -706,8 +706,8 @@
     },
     {
       "subject": "Computer Science & IT",
-      "questionText": "Consider a finite state machine (FSM) with one input $X$ and one output $f$, represented by the given state transition table. The minimum number of states required to realize this FSM is ________. (Answer in integer)\n\n| Present state | Next state X=0 | Next state X=1 | Output X=0 | Output X=1 |\n|---|---|---|---|---|\n| A | F | B | 0 | 0 |\n| B | D | C | 0 | 0 |\n| C | F | E | 0 | 0 |\n| D | G | A | 1 | 0 |\n| E | D | C | 0 | 0 |\n| F | F | B | 1 | 1 |\n| G | G | H | 0 | 1 |\n| H | G | A | 1 | 0 |",
-      "imageUrl": null,
+      "questionText": "Consider a finite state machine (FSM) with one input $X$ and one output $f$, represented by the given state transition table. The minimum number of states required to realize this FSM is ________. (Answer in integer)\n",
+      "imageUrl": "/GATE/q59_cs1_2025_gate.svg",
       "optionA": "(A) 5",
       "optionB": "(B) 4",
       "optionC": "(C) 6",
