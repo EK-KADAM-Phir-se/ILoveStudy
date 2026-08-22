@@ -2266,12 +2266,13 @@ async function seedNeet2024Paper() {
   console.log(`Inserting ${rawQuestions.length} questions in exact 1..200 sequence...`);
   for (let i = 0; i < rawQuestions.length; i++) {
     const q = rawQuestions[i];
+    const cleanImg = q.imageUrl ? path.basename(q.imageUrl) : null;
     await prisma.question.create({
       data: {
         shiftId: shift.id,
         subject: q.subject,
         questionText: q.questionText,
-        imageUrl: q.imageUrl || null,
+        imageUrl: cleanImg,
         optionA: q.optionA,
         optionB: q.optionB,
         optionC: q.optionC,

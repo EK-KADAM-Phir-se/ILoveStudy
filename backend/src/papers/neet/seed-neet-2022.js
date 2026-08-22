@@ -2416,15 +2416,18 @@ async function seedNeet2022Paper() {
   });
   console.log(`Created Shift "NEET 2022" (ID: ${shift.id})`);
 
+  const { getNeetSvgDataUri } = require('./generate-neet-data.js');
+
   console.log(`Inserting ${rawQuestions.length} questions in exact 1..200 sequence...`);
   for (let i = 0; i < rawQuestions.length; i++) {
     const q = rawQuestions[i];
+    const dataUri = getNeetSvgDataUri(q.imageUrl);
     await prisma.question.create({
       data: {
         shiftId: shift.id,
         subject: q.subject,
         questionText: q.questionText,
-        imageUrl: q.imageUrl || null,
+        imageUrl: dataUri || q.imageUrl || null,
         optionA: q.optionA,
         optionB: q.optionB,
         optionC: q.optionC,
