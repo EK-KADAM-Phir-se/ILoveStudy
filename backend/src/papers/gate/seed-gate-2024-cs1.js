@@ -50,5 +50,4 @@ async function seed() {
   await prisma.question.createMany({ data: questionsToInsert });
   console.log(`✅ Seeded ${questionsToInsert.length} questions for ${shift.name}`);
 }
-
 seed().catch(console.error).finally(() => prisma.$disconnect());
