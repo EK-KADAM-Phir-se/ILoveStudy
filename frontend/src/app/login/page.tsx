@@ -1,16 +1,51 @@
 "use client";
 
+import React, { useEffect, useState } from 'react';
 import Login from '../components/Login';
 import { useRouter } from 'next/navigation';
-import { enableGuestMode } from '@/src/lib/authUtils';
+import { enableGuestMode, isGuestUser } from '@/src/lib/authUtils';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function LoginPage() {
   const router = useRouter();
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const guestStatus = isGuestUser();
+
+    if (token || guestStatus) {
+      router.replace('/pages/dashboard');
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.replace('/pages/dashboard');
+      } else {
+        setCheckingAuth(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
 
   const handleSkip = () => {
     enableGuestMode();
     router.push('/pages/dashboard');
   };
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950">
+        <div className="flex items-center gap-3 text-gray-500">
+          <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-medium">Checking session...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -20,7 +55,12 @@ export default function LoginPage() {
           <img
             src="/logo.jpeg"
             alt="ILoveStudy"
-            className="h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
+            className="block dark:hidden h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
+          />
+          <img
+            src="/dark_mode_logo.png"
+            alt="ILoveStudy"
+            className="hidden dark:block h-12 w-12 object-contain rounded-lg hover:scale-105 transition transform"
           />
           <span className="flex flex-col leading-none">
             <span className="text-3xl font-extrabold tracking-tight leading-none">
@@ -44,7 +84,8 @@ export default function LoginPage() {
         <div className="max-w-md w-full bg-white border border-gray-200 p-8 rounded-2xl shadow-sm">
           {/* Logo + Brand */}
           <div className="text-center mb-7 flex flex-col items-center">
-            <img src="/logo_card.jpeg" alt="ILoveStudy Logo" className="w-16 h-16 object-contain mb-3" />
+            <img src="/logo_card.jpeg" alt="ILoveStudy Logo" className="block dark:hidden w-16 h-16 object-contain mb-3" />
+            <img src="/dark_mode_logo.png" alt="ILoveStudy Logo" className="hidden dark:block w-16 h-16 object-contain mb-3" />
             <span className="flex flex-col items-center leading-none">
               <span className="text-4xl font-extrabold tracking-tight leading-none">
                 <span style={{ color: '#1a2744' }}>ILove</span><span style={{ color: '#2563EB' }}>Study</span>

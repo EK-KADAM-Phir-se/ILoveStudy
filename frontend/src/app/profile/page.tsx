@@ -20,6 +20,8 @@ import {
 import { MyErrorReports } from "../../components/MyErrorReports";
 
 import { isGuestUser, clearGuestMode } from "@/src/lib/authUtils";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -145,6 +147,8 @@ export default function ProfilePage() {
     localStorage.removeItem("backendToken");
     localStorage.removeItem("displayName");
     localStorage.removeItem("userEmail");
+    clearGuestMode();
+    signOut(auth).catch(() => {});
 
     router.push("/login");
   };

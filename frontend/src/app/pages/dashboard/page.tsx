@@ -30,6 +30,7 @@ export default function GeneralDashboard() {
   const [darkMode,        setDarkMode]        = useState(false);
   const [showStreakModal, setShowStreakModal]  = useState(false);
   const [checkingIn,      setCheckingIn]      = useState(false);
+  const [showSscModal,    setShowSscModal]    = useState(false);
   const [activeCategory,  setActiveCategory]  = useState("All");
 
   const [streakData, setStreakData] = useState<StreakData>({
@@ -188,26 +189,15 @@ export default function GeneralDashboard() {
       hover: "group-hover:border-rose-300",
     },
     {
-      id: "ssc-cgl",
-      name: "SSC CGL",
-      description: "Staff Selection Commission CGL papers with GK, Reasoning, and Quant sections.",
-      route: "/pages/dashboard/ssc-cgl",
-      category: "Government",
-      icon: Users,
-      iconBg: "bg-gradient-to-br from-emerald-500 to-green-600",
-      shadow: "shadow-emerald-200",
-      hover: "group-hover:border-emerald-300",
-    },
-    {
-      id: "ssc-chsl",
-      name: "SSC CHSL",
-      description: "Combined Higher Secondary Level papers for Tier I and Tier II preparation.",
-      route: "/pages/dashboard/ssc-chsl",
+      id: "ssc",
+      name: "SSC Exams",
+      description: "Staff Selection Commission exams including SSC CGL and SSC CHSL papers with GK, Reasoning, and Quant sections.",
+      route: "/pages/dashboard/ssc",
       category: "Government",
       icon: Landmark,
-      iconBg: "bg-gradient-to-br from-amber-500 to-orange-500",
-      shadow: "shadow-amber-200",
-      hover: "group-hover:border-amber-300",
+      iconBg: "bg-gradient-to-br from-emerald-500 to-amber-500",
+      shadow: "shadow-emerald-200",
+      hover: "group-hover:border-emerald-300",
     },
   ];
 

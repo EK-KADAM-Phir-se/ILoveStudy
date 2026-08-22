@@ -99,6 +99,8 @@ const Login = () => {
         setError('Sign-in window closed before completion.');
       } else if (err.code === 'auth/cancelled-popup-request') {
         setError('Popup request was cancelled.');
+      } else if (err.message && (err.message.includes('Database is closing') || err.message.includes('hidden'))) {
+        setError('Browser database busy. Please click Google Sign-In again to retry.');
       } else {
         setError(err.message || 'Failed to sign in with Google.');
       }

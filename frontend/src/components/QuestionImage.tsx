@@ -16,27 +16,11 @@ export function getQuestionSupabaseUrl(
   examName: string = "Jee Mains",
   year?: number | string | null
 ): { supabaseUrl: string; localFallbackUrl: string } {
-  // Extract filename cleanly from path (e.g. /neetimages/neet_2023_q8.svg -> neet_2023_q8.svg)
-  let cleanFileName = imageUrl;
-  if (cleanFileName.includes("/")) {
-    const parts = cleanFileName.split("/");
-    cleanFileName = parts[parts.length - 1];
-  }
-
-  const lowerExam = examName.toLowerCase();
-  const isNeet = lowerExam.includes("neet") || imageUrl.includes("neet") || cleanFileName.startsWith("neet_");
-
-  if (isNeet) {
-    const storagePath = `NEET/${cleanFileName}`;
-    const { data } = supabase.storage
-      .from("QuestionBank")
-      .getPublicUrl(storagePath);
-    const publicUrl = data?.publicUrl || imageUrl;
-    return { supabaseUrl: publicUrl, localFallbackUrl: publicUrl };
+  if (!imageUrl) {
+    return { supabaseUrl: "", localFallbackUrl: "" };
   }
 
   if (
-    imageUrl.startsWith("/") ||
     imageUrl.startsWith("http://") ||
     imageUrl.startsWith("https://") ||
     imageUrl.startsWith("data:")
@@ -44,8 +28,26 @@ export function getQuestionSupabaseUrl(
     return { supabaseUrl: imageUrl, localFallbackUrl: imageUrl };
   }
 
+  // Clean filename: extract just the file name (e.g. neet_2023_q8.svg or 9sep_shift2_q1_question.png)
+  let cleanFileName = imageUrl;
+  if (cleanFileName.includes("/")) {
+    const parts = cleanFileName.split("/");
+    cleanFileName = parts[parts.length - 1];
+  }
+
+  const lowerExam = (examName || "").toLowerCase();
+  const lowerUrl = imageUrl.toLowerCase();
+
+  // Determine local fallback URL
+  let localFallbackUrl = imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`;
+  if (lowerExam.includes("gate") || lowerUrl.includes("gate")) {
+    localFallbackUrl = `/GATE/${cleanFileName}`;
+  } else if (lowerExam.includes("neet") || lowerUrl.includes("neet")) {
+    localFallbackUrl = `/neetimages/${cleanFileName}`;
+  }
+
   // Determine exact folder name matching Supabase bucket structure:
-  // "Jee Mains", "Jee Advance", "SSC CGL", "SSC CHSL", "Gate"
+  // "Jee Mains", "Jee Advance", "SSC CGL", "SSC CHSL", "Gate", "NEET"
   let folderExam = "Jee Mains";
   if (lowerExam.includes("advance")) {
     folderExam = "Jee Advance";
@@ -53,7 +55,14 @@ export function getQuestionSupabaseUrl(
     folderExam = "SSC CGL";
   } else if (lowerExam.includes("ssc chsl") || lowerExam.includes("chsl")) {
     folderExam = "SSC CHSL";
-  } else if (lowerExam.includes("gate")) {
+  } else if (lowerExam.includes("neet") || lowerUrl.includes("neet") || cleanFileName.startsWith("neet_")) {
+    const storagePath = `NEET/${cleanFileName}`;
+    const { data } = supabase.storage
+      .from("QuestionBank")
+      .getPublicUrl(storagePath);
+    const publicUrl = data?.publicUrl || localFallbackUrl;
+    return { supabaseUrl: publicUrl, localFallbackUrl };
+  } else if (lowerExam.includes("gate") || lowerUrl.includes("gate")) {
     folderExam = "Gate";
   } else {
     folderExam = "Jee Mains";
@@ -67,8 +76,7 @@ export function getQuestionSupabaseUrl(
     .from("QuestionBank")
     .getPublicUrl(storagePath);
 
-  const supabaseUrl = data?.publicUrl || imageUrl;
-  const localFallbackUrl = imageUrl;
+  const supabaseUrl = data?.publicUrl || localFallbackUrl;
 
   return { supabaseUrl, localFallbackUrl };
 }
@@ -104,8 +112,8 @@ export const QuestionImage: React.FC<QuestionImageProps> = ({
 
   useEffect(() => {
     if (!isDataUri) {
-      const { supabaseUrl: newUrl } = getQuestionSupabaseUrl(imageUrl, examName, year);
-      setCurrentSrc(newUrl);
+      const { supabaseUrl: newSupabaseUrl } = getQuestionSupabaseUrl(imageUrl, examName, year);
+      setCurrentSrc(newSupabaseUrl);
     } else {
       setCurrentSrc(imageUrl);
     }

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <rect width="400" height="300" fill="#ffffff"/>
+  
+  <!-- Square PQRS -->
+  <polygon points="160,80 160,200 240,200 240,80" fill="none" stroke="#0f172a" stroke-width="2"/>
+  <text x="145" y="85" font-family="sans-serif" font-size="14" font-weight="bold">P</text>
+  <text x="145" y="210" font-family="sans-serif" font-size="14" font-weight="bold">Q</text>
+  <text x="250" y="210" font-family="sans-serif" font-size="14" font-weight="bold">R</text>
+  <text x="250" y="85" font-family="sans-serif" font-size="14" font-weight="bold">S</text>
+
+  <!-- Rectangle PLMN -->
+  <!-- P is (160,80), L on QR at (200,200). PL vector = (40, 120). Angle theta approx 71.57 deg -->
+  <!-- Perpendicular vector for LM: (-120, 40) scaled down or rotated -->
+  <polygon points="160,80 200,200 260,180 220,60" fill="none" stroke="#0f172a" stroke-width="2"/>
+  <text x="220" y="50" font-family="sans-serif" font-size="14" font-weight="bold">N</text>
+  <text x="195" y="225" font-family="sans-serif" font-size="14" font-weight="bold">L</text>
+  <text x="270" y="185" font-family="sans-serif" font-size="14" font-weight="bold">M</text>
+</svg>
