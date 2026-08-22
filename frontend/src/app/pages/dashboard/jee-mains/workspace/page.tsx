@@ -44,6 +44,7 @@ function TestWorkspacePageContent() {
   } = useTest();
 
   const [selectedSubject, setSelectedSubject] = useState<string>("Physics");
+  const [selectedSection, setSelectedSection] = useState<'A' | 'B'>('A');
   const [visitedQuestions, setVisitedQuestions] = useState<Set<string>>(new Set());
   const [markedForReview, setMarkedForReview] = useState<Set<string>>(new Set());
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Set<string>>(new Set());
@@ -234,6 +235,23 @@ function TestWorkspacePageContent() {
       runPreChecks();
     }
   }, [questions]);
+
+  // Keep selectedSubject and selectedSection in sync with active question index
+  useEffect(() => {
+    if (questions && questions.length > 0 && questions[currentQuestionIndex]) {
+      const activeQ = questions[currentQuestionIndex];
+      if (activeQ && activeQ.subject) {
+        setSelectedSubject(activeQ.subject);
+        const subQuestions = questions.filter(q => q && q.subject === activeQ.subject);
+        const subIdx = subQuestions.findIndex(q => q.id === activeQ.id);
+        if (subIdx >= 20) {
+          setSelectedSection('B');
+        } else {
+          setSelectedSection('A');
+        }
+      }
+    }
+  }, [currentQuestionIndex, questions]);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -761,13 +779,28 @@ function TestWorkspacePageContent() {
     }
   };
 
-  // Subject tab click handler
-  const handleSubjectTabClick = (sub: string) => {
+
+
+  // Subject & Section tab click handler
+  const handleSubjectTabClick = (sub: string, sec: 'A' | 'B' = 'A') => {
     setSelectedSubject(sub);
-    // Find index of first question in the global list for this subject
-    const firstIndex = questions.findIndex(q => q.subject === sub);
-    if (firstIndex !== -1) {
-      setCurrentQuestionIndex(firstIndex);
+    setSelectedSection(sec);
+    const subQuestions = questions.filter(q => q.subject === sub);
+    if (subQuestions.length === 0) return;
+
+    if (sec === 'A') {
+      const targetQ = subQuestions[0];
+      const globalIdx = questions.findIndex(q => q.id === targetQ.id);
+      if (globalIdx !== -1) {
+        setCurrentQuestionIndex(globalIdx);
+      }
+    } else {
+      // Section B: Jump to 21st question of subject (index 20) or first numerical question
+      const targetQ = subQuestions.length > 20 ? subQuestions[20] : subQuestions[subQuestions.length - 1];
+      const globalIdx = questions.findIndex(q => q.id === targetQ.id);
+      if (globalIdx !== -1) {
+        setCurrentQuestionIndex(globalIdx);
+      }
     }
   };
 
@@ -788,6 +821,7 @@ function TestWorkspacePageContent() {
 
   // Navigate to previous question of current subject
   const handlePrevQuestion = () => {
+    if (!activeQuestion) return;
     const currentSubIdx = subjectQuestions.findIndex(q => q.id === activeQuestion.id);
     if (currentSubIdx > 0) {
       const prevQ = subjectQuestions[currentSubIdx - 1];
@@ -800,6 +834,7 @@ function TestWorkspacePageContent() {
 
   // Navigate to next question of current subject
   const handleNextQuestion = () => {
+    if (!activeQuestion) return;
     const currentSubIdx = subjectQuestions.findIndex(q => q.id === activeQuestion.id);
     if (currentSubIdx < subjectQuestions.length - 1) {
       const nextQ = subjectQuestions[currentSubIdx + 1];
@@ -850,7 +885,7 @@ function TestWorkspacePageContent() {
     answeredMarked: questions.filter(q => getQuestionStatus(q.id) === "answered_marked").length,
   };
 
-  const activeSubjectIndex = subjectQuestions.findIndex(q => q.id === activeQuestion.id);
+  const activeSubjectIndex = activeQuestion ? subjectQuestions.findIndex(q => q.id === activeQuestion.id) : 0;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans select-none overflow-hidden h-screen">
@@ -909,15 +944,18 @@ function TestWorkspacePageContent() {
       </div>
 
       {/* 3. NTA Section Tabs Bar */}
-      <div className="bg-[#f1f5f9] border-b border-slate-300 px-4 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0">
+      <div className="bg-[#f1f5f9] border-b border-slate-300 px-4 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0 no-scrollbar">
         {subjects.map((sub) => {
           const subName = sub === 'Math' ? 'Mathematics' : sub;
+          const isSecAActive = selectedSubject === sub && selectedSection === 'A';
+          const isSecBActive = selectedSubject === sub && selectedSection === 'B';
+
           return (
             <React.Fragment key={sub}>
               <button
-                onClick={() => handleSubjectTabClick(sub)}
-                className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                  selectedSubject === sub
+                onClick={() => handleSubjectTabClick(sub, 'A')}
+                className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                  isSecAActive
                     ? "bg-[#337ab7] text-white shadow-sm"
                     : "bg-white text-[#337ab7] border border-slate-300 hover:bg-blue-50"
                 }`}
@@ -926,11 +964,11 @@ function TestWorkspacePageContent() {
                 <span className="w-3.5 h-3.5 rounded-full border border-current flex items-center justify-center text-[9px] font-mono">i</span>
               </button>
               <button
-                onClick={() => handleSubjectTabClick(sub)}
-                className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                  selectedSubject === sub
-                    ? "bg-white text-[#337ab7] border border-slate-300 font-bold"
-                    : "bg-white text-[#337ab7] border border-slate-300 opacity-75 hover:opacity-100"
+                onClick={() => handleSubjectTabClick(sub, 'B')}
+                className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                  isSecBActive
+                    ? "bg-[#337ab7] text-white shadow-sm"
+                    : "bg-white text-[#337ab7] border border-slate-300 hover:bg-blue-50"
                 }`}
               >
                 <span>{subName} (Section B)</span>
@@ -942,9 +980,9 @@ function TestWorkspacePageContent() {
       </div>
 
       {/* 4. Question Metadata Bar */}
-      <div className="bg-white border-b border-slate-300 px-4 py-1.5 flex items-center justify-between text-xs text-slate-700 shrink-0 font-medium">
-        <span className="font-semibold">Question Type: <strong className="text-slate-900">Multiple Choice</strong></span>
-        <span>Marks for correct answer: <strong className="text-emerald-700">+4</strong> | Negative Marks: <strong className="text-rose-600">1</strong></span>
+      <div className="bg-white border-b border-slate-300 px-4 py-1.5 flex flex-wrap items-center justify-between text-xs text-slate-700 shrink-0 font-medium gap-1">
+        <span className="font-semibold">Question Type: <strong className="text-slate-900">{selectedSection === 'B' ? 'Numerical Value (NAT)' : 'Multiple Choice'}</strong></span>
+        <span>Marks for correct answer: <strong className="text-emerald-700">+4</strong> | Negative Marks: <strong className="text-rose-600">{selectedSection === 'B' ? '0' : '1'}</strong></span>
       </div>
 
       {/* Main Body Grid */}
@@ -957,19 +995,21 @@ function TestWorkspacePageContent() {
           <div className="bg-slate-100 border-b border-slate-300 px-4 sm:px-6 py-2 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
               <span className="font-bold text-slate-900 text-xs sm:text-sm">Question No. {activeSubjectIndex + 1}</span>
-              <button
-                onClick={handleToggleBookmark}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg border flex items-center gap-1 transition cursor-pointer ${
-                  bookmarkedQuestions.has(activeQuestion.id)
-                    ? 'bg-amber-100 text-amber-900 border-amber-300'
-                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
-                }`}
-              >
-                <span>🔖</span> <span className="hidden sm:inline">Bookmark</span>
-              </button>
+              {activeQuestion && (
+                <button
+                  onClick={handleToggleBookmark}
+                  className={`px-2.5 py-1 text-xs font-bold rounded-lg border flex items-center gap-1 transition cursor-pointer ${
+                    bookmarkedQuestions.has(activeQuestion.id)
+                      ? 'bg-amber-100 text-amber-900 border-amber-300'
+                      : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  <span>🔖</span> <span className="hidden sm:inline">Bookmark</span>
+                </button>
+              )}
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
-              <ReportErrorButton questionId={activeQuestion.id} questionTextSnippet={activeQuestion.questionText} />
+              {activeQuestion && <ReportErrorButton questionId={activeQuestion.id} questionTextSnippet={activeQuestion.questionText} />}
               <button
                 onClick={() => setShowMobilePalette(true)}
                 className="lg:hidden px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1 cursor-pointer shadow"
