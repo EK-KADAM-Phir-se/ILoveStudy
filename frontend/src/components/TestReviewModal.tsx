@@ -158,26 +158,26 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
       <div className="bg-white border border-slate-300 rounded-lg w-full max-w-6xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden text-slate-900 select-none" style={{ zoom: `${zoomLevel}%` }}>
         
         {/* TOP HEADER BAR */}
-        <header className="bg-white border-b border-slate-300 px-6 py-3 flex items-center justify-between shrink-0 shadow-sm">
-          <div className="flex items-center space-x-3">
-            <h1 className="text-lg font-extrabold text-slate-800 tracking-tight">
+        <header className="bg-white border-b border-slate-300 px-3 sm:px-6 py-2.5 sm:py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between shrink-0 shadow-xs gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-sm sm:text-lg font-extrabold text-slate-800 tracking-tight leading-snug">
               {attempt ? `${attempt.examName} — ${attempt.shiftName}` : "SSC CGL MOCK TEST — ANSWER REVIEW"}
             </h1>
-            <span className="text-xs font-bold px-2.5 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
+            <span className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
               Answer Key &amp; Review
             </span>
           </div>
 
           {attempt && (
-            <div className="flex items-center space-x-4 text-xs">
-              <div className="flex items-center space-x-3 bg-slate-100 px-3.5 py-1.5 rounded border border-slate-200">
-                <span>Score: <strong className="text-blue-700 text-sm font-bold">{attempt.score} / {attempt.maxMarks}</strong></span>
+            <div className="flex items-center justify-between w-full sm:w-auto gap-2 sm:gap-4 text-xs">
+              <div className="flex items-center gap-2 bg-slate-100 px-2.5 sm:px-3.5 py-1 rounded border border-slate-200 text-[11px] sm:text-xs">
+                <span>Score: <strong className="text-blue-700 text-xs sm:text-sm font-bold">{attempt.score} / {attempt.maxMarks}</strong></span>
                 <span>•</span>
-                <span>Accuracy: <strong className="text-emerald-700 text-sm font-bold">{attempt.percentage}%</strong></span>
+                <span>Accuracy: <strong className="text-emerald-700 text-xs sm:text-sm font-bold">{attempt.percentage}%</strong></span>
               </div>
               <button
                 onClick={onClose}
-                className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 rounded text-xs transition"
+                className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-2.5 sm:px-3 py-1 rounded text-xs transition shrink-0 cursor-pointer"
               >
                 ✕ Close Review
               </button>
@@ -187,35 +187,35 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
 
         {/* SUB HEADER / CONTROLS & SUMMARY BANNER */}
         <div className="bg-slate-100 border-b border-slate-300 text-xs shrink-0">
-          <div className="px-6 py-1.5 flex items-center justify-between border-b border-slate-200 bg-white">
+          <div className="px-3 sm:px-6 py-1.5 flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-200 bg-white gap-2">
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setZoomLevel(prev => Math.min(prev + 10, 140))}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition cursor-pointer"
               >
                 Zoom (+)
               </button>
               <button
                 onClick={() => setZoomLevel(prev => Math.max(prev - 10, 80))}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition cursor-pointer"
               >
                 Zoom (-)
               </button>
-              <span className="ml-3 font-semibold text-slate-700">Detailed Attempt Evaluation</span>
+              <span className="ml-2 font-semibold text-slate-700 text-[11px] sm:text-xs">Detailed Attempt Evaluation</span>
             </div>
 
             {attempt && (
-              <div className="flex items-center space-x-3 font-medium text-slate-700">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 font-medium text-slate-700 text-[11px] sm:text-xs">
                 <span className="text-emerald-700 font-bold">✓ Correct: {attempt.correctCount} (+{attempt.correctCount * positiveMultiplier} pts)</span>
-                <span>|</span>
+                <span className="hidden sm:inline">|</span>
                 <span className="text-red-600 font-bold">✕ Wrong: {attempt.incorrectCount} (-{attempt.incorrectCount * negativeMultiplier} pts)</span>
-                <span>|</span>
+                <span className="hidden sm:inline">|</span>
                 <span className="text-slate-600 font-bold">⚪ Unattempted: {attempt.unattemptedCount}</span>
               </div>
             )}
           </div>
 
-          <div className="bg-[#fffde7] border-b border-yellow-200 px-6 py-1 text-slate-800 text-[11px] flex items-center space-x-4">
+          <div className="bg-[#fffde7] border-b border-yellow-200 px-3 sm:px-6 py-1 text-slate-800 text-[10px] sm:text-[11px] flex flex-wrap items-center gap-2">
             <span className="font-bold text-yellow-900">ANSWER REVIEW MODE</span>
             <span className="text-slate-700">Green indicates correct choice, Red indicates incorrect choice.</span>
           </div>
@@ -223,34 +223,34 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
 
         {/* CONTENT AREA */}
         {loading ? (
-          <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center space-y-4 p-8">
+          <div className="flex-1 min-h-[300px] flex flex-col items-center justify-center space-y-4 p-8">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600"></div>
             <p className="text-sm font-semibold text-slate-600 animate-pulse">Loading detailed question analysis...</p>
           </div>
         ) : error ? (
-          <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center space-y-4 p-8 text-center">
+          <div className="flex-1 min-h-[300px] flex flex-col items-center justify-center space-y-4 p-8 text-center">
             <p className="text-red-600 font-semibold text-sm">{error}</p>
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs rounded transition"
+              className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs rounded transition cursor-pointer"
             >
               Close
             </button>
           </div>
         ) : !attempt || questions.length === 0 ? (
-          <div className="flex-1 min-h-[400px] flex items-center justify-center p-8 text-slate-500 text-xs">
+          <div className="flex-1 min-h-[300px] flex items-center justify-center p-8 text-slate-500 text-xs">
             No review questions found for this attempt.
           </div>
         ) : (
-          <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
+          <div className="flex-1 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row">
             
             {/* LEFT SIDEBAR: FILTERS & QUESTION PALETTE GRID */}
-            <aside className="w-full lg:w-80 bg-white border-r border-slate-300 flex flex-col justify-between shrink-0 overflow-y-auto">
-              <div className="p-4 space-y-4">
+            <aside className="w-full lg:w-80 bg-white border-b lg:border-b-0 lg:border-r border-slate-300 flex flex-col justify-between shrink-0 max-h-[280px] lg:max-h-none overflow-y-auto">
+              <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
                 
                 {/* SUBJECT FILTER */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
+                <div className="space-y-1">
+                  <label className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
                     Subject Filter
                   </label>
                   <div className="flex flex-wrap gap-1">
@@ -258,7 +258,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                       <button
                         key={subj}
                         onClick={() => setSelectedSubject(subj)}
-                        className={`px-2.5 py-1 rounded text-xs font-bold transition ${
+                        className={`px-2 py-0.5 sm:py-1 rounded text-[11px] sm:text-xs font-bold transition cursor-pointer ${
                           selectedSubject === subj
                             ? "bg-blue-600 text-white shadow-xs"
                             : "bg-white text-blue-600 border border-slate-300 hover:bg-slate-100"
@@ -271,11 +271,11 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                 </div>
 
                 {/* RESULT STATUS FILTER */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
+                <div className="space-y-1">
+                  <label className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
                     Status Filter
                   </label>
-                  <div className="grid grid-cols-2 gap-1.5">
+                  <div className="grid grid-cols-2 gap-1 sm:gap-1.5">
                     {[
                       { id: "All", label: "All Questions", count: questions.length },
                       { id: "Correct", label: "✓ Correct", count: attempt.correctCount },
@@ -285,14 +285,14 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                       <button
                         key={st.id}
                         onClick={() => setSelectedStatusFilter(st.id)}
-                        className={`px-2.5 py-1.5 rounded text-xs font-semibold transition text-left flex justify-between items-center ${
+                        className={`px-2 py-1 rounded text-[11px] sm:text-xs font-semibold transition text-left flex justify-between items-center cursor-pointer ${
                           selectedStatusFilter === st.id
                             ? "bg-blue-600 text-white font-bold"
                             : "bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300"
                         }`}
                       >
                         <span>{st.label}</span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-800">
+                        <span className="text-[9px] sm:text-[10px] px-1 py-0.2 rounded bg-slate-200 text-slate-800 font-bold">
                           {st.count}
                         </span>
                       </button>
@@ -301,11 +301,11 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                 </div>
 
                 {/* QUESTION PALETTE GRID */}
-                <div className="space-y-2 pt-2 border-t border-slate-200">
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+                <div className="space-y-1.5 pt-2 border-t border-slate-200">
+                  <h4 className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-600">
                     Questions Palette ({filteredQuestions.length})
                   </h4>
-                  <div className="grid grid-cols-5 gap-2 max-h-[260px] overflow-y-auto pr-1">
+                  <div className="grid grid-cols-6 sm:grid-cols-5 lg:grid-cols-5 gap-1.5 max-h-[160px] sm:max-h-[220px] overflow-y-auto pr-1">
                     {filteredQuestions.map((q, idx) => {
                       const originalIdx = questions.findIndex((orig) => orig.id === q.id);
                       const isSelected = activeQuestion?.id === q.id;
@@ -323,7 +323,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                         <button
                           key={q.id}
                           onClick={() => setCurrentIndex(idx)}
-                          className={`w-9 h-9 rounded text-xs flex items-center justify-center transition shadow-xs cursor-pointer ${bgClass} ${borderClass}`}
+                          className={`w-8 h-8 sm:w-9 sm:h-9 rounded text-[11px] sm:text-xs flex items-center justify-center transition shadow-xs cursor-pointer ${bgClass} ${borderClass}`}
                           title={`Q${originalIdx + 1} (${q.subject}) - ${q.status}`}
                         >
                           {originalIdx + 1}
@@ -471,15 +471,15 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                             return (
                               <div
                                 key={opt.key}
-                                className={`p-3 rounded border flex items-center justify-between text-xs transition ${optionCardStyle}`}
+                                className={`p-2.5 sm:p-3 rounded-lg border flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs transition gap-2 ${optionCardStyle}`}
                               >
-                                <div className="flex items-center space-x-3 flex-1">
-                                  <span className={`w-7 h-7 rounded flex items-center justify-center font-bold text-xs shrink-0 ${
+                                <div className="flex items-start sm:items-center space-x-2.5 sm:space-x-3 flex-1 min-w-0">
+                                  <span className={`w-6 h-6 sm:w-7 sm:h-7 rounded flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 sm:mt-0 ${
                                     isCorrectOption ? 'bg-emerald-600 text-white' : isUserSelected ? 'bg-rose-600 text-white' : 'bg-slate-200 text-slate-700'
                                   }`}>
                                     {opt.key}
                                   </span>
-                                  <div className="flex-1 font-medium">
+                                  <div className="flex-1 font-medium break-words min-w-0 text-xs sm:text-sm">
                                     {isImg ? (
                                       <QuestionImage imageUrl={cleanedVal} examName={attempt?.examName} alt={`Option ${opt.key}`} className="max-h-24 object-contain rounded" />
                                     ) : (
@@ -487,7 +487,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                                     )}
                                   </div>
                                 </div>
-                                {badge && <div className="shrink-0 ml-3">{badge}</div>}
+                                {badge && <div className="shrink-0 self-end sm:self-auto text-[10px] sm:text-xs">{badge}</div>}
                               </div>
                             );
                           })}
@@ -497,41 +497,41 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
 
                     {/* SOLUTION / EXPLANATION SECTION */}
                     {activeQuestion.explanation && (
-                      <div className="bg-blue-50 border border-blue-200 rounded p-4 space-y-2 text-xs text-slate-800">
-                        <h4 className="font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 space-y-2 text-xs text-slate-800">
+                        <h4 className="font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5 text-xs sm:text-sm">
                           💡 Solution &amp; Detailed Explanation
                         </h4>
-                        <div className="leading-relaxed">
+                        <div className="leading-relaxed text-xs sm:text-sm">
                           <LatexRenderer text={activeQuestion.explanation} />
                         </div>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="min-h-[250px] flex items-center justify-center text-slate-500 text-xs">
+                  <div className="min-h-[200px] flex items-center justify-center text-slate-500 text-xs">
                     No questions match the selected filters.
                   </div>
                 )}
               </div>
 
               {/* FOOTER NAVIGATION */}
-              <footer className="border-t border-slate-300 bg-slate-50 px-6 py-3 flex items-center justify-between shrink-0">
+              <footer className="border-t border-slate-300 bg-slate-50 px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-between shrink-0 gap-2">
                 <button
                   onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
                   disabled={currentIndex === 0}
-                  className="px-4 py-2 rounded text-xs font-bold bg-white hover:bg-slate-100 border border-slate-300 disabled:opacity-40 text-slate-700 shadow-xs transition"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs font-bold bg-white hover:bg-slate-100 border border-slate-300 disabled:opacity-40 text-slate-700 shadow-xs transition cursor-pointer"
                 >
-                  ← Previous Question
+                  ← <span className="hidden sm:inline">Previous</span>
                 </button>
-                <span className="text-xs text-slate-600 font-bold">
+                <span className="text-[11px] sm:text-xs text-slate-600 font-bold text-center">
                   {currentIndex + 1} of {filteredQuestions.length}
                 </span>
                 <button
                   onClick={() => setCurrentIndex((prev) => Math.min(filteredQuestions.length - 1, prev + 1))}
                   disabled={currentIndex === filteredQuestions.length - 1}
-                  className="px-4 py-2 rounded text-xs font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white shadow-xs transition"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white shadow-xs transition cursor-pointer"
                 >
-                  Next Question →
+                  <span className="hidden sm:inline">Next Question</span> →
                 </button>
               </footer>
             </main>

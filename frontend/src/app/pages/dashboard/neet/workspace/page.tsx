@@ -683,24 +683,24 @@ function NeetWorkspacePageContent() {
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans select-none overflow-hidden h-screen">
       {/* 1. NTA Topmost Dark Banner */}
-      <div className="bg-[#1a1d20] text-yellow-400 font-bold text-xs sm:text-sm px-4 py-2 flex items-center justify-between border-b border-slate-800 shrink-0">
+      <div className="bg-[#1a1d20] text-yellow-400 font-bold text-xs sm:text-sm px-2.5 sm:px-4 py-1.5 sm:py-2 flex flex-wrap items-center justify-between border-b border-slate-800 shrink-0 gap-2">
         <div className="flex items-center gap-2">
-          <span>NEET Mock Test UPDATED AS PER LATEST NTA PATTERN</span>
+          <span className="text-[11px] sm:text-sm">NEET Mock Test UPDATED AS PER LATEST NTA PATTERN</span>
         </div>
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex items-center gap-2 sm:gap-3 text-xs">
           <button
             onClick={() => setShowAccessibilityModal(true)}
-            className="bg-[#4caf50] hover:bg-[#43a047] text-white px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer shadow-sm transition"
+            className="bg-[#4caf50] hover:bg-[#43a047] text-white px-2 sm:px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer shadow-sm transition text-[11px] sm:text-xs"
           >
-            <span>♿</span> Accessibility
+            <span>♿</span> <span className="hidden sm:inline">Accessibility</span>
           </button>
           <button
             onClick={() => setShowMagnifierBar(prev => !prev)}
-            className={`px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer shadow-sm transition ${
+            className={`px-2 sm:px-2.5 py-1 rounded flex items-center gap-1 font-semibold cursor-pointer shadow-sm transition text-[11px] sm:text-xs ${
               showMagnifierBar ? 'bg-amber-600 ring-2 ring-amber-400 text-white' : 'bg-[#ff9800] hover:bg-[#fb8c00] text-white'
             }`}
           >
-            <span>🔍</span> Screen Magnifier
+            <span>🔍</span> <span className="hidden sm:inline">Screen Magnifier</span>
           </button>
         </div>
       </div>
@@ -715,34 +715,34 @@ function NeetWorkspacePageContent() {
       )}
 
       {/* 2. Sub-Header Bar (Paper Badge + Timer) */}
-      <div className="bg-[#e2e8f0] text-slate-800 px-4 py-2 flex items-center justify-between text-xs border-b border-slate-300 shrink-0">
-        <div className="flex items-center gap-3">
-          <span className="bg-[#31708f] text-white px-3 py-1 rounded-md font-bold text-xs shadow-sm">
+      <div className="bg-[#e2e8f0] text-slate-800 px-2.5 sm:px-4 py-1.5 sm:py-2 flex flex-wrap items-center justify-between text-xs border-b border-slate-300 shrink-0 gap-2">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <span className="bg-[#31708f] text-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-md font-bold text-[11px] sm:text-xs shadow-sm">
             NEET {year}
           </span>
           <button
             onClick={() => setShowExitConfirmModal(true)}
-            className="text-slate-600 hover:text-slate-900 text-xs font-semibold cursor-pointer"
+            className="text-slate-600 hover:text-slate-900 text-[11px] sm:text-xs font-semibold cursor-pointer"
           >
             &larr; Exit Exam
           </button>
         </div>
 
-        <div className="flex items-center gap-4 font-bold text-sm">
-          <span className="text-slate-600 text-xs uppercase tracking-wide">Sections</span>
-          <div className="bg-white px-3 py-1 rounded border border-slate-300 shadow-inner">
-            Time Left : <span className={`font-mono text-base font-bold ${examTimeLeft < 600 ? 'text-red-600 animate-pulse' : 'text-blue-600'}`}>{formatTime(examTimeLeft)}</span>
+        <div className="flex items-center gap-2 sm:gap-4 font-bold text-xs sm:text-sm">
+          <span className="text-slate-600 text-[10px] sm:text-xs uppercase tracking-wide hidden sm:inline">Sections</span>
+          <div className="bg-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded border border-slate-300 shadow-xs text-xs sm:text-sm">
+            Time Left : <span className={`font-mono text-xs sm:text-base font-bold ${examTimeLeft < 600 ? 'text-red-600 animate-pulse' : 'text-blue-600'}`}>{formatTime(examTimeLeft)}</span>
           </div>
         </div>
       </div>
 
       {/* 3. NTA Section Tabs Bar */}
-      <div className="bg-[#f1f5f9] border-b border-slate-300 px-4 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0">
+      <div className="bg-[#f1f5f9] border-b border-slate-300 px-2.5 sm:px-4 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0 no-scrollbar">
         {neetSubjects.map((subj) => (
           <button
             key={subj.name}
             onClick={() => handleSelectSubject(subj.name)}
-            className={`px-3 py-1.5 rounded text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               selectedSubject === subj.name
                 ? "bg-[#337ab7] text-white shadow-sm"
                 : "bg-white text-[#337ab7] border border-slate-300 hover:bg-blue-50 font-bold"
@@ -755,9 +755,9 @@ function NeetWorkspacePageContent() {
       </div>
 
       {/* 4. Question Metadata Bar */}
-      <div className="bg-white border-b border-slate-200 px-4 py-1.5 flex items-center justify-between text-xs text-slate-700 shrink-0">
+      <div className="bg-white border-b border-slate-200 px-2.5 sm:px-4 py-1.5 flex flex-wrap items-center justify-between text-[11px] sm:text-xs text-slate-700 shrink-0 gap-1">
         <span className="font-semibold">Question Type: <strong className="text-slate-900">Multiple Choice</strong></span>
-        <span>Marks for correct answer: <strong className="text-emerald-600">+4</strong> | Negative Marks: <strong className="text-rose-600">1</strong></span>
+        <span>Marks for correct: <strong className="text-emerald-600">+4</strong> | Negative: <strong className="text-rose-600">1</strong></span>
       </div>
 
       {/* Main Body Grid */}
