@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   FileText, Calendar, ArrowRight,
-  BookOpen, FlaskConical, Sigma, Atom, X, Play
+  BookOpen, FlaskConical, Sigma, Atom, X, Play, Clock, Sparkles
 } from "lucide-react";
 import NavBar from "../../../../components/NavBar";
 import Footer from "../../../../components/Footer";
@@ -187,9 +187,15 @@ function JeeExamPageContent() {
 
               {/* Meta */}
               <p className="text-gray-400 dark:text-slate-400 text-sm leading-relaxed">
-                {total} papers
-                {dbCount > 0 && (
-                  <span className="text-emerald-500 font-semibold ml-1">· {dbCount} with answers</span>
+                {year === 2026 ? (
+                  <span className="text-amber-500 font-semibold">Upcoming · Uploading soon</span>
+                ) : (
+                  <>
+                    {total} papers
+                    {dbCount > 0 && (
+                      <span className="text-emerald-500 font-semibold ml-1">· {dbCount} with answers</span>
+                    )}
+                  </>
                 )}
               </p>
 
@@ -236,7 +242,7 @@ function JeeExamPageContent() {
                     {selectedYear === "temp" ? "🔥 Temp Section — Wave Optics Papers" : `${selectedYear} Papers`}
                   </h2>
                   <p className="text-xs text-gray-500 dark:text-slate-400">
-                    {selectedYear === "temp" ? "Select any of the 4 Wave Optics PYQ papers to attempt" : `${isAdvanced ? "JEE Advanced" : "JEE Mains"} — Select a paper to start`}
+                    {selectedYear === 2026 || selectedYear === "2026" ? "Paper release schedule & availability" : selectedYear === "temp" ? "Select any of the 4 Wave Optics PYQ papers to attempt" : `${isAdvanced ? "JEE Advanced" : "JEE Mains"} — Select a paper to start`}
                   </p>
                 </div>
               </div>
@@ -246,7 +252,39 @@ function JeeExamPageContent() {
             </div>
 
             <div className="px-6 py-5 space-y-4">
-              {selectedYear === "temp" ? (
+              {selectedYear === 2026 || selectedYear === "2026" ? (
+                <div className="py-8 px-6 text-center space-y-4 bg-gradient-to-b from-indigo-50/50 via-white to-white dark:from-slate-900/50 dark:via-slate-950 dark:to-slate-950 rounded-2xl border border-indigo-100/80 dark:border-slate-800">
+                  <div className="w-16 h-16 mx-auto bg-gradient-to-tr from-indigo-600 to-violet-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <Clock size={32} />
+                  </div>
+                  <div className="max-w-md mx-auto space-y-2">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                      <Sparkles size={12} /> Upcoming Paper Release
+                    </div>
+                    <h3 className="text-xl font-black text-slate-900 dark:text-slate-100">
+                      2026 Question Papers Uploading Soon
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                      Our academic team is currently verifying and formatting the official 2026 JEE Mains papers with step-by-step LaTeX solutions &amp; diagram illustrations. They will be published here shortly.
+                    </p>
+                  </div>
+                  <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+                    <button 
+                      onClick={() => setSelectedYear(2025)}
+                      className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md transition cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <span>Explore 2025 Solved Papers</span>
+                      <ArrowRight size={14} />
+                    </button>
+                    <button 
+                      onClick={() => setSelectedYear(null)}
+                      className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition cursor-pointer"
+                    >
+                      Close Window
+                    </button>
+                  </div>
+                </div>
+              ) : selectedYear === "temp" ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {tempShifts.map((shift, idx) => (
                     <button key={`${shift.name}-${idx}`}

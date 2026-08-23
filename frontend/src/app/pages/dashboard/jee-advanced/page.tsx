@@ -2,70 +2,78 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Clock, Sparkles, ArrowRight, ShieldCheck, FileCheck, Layers } from 'lucide-react';
 import NavBar from '../../../../components/NavBar';
 import Footer from '../../../../components/Footer';
-import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
-import { isGuestUser } from "@/src/lib/authUtils";
 
 export default function JeeAdvancedDashboard() {
   const router = useRouter();
-  const [selectedPaper, setSelectedPaper] = useState<string | null>(null);
-  const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
-
-  const papers = [
-    { id: "paper-1", name: "Paper 1 (09:00 AM - 12:00 PM)", status: "Ready to Launch", questions: 54 },
-    { id: "paper-2", name: "Paper 2 (02:30 PM - 05:30 PM)", status: "Ready to Launch", questions: 54 }
-  ];
-
-  const handleInitialize = () => {
-    if (isGuestUser()) {
-      setShowGuestModal(true);
-      return;
-    }
-    alert("Launching JEE Advanced Workspace...");
-  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors flex flex-col justify-between">
       <div>
         <NavBar />
-        <div className="p-6">
-          <div className="max-w-4xl mx-auto bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors mt-4">
-            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2">JEE Advanced Ultimate Portal</h1>
-            <p className="text-slate-500 dark:text-slate-400 mb-6">Select your paper challenge. Advanced testing requires rigorous analytical accuracy.</p>
-
-            <div className="space-y-3 mb-8">
-              {papers.map((paper) => (
-                <div
-                  key={paper.id}
-                  onClick={() => setSelectedPaper(paper.name)}
-                  className={`p-5 border-2 rounded-xl cursor-pointer transition flex justify-between items-center ${
-                    selectedPaper === paper.name
-                      ? 'border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/40 dark:border-indigo-500'
-                      : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-300 dark:hover:border-indigo-700'
-                  }`}
-                >
-                  <div>
-                    <p className="font-bold text-slate-800 dark:text-slate-100">{paper.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{paper.questions} Advanced Tier Questions • <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{paper.status}</span></p>
-                  </div>
-                  <input type="radio" checked={selectedPaper === paper.name} readOnly className="h-4 w-4 text-indigo-600" />
-                </div>
-              ))}
+        <div className="p-4 sm:p-8">
+          <div className="max-w-3xl mx-auto bg-white dark:bg-slate-900 p-6 sm:p-10 rounded-3xl shadow-xl border border-slate-200/80 dark:border-slate-800 transition-colors mt-4 text-center space-y-6">
+            
+            {/* Animated Icon Container */}
+            <div className="w-20 h-20 mx-auto bg-gradient-to-tr from-indigo-600 via-violet-600 to-purple-600 text-white rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/25">
+              <Clock size={38} />
             </div>
 
-            <button onClick={handleInitialize} disabled={!selectedPaper} className={`w-full py-3.5 rounded-xl font-bold text-white transition ${selectedPaper ? 'bg-indigo-600 hover:bg-indigo-700 shadow-md cursor-pointer' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'}`}>
-              Initialize Heavy Workspace
-            </button>
+            {/* Badge & Title */}
+            <div className="space-y-3 max-w-lg mx-auto">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/90 dark:border-amber-800/80 shadow-xs">
+                <Sparkles size={14} className="text-amber-500 animate-spin" />
+                <span>Upcoming Release · JEE Advanced Archive</span>
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
+                JEE Advanced Papers Uploading Soon
+              </h1>
+
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                Our expert academic faculty is currently digitizing, verifying, and formatting official JEE Advanced Paper 1 and Paper 2 exams with detailed multi-correct, numerical, and matrix-match LaTeX solutions.
+              </p>
+            </div>
+
+            {/* Feature Checklist */}
+            <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 text-left max-w-md mx-auto space-y-3">
+              <div className="flex items-center gap-3 text-xs font-bold text-slate-700 dark:text-slate-300">
+                <ShieldCheck size={16} className="text-emerald-500 shrink-0" />
+                <span>Verified NTA Answer Keys &amp; Scoring Schema</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs font-bold text-slate-700 dark:text-slate-300">
+                <FileCheck size={16} className="text-indigo-500 shrink-0" />
+                <span>Step-by-Step Multi-Correct &amp; Matrix LaTeX Explanations</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs font-bold text-slate-700 dark:text-slate-300">
+                <Layers size={16} className="text-amber-500 shrink-0" />
+                <span>Real-Time High Performance Exam Workspace</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center items-center">
+              <button
+                onClick={() => router.push("/pages/dashboard/jee-mains")}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold shadow-lg shadow-indigo-600/20 transition flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Explore JEE Mains Solved Papers</span>
+                <ArrowRight size={15} />
+              </button>
+
+              <button
+                onClick={() => router.push("/pages/dashboard/create-test")}
+                className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-extrabold transition cursor-pointer"
+              >
+                Create Custom Test
+              </button>
+            </div>
+
           </div>
         </div>
       </div>
-      <GuestRestrictionModal
-        isOpen={showGuestModal}
-        onClose={() => setShowGuestModal(false)}
-        title="JEE Advanced Restricted"
-        message="You are exploring in Guest Tour mode. Sign in to attempt JEE Advanced Paper 1 and Paper 2 exams."
-      />
       <Footer />
     </div>
   );
