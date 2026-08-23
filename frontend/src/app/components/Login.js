@@ -41,7 +41,7 @@ const Login = () => {
     }
   };
 
-  // Password Login / Register
+  // Password Login / Register (Dual Auth: Utho Native Backend + Firebase Fallback)
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -50,21 +50,100 @@ const Login = () => {
     const cleanEmail = email.trim();
 
     try {
-      let userCredential;
       if (isRegistering) {
         if (password !== confirmPassword) {
           setError('Passwords do not match.');
           setLoading(false);
           return;
         }
-        userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, password);
-      } else {
-        userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
-      }
 
-      const token = await userCredential.user.getIdToken();
-      await persistSession(userCredential.user, token);
-      router.push('/pages/dashboard');
+        const displayName = cleanEmail.split('@')[0];
+        let uthoSuccess = false;
+
+        // 1. Register directly in Utho PostgreSQL Database
+        try {
+          const regRes = await fetch(`${API_BASE_URL}/api/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: cleanEmail, password, fullName: displayName }),
+          });
+
+          const regData = await regRes.json();
+
+          if (regRes.ok) {
+            uthoSuccess = true;
+            // Automatically log in on Utho backend to fetch JWT token
+            const loginRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: cleanEmail, password }),
+            });
+            const loginData = await loginRes.json();
+
+            if (loginRes.ok && loginData.token) {
+              clearGuestMode();
+              localStorage.setItem('token', loginData.token);
+              localStorage.setItem('backendToken', loginData.token);
+              localStorage.setItem('userEmail', cleanEmail);
+              localStorage.setItem('displayName', loginData.user?.fullName || displayName);
+            }
+          }
+        } catch (uthoErr) {
+          console.warn("Utho registration note/fallback:", uthoErr);
+        }
+
+        // 2. Also register in Firebase Auth for seamless dual support
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+          const token = await userCredential.user.getIdToken();
+          await persistSession(userCredential.user, token);
+        } catch (fbErr) {
+          // If Utho backend registration succeeded, we can proceed even if Firebase gives duplicate/warning
+          if (!uthoSuccess) {
+            throw fbErr;
+          }
+        }
+
+        router.push('/pages/dashboard');
+        return;
+      } else {
+        // Logging In
+        let uthoLoginSuccess = false;
+
+        // 1. Try Utho Native Backend Login
+        try {
+          const loginRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: cleanEmail, password }),
+          });
+          const loginData = await loginRes.json();
+
+          if (loginRes.ok && loginData.token) {
+            uthoLoginSuccess = true;
+            clearGuestMode();
+            localStorage.setItem('token', loginData.token);
+            localStorage.setItem('backendToken', loginData.token);
+            localStorage.setItem('userEmail', cleanEmail);
+            localStorage.setItem('displayName', loginData.user?.fullName || cleanEmail.split('@')[0]);
+
+            // Background sync with Firebase if credentials match
+            signInWithEmailAndPassword(auth, cleanEmail, password).catch(() => {});
+          }
+        } catch (uthoErr) {
+          console.warn("Utho login fallback to Firebase:", uthoErr);
+        }
+
+        // 2. If Utho Login was not successful, fallback to Firebase Auth
+        if (!uthoLoginSuccess) {
+          const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
+          const token = await userCredential.user.getIdToken();
+          await persistSession(userCredential.user, token);
+        }
+
+        router.push('/pages/dashboard');
+        return;
+      }
     } catch (err) {
       console.error("Authentication Error:", err);
       let errorMessage = 'Authentication failed';
