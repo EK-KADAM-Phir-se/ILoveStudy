@@ -155,30 +155,6 @@ function JeeExamPageContent() {
 
       {/* ── Card Grid ── */}
       <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        
-        {/* 🔥 Temp Section Card */}
-        <button
-          onClick={() => openYear("temp")}
-          className="group bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-rose-500/10 dark:from-amber-950/40 dark:to-rose-950/40 border-2 border-amber-400/80 dark:border-amber-500/60 hover:shadow-lg rounded-2xl p-5 text-left transition-all duration-200 cursor-pointer relative overflow-hidden"
-        >
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md">
-            <BookOpen size={22} />
-          </div>
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-extrabold text-gray-900 dark:text-slate-100 text-lg group-hover:text-amber-600 dark:group-hover:text-amber-400 transition">
-              Temp Section
-            </h3>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-xs">
-              55 Questions
-            </span>
-          </div>
-          <p className="text-gray-600 dark:text-slate-300 text-sm leading-relaxed font-medium">
-            Topic Master Paper (25 Physics + 30 Chemistry)
-          </p>
-          <div className="mt-4 flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 transition">
-            Start Master Exam <ArrowRight size={13} />
-          </div>
-        </button>
 
         {years.map((year, idx) => {
           const col        = YEAR_COLORS[idx % YEAR_COLORS.length];
