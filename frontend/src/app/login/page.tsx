@@ -21,7 +21,8 @@ export default function LoginPage() {
     }
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+      const currentToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      if (user && (currentToken || isGuestUser())) {
         router.replace('/pages/dashboard');
       } else {
         setCheckingAuth(false);
