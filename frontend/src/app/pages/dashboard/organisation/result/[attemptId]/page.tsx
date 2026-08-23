@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import NavBar from "@/src/components/NavBar";
 import { LatexRenderer } from "@/src/app/components/LatexRenderer";
+import { QuestionImage } from "@/src/components/QuestionImage";
 import {
   fetchStudentAttemptResult,
   StudentAttemptResultResponse,
@@ -263,7 +264,7 @@ export default function OrgStudentResultPage() {
                     <LatexRenderer text={q.questionText} />
                     {q.imageUrl && (
                       <div className="mt-3 rounded-xl overflow-hidden border border-slate-800 max-w-sm">
-                        <img src={q.imageUrl} alt="Question diagram" className="w-full object-contain" />
+                        <QuestionImage imageUrl={q.imageUrl} examName="Organisation" alt="Question diagram" className="w-full object-contain" />
                       </div>
                     )}
                   </div>

@@ -30,6 +30,8 @@ import {
 } from "@/src/lib/orgApi";
 import { fetchProfile } from "@/src/lib/profileApi";
 import { supabase } from "@/src/lib/supabase";
+import { uploadPdfFile } from "@/src/lib/uploadApi";
+import { QuestionImage } from "@/src/components/QuestionImage";
 import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
 import { isGuestUser } from "@/src/lib/authUtils";
 
@@ -246,9 +248,8 @@ export default function OrganisationStudentPage() {
     }
     setIsSubmittingReq(true);
     try {
-      let finalPdfUrl = pdfDataUri;
+      let finalPdfUrl: string | undefined = undefined;
 
-      // Attempt Dynamic PDF Compression & Supabase Storage Bucket Upload (Lazy loaded pdf-lib)
       if (pdfFileObj) {
         let fileToUpload: Blob = pdfFileObj;
         try {
@@ -264,26 +265,18 @@ export default function OrganisationStudentPage() {
 
         try {
           const cleanFileName = `${Date.now()}_${pdfFileObj.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
-          const { data: uploadData, error: uploadError } = await supabase.storage
-            .from("test-pdfs")
-            .upload(cleanFileName, fileToUpload, {
-              cacheControl: "3600",
-              upsert: true,
-              contentType: "application/pdf"
-            });
-
-          if (!uploadError && uploadData) {
-            const { data: publicUrlData } = supabase.storage
-              .from("test-pdfs")
-              .getPublicUrl(uploadData.path);
-            if (publicUrlData?.publicUrl) {
-              finalPdfUrl = publicUrlData.publicUrl;
-            }
+          const uploadRes = await uploadPdfFile(fileToUpload, cleanFileName);
+          if (uploadRes && uploadRes.url) {
+            finalPdfUrl = uploadRes.url;
           } else {
-            console.warn("Supabase bucket upload warning (using fallback DataURI):", uploadError);
+            throw new Error("Server returned empty file URL.");
           }
-        } catch (supErr) {
-          console.warn("Supabase storage exception (using fallback DataURI):", supErr);
+        } catch (uploadErr: any) {
+          console.error("Utho server PDF upload error:", uploadErr);
+          const errorMessage = uploadErr?.response?.data?.error || uploadErr?.message || "Failed to upload PDF paper to server storage.";
+          alert(`❌ PDF Upload Failed: ${errorMessage}`);
+          setIsSubmittingReq(false);
+          return;
         }
       }
 
@@ -1584,8 +1577,7 @@ export default function OrganisationStudentPage() {
 
                     {q.imageUrl && (
                       <div className="rounded-xl overflow-hidden max-w-sm border border-slate-800">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={q.imageUrl} alt={`Question ${idx + 1}`} className="w-full h-auto object-contain" />
+                        <QuestionImage imageUrl={q.imageUrl} examName="Organisation" alt={`Question ${idx + 1}`} className="w-full h-auto object-contain" />
                       </div>
                     )}
 

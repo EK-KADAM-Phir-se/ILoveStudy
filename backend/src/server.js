@@ -15,6 +15,8 @@ const profileRoutes = require('./routes/profileRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 const orgRoutes = require('./routes/orgRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+const path = require('path');
 
 // 3. Mount the API routes
 app.use('/api/auth', authRoutes);
@@ -24,6 +26,11 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/org', orgRoutes);
+app.use('/api/upload', uploadRoutes);
+
+// Optional static uploads directory fallback
+const UPLOAD_BASE_DIR = process.env.UPLOAD_BASE_DIR || '/var/www/ilovestudy/uploads';
+app.use('/uploads', express.static(UPLOAD_BASE_DIR));
 
 // Health check route
 app.get('/health', (req, res) => {

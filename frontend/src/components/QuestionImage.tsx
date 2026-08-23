@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { supabase } from "@/src/lib/supabase";
 
 interface QuestionImageProps {
   imageUrl?: string | null;
@@ -11,25 +10,33 @@ interface QuestionImageProps {
   className?: string;
 }
 
-export function getQuestionSupabaseUrl(
+const UTHO_UPLOADS_BASE = (process.env.NEXT_PUBLIC_UPLOADS_URL || "https://ilovestudy.in/uploads").replace(/\/$/, "");
+
+/**
+ * Robust candidate generator for QuestionBank images on Utho server
+ */
+export function getQuestionImageUrls(
   imageUrl: string,
   examName: string = "Jee Mains",
   year?: number | string | null
-): { supabaseUrl: string; localFallbackUrl: string } {
-  if (!imageUrl) {
-    return { supabaseUrl: "", localFallbackUrl: "" };
+): string[] {
+  if (!imageUrl) return [];
+  if (imageUrl.startsWith("data:")) return [imageUrl];
+
+  // Handle full HTTP / HTTPS URLs
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    const supabaseRegex = /https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/(QuestionBank|test-pdfs)\/(.+)/i;
+    const match = imageUrl.match(supabaseRegex);
+    if (match) {
+      const bucket = match[1];
+      const filePath = match[2];
+      return [encodeURI(`${UTHO_UPLOADS_BASE}/${bucket}/${filePath}`)];
+    }
+    return [imageUrl];
   }
 
-  if (
-    imageUrl.startsWith("http://") ||
-    imageUrl.startsWith("https://") ||
-    imageUrl.startsWith("data:")
-  ) {
-    return { supabaseUrl: imageUrl, localFallbackUrl: imageUrl };
-  }
-
-  // Clean filename: extract just the file name (e.g. neet_2023_q8.svg or 9sep_shift2_q1_question.png)
-  let cleanFileName = imageUrl;
+  const cleanPath = imageUrl.replace(/^\/+/, '');
+  let cleanFileName = cleanPath;
   if (cleanFileName.includes("/")) {
     const parts = cleanFileName.split("/");
     cleanFileName = parts[parts.length - 1];
@@ -38,62 +45,61 @@ export function getQuestionSupabaseUrl(
   const lowerExam = (examName || "").toLowerCase();
   const lowerUrl = imageUrl.toLowerCase();
 
-  // Determine local fallback URL
-  let localFallbackUrl = imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`;
-  if (lowerExam.includes("gate") || lowerUrl.includes("gate")) {
-    localFallbackUrl = `/GATE/${cleanFileName}`;
-  } else if (lowerExam.includes("neet") || lowerUrl.includes("neet")) {
-    localFallbackUrl = `/neetimages/${cleanFileName}`;
-  }
-
-  // Determine exact folder name matching Supabase bucket structure:
-  // "Jee Mains", "Jee Advance", "SSC CGL", "SSC CHSL", "Gate", "NEET"
   let folderExam = "Jee Mains";
-  if (lowerExam.includes("advance")) {
-    folderExam = "Jee Advance";
-  } else if (lowerExam.includes("ssc cgl") || lowerExam.includes("cgl")) {
-    folderExam = "SSC CGL";
-  } else if (lowerExam.includes("ssc chsl") || lowerExam.includes("chsl")) {
-    folderExam = "SSC CHSL";
-  } else if (lowerExam.includes("neet") || lowerUrl.includes("neet") || cleanFileName.startsWith("neet_")) {
-    const storagePath = `NEET/${cleanFileName}`;
-    const { data } = supabase.storage
-      .from("QuestionBank")
-      .getPublicUrl(storagePath);
-    const publicUrl = data?.publicUrl || localFallbackUrl;
-    return { supabaseUrl: publicUrl, localFallbackUrl };
-  } else if (lowerExam.includes("gate") || lowerUrl.includes("gate")) {
-    folderExam = "Gate";
+  if (lowerExam.includes("advance")) folderExam = "Jee Advance";
+  else if (lowerExam.includes("ssc cgl") || lowerExam.includes("cgl") || lowerUrl.includes("ssc")) folderExam = "SSC CGL";
+  else if (lowerExam.includes("ssc chsl") || lowerExam.includes("chsl")) folderExam = "SSC CHSL";
+  else if (lowerExam.includes("neet") || lowerUrl.includes("neet")) folderExam = "NEET";
+  else if (lowerExam.includes("gate") || lowerUrl.includes("gate")) folderExam = "Gate";
+
+  const defaultYear = (lowerExam.includes("ssc") ? "2024" : "2025");
+  const folderYear = year ? String(year) : defaultYear;
+
+  const candidates: string[] = [];
+  const hasPathSlash = cleanPath.includes("/");
+
+  if (hasPathSlash) {
+    // If path already has subfolder (e.g. ssc-cgl/images/foo.png or Jee Mains/2025/foo.png or NEET/foo.png)
+    candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${cleanPath}`);
+    if (folderExam === "NEET") {
+      candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/NEET/${cleanFileName}`);
+    } else {
+      candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${folderExam}/${folderYear}/${cleanFileName}`);
+    }
+    candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${cleanFileName}`);
   } else {
-    folderExam = "Jee Mains";
+    // Single filename (e.g. 28th_jan_q30_diagram.png) -> primary candidate is structured exam folder
+    if (folderExam === "NEET") {
+      candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/NEET/${cleanFileName}`);
+    } else {
+      candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${folderExam}/${folderYear}/${cleanFileName}`);
+    }
+    candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${cleanPath}`);
   }
 
-  const defaultYear = lowerExam.includes("ssc") ? "2024" : "2025";
-  const folderYear = year ? String(year) : defaultYear;
-  const storagePath = `${folderExam}/${folderYear}/${cleanFileName}`;
+  // Fallback to local static asset if needed
+  candidates.push(cleanPath.startsWith('/') ? cleanPath : `/${cleanPath}`);
 
-  const { data } = supabase.storage
-    .from("QuestionBank")
-    .getPublicUrl(storagePath);
+  // Safely URL-encode candidates (converting spaces like "Jee Mains" to "Jee%20Mains")
+  const safeCandidates = candidates.map((c) =>
+    c.startsWith("http://") || c.startsWith("https://") ? encodeURI(c) : c
+  );
 
-  const supabaseUrl = data?.publicUrl || localFallbackUrl;
-
-  return { supabaseUrl, localFallbackUrl };
+  return Array.from(new Set(safeCandidates));
 }
 
-const neetFallbackMap: Record<string, string> = {
-  "neet_2023_q8.svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 240" width="100%" height="220"><rect width="500" height="240" fill="#0f172a" rx="16"/><line x1="120" y1="80" x2="160" y2="80" stroke="#94a3b8" stroke-width="2.5"/><path d="M160 80 L168 68 L180 92 L192 68 L204 92 L216 68 L228 92 L236 80" fill="none" stroke="#38bdf8" stroke-width="3"/><text x="198" y="55" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="14" text-anchor="middle">400 Ω</text><line x1="236" y1="80" x2="280" y2="80" stroke="#94a3b8" stroke-width="2.5"/><circle cx="310" cy="80" r="18" fill="#1e293b" stroke="#f59e0b" stroke-width="2.5"/><text x="310" y="86" fill="#f59e0b" font-family="sans-serif" font-weight="bold" font-size="16" text-anchor="middle">G</text><line x1="328" y1="80" x2="380" y2="80" stroke="#94a3b8" stroke-width="2.5"/><line x1="120" y1="80" x2="120" y2="105" stroke="#94a3b8" stroke-width="2.5"/><line x1="105" y1="105" x2="135" y2="105" stroke="#10b981" stroke-width="3"/><line x1="112" y1="117" x2="128" y2="117" stroke="#94a3b8" stroke-width="2.5"/><text x="75" y="115" fill="#10b981" font-family="sans-serif" font-weight="bold" font-size="14">+ 10 V -</text><line x1="120" y1="117" x2="120" y2="180" stroke="#94a3b8" stroke-width="2.5"/><line x1="260" y1="80" x2="260" y2="105" stroke="#94a3b8" stroke-width="2.5"/><path d="M260 105 L248 113 L272 125 L248 137 L272 149 L260 157" fill="none" stroke="#a855f7" stroke-width="3"/><text x="235" y="135" fill="#a855f7" font-family="sans-serif" font-weight="bold" font-size="15">R</text><line x1="260" y1="157" x2="260" y2="180" stroke="#94a3b8" stroke-width="2.5"/><line x1="380" y1="80" x2="380" y2="105" stroke="#94a3b8" stroke-width="2.5"/><line x1="365" y1="105" x2="395" y2="105" stroke="#38bdf8" stroke-width="3"/><line x1="372" y1="117" x2="388" y2="117" stroke="#94a3b8" stroke-width="2.5"/><text x="410" y="115" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="14">+ 2 V -</text><line x1="380" y1="117" x2="380" y2="180" stroke="#94a3b8" stroke-width="2.5"/><line x1="120" y1="180" x2="380" y2="180" stroke="#94a3b8" stroke-width="2.5"/><path d="M210 180 L200 174 L200 186 Z" fill="#94a3b8"/></svg>`,
-  "neet_2024_q3.svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="100%" height="200"><rect width="400" height="240" fill="#0f172a" rx="16"/><line x1="70" y1="20" x2="70" y2="200" stroke="#94a3b8" stroke-width="2.5"/><line x1="70" y1="200" x2="360" y2="200" stroke="#94a3b8" stroke-width="2.5"/><text x="45" y="30" fill="#f8fafc" font-family="sans-serif" font-weight="bold" font-size="14">P</text><text x="370" y="205" fill="#f8fafc" font-family="sans-serif" font-weight="bold" font-size="14">V</text><path d="M120 70 L300 70 L300 160 L120 160 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/><text x="110" y="60" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="14">a</text><text x="310" y="60" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="14">b</text><text x="310" y="175" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="14">c</text><text x="110" y="175" fill="#38bdf8" font-family="sans-serif" font-weight="bold" font-size="14">d</text><text x="300" y="220" fill="#a855f7" font-family="sans-serif" font-size="12" text-anchor="middle">V = 400 cm³</text></svg>`,
-  "neet_2022_q5.svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" width="100%" height="190"><rect width="400" height="220" fill="#0f172a" rx="16"/><polygon points="200,30 320,110 200,190 80,110" fill="none" stroke="#38bdf8" stroke-width="3"/><circle cx="200" cy="110" r="14" fill="#1e293b" stroke="#f59e0b" stroke-width="2.5"/><text x="200" y="115" fill="#f59e0b" font-family="sans-serif" font-weight="bold" font-size="14" text-anchor="middle">G</text><text x="130" y="60" fill="#10b981" font-family="sans-serif" font-weight="bold" font-size="14">P = 10 Ω</text><text x="270" y="60" fill="#10b981" font-family="sans-serif" font-weight="bold" font-size="14">Q = 20 Ω</text><text x="130" y="170" fill="#a855f7" font-family="sans-serif" font-weight="bold" font-size="14">R = 5 Ω</text><text x="270" y="170" fill="#a855f7" font-family="sans-serif" font-weight="bold" font-size="14">S = 10 Ω</text></svg>`
-};
-
-function getNeetFallbackDataUri(filename: string): string | null {
-  const clean = filename.replace('/neetimages/', '').replace('/', '');
-  const rawSvg = neetFallbackMap[clean];
-  if (rawSvg) {
-    return `data:image/svg+xml;utf8,${encodeURIComponent(rawSvg)}`;
-  }
-  return null;
+/**
+ * Backward compatibility export
+ */
+export function getQuestionSupabaseUrl(
+  imageUrl: string,
+  examName: string = "Jee Mains",
+  year?: number | string | null
+): { supabaseUrl: string; localFallbackUrl: string } {
+  const candidates = getQuestionImageUrls(imageUrl, examName, year);
+  const supabaseUrl = candidates[0] || "";
+  const localFallbackUrl = candidates[candidates.length - 1] || "";
+  return { supabaseUrl, localFallbackUrl };
 }
 
 export const QuestionImage: React.FC<QuestionImageProps> = ({
@@ -106,31 +112,24 @@ export const QuestionImage: React.FC<QuestionImageProps> = ({
   if (!imageUrl) return null;
 
   const isDataUri = imageUrl.startsWith("data:");
-  const { supabaseUrl, localFallbackUrl } = getQuestionSupabaseUrl(imageUrl, examName, year);
+  const candidates = getQuestionImageUrls(imageUrl, examName, year);
 
-  const [currentSrc, setCurrentSrc] = useState<string>(isDataUri ? imageUrl : supabaseUrl);
+  const [candidateIndex, setCandidateIndex] = useState<number>(0);
 
   useEffect(() => {
-    if (!isDataUri) {
-      const { supabaseUrl: newSupabaseUrl } = getQuestionSupabaseUrl(imageUrl, examName, year);
-      setCurrentSrc(newSupabaseUrl);
-    } else {
-      setCurrentSrc(imageUrl);
-    }
-  }, [imageUrl, examName, year, isDataUri]);
+    setCandidateIndex(0);
+  }, [imageUrl, examName, year]);
+
+  if (candidates.length === 0) return null;
+
+  const currentSrc = isDataUri ? imageUrl : (candidates[candidateIndex] || candidates[0]);
 
   const handleError = () => {
-    let clean = imageUrl;
-    if (clean.includes("/")) {
-      const parts = clean.split("/");
-      clean = parts[parts.length - 1];
-    }
-    const fallbackDataUri = getNeetFallbackDataUri(clean);
-    if (fallbackDataUri && currentSrc !== fallbackDataUri) {
-      console.log(`[QuestionImage] Supabase image fetch failed for ${clean}. Using vector fallback Data URI.`);
-      setCurrentSrc(fallbackDataUri);
-    } else if (!isDataUri && currentSrc !== localFallbackUrl) {
-      setCurrentSrc(localFallbackUrl);
+    if (!isDataUri && candidateIndex < candidates.length - 1) {
+      console.warn(
+        `[QuestionImage] Failed to load image from (${currentSrc}). Trying next candidate (${candidates[candidateIndex + 1]}).`
+      );
+      setCandidateIndex((prev) => prev + 1);
     }
   };
 
@@ -169,7 +168,7 @@ export async function preloadExamImages(
         return;
       }
 
-      const { supabaseUrl, localFallbackUrl } = getQuestionSupabaseUrl(url, examName, year);
+      const candidates = getQuestionImageUrls(url, examName, year);
       const img = new Image();
 
       const handleComplete = () => {
@@ -180,13 +179,17 @@ export async function preloadExamImages(
 
       img.onload = handleComplete;
       img.onerror = () => {
-        const fallbackImg = new Image();
-        fallbackImg.onload = handleComplete;
-        fallbackImg.onerror = handleComplete;
-        fallbackImg.src = localFallbackUrl;
+        if (candidates.length > 1) {
+          const fallbackImg = new Image();
+          fallbackImg.onload = handleComplete;
+          fallbackImg.onerror = handleComplete;
+          fallbackImg.src = candidates[candidates.length - 1];
+        } else {
+          handleComplete();
+        }
       };
 
-      img.src = supabaseUrl;
+      img.src = candidates[0] || url;
     });
   });
 

@@ -1,5 +1,6 @@
 const prisma = require('../lib/prisma');
 const crypto = require('crypto');
+const { convertSupabaseUrlToUthoUrl } = require('./uploadController');
 
 // Generate unique readable test access code e.g. "DPS-2026-X821" or "TEST-7821"
 function generateAccessCode(orgCode = "TEST", subject = "") {
@@ -1539,7 +1540,7 @@ exports.createOrgTestRequest = async (req, res) => {
         scheduledStart: parsedStart,
         scheduledEnd: parsedEnd,
         expectedStudents: parseInt(expectedStudents, 10) || 50,
-        pdfUrl: pdfUrl || null,
+        pdfUrl: convertSupabaseUrlToUthoUrl(pdfUrl) || null,
         pdfFileName: pdfFileName || null,
         status: "PENDING_JSON_CONVERSION"
       },
@@ -1550,7 +1551,10 @@ exports.createOrgTestRequest = async (req, res) => {
 
     return res.status(201).json({
       message: "Test request submitted successfully! Admin will convert the PDF paper into an online exam.",
-      testRequest
+      testRequest: {
+        ...testRequest,
+        pdfUrl: convertSupabaseUrlToUthoUrl(testRequest.pdfUrl)
+      }
     });
   } catch (error) {
     console.error("Create test request error:", error);
@@ -1569,7 +1573,12 @@ exports.listAdminTestRequests = async (req, res) => {
       }
     });
 
-    return res.status(200).json({ requests });
+    const formattedRequests = requests.map(r => ({
+      ...r,
+      pdfUrl: convertSupabaseUrlToUthoUrl(r.pdfUrl)
+    }));
+
+    return res.status(200).json({ requests: formattedRequests });
   } catch (error) {
     console.error("List admin test requests error:", error);
     return res.status(500).json({ error: "Failed to fetch test requests." });
