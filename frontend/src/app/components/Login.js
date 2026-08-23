@@ -14,6 +14,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,13 +42,13 @@ const Login = () => {
     }
   };
 
-  // Password Login / Register (Dual Auth: Utho Native Backend + Firebase Fallback)
+  // Password Login / Register on Utho Backend
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    const cleanEmail = email.trim();
+    const cleanEmail = email.trim().toLowerCase();
 
     try {
       if (isRegistering) {
@@ -57,60 +58,46 @@ const Login = () => {
           return;
         }
 
-        const displayName = cleanEmail.split('@')[0];
-        let uthoSuccess = false;
+        const displayName = fullName.trim() || cleanEmail.split('@')[0];
 
         // 1. Register directly in Utho PostgreSQL Database
-        try {
-          const regRes = await fetch(`${API_BASE_URL}/api/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: cleanEmail, password, fullName: displayName }),
-          });
+        const regRes = await fetch(`${API_BASE_URL}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail, password, fullName: displayName }),
+        });
 
-          const regData = await regRes.json();
+        const regData = await regRes.json();
 
-          if (regRes.ok) {
-            uthoSuccess = true;
-            // Automatically log in on Utho backend to fetch JWT token
-            const loginRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: cleanEmail, password }),
-            });
-            const loginData = await loginRes.json();
-
-            if (loginRes.ok && loginData.token) {
-              clearGuestMode();
-              localStorage.setItem('token', loginData.token);
-              localStorage.setItem('backendToken', loginData.token);
-              localStorage.setItem('userEmail', cleanEmail);
-              localStorage.setItem('displayName', loginData.user?.fullName || displayName);
-            }
-          }
-        } catch (uthoErr) {
-          console.warn("Utho registration note/fallback:", uthoErr);
+        if (!regRes.ok) {
+          throw new Error(regData.error || 'Registration failed.');
         }
 
-        // 2. Also register in Firebase Auth for seamless dual support
-        try {
-          const userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, password);
-          const token = await userCredential.user.getIdToken();
-          await persistSession(userCredential.user, token);
-        } catch (fbErr) {
-          // If Utho backend registration succeeded, we can proceed even if Firebase gives duplicate/warning
-          if (!uthoSuccess) {
-            throw fbErr;
-          }
+        // 2. Automatically log in on Utho backend to fetch JWT token
+        const loginRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail, password }),
+        });
+        const loginData = await loginRes.json();
+
+        if (loginRes.ok && loginData.token) {
+          clearGuestMode();
+          localStorage.setItem('token', loginData.token);
+          localStorage.setItem('backendToken', loginData.token);
+          localStorage.setItem('userEmail', cleanEmail);
+          localStorage.setItem('displayName', loginData.user?.fullName || displayName);
         }
+
+        // Background sync to Firebase if available
+        createUserWithEmailAndPassword(auth, cleanEmail, password).catch(() => {});
 
         router.push('/pages/dashboard');
         return;
       } else {
-        // Logging In
+        // Logging In directly against Utho Backend
         let uthoLoginSuccess = false;
 
-        // 1. Try Utho Native Backend Login
         try {
           const loginRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
             method: 'POST',
@@ -127,26 +114,30 @@ const Login = () => {
             localStorage.setItem('userEmail', cleanEmail);
             localStorage.setItem('displayName', loginData.user?.fullName || cleanEmail.split('@')[0]);
 
-            // Background sync with Firebase if credentials match
+            // Background sync with Firebase
             signInWithEmailAndPassword(auth, cleanEmail, password).catch(() => {});
+
+            router.push('/pages/dashboard');
+            return;
+          } else if (loginData.error && loginData.error !== "Invalid email or password.") {
+            // Specific database message
           }
         } catch (uthoErr) {
-          console.warn("Utho login fallback to Firebase:", uthoErr);
+          console.warn("Utho direct login notice:", uthoErr);
         }
 
-        // 2. If Utho Login was not successful, fallback to Firebase Auth
+        // Fallback to Firebase if not found in local Utho DB yet
         if (!uthoLoginSuccess) {
           const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
           const token = await userCredential.user.getIdToken();
           await persistSession(userCredential.user, token);
+          router.push('/pages/dashboard');
+          return;
         }
-
-        router.push('/pages/dashboard');
-        return;
       }
     } catch (err) {
       console.error("Authentication Error:", err);
-      let errorMessage = 'Authentication failed';
+      let errorMessage = err.message || 'Authentication failed';
       if (err.code === 'auth/email-already-in-use') {
         errorMessage = 'Email is already registered.';
       } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
@@ -155,8 +146,6 @@ const Login = () => {
         errorMessage = 'Invalid email address format.';
       } else if (err.code === 'auth/weak-password') {
         errorMessage = 'Password should be at least 6 characters.';
-      } else if (err.message) {
-        errorMessage = err.message;
       }
       setError(errorMessage);
     } finally {
@@ -169,6 +158,37 @@ const Login = () => {
     setLoading(true);
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
+      const firebaseUser = userCredential.user;
+      const userEmail = firebaseUser.email;
+      const displayName = firebaseUser.displayName || userEmail.split('@')[0];
+
+      // Sync Google user directly to Utho backend & obtain standard backend JWT
+      try {
+        const syncRes = await fetch(`${API_BASE_URL}/api/auth/google-sync`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: userEmail,
+            fullName: displayName,
+            avatarUrl: firebaseUser.photoURL,
+          }),
+        });
+        const syncData = await syncRes.json();
+
+        if (syncRes.ok && syncData.token) {
+          clearGuestMode();
+          localStorage.setItem('token', syncData.token);
+          localStorage.setItem('backendToken', syncData.token);
+          localStorage.setItem('userEmail', userEmail);
+          localStorage.setItem('displayName', syncData.user?.fullName || displayName);
+          router.push('/pages/dashboard');
+          return;
+        }
+      } catch (syncErr) {
+        console.warn("Backend Google Sync note:", syncErr);
+      }
+
+      // Fallback session persistence
       const token = await userCredential.user.getIdToken();
       await persistSession(userCredential.user, token);
       router.push('/pages/dashboard');
@@ -198,6 +218,17 @@ const Login = () => {
 
       {/* PASSWORD AUTH FLOW */}
       <form onSubmit={handlePasswordSubmit} className="flex flex-col space-y-4">
+        {isRegistering && (
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className="bg-slate-950/80 border border-slate-800 text-slate-100 placeholder-slate-500 p-3 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all duration-200 w-full text-sm"
+            required
+          />
+        )}
+
         <input
           type="email"
           placeholder="Email Address"

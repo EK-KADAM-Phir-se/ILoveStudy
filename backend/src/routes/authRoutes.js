@@ -8,6 +8,7 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.post('/send-otp', authController.sendOTP);
 router.post('/verify-otp', authController.verifyOTPAndLogin);
+router.post('/google-sync', authController.googleSync);
 
 // Protected Route (Only accessible with a valid JWT!)
 router.get('/me', protect, (req, res) => {

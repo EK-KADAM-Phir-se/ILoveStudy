@@ -227,11 +227,11 @@ exports.login = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password." });
     }
 
-    // Generate JWT secure token valid for 1 day
+    // Generate JWT secure token valid for 7 days
     const token = jwt.sign(
-      { userId: user.id },
+      { userId: user.id, email: user.email },
       process.env.JWT_SECRET || 'fallback_secret',
-      { expiresIn: '1d' }
+      { expiresIn: '7d' }
     );
 
     return res.json({
@@ -247,5 +247,69 @@ exports.login = async (req, res) => {
   } catch (error) {
     console.error("Login Error:", error);
     return res.status(500).json({ error: "Internal server error during login." });
+  }
+};
+
+// ==========================================
+// 4. GOOGLE AUTH SYNC
+// ==========================================
+exports.googleSync = async (req, res) => {
+  try {
+    const { email, fullName, avatarUrl } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required." });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const displayName = fullName?.trim() || cleanEmail.split('@')[0] || "User";
+
+    let user = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+      include: { profiles: true }
+    });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email: cleanEmail,
+          profiles: {
+            create: {
+              fullName: displayName,
+              avatarUrl: avatarUrl || null,
+              targetExam: "JEE Mains"
+            }
+          }
+        },
+        include: { profiles: true }
+      });
+    } else if (user.profiles && (avatarUrl || displayName)) {
+      await prisma.profile.update({
+        where: { userId: user.id },
+        data: {
+          fullName: displayName,
+          ...(avatarUrl ? { avatarUrl } : {})
+        }
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET || 'fallback_secret',
+      { expiresIn: '7d' }
+    );
+
+    return res.json({
+      message: "Google authentication synced successfully!",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.profiles?.fullName || displayName
+      }
+    });
+  } catch (error) {
+    console.error("Google Sync Error:", error);
+    return res.status(500).json({ error: "Internal server error during Google sync." });
   }
 };
