@@ -557,62 +557,71 @@ function GateWorkspaceContent() {
     ? sectionNames
     : ["General Aptitude", defaultSecondSection];
 
+  const [showMobilePalette, setShowMobilePalette] = useState<boolean>(false);
+
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans select-none overflow-hidden h-screen">
       
       {/* 1. Official TCS iON Top Bar */}
-      <header className="bg-[#1c1f24] text-white px-4 py-1.5 flex items-center justify-between text-xs border-b border-slate-800 shrink-0">
-        <div className="flex items-center gap-2">
-          <img src="/dark_mode_logo.png" alt="ILoveStudy Logo" className="w-5 h-5 rounded object-cover border border-slate-700" />
+      <header className="bg-[#1c1f24] text-white px-2 sm:px-4 py-1 sm:py-1.5 flex items-center justify-between text-[11px] sm:text-xs border-b border-slate-800 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <img src="/dark_mode_logo.png" alt="ILoveStudy Logo" className="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-slate-700" />
           <span className="text-[#fbbf24] font-bold text-xs tracking-tight">Gate Pattern</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <button
+            onClick={() => setShowMobilePalette(true)}
+            className="lg:hidden flex items-center gap-1 bg-[#2563eb] hover:bg-blue-700 text-white px-2 py-1 rounded text-[10px] sm:text-[11px] font-bold transition cursor-pointer shadow"
+          >
+            <span>🔢</span>
+            <span>Palette</span>
+          </button>
           <button
             onClick={() => setShowQuestionPaperModal(true)}
-            className="flex items-center gap-1.5 bg-[#2b3038] hover:bg-[#373d47] text-white px-3 py-1 rounded text-[11px] font-semibold transition cursor-pointer border border-slate-700"
+            className="flex items-center gap-1 bg-[#2b3038] hover:bg-[#373d47] text-white px-2 sm:px-3 py-1 rounded text-[10px] sm:text-[11px] font-semibold transition cursor-pointer border border-slate-700"
           >
-            <FileText size={13} className="text-emerald-400" />
-            <span>Question Paper</span>
+            <FileText size={12} className="text-emerald-400" />
+            <span className="hidden sm:inline">Question </span>Paper
           </button>
           <button
             onClick={() => setShowInstructionsModal(true)}
-            className="flex items-center gap-1.5 bg-[#2b3038] hover:bg-[#373d47] text-white px-3 py-1 rounded text-[11px] font-semibold transition cursor-pointer border border-slate-700"
+            className="flex items-center gap-1 bg-[#2b3038] hover:bg-[#373d47] text-white px-2 sm:px-3 py-1 rounded text-[10px] sm:text-[11px] font-semibold transition cursor-pointer border border-slate-700"
           >
-            <Info size={13} className="text-sky-400" />
-            <span>Instructions</span>
+            <Info size={12} className="text-sky-400" />
+            <span className="hidden sm:inline">Instructions</span>
           </button>
           <button
             onClick={() => setShowExitConfirmModal(true)}
-            className="bg-red-700 hover:bg-red-600 text-white px-2.5 py-1 rounded text-[11px] font-bold transition cursor-pointer"
+            className="bg-red-700 hover:bg-red-600 text-white px-2 sm:px-2.5 py-1 rounded text-[10px] sm:text-[11px] font-bold transition cursor-pointer"
           >
-            Exit Exam
+            Exit<span className="hidden sm:inline"> Exam</span>
           </button>
         </div>
       </header>
 
       {/* 2. Sub-Header Bar */}
-      <div className="bg-[#e5e7eb] border-b border-slate-300 px-4 py-1.5 flex items-center justify-between text-xs shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="bg-[#3b82f6] text-white font-bold px-3 py-1 rounded text-xs inline-flex items-center gap-1 shadow-xs">
-            <span>{branch === 'CS' ? 'Computer Science & IT' : branch === 'ME' ? 'Mechanical Engineering' : branch}</span>
-            <Info size={12} className="cursor-pointer" />
+      <div className="bg-[#e5e7eb] border-b border-slate-300 px-2 sm:px-4 py-1 sm:py-1.5 flex items-center justify-between text-[11px] sm:text-xs shrink-0 gap-1">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          <span className="bg-[#3b82f6] text-white font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs inline-flex items-center gap-1 shadow-xs truncate">
+            <span className="truncate">{branch === 'CS' ? 'Computer Science & IT' : branch === 'ME' ? 'Mechanical Engineering' : branch}</span>
+            <Info size={11} className="cursor-pointer shrink-0" />
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <button
             onClick={() => setShowCalculator(true)}
-            className="flex items-center gap-1.5 bg-[#f97316] hover:bg-[#ea580c] text-white px-3 py-1 rounded font-bold text-xs shadow-xs transition cursor-pointer"
+            className="flex items-center gap-1 bg-[#f97316] hover:bg-[#ea580c] text-white px-2 sm:px-3 py-1 rounded font-bold text-[10px] sm:text-xs shadow-xs transition cursor-pointer"
             title="Open GATE Virtual Scientific Calculator"
           >
-            <Calculator size={14} />
-            <span>Scientific Calculator</span>
+            <Calculator size={13} />
+            <span><span className="hidden sm:inline">Scientific </span>Calculator</span>
           </button>
 
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-            <span className="text-slate-600">Time Left:</span>
-            <span className={`font-mono text-sm px-2 py-0.5 rounded bg-white border border-slate-300 ${examTimeLeft < 600 ? 'text-red-600 animate-pulse' : 'text-slate-900'}`}>
+          <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-800">
+            <span className="text-slate-600 hidden sm:inline">Time Left:</span>
+            <span className={`font-mono text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 rounded bg-white border border-slate-300 ${examTimeLeft < 600 ? 'text-red-600 animate-pulse' : 'text-slate-900'}`}>
               {formatTime(examTimeLeft)}
             </span>
           </div>
@@ -620,7 +629,7 @@ function GateWorkspaceContent() {
       </div>
 
       {/* 3. Section Tabs Bar */}
-      <div className="bg-[#f3f4f6] border-b border-slate-300 px-4 py-0 flex items-center shrink-0">
+      <div className="bg-[#f3f4f6] border-b border-slate-300 px-2 sm:px-4 py-0 flex items-center shrink-0 overflow-x-auto no-scrollbar">
         {sectionsToDisplay.map((sec) => {
           const isActive = selectedSection === sec;
           return (
@@ -633,7 +642,7 @@ function GateWorkspaceContent() {
                   setCurrentQuestionIndex(firstIdx);
                 }
               }}
-              className={`px-4 py-2 text-xs font-bold transition border-r border-slate-300 cursor-pointer ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold transition border-r border-slate-300 cursor-pointer whitespace-nowrap ${
                 isActive
                   ? "bg-[#3b82f6] text-white shadow-xs"
                   : "bg-white text-[#3b82f6] hover:bg-slate-100"
@@ -646,14 +655,14 @@ function GateWorkspaceContent() {
       </div>
 
       {/* 4. Question Meta Bar */}
-      <div className="bg-white border-b border-slate-200 px-4 py-1.5 flex items-center justify-between text-xs shrink-0">
-        <div className="font-bold text-[#ea580c]">
+      <div className="bg-white border-b border-slate-200 px-2 sm:px-4 py-1 text-[10px] sm:text-xs flex items-center justify-between shrink-0">
+        <div className="font-bold text-[#ea580c] truncate">
           Question Type : {isNumerical ? "NAT Numerical" : isMsq ? "MSQ Multiple" : "MCQ Single"}
         </div>
-        <div className="text-slate-600 font-semibold text-[11px] flex items-center gap-3">
+        <div className="text-slate-600 font-semibold text-[10px] sm:text-[11px] flex items-center gap-1.5 sm:gap-3 shrink-0">
           <span>Marks: <strong className="text-slate-800">{currentQ?.positiveMarks || 1}</strong></span>
           <span>|</span>
-          <span>Negative Marks: <strong className="text-slate-800">{Math.abs(currentQ?.negativeMarks || 0)}</strong></span>
+          <span>Neg: <strong className="text-slate-800">{Math.abs(currentQ?.negativeMarks || 0)}</strong></span>
           {currentQ && <ReportErrorButton questionId={currentQ.id} questionTextSnippet={currentQ.questionText} />}
         </div>
       </div>
@@ -662,15 +671,15 @@ function GateWorkspaceContent() {
       <div className="flex-1 flex overflow-hidden relative">
         
         {/* LEFT QUESTION CONTAINER */}
-        <main className="flex-1 flex flex-col bg-white overflow-hidden border-r border-slate-300">
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+        <main className="flex-1 flex flex-col bg-white overflow-hidden border-r border-slate-300 w-full min-w-0">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4">
             {currentQ && (
-              <div className="space-y-4 max-w-4xl">
-                <h3 className="text-sm font-extrabold text-slate-900">
+              <div className="space-y-3 sm:space-y-4 max-w-4xl">
+                <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
                   Question No. {currentQuestionIndex + 1}
                 </h3>
 
-                <div className="text-sm text-slate-800 leading-relaxed font-medium">
+                <div className="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium">
                   <LatexRenderer text={currentQ.questionText} />
                 </div>
 
@@ -696,15 +705,15 @@ function GateWorkspaceContent() {
                       value={answers[currentQ.id] || ''}
                       onChange={(e) => selectOption(currentQ.id, e.target.value)}
                       placeholder="Type numerical answer..."
-                      className="w-64 bg-white border-2 border-slate-300 focus:border-blue-600 rounded px-3 py-2 text-base font-mono text-slate-900 outline-none"
+                      className="w-full sm:w-64 bg-white border-2 border-slate-300 focus:border-blue-600 rounded px-3 py-2 text-sm sm:text-base font-mono text-slate-900 outline-none"
                     />
                   </div>
                 ) : (
-                  <div className="space-y-2.5 pt-2">
+                  <div className="space-y-2 pt-2">
                     {/* MSQ Notice */}
                     {isMsq && (
-                      <div className="flex items-center gap-2 bg-teal-50 border border-teal-300 rounded px-3 py-1.5 text-xs font-semibold text-teal-800 mb-1">
-                        <span className="text-teal-600 font-bold text-sm">⊞</span>
+                      <div className="flex items-center gap-2 bg-teal-50 border border-teal-300 rounded px-2.5 py-1.5 text-[11px] sm:text-xs font-semibold text-teal-800 mb-1">
+                        <span className="text-teal-600 font-bold text-xs sm:text-sm shrink-0">⊞</span>
                         <span><strong>MSQ:</strong> Multiple answers may be correct. Select all that apply. Full marks only if all correct options are chosen.</span>
                       </div>
                     )}
@@ -733,7 +742,7 @@ function GateWorkspaceContent() {
                         <label
                           key={key}
                           onClick={isMsq ? handleMsqToggle : () => selectOption(currentQ.id, key)}
-                          className={`flex items-start gap-3 p-2.5 rounded cursor-pointer transition text-xs text-slate-800 ${
+                          className={`flex items-start gap-2.5 p-2 sm:p-2.5 rounded cursor-pointer transition text-xs text-slate-800 ${
                             isSelected
                               ? 'bg-blue-50 border border-blue-400'
                               : 'hover:bg-blue-50/50 border border-transparent'
@@ -744,7 +753,7 @@ function GateWorkspaceContent() {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => {}}
-                              className="mt-0.5 accent-blue-600 h-4 w-4 shrink-0 rounded"
+                              className="mt-0.5 accent-blue-600 h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 rounded"
                             />
                           ) : (
                             <input
@@ -752,10 +761,10 @@ function GateWorkspaceContent() {
                               name={`q_${currentQ.id}`}
                               checked={isSelected}
                               onChange={() => {}}
-                              className="mt-0.5 accent-blue-600 h-4 w-4 shrink-0"
+                              className="mt-0.5 accent-blue-600 h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0"
                             />
                           )}
-                          <div className="flex-1 font-medium">
+                          <div className="flex-1 font-medium min-w-0">
                             <LatexRenderer text={text} />
                           </div>
                         </label>
@@ -768,48 +777,72 @@ function GateWorkspaceContent() {
           </div>
 
           {/* BOTTOM ACTION FOOTER */}
-          <footer className="bg-white border-t border-slate-300 px-4 py-2.5 flex items-center justify-between text-xs shrink-0">
-            <div className="flex items-center gap-2">
+          <footer className="bg-white border-t border-slate-300 px-2 sm:px-4 py-1.5 sm:py-2.5 flex items-center justify-between text-[11px] sm:text-xs shrink-0 gap-1 sm:gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <button
                 onClick={handleMarkForReviewAndNext}
-                className="px-4 py-2 rounded bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 shadow-2xs transition cursor-pointer"
+                className="px-2 sm:px-4 py-1.5 sm:py-2 rounded bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 shadow-2xs transition cursor-pointer text-[10px] sm:text-xs whitespace-nowrap"
               >
                 Mark for Review &amp; Next
               </button>
               <button
                 onClick={handleClearResponse}
                 disabled={!currentQ || !answers[currentQ.id]}
-                className="px-4 py-2 rounded bg-white hover:bg-slate-100 text-slate-700 disabled:opacity-40 font-bold border border-slate-300 shadow-2xs transition cursor-pointer"
+                className="px-2 sm:px-4 py-1.5 sm:py-2 rounded bg-white hover:bg-slate-100 text-slate-700 disabled:opacity-40 font-bold border border-slate-300 shadow-2xs transition cursor-pointer text-[10px] sm:text-xs whitespace-nowrap"
               >
-                Clear Response
+                Clear<span className="hidden sm:inline"> Response</span>
               </button>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-3">
               <button
                 onClick={handleNextQuestion}
-                className="px-5 py-2 rounded bg-[#2563eb] hover:bg-blue-700 text-white font-bold shadow-xs transition cursor-pointer"
+                className="px-3 sm:px-5 py-1.5 sm:py-2 rounded bg-[#2563eb] hover:bg-blue-700 text-white font-bold shadow-xs transition cursor-pointer text-[10px] sm:text-xs whitespace-nowrap"
               >
                 Save &amp; Next
               </button>
               <button
                 onClick={() => setShowSubmitModal(true)}
-                className="px-5 py-2 rounded bg-[#0284c7] hover:bg-sky-700 text-white font-bold shadow-xs transition cursor-pointer"
+                className="px-3 sm:px-5 py-1.5 sm:py-2 rounded bg-[#0284c7] hover:bg-sky-700 text-white font-bold shadow-xs transition cursor-pointer text-[10px] sm:text-xs whitespace-nowrap"
               >
-                Submit Test
+                Submit<span className="hidden sm:inline"> Test</span>
               </button>
             </div>
           </footer>
         </main>
 
+        {/* Mobile Backdrop Overlay */}
+        {showMobilePalette && (
+          <div
+            className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs lg:hidden animate-fadeIn"
+            onClick={() => setShowMobilePalette(false)}
+          />
+        )}
+
         {/* RIGHT PALETTE & CANDIDATE SIDEBAR */}
-        <aside className={`bg-[#f1f5f9] border-l border-slate-300 flex flex-col justify-between transition-all duration-200 shrink-0 ${
-          isPaletteCollapsed ? 'w-10' : 'w-72'
-        }`}>
+        <aside className={`
+          fixed inset-y-0 right-0 z-50 bg-[#f1f5f9] border-l border-slate-300 flex flex-col justify-between transition-transform duration-300 shrink-0
+          lg:static lg:translate-x-0 lg:z-auto h-full
+          ${showMobilePalette ? 'translate-x-0 shadow-2xl w-80' : 'translate-x-full lg:translate-x-0'}
+          ${isPaletteCollapsed ? 'lg:w-10' : 'lg:w-72'}
+        `}>
+          {/* Mobile Drawer Close Header */}
+          <div className="lg:hidden p-3 bg-slate-800 text-white flex items-center justify-between shrink-0 font-bold text-xs">
+            <span className="flex items-center gap-1.5">
+              <span>🔢</span> Question Palette ({totalCounters.answered}/{questions.length})
+            </span>
+            <button
+              onClick={() => setShowMobilePalette(false)}
+              className="px-2.5 py-1 rounded bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold"
+            >
+              ✕ Close
+            </button>
+          </div>
+
           {isPaletteCollapsed ? (
             <button
               onClick={() => setIsPaletteCollapsed(false)}
-              className="p-2 hover:bg-slate-200 text-slate-700 font-bold text-xs flex justify-center cursor-pointer"
+              className="hidden lg:flex p-2 hover:bg-slate-200 text-slate-700 font-bold text-xs justify-center cursor-pointer"
               title="Expand Palette"
             >
               <ChevronLeft size={20} />
@@ -828,7 +861,7 @@ function GateWorkspaceContent() {
                 </div>
                 <button
                   onClick={() => setIsPaletteCollapsed(true)}
-                  className="ml-auto text-slate-400 hover:text-slate-700 cursor-pointer"
+                  className="hidden lg:block ml-auto text-slate-400 hover:text-slate-700 cursor-pointer"
                   title="Collapse Palette"
                 >
                   <ChevronRight size={18} />
@@ -869,7 +902,7 @@ function GateWorkspaceContent() {
               </div>
 
               {/* Question Palette Grid */}
-              <div className="flex-1 overflow-y-auto p-3">
+              <div className="flex-1 overflow-y-auto p-3 bg-white">
                 <div className="grid grid-cols-4 gap-2 justify-items-center">
                   {questions.map((q: any, idx: number) => {
                     const isCurrent = idx === currentQuestionIndex;
@@ -881,7 +914,10 @@ function GateWorkspaceContent() {
                         questionNumber={idx + 1}
                         status={qStatus}
                         isSelected={isCurrent}
-                        onClick={() => setCurrentQuestionIndex(idx)}
+                        onClick={() => {
+                          setCurrentQuestionIndex(idx);
+                          setShowMobilePalette(false);
+                        }}
                       />
                     );
                   })}
