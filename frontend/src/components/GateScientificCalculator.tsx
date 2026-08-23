@@ -157,21 +157,21 @@ export const GateScientificCalculator: React.FC<GateScientificCalculatorProps> =
   const factorial = (n: number): number => {
     if (n < 0) return NaN;
     if (n === 0 || n === 1) return 1;
-    let acc = 1;
-    for (let i = 2; i <= n; i++) acc *= i;
-    return acc;
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+      result *= i;
+    }
+    return result;
   };
 
   const evalMath = (expr: string): number => {
     try {
-      const clean = expr
-        .replace(/π/g, String(Math.PI))
-        .replace(/e/g, String(Math.E))
-        .replace(/mod/g, "%");
-      // eslint-disable-next-line no-eval
-      const num = Function(`"use strict"; return (${clean})`)();
-      return typeof num === "number" ? num : NaN;
-    } catch (e) {
+      const sanitized = expr
+        .replace(/π/g, "Math.PI")
+        .replace(/e/g, "Math.E")
+        .replace(/\^/g, "**");
+      return Function(`"use strict"; return (${sanitized})`)();
+    } catch {
       return NaN;
     }
   };
@@ -196,160 +196,167 @@ export const GateScientificCalculator: React.FC<GateScientificCalculatorProps> =
   };
 
   return (
-    <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[110] bg-[#e5e7eb] border-2 border-[#3b82f6] rounded-t-lg rounded-b-md shadow-2xl w-[460px] text-slate-800 font-sans select-none overflow-hidden">
+    <div className="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4">
       
-      {/* Title Bar */}
-      <div className="bg-[#3b82f6] text-white px-3 py-1.5 flex items-center justify-between font-bold text-xs">
-        <span>Scientific Calculator</span>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowHelp(!showHelp)}
-            className="hover:underline flex items-center gap-0.5 text-[11px] cursor-pointer"
-          >
-            <HelpCircle size={13} />
-            <span>Help</span>
-          </button>
-          <button
-            onClick={onClose}
-            className="hover:bg-blue-700 rounded px-1 text-sm font-black cursor-pointer"
-          >
-            ✕
-          </button>
-        </div>
-      </div>
-
-      {showHelp && (
-        <div className="p-3 bg-yellow-50 border-b border-yellow-200 text-[11px] text-yellow-900 leading-relaxed">
-          <strong>Official GATE Calculator Guide:</strong>
-          <ul className="list-disc list-inside mt-1 space-y-0.5">
-            <li>Use Deg/Rad radio to toggle angle mode for trig operations.</li>
-            <li>Use C to clear display, ⇦ for backspace, +/- to change sign.</li>
-            <li>Operations follow standard mathematical precedence.</li>
-          </ul>
-        </div>
-      )}
-
-      <div className="p-3 space-y-2.5 bg-[#f3f4f6]">
+      {/* Modal Container */}
+      <div className="relative w-full max-w-[480px] max-h-[95vh] overflow-y-auto bg-[#e5e7eb] border-2 border-[#3b82f6] rounded-2xl shadow-2xl text-slate-800 font-sans select-none my-auto">
         
-        {/* Expression / Result Display Box */}
-        <div className="bg-white border border-slate-300 rounded px-3 py-2 text-right shadow-inner">
-          <div className="text-[11px] text-slate-400 font-mono h-4 overflow-hidden">
-            {display}
-          </div>
-          <div className="text-xl font-bold font-mono text-slate-900 tracking-wide overflow-x-auto whitespace-nowrap">
-            {display}
-          </div>
-        </div>
-
-        {/* Mode Toggle & Memory Bar */}
-        <div className="flex items-center justify-between text-[11px] font-semibold pt-0.5">
-          <div className="flex items-center gap-3 bg-white px-2.5 py-1 rounded border border-slate-300">
+        {/* Title Bar */}
+        <div className="bg-[#3b82f6] text-white px-3 py-2 flex items-center justify-between font-bold text-xs sm:text-sm sticky top-0 z-10">
+          <span className="flex items-center gap-1.5">
+            <span>🧮</span>
+            <span>GATE Scientific Calculator</span>
+          </span>
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => handleFunc("mod")}
-              className="text-blue-700 font-bold hover:underline"
+              onClick={() => setShowHelp(!showHelp)}
+              className="hover:underline flex items-center gap-0.5 text-xs cursor-pointer bg-blue-700/60 px-2 py-0.5 rounded"
             >
-              mod
+              <HelpCircle size={13} />
+              <span>Help</span>
             </button>
-            <label className="flex items-center gap-1 cursor-pointer">
-              <input
-                type="radio"
-                name="angleMode"
-                checked={angleMode === "deg"}
-                onChange={() => setAngleMode("deg")}
-                className="accent-blue-600 h-3 w-3"
-              />
-              <span>Deg</span>
-            </label>
-            <label className="flex items-center gap-1 cursor-pointer">
-              <input
-                type="radio"
-                name="angleMode"
-                checked={angleMode === "rad"}
-                onChange={() => setAngleMode("rad")}
-                className="accent-blue-600 h-3 w-3"
-              />
-              <span>Rad</span>
-            </label>
-          </div>
-
-          <div className="flex items-center gap-1">
-            {["MC", "MR", "MS", "M+", "M-"].map((m) => (
-              <button
-                key={m}
-                onClick={() => handleMemory(m)}
-                className="px-2 py-1 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] font-bold text-slate-700 shadow-xs"
-              >
-                {m}
-              </button>
-            ))}
+            <button
+              onClick={onClose}
+              className="hover:bg-blue-700 rounded px-2 py-0.5 text-sm font-black cursor-pointer"
+            >
+              ✕
+            </button>
           </div>
         </div>
 
-        {/* Grid Keypad */}
-        <div className="grid grid-cols-11 gap-1 text-[11px] font-bold">
+        {showHelp && (
+          <div className="p-3 bg-yellow-50 border-b border-yellow-200 text-xs text-yellow-900 leading-relaxed">
+            <strong>Official GATE Calculator Guide:</strong>
+            <ul className="list-disc list-inside mt-1 space-y-0.5 text-[11px]">
+              <li>Use Deg/Rad radio to toggle angle mode for trig operations.</li>
+              <li>Use C to clear display, ⇦ for backspace, +/- to change sign.</li>
+              <li>Operations follow standard mathematical precedence.</li>
+            </ul>
+          </div>
+        )}
+
+        <div className="p-2 sm:p-3 space-y-2.5 bg-[#f3f4f6]">
           
-          {/* Row 1 */}
-          <button onClick={() => handleFunc("sinh")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">sinh</button>
-          <button onClick={() => handleFunc("cosh")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">cosh</button>
-          <button onClick={() => handleFunc("tanh")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">tanh</button>
-          <button onClick={() => handleFunc("exp")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">Exp</button>
-          <button onClick={() => handleNum("(")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">(</button>
-          <button onClick={() => handleNum(")")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">)</button>
-          <button onClick={handleBackspace} className="col-span-1 p-1.5 bg-[#ef4444] hover:bg-red-600 text-white rounded text-xs">⇦</button>
-          <button onClick={handleClear} className="col-span-1 p-1.5 bg-[#ef4444] hover:bg-red-600 text-white rounded text-xs">C</button>
-          <button onClick={handleToggleSign} className="col-span-1 p-1.5 bg-[#ef4444] hover:bg-red-600 text-white rounded text-xs">+/-</button>
-          <button onClick={() => handleFunc("sqrt")} className="col-span-2 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">√</button>
+          {/* Expression / Result Display Box */}
+          <div className="bg-white border border-slate-300 rounded-xl px-3 py-2 text-right shadow-inner">
+            <div className="text-[11px] text-slate-400 font-mono h-4 overflow-hidden">
+              {display}
+            </div>
+            <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 tracking-wide overflow-x-auto whitespace-nowrap">
+              {display}
+            </div>
+          </div>
 
-          {/* Row 2 */}
-          <button onClick={() => handleFunc("asinh")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">sinh⁻¹</button>
-          <button onClick={() => handleFunc("acosh")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">cosh⁻¹</button>
-          <button onClick={() => handleFunc("atanh")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">tanh⁻¹</button>
-          <button onClick={() => handleNum("log2")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">log₂x</button>
-          <button onClick={() => handleFunc("ln")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">ln</button>
-          <button onClick={() => handleFunc("log")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">log</button>
-          <button onClick={() => handleNum("7")} className="col-span-1 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">7</button>
-          <button onClick={() => handleNum("8")} className="col-span-1 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">8</button>
-          <button onClick={() => handleNum("9")} className="col-span-1 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">9</button>
-          <button onClick={() => handleOp("/")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800">/</button>
-          <button onClick={() => handleOp("%")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800">%</button>
+          {/* Mode Toggle & Memory Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold pt-0.5">
+            <div className="flex items-center gap-2.5 bg-white px-2.5 py-1 rounded-lg border border-slate-300">
+              <button
+                onClick={() => handleFunc("mod")}
+                className="text-blue-700 font-bold hover:underline"
+              >
+                mod
+              </button>
+              <label className="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="radio"
+                  name="angleMode"
+                  checked={angleMode === "deg"}
+                  onChange={() => setAngleMode("deg")}
+                  className="accent-blue-600 h-3 w-3"
+                />
+                <span>Deg</span>
+              </label>
+              <label className="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="radio"
+                  name="angleMode"
+                  checked={angleMode === "rad"}
+                  onChange={() => setAngleMode("rad")}
+                  className="accent-blue-600 h-3 w-3"
+                />
+                <span>Rad</span>
+              </label>
+            </div>
 
-          {/* Row 3 */}
-          <button onClick={() => handleNum("π")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">π</button>
-          <button onClick={() => handleNum("e")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">e</button>
-          <button onClick={() => handleFunc("fact")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">n!</button>
-          <button onClick={() => handleOp("^")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">logyx</button>
-          <button onClick={() => handleFunc("exp")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">eˣ</button>
-          <button onClick={() => handleFunc("10x")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">10ˣ</button>
-          <button onClick={() => handleNum("4")} className="col-span-1 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">4</button>
-          <button onClick={() => handleNum("5")} className="col-span-1 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">5</button>
-          <button onClick={() => handleNum("6")} className="col-span-1 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">6</button>
-          <button onClick={() => handleOp("*")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800">*</button>
-          <button onClick={() => handleFunc("inv")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">1/x</button>
+            <div className="flex items-center gap-1 flex-wrap">
+              {["MC", "MR", "MS", "M+", "M-"].map((m) => (
+                <button
+                  key={m}
+                  onClick={() => handleMemory(m)}
+                  className="px-2 py-1 bg-white hover:bg-slate-100 border border-slate-300 rounded-md text-[10px] sm:text-xs font-bold text-slate-700 shadow-xs cursor-pointer"
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+          </div>
 
-          {/* Row 4 */}
-          <button onClick={() => handleFunc("sin")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">sin</button>
-          <button onClick={() => handleFunc("cos")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">cos</button>
-          <button onClick={() => handleFunc("tan")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">tan</button>
-          <button onClick={() => handleOp("^")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">xʸ</button>
-          <button onClick={() => handleFunc("cube")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">x³</button>
-          <button onClick={() => handleFunc("sqr")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">x²</button>
-          <button onClick={() => handleNum("1")} className="col-span-1 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">1</button>
-          <button onClick={() => handleNum("2")} className="col-span-1 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">2</button>
-          <button onClick={() => handleNum("3")} className="col-span-1 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">3</button>
-          <button onClick={() => handleOp("-")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800">-</button>
-          <button onClick={handleEquals} className="col-span-1 row-span-2 bg-[#22c55e] hover:bg-emerald-600 text-white rounded font-black text-lg flex items-center justify-center cursor-pointer shadow">=</button>
+          {/* Grid Keypad */}
+          <div className="grid grid-cols-11 gap-1 text-[10px] sm:text-[11px] font-bold touch-manipulation">
+            
+            {/* Row 1 */}
+            <button onClick={() => handleFunc("sinh")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">sinh</button>
+            <button onClick={() => handleFunc("cosh")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">cosh</button>
+            <button onClick={() => handleFunc("tanh")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">tanh</button>
+            <button onClick={() => handleFunc("exp")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">Exp</button>
+            <button onClick={() => handleNum("(")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">(</button>
+            <button onClick={() => handleNum(")")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">)</button>
+            <button onClick={handleBackspace} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-[#ef4444] hover:bg-red-600 text-white rounded text-xs flex items-center justify-center cursor-pointer">⇦</button>
+            <button onClick={handleClear} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-[#ef4444] hover:bg-red-600 text-white rounded text-xs flex items-center justify-center cursor-pointer">C</button>
+            <button onClick={handleToggleSign} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-[#ef4444] hover:bg-red-600 text-white rounded text-xs flex items-center justify-center cursor-pointer">+/-</button>
+            <button onClick={() => handleFunc("sqrt")} className="col-span-2 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">√</button>
 
-          {/* Row 5 */}
-          <button onClick={() => handleFunc("asin")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">sin⁻¹</button>
-          <button onClick={() => handleFunc("acos")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">cos⁻¹</button>
-          <button onClick={() => handleFunc("atan")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">tan⁻¹</button>
-          <button onClick={() => handleFunc("sqrt")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">ʸ√x</button>
-          <button onClick={() => handleFunc("cbrt")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-[10px] text-slate-700">³√x</button>
-          <button onClick={() => handleFunc("abs")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700">|x|</button>
-          <button onClick={() => handleNum("0")} className="col-span-2 p-1.5 bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-sm font-extrabold">0</button>
-          <button onClick={() => handleNum(".")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-900 font-bold">.</button>
-          <button onClick={() => handleOp("+")} className="col-span-1 p-1.5 bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800">+</button>
+            {/* Row 2 */}
+            <button onClick={() => handleFunc("asinh")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">sinh⁻¹</button>
+            <button onClick={() => handleFunc("acosh")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">cosh⁻¹</button>
+            <button onClick={() => handleFunc("atanh")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">tanh⁻¹</button>
+            <button onClick={() => handleNum("log2")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">log₂x</button>
+            <button onClick={() => handleFunc("ln")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">ln</button>
+            <button onClick={() => handleFunc("log")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">log</button>
+            <button onClick={() => handleNum("7")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">7</button>
+            <button onClick={() => handleNum("8")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">8</button>
+            <button onClick={() => handleNum("9")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">9</button>
+            <button onClick={() => handleOp("/")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800 flex items-center justify-center cursor-pointer">/</button>
+            <button onClick={() => handleOp("%")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800 flex items-center justify-center cursor-pointer">%</button>
 
+            {/* Row 3 */}
+            <button onClick={() => handleNum("π")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">π</button>
+            <button onClick={() => handleNum("e")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">e</button>
+            <button onClick={() => handleFunc("fact")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">n!</button>
+            <button onClick={() => handleOp("^")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">logyx</button>
+            <button onClick={() => handleFunc("exp")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">eˣ</button>
+            <button onClick={() => handleFunc("10x")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">10ˣ</button>
+            <button onClick={() => handleNum("4")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">4</button>
+            <button onClick={() => handleNum("5")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">5</button>
+            <button onClick={() => handleNum("6")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">6</button>
+            <button onClick={() => handleOp("*")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800 flex items-center justify-center cursor-pointer">*</button>
+            <button onClick={() => handleFunc("inv")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">1/x</button>
+
+            {/* Row 4 */}
+            <button onClick={() => handleFunc("sin")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">sin</button>
+            <button onClick={() => handleFunc("cos")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">cos</button>
+            <button onClick={() => handleFunc("tan")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">tan</button>
+            <button onClick={() => handleOp("^")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">xʸ</button>
+            <button onClick={() => handleFunc("cube")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">x³</button>
+            <button onClick={() => handleFunc("sqr")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">x²</button>
+            <button onClick={() => handleNum("1")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">1</button>
+            <button onClick={() => handleNum("2")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">2</button>
+            <button onClick={() => handleNum("3")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">3</button>
+            <button onClick={() => handleOp("-")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800 flex items-center justify-center cursor-pointer">-</button>
+            <button onClick={handleEquals} className="col-span-1 row-span-2 bg-[#22c55e] hover:bg-emerald-600 text-white rounded font-black text-lg flex items-center justify-center cursor-pointer shadow">=</button>
+
+            {/* Row 5 */}
+            <button onClick={() => handleFunc("asin")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">sin⁻¹</button>
+            <button onClick={() => handleFunc("acos")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">cos⁻¹</button>
+            <button onClick={() => handleFunc("atan")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">tan⁻¹</button>
+            <button onClick={() => handleFunc("sqrt")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">ʸ√x</button>
+            <button onClick={() => handleFunc("cbrt")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-[9px] sm:text-[10px] text-slate-700 flex items-center justify-center cursor-pointer truncate">³√x</button>
+            <button onClick={() => handleFunc("abs")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-700 flex items-center justify-center cursor-pointer">|x|</button>
+            <button onClick={() => handleNum("0")} className="col-span-2 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-blue-50 border border-slate-300 rounded text-slate-900 text-xs sm:text-sm font-extrabold flex items-center justify-center cursor-pointer">0</button>
+            <button onClick={() => handleNum(".")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-900 font-bold flex items-center justify-center cursor-pointer">.</button>
+            <button onClick={() => handleOp("+")} className="col-span-1 p-1 sm:p-1.5 min-h-[32px] bg-white hover:bg-slate-100 border border-slate-300 rounded text-slate-800 flex items-center justify-center cursor-pointer">+</button>
+
+          </div>
         </div>
       </div>
     </div>

@@ -303,9 +303,41 @@ function SscCglDashboardContent() {
               </button>
             </div>
 
-            {/* 2-COLUMN SHIFTS GRID */}
-            <div className="flex-1 max-h-[55vh] overflow-y-auto pr-1">
-              {loading ? (
+            {/* 2-COLUMN SHIFTS GRID OR 2026 UPLOADING SOON BANNER */}
+            <div className="flex-1 max-h-[60vh] sm:max-h-[55vh] overflow-y-auto pr-1">
+              {modalYear === 2026 ? (
+                <div className="py-6 px-4 sm:px-6 text-center space-y-4 bg-gradient-to-b from-emerald-50/50 via-white to-white dark:from-slate-900/50 dark:via-slate-950 dark:to-slate-950 rounded-2xl border border-emerald-100 dark:border-slate-800">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto bg-gradient-to-tr from-emerald-600 to-teal-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <CalendarIcon className="w-7 h-7 sm:w-8 sm:h-8" />
+                  </div>
+                  <div className="max-w-md mx-auto space-y-2">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                      <span>✨ Upcoming Release · SSC CGL 2026</span>
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100">
+                      2026 Question Papers Uploading Soon
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                      Our editorial team is currently verifying and formatting official SSC CGL 2026 Tier-I &amp; Tier-II question papers with verified answer keys &amp; solutions. They will be published here shortly.
+                    </p>
+                  </div>
+                  <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+                    <button 
+                      onClick={() => setModalYear(2025)}
+                      className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <span>Explore 2025 Solved Papers</span>
+                      <ArrowIcon className="w-3.5 h-3.5" />
+                    </button>
+                    <button 
+                      onClick={() => setModalYear(null)}
+                      className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition cursor-pointer"
+                    >
+                      Close Window
+                    </button>
+                  </div>
+                </div>
+              ) : loading ? (
                 <div className="py-12 text-center text-slate-400 text-xs animate-pulse">
                   Loading {modalYear} paper shifts...
                 </div>
@@ -318,17 +350,17 @@ function SscCglDashboardContent() {
                         setModalYear(null);
                         handleStartExam(shift.name, modalYear, shift.id);
                       }}
-                      className="group cursor-pointer bg-white dark:bg-slate-950 border border-slate-200/90 dark:border-slate-800/90 hover:border-emerald-500/60 rounded-2xl p-4 shadow-xs hover:shadow-md transition-all flex items-center justify-between space-x-3"
+                      className="group cursor-pointer bg-white dark:bg-slate-950 border border-slate-200/90 dark:border-slate-800/90 hover:border-emerald-500/60 rounded-2xl p-3.5 sm:p-4 shadow-xs hover:shadow-md transition-all flex items-center justify-between space-x-3"
                     >
                       <div className="flex items-center space-x-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200/60 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
-                          <DocumentIcon className="w-5 h-5" />
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200/60 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                          <DocumentIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                         <div className="min-w-0">
-                          <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
                             {shift.name}
                           </h4>
-                          <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5 flex items-center gap-1">
+                          <p className="text-[10px] sm:text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5 flex items-center gap-1">
                             <span>✓ Full paper with answers</span>
                           </p>
                         </div>

@@ -405,18 +405,10 @@ export default function ProfilePage() {
           </div>
 
           {/* Buttons */}
-          <div className="px-6 pb-6">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_6px_18px_rgba(37,99,235,0.25)] transition hover:bg-blue-700 hover:shadow-[0_8px_22px_rgba(37,99,235,0.3)] cursor-pointer"
-            >
-              <EditIcon />
-              Edit Profile
-            </button>
-
+          <div className="px-6 pb-6 space-y-3">
             <button
               onClick={handleLogout}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/80 px-4 py-3.5 text-sm font-semibold text-red-500 transition hover:border-red-100 hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/80 px-4 py-3.5 text-sm font-semibold text-red-500 transition hover:border-red-100 hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer"
             >
               <LogoutIcon />
               Log Out
@@ -424,7 +416,7 @@ export default function ProfilePage() {
 
             <button
               onClick={() => router.push("/pages/dashboard")}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 dark:bg-slate-800 border border-transparent dark:border-slate-700 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:hover:bg-slate-700 cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 dark:bg-slate-800 border border-transparent dark:border-slate-700 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800 dark:hover:bg-slate-700 cursor-pointer"
             >
               <ArrowLeftIcon />
               Back to Dashboard
@@ -453,32 +445,14 @@ export default function ProfilePage() {
                 </p>
 
                 <h2 className="mt-1 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                  {isEditing ? "Edit your profile" : "Student Dashboard & Test History"}
+                  Student Dashboard &amp; Test History
                 </h2>
 
                 <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
-                  {isEditing
-                    ? "Update your personal and academic information."
-                    : "Track your test results, maximum marks achieved, and performance progression graph."}
+                  Track your test results, maximum marks achieved, and performance progression graph.
                 </p>
               </div>
             </div>
-
-            {/* Edit button / status */}
-            {!isEditing ? (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-blue-200 dark:border-blue-900 bg-white dark:bg-slate-800 px-5 py-3 text-sm font-semibold text-blue-600 dark:text-blue-400 transition hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer"
-              >
-                <EditIcon />
-                Edit Profile
-              </button>
-            ) : (
-              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-xs font-bold uppercase tracking-wider text-amber-600">
-                <span className="h-2 w-2 rounded-full bg-amber-500" />
-                Editing
-              </span>
-            )}
           </div>
 
           {/* Error */}

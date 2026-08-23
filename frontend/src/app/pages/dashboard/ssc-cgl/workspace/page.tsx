@@ -57,6 +57,7 @@ function SscTestWorkspaceContent() {
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [candidateName, setCandidateName] = useState<string>("Candidate Name");
   const [showSubmitModal, setShowSubmitModal] = useState<boolean>(false);
+  const [showMobilePalette, setShowMobilePalette] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -588,37 +589,43 @@ function SscTestWorkspaceContent() {
       )}
 
       {/* TOP HEADER BAR */}
-      <header className="bg-white border-b border-slate-300 px-6 py-2 flex items-center justify-between shrink-0 shadow-sm">
+      <header className="bg-white border-b border-slate-300 px-3 sm:px-6 py-2 flex flex-col sm:flex-row items-center justify-between gap-2 shrink-0 shadow-sm">
         {/* Left Title */}
-        <div className="flex items-center space-x-3">
-          <h1 className="text-lg font-extrabold text-slate-800 tracking-tight">SSC CGL MOCK TEST</h1>
+        <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+          <h1 className="text-base sm:text-lg font-extrabold text-slate-800 tracking-tight">SSC CGL MOCK TEST</h1>
+          <div className="flex sm:hidden items-center space-x-2 text-xs text-slate-600">
+            <span className="w-6 h-6 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center font-bold text-slate-500 text-[10px]">
+              👤
+            </span>
+            <span className="font-semibold text-slate-800 text-xs truncate max-w-[100px]">{candidateName}</span>
+          </div>
         </div>
 
         {/* Center Clocks: 15-Min Section Timer & 60-Min Overall Timer */}
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center justify-center space-x-3 sm:space-x-6 w-full sm:w-auto">
           {/* Section Timer (15 Min) */}
-          <div className="flex flex-col items-center bg-red-50 border border-red-200 px-3.5 py-1 rounded shadow-xs">
-            <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider">
+          <div className="flex flex-col items-center bg-red-50 border border-red-200 px-2.5 sm:px-3.5 py-1 rounded shadow-xs">
+            <span className="text-[9px] sm:text-[10px] font-bold text-red-600 uppercase tracking-wider">
               Section Time ({activePart.partLabel})
             </span>
-            <span className="font-mono text-xl font-extrabold text-red-600 tracking-widest">
+            <span className="font-mono text-base sm:text-xl font-extrabold text-red-600 tracking-widest">
               {formatTime(activeSectionRemSeconds)}
             </span>
           </div>
 
           {/* Overall Exam Timer (60 Min) */}
-          <div className="flex flex-col items-center bg-slate-50 border border-slate-300 px-3.5 py-1 rounded shadow-xs">
-            <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">
-              Overall Exam Time (60 Min)
+          <div className="flex flex-col items-center bg-slate-50 border border-slate-300 px-2.5 sm:px-3.5 py-1 rounded shadow-xs">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-600 uppercase tracking-wider">
+              Overall Time (60M)
             </span>
-            <span className="font-mono text-xl font-extrabold text-slate-800 tracking-widest">
+            <span className="font-mono text-base sm:text-xl font-extrabold text-slate-800 tracking-widest">
               {formatTime(overallTimeLeft)}
             </span>
           </div>
         </div>
 
-        {/* Right Candidate Details */}
-        <div className="flex items-center space-x-4 text-xs text-slate-600">
+        {/* Right Candidate Details (Desktop) */}
+        <div className="hidden sm:flex items-center space-x-4 text-xs text-slate-600">
           <div className="flex items-center space-x-2">
             <span className="w-7 h-7 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center font-bold text-slate-500">
               👤
@@ -631,24 +638,31 @@ function SscTestWorkspaceContent() {
       {/* SUB HEADER / CONTROLS & NOTICE STRIP */}
       <div className="bg-slate-100 border-b border-slate-300 text-xs shrink-0">
         {/* Controls row */}
-        <div className="px-6 py-1.5 flex items-center justify-between border-b border-slate-200 bg-white">
+        <div className="px-3 sm:px-6 py-1.5 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-white">
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setZoomLevel(prev => Math.min(prev + 10, 140))}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded text-xs transition"
             >
               Zoom (+)
             </button>
             <button
               onClick={() => setZoomLevel(prev => Math.max(prev - 10, 80))}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded text-xs transition"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded text-xs transition"
             >
               Zoom (-)
             </button>
-            <span className="ml-3 font-semibold text-slate-700">SSC-CGL Tier 1</span>
+            <span className="hidden sm:inline font-semibold text-slate-700 ml-2">SSC-CGL Tier 1</span>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setShowMobilePalette(prev => !prev)}
+              className="lg:hidden bg-blue-50 text-blue-700 font-bold px-2.5 py-1 rounded text-xs border border-blue-200 hover:bg-blue-100 transition"
+            >
+              {showMobilePalette ? "✕ Close Palette" : `📊 Questions (${subjectQuestions.length})`}
+            </button>
+
             <button
               onClick={handleToggleFullscreen}
               className="text-xs text-blue-600 hover:underline font-semibold"
@@ -659,18 +673,43 @@ function SscTestWorkspaceContent() {
         </div>
 
         {/* Yellow Instructions Banner */}
-        <div className="bg-[#fffde7] border-b border-yellow-200 px-6 py-1 text-slate-800 text-[11px] flex items-center space-x-4">
+        <div className="bg-[#fffde7] border-b border-yellow-200 px-3 sm:px-6 py-1 text-slate-800 text-[11px] flex flex-wrap items-center gap-2 sm:space-x-4">
           <span className="font-bold text-yellow-900 cursor-pointer hover:underline">SYMBOLS</span>
           <span className="font-bold text-yellow-900 cursor-pointer hover:underline">INSTRUCTIONS</span>
-          <span className="text-slate-700">Please note that this is a mock test for practice purposes.</span>
+          <span className="text-slate-700 text-[10px] sm:text-[11px]">Mock test for practice.</span>
         </div>
       </div>
 
       {/* MAIN CONTENT WORKSPACE */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* LEFT COLUMN: PARTS + GRID PALETTE + ANALYSIS */}
-        <aside className="w-80 bg-white border-r border-slate-300 flex flex-col justify-between shrink-0 overflow-y-auto">
-          <div>
+      <div className="flex-1 flex overflow-hidden relative">
+        
+        {/* Mobile Backdrop Overlay */}
+        {showMobilePalette && (
+          <div 
+            className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden"
+            onClick={() => setShowMobilePalette(false)}
+          />
+        )}
+
+        {/* PALETTE ASIDE - DESKTOP SIDEBAR OR MOBILE SLIDE-OVER DRAWER */}
+        <aside className={`
+          fixed inset-y-0 right-0 z-50 w-80 bg-white border-l border-slate-300 flex flex-col h-full 
+          transition-transform duration-300 transform 
+          lg:static lg:translate-x-0 lg:z-auto shrink-0
+          ${showMobilePalette ? 'translate-x-0 shadow-2xl' : 'translate-x-full lg:translate-x-0'}
+        `}>
+          {/* Mobile Drawer Header */}
+          <div className="lg:hidden p-3 bg-slate-800 text-white flex items-center justify-between font-bold text-xs">
+            <span>📊 Question Palette ({subjectQuestions.length})</span>
+            <button
+              onClick={() => setShowMobilePalette(false)}
+              className="px-2 py-0.5 rounded bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold"
+            >
+              ✕ Close
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
             {/* PART Navigation Buttons */}
             <div className="p-2 border-b border-slate-200 flex items-center justify-between bg-slate-50 gap-1">
               {PARTS.map((part, pIdx) => {
@@ -711,7 +750,7 @@ function SscTestWorkspaceContent() {
 
             {/* Question Palette Grid */}
             <div className="p-4">
-              <div className="grid grid-cols-5 gap-2 justify-items-center">
+              <div className="grid grid-cols-5 sm:grid-cols-8 lg:grid-cols-5 gap-2 justify-items-center">
                 {subjectQuestions.map((q, idx) => {
                   const globalIdx = questions.findIndex(item => item.id === q.id);
                   const isCurrent = currentQuestionIndex === globalIdx;
@@ -730,7 +769,10 @@ function SscTestWorkspaceContent() {
                   return (
                     <button
                       key={q.id}
-                      onClick={() => handleGridQuestionClick(q.id)}
+                      onClick={() => {
+                        handleGridQuestionClick(q.id);
+                        setShowMobilePalette(false);
+                      }}
                       className={`w-9 h-9 rounded text-xs font-bold flex items-center justify-center transition shadow-sm cursor-pointer ${bgStyle} ${borderStyle}`}
                     >
                       {idx + 1}
@@ -760,7 +802,10 @@ function SscTestWorkspaceContent() {
             </div>
 
             <button
-              onClick={handleClearResponse}
+              onClick={() => {
+                handleClearResponse();
+                setShowMobilePalette(false);
+              }}
               className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded text-xs shadow transition cursor-pointer"
             >
               Clear Response
@@ -769,27 +814,27 @@ function SscTestWorkspaceContent() {
         </aside>
 
         {/* RIGHT COLUMN: QUESTION CONTENT + ACTIONS + SUBMIT */}
-        <main className="flex-1 bg-white flex flex-col justify-between overflow-y-auto">
-          <div className="p-6 space-y-4 max-w-5xl mx-auto w-full">
+        <main className="flex-1 bg-white flex flex-col justify-between overflow-y-auto w-full min-w-0">
+          <div className="p-3 sm:p-6 space-y-4 max-w-5xl mx-auto w-full">
             {/* Top Action Bar & Language Select */}
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <div className="flex items-center space-x-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <button
                   onClick={handleMarkForReviewAndNext}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded shadow transition cursor-pointer"
+                  className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 sm:px-4 py-2.5 rounded shadow transition cursor-pointer text-center"
                 >
                   Mark for Review &amp; Next
                 </button>
                 <button
                   onClick={handleNextQuestion}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded shadow transition cursor-pointer"
+                  className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 sm:px-4 py-2.5 rounded shadow transition cursor-pointer text-center"
                 >
                   Save &amp; Next
                 </button>
               </div>
 
-              <div className="flex items-center space-x-4 text-xs text-slate-700">
-                <span className="font-medium">Total Questions Answered: <strong className="text-slate-900">{answeredQuestionsCount}</strong></span>
+              <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-slate-700 w-full sm:w-auto">
+                <span className="font-medium text-[11px] sm:text-xs">Answered: <strong className="text-slate-900">{answeredQuestionsCount}</strong></span>
                 <div className="flex items-center space-x-1">
                   <span>View in:</span>
                   <select
