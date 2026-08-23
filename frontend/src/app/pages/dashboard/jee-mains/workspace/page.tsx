@@ -257,12 +257,19 @@ function TestWorkspacePageContent() {
     const handleFullscreenChange = () => {
       const isCurrentlyFullscreen = !!document.fullscreenElement;
       setIsFullscreen(isCurrentlyFullscreen);
+      
+      // If the exam is active and they exited fullscreen, count it as a violation!
+      if (isExamActive && !isCurrentlyFullscreen && !showSubmitModal && !submitSuccess && violationsCount < 5) {
+        setViolationsCount(prev => prev + 1);
+        setViolationReason("Exited fullscreen mode");
+        setShowViolationModal(true);
+      }
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
-  }, [setIsFullscreen]);
+  }, [isExamActive, showSubmitModal, submitSuccess, violationsCount, setIsFullscreen]);
 
   // Security restrictions (right-click, screenshots, copy/paste)
   useEffect(() => {
@@ -353,6 +360,12 @@ function TestWorkspacePageContent() {
   }, [violationsCount, isExamActive, showAutoSubmitModal]);
 
   const handleResumeFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.warn("Fullscreen auto-enable suppressed by browser permissions:", err);
+      });
+      setIsFullscreen(true);
+    }
     setShowViolationModal(false);
   };
 
@@ -364,6 +377,12 @@ function TestWorkspacePageContent() {
         if (prev === null || prev <= 1) {
           clearInterval(timer);
           setTimeout(() => {
+            if (!document.fullscreenElement) {
+              document.documentElement.requestFullscreen().catch(err => {
+                console.error("Error enabling full-screen:", err);
+              });
+              setIsFullscreen(true);
+            }
             setIsExamActive(true);
             setShowPreCheck(false);
           }, 0);
@@ -671,17 +690,17 @@ function TestWorkspacePageContent() {
             {/* Fullscreen check card */}
             <div className="bg-slate-50 border border-slate-200/90 p-4 sm:p-4.5 rounded-2xl flex items-center justify-between shadow-xs">
               <div className="flex items-center space-x-4">
-                <div className="p-2.5 bg-slate-100 text-slate-500 border border-slate-200 rounded-xl">
+                <div className="p-2.5 bg-indigo-50 text-indigo-600 border border-indigo-200 rounded-xl">
                   <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 20v-4m0 4h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                   </svg>
                 </div>
                 <div>
                   <h3 className="text-sm font-extrabold text-slate-900">Fullscreen Mode</h3>
-                  <p className="text-xs text-slate-600 font-medium">Fullscreen enforcement is turned off for standard browser viewing.</p>
+                  <p className="text-xs text-slate-600 font-medium">Will automatically transition to full screen on exam start.</p>
                 </div>
               </div>
-              <span className="text-xs font-extrabold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">Disabled</span>
+              <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">Auto-Enable</span>
             </div>
 
           </div>
