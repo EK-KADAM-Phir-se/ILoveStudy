@@ -441,18 +441,36 @@ export default function ProfilePage() {
 
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.25em] text-blue-500 dark:text-blue-400">
-                  Profile & Performance Analytics
+                  Profile &amp; Performance Analytics
                 </p>
 
                 <h2 className="mt-1 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                  Student Dashboard &amp; Test History
+                  {isEditing ? "Edit your profile" : "Student Dashboard & Test History"}
                 </h2>
 
                 <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
-                  Track your test results, maximum marks achieved, and performance progression graph.
+                  {isEditing
+                    ? "Update your personal and academic information."
+                    : "Track your test results, maximum marks achieved, and performance progression graph."}
                 </p>
               </div>
             </div>
+
+            {/* Edit Profile button */}
+            {!isEditing ? (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 text-sm font-semibold shadow-md hover:shadow-lg transition cursor-pointer"
+              >
+                <EditIcon />
+                Edit Profile
+              </button>
+            ) : (
+              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-amber-50 dark:bg-amber-950/40 px-4 py-2 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                Editing Mode
+              </span>
+            )}
           </div>
 
           {/* Error */}
