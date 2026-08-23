@@ -112,7 +112,7 @@ export default function NavBar({
           {/* Custom Test pill — right next to logo */}
           <button
             onClick={() => router.push("/pages/dashboard/create-test")}
-            className={`hidden sm:flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium tracking-wide uppercase rounded-full transition cursor-pointer border ${
+            className={`hidden sm:flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium tracking-wide uppercase rounded-xl transition cursor-pointer border ${
               isActive("/pages/dashboard/create-test")
                 ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
                 : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-500 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
@@ -125,7 +125,7 @@ export default function NavBar({
           {/* Organisation Portal Link */}
           <button
             onClick={() => router.push("/pages/dashboard/organisation")}
-            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium tracking-wide uppercase rounded-full transition cursor-pointer border ${
+            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium tracking-wide uppercase rounded-xl transition cursor-pointer border ${
               isActive("/pages/dashboard/organisation")
                 ? "bg-blue-600 text-white border-blue-600"
                 : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-500 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
@@ -136,7 +136,7 @@ export default function NavBar({
 
           {/* Guest Mode Indicator */}
           {isGuest && (
-            <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+            <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
               <Eye size={12} /> Guest Tour
             </span>
           )}
@@ -151,7 +151,7 @@ export default function NavBar({
           {onStreakClick && !isGuest && (
             <button
               onClick={onStreakClick}
-              className={`flex items-center gap-1.5 h-8 px-3 rounded-full border text-xs font-extrabold cursor-pointer transition-all hover:scale-105 ${
+              className={`flex items-center gap-1.5 h-8 px-3 rounded-xl border text-xs font-extrabold cursor-pointer transition-all hover:scale-105 ${
                 isStreakActive
                   ? "bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-900 text-orange-600 dark:text-orange-400"
                   : "bg-gray-100 dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-400 dark:text-slate-500 grayscale opacity-70"
@@ -166,7 +166,7 @@ export default function NavBar({
           <button
             onClick={handleToggleDark}
             aria-label="Toggle theme"
-            className="h-8 w-8 flex items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-slate-600 hover:bg-gray-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 transition text-sm cursor-pointer"
+            className="h-8 w-8 flex items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-slate-600 hover:bg-gray-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 transition text-sm cursor-pointer"
           >
             {isDark ? "☀️" : "🌙"}
           </button>
@@ -175,7 +175,7 @@ export default function NavBar({
           {isGuest ? (
             <button
               onClick={handleLoginClick}
-              className="h-8 px-4 flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-full font-bold text-xs tracking-wide uppercase shadow-sm transition cursor-pointer"
+              className="h-8 px-4 flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl font-bold text-xs tracking-wide uppercase shadow-sm transition cursor-pointer"
             >
               <LogIn size={13} />
               <span>Log In</span>
@@ -183,7 +183,7 @@ export default function NavBar({
           ) : (
             <button
               onClick={() => router.push("/profile")}
-              className="h-8 px-4 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold text-xs tracking-wide uppercase shadow-sm transition cursor-pointer"
+              className="h-8 px-4 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs tracking-wide uppercase shadow-sm transition cursor-pointer"
             >
               <User size={13} />
               <span className="hidden sm:inline">{displayName || "Profile"}</span>
