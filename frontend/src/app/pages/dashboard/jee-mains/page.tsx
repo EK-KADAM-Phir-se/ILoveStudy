@@ -50,8 +50,8 @@ function JeeExamPageContent() {
   const isAdvanced = examType === "advanced";
 
   const [dbShifts,      setDbShifts]      = useState<any[]>([]);
-  const [selectedYear,  setSelectedYear]  = useState<number | null>(null);
-  const [activeAttempt, setActiveAttempt] = useState<"january" | "february" | "march" | "april" | "june" | "july" | "august">("january");
+  const [selectedYear,  setSelectedYear]  = useState<number | string | null>(null);
+  const [activeAttempt, setActiveAttempt] = useState<"january" | "february" | "march" | "april" | "june" | "july" | "august" | "temp">("january");
   const [showGuestModal, setShowGuestModal] = useState<boolean>(false);
 
   const years = Array.from({ length: 6 }, (_, i) => 2026 - i);
@@ -67,11 +67,16 @@ function JeeExamPageContent() {
   }, []);
 
   /* ── helpers ── */
-  const getShifts = (year: number, attempt: "january" | "february" | "march" | "april" | "june" | "july" | "august") => {
-    const staticNames = (mainsPapersData[year] as any)?.[attempt] || [];
+  const getShifts = (year: number | string, attempt: "january" | "february" | "march" | "april" | "june" | "july" | "august" | "temp") => {
+    if (attempt === "temp") {
+      return dbShifts.filter((s: any) =>
+        s.name.includes("Wave Optics") || s.name.includes("Temp") || s.name.includes("Topic")
+      ).map((s: any) => ({ name: s.name, id: s.id }));
+    }
+    const staticNames = (mainsPapersData[year as number] as any)?.[attempt] || [];
     const dbMatched   = dbShifts.filter((s: any) => {
       const d = new Date(s.date);
-      return d.getUTCFullYear() === year &&
+      return typeof year === "number" && d.getUTCFullYear() === year &&
         ((attempt === "january"  && d.getUTCMonth() === 0) ||
          (attempt === "february" && d.getUTCMonth() === 1) ||
          (attempt === "march"    && d.getUTCMonth() === 2) ||
@@ -90,7 +95,7 @@ function JeeExamPageContent() {
     return combined;
   };
 
-  const handleStart = (name: string, year: number, shiftId?: string) => {
+  const handleStart = (name: string, year: number | string, shiftId?: string) => {
     if (isGuestUser()) {
       setShowGuestModal(true);
       return;
@@ -103,9 +108,11 @@ function JeeExamPageContent() {
   };
 
   /* ── open modal ── */
-  const openYear = (year: number) => {
+  const openYear = (year: number | string) => {
     setSelectedYear(year);
-    if (year === 2022) {
+    if (year === "temp") {
+      setActiveAttempt("temp");
+    } else if (year === 2022) {
       setActiveAttempt("june");
     } else if (year === 2021) {
       setActiveAttempt("august");
@@ -113,6 +120,10 @@ function JeeExamPageContent() {
       setActiveAttempt("january");
     }
   };
+
+  const tempShifts = dbShifts.filter((s: any) =>
+    s.name.includes("Wave Optics") || s.name.includes("Temp") || s.name.includes("Topic")
+  );
 
   /* modal data */
   const modalShifts = selectedYear ? getShifts(selectedYear, activeAttempt) : [];
@@ -130,7 +141,7 @@ function JeeExamPageContent() {
           {isAdvanced ? "JEE Advanced" : "JEE Mains"} Question Papers
         </h1>
         <p className="text-gray-500 dark:text-slate-400 text-lg max-w-xl mx-auto leading-relaxed">
-          Browse year-wise shifted papers. Attempt real database exams or explore mock papers with full LaTeX and diagram support.
+          Browse year-wise shifted papers and topic special papers. Attempt real database exams or explore mock papers with full LaTeX and diagram support.
         </p>
         <div className="flex justify-center gap-2 mt-6 flex-wrap">
           {SUBJECT_TAGS.map(tag => (
@@ -144,6 +155,31 @@ function JeeExamPageContent() {
 
       {/* ── Card Grid ── */}
       <div className="max-w-5xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        {/* 🔥 Temp Section Card */}
+        <button
+          onClick={() => openYear("temp")}
+          className="group bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-rose-500/10 dark:from-amber-950/40 dark:to-rose-950/40 border-2 border-amber-400/80 dark:border-amber-500/60 hover:shadow-lg rounded-2xl p-5 text-left transition-all duration-200 cursor-pointer relative overflow-hidden"
+        >
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md">
+            <BookOpen size={22} />
+          </div>
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-extrabold text-gray-900 dark:text-slate-100 text-lg group-hover:text-amber-600 dark:group-hover:text-amber-400 transition">
+              Temp Section
+            </h3>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-xs">
+              55 Questions
+            </span>
+          </div>
+          <p className="text-gray-600 dark:text-slate-300 text-sm leading-relaxed font-medium">
+            Topic Master Paper (25 Physics + 30 Chemistry)
+          </p>
+          <div className="mt-4 flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 transition">
+            Start Master Exam <ArrowRight size={13} />
+          </div>
+        </button>
+
         {years.map((year, idx) => {
           const col        = YEAR_COLORS[idx % YEAR_COLORS.length];
           const janShifts  = getShifts(year, "january");
@@ -220,9 +256,11 @@ function JeeExamPageContent() {
                   <Calendar size={18} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-gray-900 dark:text-slate-100 text-lg">{selectedYear} Papers</h2>
+                  <h2 className="font-bold text-gray-900 dark:text-slate-100 text-lg">
+                    {selectedYear === "temp" ? "🔥 Temp Section — Wave Optics Papers" : `${selectedYear} Papers`}
+                  </h2>
                   <p className="text-xs text-gray-500 dark:text-slate-400">
-                    {isAdvanced ? "JEE Advanced" : "JEE Mains"} — Select a paper to start
+                    {selectedYear === "temp" ? "Select any of the 4 Wave Optics PYQ papers to attempt" : `${isAdvanced ? "JEE Advanced" : "JEE Mains"} — Select a paper to start`}
                   </p>
                 </div>
               </div>
@@ -232,7 +270,28 @@ function JeeExamPageContent() {
             </div>
 
             <div className="px-6 py-5 space-y-4">
-              {isAdvanced ? (
+              {selectedYear === "temp" ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {tempShifts.map((shift, idx) => (
+                    <button key={`${shift.name}-${idx}`}
+                      onClick={() => handleStart(shift.name, "2025", shift.id)}
+                      className="group bg-white dark:bg-slate-950 border border-amber-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md rounded-xl p-4 text-left flex items-center justify-between transition cursor-pointer">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center transition bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:bg-amber-600 group-hover:text-white">
+                          <FileText size={15} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-gray-800 dark:text-slate-100 text-sm truncate">{shift.name}</p>
+                          <p className="text-xs mt-0.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                            ✓ Full paper with answers
+                          </p>
+                        </div>
+                      </div>
+                      <Play size={14} className="text-gray-300 dark:text-slate-600 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition shrink-0" />
+                    </button>
+                  ))}
+                </div>
+              ) : isAdvanced ? (
                 /* Advanced papers */
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {["Paper 1 (PCM)", "Paper 2 (PCM)"].map(paper => (
@@ -255,8 +314,9 @@ function JeeExamPageContent() {
                 <>
                   {/* Attempt tab pills */}
                   <div className="flex gap-2 flex-wrap">
-                    {(["january", "february", "march", "april", "june", "july", "august"] as const)
+                    {(["january", "february", "march", "april", "june", "july", "august", "temp"] as const)
                       .filter(attempt => {
+                        if (attempt === "temp") return tempShifts.length > 0;
                         if (selectedYear === 2021) return attempt === "august" || attempt === "july" || attempt === "february" || attempt === "march" || getShifts(selectedYear, attempt).length > 0;
                         if (selectedYear === 2022) return attempt === "june" || attempt === "july" || getShifts(selectedYear, attempt).length > 0;
                         if (attempt === "june" || attempt === "july" || attempt === "august" || attempt === "march") return getShifts(selectedYear, attempt).length > 0;
@@ -270,7 +330,7 @@ function JeeExamPageContent() {
                               ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
                               : "bg-white text-gray-500 border-gray-200 hover:border-gray-400 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
                           }`}>
-                          {attempt === "january" ? "🔵 January" : attempt === "february" ? "🟣 February" : attempt === "march" ? "🟡 March" : attempt === "april" ? "🟠 April" : attempt === "june" ? "🟢 June" : attempt === "july" ? "🔴 July" : "🟤 August"}
+                          {attempt === "temp" ? "🔥 Temp Section" : attempt === "january" ? "🔵 January" : attempt === "february" ? "🟣 February" : attempt === "march" ? "🟡 March" : attempt === "april" ? "🟠 April" : attempt === "june" ? "🟢 June" : attempt === "july" ? "🔴 July" : "🟤 August"}
                         </button>
                       ))}
                   </div>
@@ -284,7 +344,7 @@ function JeeExamPageContent() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {modalShifts.map((shift, idx) => (
                         <button key={`${shift.name}-${idx}`}
-                          onClick={() => handleStart(shift.name, selectedYear, shift.id)}
+                          onClick={() => handleStart(shift.name, typeof selectedYear === "number" ? selectedYear : 2025, shift.id)}
                           className="group bg-white dark:bg-slate-950 border border-gray-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-md rounded-xl p-4 text-left flex items-center justify-between transition cursor-pointer">
                           <div className="flex items-center gap-3 min-w-0">
                             <div className={`w-9 h-9 shrink-0 rounded-lg flex items-center justify-center transition ${

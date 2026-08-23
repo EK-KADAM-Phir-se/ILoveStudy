@@ -400,7 +400,7 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
 
                     {/* QUESTION TEXT */}
                     <div className="text-sm text-slate-800 font-medium leading-relaxed bg-slate-50 p-4 rounded border border-slate-200">
-                      <LatexRenderer text={cleanText(activeQuestion.questionText)} />
+                      <LatexRenderer text={cleanText(activeQuestion.questionText.split("**Solution & Detailed Explanation:**")[0])} />
                       {activeQuestion.imageUrl && (
                         <div className="mt-3">
                           <QuestionImage imageUrl={activeQuestion.imageUrl} examName={attempt?.examName} alt="Question Diagram" className="max-h-72 object-contain rounded" />
@@ -496,13 +496,17 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
                     )}
 
                     {/* SOLUTION / EXPLANATION SECTION */}
-                    {activeQuestion.explanation && (
-                      <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 space-y-2 text-xs text-slate-800">
+                    {(activeQuestion.explanation || activeQuestion.questionText.includes("**Solution & Detailed Explanation:**")) && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 space-y-2 text-xs text-slate-800 shadow-xs">
                         <h4 className="font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5 text-xs sm:text-sm">
                           💡 Solution &amp; Detailed Explanation
                         </h4>
-                        <div className="leading-relaxed text-xs sm:text-sm">
-                          <LatexRenderer text={activeQuestion.explanation} />
+                        <div className="leading-relaxed text-xs sm:text-sm text-slate-800 font-normal">
+                          <LatexRenderer text={
+                            activeQuestion.explanation ||
+                            activeQuestion.questionText.split("**Solution & Detailed Explanation:**")[1]?.trim() ||
+                            ""
+                          } />
                         </div>
                       </div>
                     )}
