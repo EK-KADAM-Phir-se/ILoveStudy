@@ -72,6 +72,7 @@ function GateWorkspaceContent() {
   const [showExitConfirmModal, setShowExitConfirmModal] = useState<boolean>(false);
   const [showAccessibilityModal, setShowAccessibilityModal] = useState<boolean>(false);
   const [isPaletteCollapsed, setIsPaletteCollapsed] = useState<boolean>(false);
+  const [showMobilePalette, setShowMobilePalette] = useState<boolean>(false);
 
   const [accessSettings, setAccessSettings] = useState<AccessibilitySettings>({
     fontSize: 'normal',
@@ -556,8 +557,6 @@ function GateWorkspaceContent() {
   const sectionsToDisplay = sectionNames.length > 0
     ? sectionNames
     : ["General Aptitude", defaultSecondSection];
-
-  const [showMobilePalette, setShowMobilePalette] = useState<boolean>(false);
 
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans select-none overflow-hidden h-screen">

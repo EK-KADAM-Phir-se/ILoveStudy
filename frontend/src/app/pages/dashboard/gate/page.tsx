@@ -62,8 +62,11 @@ export default function GateDashboard() {
       setShowGuestModal(true);
       return;
     }
-    const shiftId = paper.id || `gate-${selectedBranch}-${selectedYear}`;
-    router.push(`/pages/dashboard/gate/workspace?shiftId=${shiftId}&name=${encodeURIComponent(paper.name)}&year=${selectedYear}&branch=${selectedBranch}`);
+    if (!paper?.id) {
+      alert("Paper not found in database.");
+      return;
+    }
+    router.push(`/pages/dashboard/gate/workspace?shiftId=${paper.id}&name=${encodeURIComponent(paper.name)}&year=${selectedYear}&branch=${selectedBranch}`);
   };
 
   const currentPapers = getGatePapers();
