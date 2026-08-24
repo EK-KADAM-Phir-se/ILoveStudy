@@ -36,11 +36,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/icon.png?v=3", type: "image/png" },
-      { url: "/logo_card.jpeg?v=3", type: "image/jpeg" },
       { url: "/favicon.ico?v=3", sizes: "any" },
+      { url: "/logo_card.jpeg?v=3", type: "image/jpeg" },
     ],
     shortcut: "/icon.png?v=3",
-    apple: "/apple-icon.jpeg?v=3",
+    apple: "/apple-touch-icon.png?v=3",
   },
   openGraph: {
     title: "ILoveStudy — Free Official PYQ Tests for JEE, NEET, SSC & GATE",
@@ -121,10 +121,9 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/icon.png?v=3" type="image/png" sizes="any" />
-        <link rel="icon" href="/logo_card.jpeg?v=3" type="image/jpeg" sizes="any" />
         <link rel="icon" href="/favicon.ico?v=3" sizes="any" />
         <link rel="shortcut icon" href="/icon.png?v=3" />
-        <link rel="apple-touch-icon" href="/apple-icon.jpeg?v=3" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=3" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
