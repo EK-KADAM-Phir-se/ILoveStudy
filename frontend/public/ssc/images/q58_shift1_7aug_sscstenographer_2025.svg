@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 180" width="340" height="180">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <g stroke="#1e293b" stroke-width="1.5" font-family="sans-serif" font-size="12" fill="#1e293b">
+    <rect x="20" y="15" width="300" height="150" fill="none" stroke-width="2"/>
+    <line x1="20" y1="40" x2="320" y2="40"/>
+    <line x1="180" y1="15" x2="180" y2="165"/>
+    <text x="40" y="32" font-weight="bold">Operation preference wise</text>
+    <text x="220" y="32" font-weight="bold">Symbol</text>
+    <line x1="20" y1="65" x2="320" y2="65"/>
+    <text x="30" y="58">Brackets</text><text x="230" y="58">[ ], { }, ( )</text>
+    <line x1="20" y1="90" x2="320" y2="90"/>
+    <text x="30" y="83">Orders, of</text><text x="230" y="83">power, root, of</text>
+    <line x1="20" y1="115" x2="320" y2="115"/>
+    <text x="30" y="108">Division</text><text x="240" y="108">÷</text>
+    <line x1="20" y1="140" x2="320" y2="140"/>
+    <text x="30" y="133">Multiplication</text><text x="240" y="133">×</text>
+    <text x="30" y="158">Addition / Subtraction</text><text x="240" y="158">+ / −</text>
+  </g>
+</svg>

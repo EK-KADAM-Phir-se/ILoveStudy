@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useTest } from '../../../../context/TestContext';
@@ -50,6 +50,17 @@ function SscTestWorkspaceContent() {
     isExamActive,
     setIsExamActive
   } = useTest();
+
+  const isSteno = name.toLowerCase().includes("stenographer") || 
+                  name.toLowerCase().includes("steno") || 
+                  (questions.length > 100 && !questions.some((q: any) => (q.subject || "").toLowerCase().includes("quantitative")));
+  const isChsl = name.toLowerCase().includes("chsl");
+  const examTitle = isSteno ? "SSC Stenographer Exam" : isChsl ? "SSC CHSL Exam" : "SSC CGL Exam";
+  const dashboardBackPath = isSteno 
+    ? "/pages/dashboard/ssc-stenographer" 
+    : isChsl 
+    ? "/pages/dashboard/ssc-chsl" 
+    : "/pages/dashboard/ssc-cgl";
 
   const [selectedSubject, setSelectedSubject] = useState<string>("General Intelligence and Reasoning");
   const [visitedQuestions, setVisitedQuestions] = useState<Set<string>>(new Set());
@@ -110,17 +121,19 @@ function SscTestWorkspaceContent() {
     return (
       v.startsWith('data:image') ||
       v.startsWith('http') ||
-      v.startsWith('/ssc-cgl') ||
+      v.startsWith('/ssc') ||
       v.startsWith('/images') ||
+      v.includes('/ssc/') ||
       v.endsWith('.jpeg') ||
       v.endsWith('.png') ||
       v.endsWith('.jpg') ||
-      v.endsWith('.webp')
+      v.endsWith('.webp') ||
+      v.endsWith('.svg')
     );
   };
 
-  // Overall time left dynamically calculated from all section timers
-  const overallTimeLeft = Object.values(sectionTimeLeft).reduce((acc, curr) => acc + curr, 0);
+  // Overall time left: for Stenographer use examTimeLeft (2 hours), for others use section timers total
+  const overallTimeLeft = isSteno ? examTimeLeft : Object.values(sectionTimeLeft).reduce((acc, curr) => acc + curr, 0);
 
   // Unique list of subjects in questions
   const availableSubjects = Array.from(new Set(questions.map(q => q.subject)));
@@ -130,16 +143,6 @@ function SscTestWorkspaceContent() {
     "Quantitative Aptitude",
     "English Comprehension"
   ];
-
-  const activePart = PARTS.find(p => {
-    const sName = (selectedSubject || "").toLowerCase();
-    const pName = p.subjectName.toLowerCase();
-    return sName.includes(pName) || pName.includes(sName) ||
-      (p.id === 'PART-A' && (sName.includes('reasoning') || sName.includes('intelligence'))) ||
-      (p.id === 'PART-B' && sName.includes('awareness')) ||
-      (p.id === 'PART-C' && (sName.includes('quantitative') || sName.includes('aptitude') || sName.includes('math'))) ||
-      (p.id === 'PART-D' && (sName.includes('english') || sName.includes('comprehension')));
-  }) || PARTS[0];
 
   const handleFinalSubmit = async () => {
     setIsSubmitting(true);
@@ -152,9 +155,10 @@ function SscTestWorkspaceContent() {
       if (document.fullscreenElement) {
         await document.exitFullscreen().catch(err => console.error("Error exiting fullscreen:", err));
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to submit SSC exam:", err);
-      alert("Failed to submit exam. Please try again.");
+      const errMsg = err?.response?.data?.error || "Failed to submit exam. Please try again.";
+      alert(errMsg);
       setShowAutoSubmitModal(false);
     } finally {
       setIsSubmitting(false);
@@ -382,7 +386,7 @@ function SscTestWorkspaceContent() {
 
   // Section timer decrements
   useEffect(() => {
-    if (questions.length === 0 || loading || !isExamActive) return;
+    if (questions.length === 0 || loading || !isExamActive || isSteno) return;
 
     const interval = setInterval(() => {
       setSectionTimeLeft(prev => {
@@ -439,11 +443,27 @@ function SscTestWorkspaceContent() {
     return `${hrs.toString().padStart(2, '0')} : ${mins.toString().padStart(2, '0')} : ${secs.toString().padStart(2, '0')}`;
   };
 
+  const activeParts: PartConfig[] = useMemo(() => {
+    if (questions.length === 0) return PARTS;
+    const subjectsInExam: string[] = [];
+    questions.forEach(q => {
+      if (q.subject && !subjectsInExam.includes(q.subject)) {
+        subjectsInExam.push(q.subject);
+      }
+    });
+    if (subjectsInExam.length === 0) return PARTS;
+    return subjectsInExam.map((subj, idx) => ({
+      id: `PART-${String.fromCharCode(65 + idx)}`,
+      partLabel: `PART-${String.fromCharCode(65 + idx)}`,
+      subjectName: subj
+    }));
+  }, [questions]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-100 flex flex-col items-center justify-center text-slate-800">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-4"></div>
-        <p className="font-bold text-lg">Loading SSC CGL Shift Questions...</p>
+        <p className="font-bold text-lg">Loading {examTitle} Questions...</p>
       </div>
     );
   }
@@ -459,15 +479,19 @@ function SscTestWorkspaceContent() {
     notVisited: subjectQuestions.filter(q => !visitedQuestions.has(q.id)).length
   };
 
-  const activePartIndex = PARTS.findIndex(p => p.subjectName.toLowerCase() === selectedSubject.toLowerCase());
+  const activePartIndex = activeParts.findIndex(p => p.subjectName.toLowerCase() === selectedSubject.toLowerCase());
   const currentActivePartIdx = activePartIndex !== -1 ? activePartIndex : 0;
+  const activePart = activeParts[currentActivePartIdx] || activeParts[0];
   const activeSectionRemSeconds = sectionTimeLeft[selectedSubject] ?? 900;
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
       const nextQ = questions[currentQuestionIndex + 1];
-      if (nextQ && nextQ.subject.toLowerCase() === selectedSubject.toLowerCase()) {
+      if (isSteno || (nextQ && nextQ.subject.toLowerCase() === selectedSubject.toLowerCase())) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
+        if (nextQ && nextQ.subject && nextQ.subject.toLowerCase() !== selectedSubject.toLowerCase()) {
+          setSelectedSubject(nextQ.subject);
+        }
       } else {
         setToastNotice(`You have reached the end of ${activePart.partLabel}. Please wait for the 15-minute section timer to finish.`);
         setTimeout(() => setToastNotice(null), 4000);
@@ -478,8 +502,11 @@ function SscTestWorkspaceContent() {
   const handlePrevQuestion = () => {
     if (currentQuestionIndex > 0) {
       const prevQ = questions[currentQuestionIndex - 1];
-      if (prevQ && prevQ.subject.toLowerCase() === selectedSubject.toLowerCase()) {
+      if (isSteno || (prevQ && prevQ.subject.toLowerCase() === selectedSubject.toLowerCase())) {
         setCurrentQuestionIndex(currentQuestionIndex - 1);
+        if (prevQ && prevQ.subject && prevQ.subject.toLowerCase() !== selectedSubject.toLowerCase()) {
+          setSelectedSubject(prevQ.subject);
+        }
       }
     }
   };
@@ -493,8 +520,11 @@ function SscTestWorkspaceContent() {
     const idx = questions.findIndex(q => q.id === questionId);
     if (idx !== -1) {
       const targetQ = questions[idx];
-      if (targetQ && targetQ.subject.toLowerCase() === selectedSubject.toLowerCase()) {
+      if (isSteno || (targetQ && targetQ.subject.toLowerCase() === selectedSubject.toLowerCase())) {
         setCurrentQuestionIndex(idx);
+        if (targetQ && targetQ.subject && targetQ.subject.toLowerCase() !== selectedSubject.toLowerCase()) {
+          setSelectedSubject(targetQ.subject);
+        }
       } else {
         setToastNotice(`Question belongs to another section which is currently locked.`);
         setTimeout(() => setToastNotice(null), 3000);
@@ -503,9 +533,18 @@ function SscTestWorkspaceContent() {
   };
 
   const handlePartTabClick = (partConfig: PartConfig, targetIdx: number) => {
+    if (isSteno) {
+      const firstQIdx = questions.findIndex(q => (q.subject || "").toLowerCase() === partConfig.subjectName.toLowerCase());
+      if (firstQIdx !== -1) {
+        setSelectedSubject(partConfig.subjectName);
+        setCurrentQuestionIndex(firstQIdx);
+      }
+      return;
+    }
+
     if (targetIdx !== currentActivePartIdx) {
       if (targetIdx > currentActivePartIdx) {
-        setToastNotice(`Section locked! You must complete ${PARTS[currentActivePartIdx].partLabel} (15 mins) before moving to ${partConfig.partLabel}.`);
+        setToastNotice(`Section locked! You must complete ${activeParts[currentActivePartIdx].partLabel} (15 mins) before moving to ${partConfig.partLabel}.`);
       } else {
         setToastNotice(`Section completed! You cannot revisit previously submitted sections.`);
       }
@@ -550,7 +589,7 @@ function SscTestWorkspaceContent() {
                   SSC
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800">SSC CGL Mock Test Pre-Check</h3>
+                  <h3 className="text-lg font-bold text-slate-800">{examTitle} Pre-Check</h3>
                   <p className="text-xs text-slate-500">Verifying secure browser environment</p>
                 </div>
               </div>
@@ -582,7 +621,7 @@ function SscTestWorkspaceContent() {
               disabled={assetStatus === 'checking'}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2.5 px-4 rounded shadow transition"
             >
-              Start SSC CGL Mock Test (Fullscreen) →
+              Start {examTitle} (Fullscreen) →
             </button>
           </div>
         </div>
@@ -592,7 +631,7 @@ function SscTestWorkspaceContent() {
       <header className="bg-white border-b border-slate-300 px-3 sm:px-6 py-2 flex flex-col sm:flex-row items-center justify-between gap-2 shrink-0 shadow-sm">
         {/* Left Title */}
         <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
-          <h1 className="text-base sm:text-lg font-extrabold text-slate-800 tracking-tight">SSC CGL MOCK TEST</h1>
+          <h1 className="text-base sm:text-lg font-extrabold text-slate-800 tracking-tight">{examTitle.toUpperCase()}</h1>
           <div className="flex sm:hidden items-center space-x-2 text-xs text-slate-600">
             <span className="w-6 h-6 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center font-bold text-slate-500 text-[10px]">
               👤
@@ -601,22 +640,23 @@ function SscTestWorkspaceContent() {
           </div>
         </div>
 
-        {/* Center Clocks: 15-Min Section Timer & 60-Min Overall Timer */}
+        {/* Center Clocks: Section Timer & Overall Exam Timer */}
         <div className="flex items-center justify-center space-x-3 sm:space-x-6 w-full sm:w-auto">
-          {/* Section Timer (15 Min) */}
-          <div className="flex flex-col items-center bg-red-50 border border-red-200 px-2.5 sm:px-3.5 py-1 rounded shadow-xs">
-            <span className="text-[9px] sm:text-[10px] font-bold text-red-600 uppercase tracking-wider">
-              Section Time ({activePart.partLabel})
-            </span>
-            <span className="font-mono text-base sm:text-xl font-extrabold text-red-600 tracking-widest">
-              {formatTime(activeSectionRemSeconds)}
-            </span>
-          </div>
+          {!isSteno && (
+            <div className="flex flex-col items-center bg-red-50 border border-red-200 px-2.5 sm:px-3.5 py-1 rounded shadow-xs">
+              <span className="text-[9px] sm:text-[10px] font-bold text-red-600 uppercase tracking-wider">
+                Section Time ({activePart.partLabel})
+              </span>
+              <span className="font-mono text-base sm:text-xl font-extrabold text-red-600 tracking-widest">
+                {formatTime(activeSectionRemSeconds)}
+              </span>
+            </div>
+          )}
 
-          {/* Overall Exam Timer (60 Min) */}
+          {/* Overall Exam Timer (120 Min for Stenographer, 60 Min for CGL) */}
           <div className="flex flex-col items-center bg-slate-50 border border-slate-300 px-2.5 sm:px-3.5 py-1 rounded shadow-xs">
             <span className="text-[9px] sm:text-[10px] font-bold text-slate-600 uppercase tracking-wider">
-              Overall Time (60M)
+              Overall Time ({isSteno ? "120M" : "60M"})
             </span>
             <span className="font-mono text-base sm:text-xl font-extrabold text-slate-800 tracking-widest">
               {formatTime(overallTimeLeft)}
@@ -712,29 +752,32 @@ function SscTestWorkspaceContent() {
           <div className="flex-1 overflow-y-auto">
             {/* PART Navigation Buttons */}
             <div className="p-2 border-b border-slate-200 flex items-center justify-between bg-slate-50 gap-1">
-              {PARTS.map((part, pIdx) => {
+              {activeParts.map((part, pIdx) => {
                 const isActive = pIdx === currentActivePartIdx;
                 const isPast = pIdx < currentActivePartIdx;
                 const isFuture = pIdx > currentActivePartIdx;
 
-                let btnStyle = "bg-white text-slate-400 border border-slate-200 cursor-not-allowed opacity-60";
-                let statusIcon = "🔒";
+                let btnStyle = "bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 cursor-pointer";
+                let statusIcon = "📄";
 
                 if (isActive) {
                   btnStyle = "bg-blue-600 text-white font-bold shadow-sm cursor-default";
                   statusIcon = "⏱️";
-                } else if (isPast) {
+                } else if (!isSteno && isPast) {
                   btnStyle = "bg-slate-100 text-slate-500 border border-slate-300 cursor-not-allowed opacity-70";
                   statusIcon = "✓";
+                } else if (!isSteno && isFuture) {
+                  btnStyle = "bg-white text-slate-400 border border-slate-200 cursor-not-allowed opacity-60";
+                  statusIcon = "🔒";
                 }
 
                 return (
                   <button
                     key={part.id}
-                    disabled={!isActive}
+                    disabled={!isSteno && !isActive}
                     onClick={() => handlePartTabClick(part, pIdx)}
                     className={`flex-1 py-1.5 px-1 rounded text-[11px] font-bold transition text-center flex items-center justify-center space-x-0.5 ${btnStyle}`}
-                    title={isFuture ? "Locked: Unlocks after 15 minutes" : isPast ? "Section Completed" : "Current Active Section (15 Mins)"}
+                    title={isSteno ? `Switch section to ${part.subjectName}` : (isFuture ? "Locked: Unlocks after 15 minutes" : isPast ? "Section Completed" : "Current Active Section (15 Mins)")}
                   >
                     <span>{part.partLabel}</span>
                     <span className="text-[9px]">{statusIcon}</span>
@@ -992,9 +1035,9 @@ function SscTestWorkspaceContent() {
                   <button
                     onClick={() => {
                       setShowSubmitModal(false);
-                      router.replace('/pages/dashboard/ssc-cgl');
+                      router.replace(dashboardBackPath);
                     }}
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded text-xs shadow"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded text-xs shadow cursor-pointer"
                   >
                     Back to Dashboard
                   </button>
@@ -1002,7 +1045,7 @@ function SscTestWorkspaceContent() {
               </div>
             ) : (
               <div className="space-y-4">
-                <h3 className="text-base font-bold text-slate-800">Submit SSC CGL Exam?</h3>
+                <h3 className="text-base font-bold text-slate-800">Submit {examTitle}?</h3>
                 <p className="text-xs text-slate-600">Are you sure you want to finalize your exam submission?</p>
                 <div className="flex space-x-3 pt-2">
                   <button

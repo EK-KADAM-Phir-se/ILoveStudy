@@ -133,12 +133,14 @@ export const TestReviewModal: React.FC<TestReviewModalProps> = ({ attemptId, onC
     return (
       v.startsWith('data:image') ||
       v.startsWith('http') ||
-      v.startsWith('/ssc-cgl') ||
+      v.startsWith('/ssc') ||
       v.startsWith('/images') ||
+      v.includes('/ssc/') ||
       v.endsWith('.jpeg') ||
       v.endsWith('.png') ||
       v.endsWith('.jpg') ||
-      v.endsWith('.webp')
+      v.endsWith('.webp') ||
+      v.endsWith('.svg')
     );
   };
 

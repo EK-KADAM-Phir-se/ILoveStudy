@@ -23,6 +23,11 @@ export function getQuestionImageUrls(
   if (!imageUrl) return [];
   if (imageUrl.startsWith("data:")) return [imageUrl];
 
+  // Instantly return local static assets under /ssc/
+  if (imageUrl.startsWith("/ssc/") || imageUrl.startsWith("ssc/")) {
+    return [imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`];
+  }
+
   // Handle full HTTP / HTTPS URLs
   if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
     const supabaseRegex = /https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/(QuestionBank|test-pdfs)\/(.+)/i;

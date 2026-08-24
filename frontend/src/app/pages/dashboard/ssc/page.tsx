@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "../../../../components/NavBar";
 import Footer from "../../../../components/Footer";
-import { Users, Landmark, ArrowRight, ArrowLeft, ShieldCheck, Sparkles } from "lucide-react";
+import { Users, Landmark, Award, ArrowRight, ArrowLeft, ShieldCheck, Sparkles } from "lucide-react";
 import { isGuestUser } from "@/src/lib/authUtils";
 
 export default function SSCSelectionPage() {
@@ -40,12 +40,12 @@ export default function SSCSelectionPage() {
             Select Your SSC Exam
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
-            Choose between SSC CGL and SSC CHSL to access year-wise previous papers, section-wise practice, and full CBT mock exams.
+            Choose between SSC CGL, SSC CHSL, and SSC Stenographer to access year-wise previous papers, section-wise practice, and full CBT mock exams.
           </p>
         </div>
 
         {/* Exam Selection Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
           
           {/* SSC CGL Card */}
           <div
@@ -96,6 +96,33 @@ export default function SSCSelectionPage() {
                 <ShieldCheck size={14} /> 10+2 Level Preparation
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-xl transition shadow-xs">
+                Explore Papers <ArrowRight size={14} />
+              </span>
+            </div>
+          </div>
+
+          {/* SSC Stenographer Card */}
+          <div
+            onClick={() => router.push("/pages/dashboard/ssc-stenographer")}
+            className="group relative bg-white dark:bg-slate-900/80 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 hover:border-purple-500 dark:hover:border-purple-500/80 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Award size={28} />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                SSC Stenographer
+              </h2>
+              <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
+                Staff Selection Commission Stenographer Grade 'C' &amp; 'D' papers with Reasoning, General Awareness, and English Language.
+              </p>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+              <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
+                <ShieldCheck size={14} /> Grade C &amp; D Pattern
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-xl transition shadow-xs">
                 Explore Papers <ArrowRight size={14} />
               </span>
             </div>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" width="200" height="140">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <g font-family="sans-serif" font-size="14" font-weight="bold" fill="#1e293b" text-anchor="middle">
+    <text x="50" y="35">E</text><text x="100" y="35">F</text><text x="150" y="35">D</text>
+    <path d="M 50 45 L 50 65 M 100 45 L 100 65 M 150 45 L 150 65" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="50" y="95">C</text><text x="100" y="95">A</text><text x="150" y="95">B</text>
+  </g>
+</svg>

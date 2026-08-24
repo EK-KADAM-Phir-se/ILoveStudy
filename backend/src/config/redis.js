@@ -74,26 +74,56 @@ try {
 
 // Proxied Client that routes calls to either local Redis or the mock in-memory database
 const proxiedClient = {
-  set(...args) {
-    return isMock ? mockClient.set(...args) : client.set(...args);
+  async set(...args) {
+    if (isMock) return mockClient.set(...args);
+    try {
+      return await client.set(...args);
+    } catch (e) {
+      isMock = true;
+      return mockClient.set(...args);
+    }
   },
-  get(...args) {
-    return isMock ? mockClient.get(...args) : client.get(...args);
+  async get(...args) {
+    if (isMock) return mockClient.get(...args);
+    try {
+      return await client.get(...args);
+    } catch (e) {
+      isMock = true;
+      return mockClient.get(...args);
+    }
   },
-  hset(...args) {
-    return isMock ? mockClient.hset(...args) : client.hset(...args);
+  async hset(...args) {
+    if (isMock) return mockClient.hset(...args);
+    try {
+      return await client.hset(...args);
+    } catch (e) {
+      isMock = true;
+      return mockClient.hset(...args);
+    }
   },
-  hgetall(...args) {
-    return isMock ? mockClient.hgetall(...args) : client.hgetall(...args);
+  async hgetall(...args) {
+    if (isMock) return mockClient.hgetall(...args);
+    try {
+      return await client.hgetall(...args);
+    } catch (e) {
+      isMock = true;
+      return mockClient.hgetall(...args);
+    }
   },
-  del(...args) {
-    return isMock ? mockClient.del(...args) : client.del(...args);
+  async del(...keys) {
+    if (isMock) return mockClient.del(...keys);
+    try {
+      return await client.del(...keys);
+    } catch (e) {
+      isMock = true;
+      return mockClient.del(...keys);
+    }
   },
   on(event, handler) {
-    if (!isMock) client.on(event, handler);
+    if (!isMock && client) client.on(event, handler);
   },
   once(event, handler) {
-    if (!isMock) client.once(event, handler);
+    if (!isMock && client) client.once(event, handler);
   }
 };
 

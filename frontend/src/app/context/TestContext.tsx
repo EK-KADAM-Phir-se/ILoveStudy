@@ -129,8 +129,13 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
       setCurrentQuestionIndex(0);
       setAnswers({});
       setQuestionTimers({});
-      const isSsc = name.toUpperCase().includes("SSC") || name.toUpperCase().includes("CGL") || (typeof window !== 'undefined' && window.location.href.includes("ssc-cgl"));
-      setExamTimeLeft(isSsc ? 3600 : 10800); // Reset countdown: 1 hour for SSC CGL, 3 hours for others
+      const lowerName = (name || "").toLowerCase();
+      const isSteno = lowerName.includes("stenographer") || 
+                      lowerName.includes("steno") || 
+                      (rawQs.length > 100 && !rawQs.some((q: any) => (q.subject || "").toLowerCase().includes("quantitative")));
+      const isCglOrChsl = lowerName.includes("cgl") || lowerName.includes("chsl");
+      const defaultDuration = isSteno ? 7200 : isCglOrChsl ? 3600 : 10800;
+      setExamTimeLeft(defaultDuration); // 2 hours (7200s) for Stenographer, 1 hour for CGL/CHSL, 3 hours for others
       setIsExamActive(false); // Reset to false on reload
     } catch (err) {
       console.error("Failed to load shift questions:", err);
@@ -167,7 +172,9 @@ export const TestProvider = ({ children }: { children: React.ReactNode }) => {
   const submitFinalExam = async (): Promise<any> => {
     const token = localStorage.getItem('token') || 'SIMULATED_TOKEN';
     const response = await axios.post(`${API_BASE_URL}/api/test/submit`, {
-      shiftId: activeShiftId
+      shiftId: activeShiftId,
+      answers: answers,
+      timers: questionTimers
     }, {
       headers: { 'Authorization': `Bearer ${token}` }
     });

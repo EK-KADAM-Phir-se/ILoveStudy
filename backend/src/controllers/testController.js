@@ -73,27 +73,32 @@ exports.getTestSnapshot = async (req, res) => {
 // 3. Submit entire exam, evaluate marks against master key, and save to PostgreSQL
 exports.submitTest = async (req, res) => {
   try {
-    const { shiftId } = req.body;
+    const { shiftId, answers: bodyAnswers, timers: bodyTimers } = req.body;
     const userId = req.userId;
+
+    if (!shiftId) {
+      return res.status(400).json({ error: "Missing required shiftId parameter." });
+    }
 
     const redisAnswersKey = `active_test:${userId}:${shiftId}:answers`;
     const redisTimersKey = `active_test:${userId}:${shiftId}:timers`;
 
-    // 1. Fetch user inputs from Redis cache
+    // 1. Fetch user inputs from Redis cache with safe fallback
     let userAnswers = {};
     let userTimers = {};
     try {
-      userAnswers = await redisClient.hgetall(redisAnswersKey);
-      userTimers = await redisClient.hgetall(redisTimersKey);
+      userAnswers = (await redisClient.hgetall(redisAnswersKey)) || {};
+      userTimers = (await redisClient.hgetall(redisTimersKey)) || {};
     } catch (redisError) {
-      console.error('Redis cache warning during submitTest:', redisError);
-      return res.status(503).json({
-        error: 'Temporary caching unavailable. Please try again later.',
-      });
+      console.warn('Redis cache warning during submitTest (falling back to request body):', redisError.message);
     }
 
-    const activeAnswers = userAnswers || {};
-    const activeTimers = userTimers || {};
+    const activeAnswers = (userAnswers && Object.keys(userAnswers).length > 0)
+      ? userAnswers
+      : (bodyAnswers || {});
+    const activeTimers = (userTimers && Object.keys(userTimers).length > 0)
+      ? userTimers
+      : (bodyTimers || {});
 
     // 2. Fetch the master correct answer key from PostgreSQL
     const officialQuestions = await prisma.question.findMany({

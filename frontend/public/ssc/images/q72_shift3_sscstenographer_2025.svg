@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 180" width="220" height="180">
+  <rect width="100%" height="100%" fill="#f8fafc" rx="8"/>
+  <g stroke="#1e293b" stroke-width="2.5" fill="none">
+    <polygon points="110,20 170,140 50,140"/>
+    <polygon points="110,160 170,40 50,40"/>
+  </g>
+  <text x="110" y="175" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#64748b">Star Line Figure</text>
+</svg>
