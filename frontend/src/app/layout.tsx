@@ -35,12 +35,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/logo_card.jpeg", type: "image/jpeg" },
-      { url: "/icon.jpeg", type: "image/jpeg" },
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png?v=3", type: "image/png" },
+      { url: "/logo_card.jpeg?v=3", type: "image/jpeg" },
+      { url: "/favicon.ico?v=3", sizes: "any" },
     ],
-    shortcut: "/logo_card.jpeg",
-    apple: "/logo_card.jpeg",
+    shortcut: "/icon.png?v=3",
+    apple: "/apple-icon.jpeg?v=3",
   },
   openGraph: {
     title: "ILoveStudy — Free Official PYQ Tests for JEE, NEET, SSC & GATE",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     siteName: "ILoveStudy",
     images: [
       {
-        url: "/logo_card.jpeg",
+        url: "/logo_card.jpeg?v=3",
         width: 800,
         height: 800,
         alt: "ILoveStudy Logo",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     title: "ILoveStudy — Free Official PYQ Tests for JEE, NEET, SSC & GATE",
     description:
       "Prepare, practice, and excel in national competitive exams with real-time analytics, official CBT mock test workspaces, and full PYQ papers on ilovestudy.in.",
-    images: ["/logo_card.jpeg"],
+    images: ["/logo_card.jpeg?v=3"],
   },
   robots: {
     index: true,
@@ -104,7 +104,7 @@ const jsonLd = {
       "@id": "https://ilovestudy.in/#organization",
       "name": "ILoveStudy",
       "url": "https://ilovestudy.in",
-      "logo": "https://ilovestudy.in/logo_card.jpeg",
+      "logo": "https://ilovestudy.in/logo_card.jpeg?v=3",
       "sameAs": [
         "https://ilovestudy.in"
       ]
@@ -120,11 +120,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/logo_card.jpeg?v=2" type="image/jpeg" sizes="any" />
-        <link rel="icon" href="/icon.jpeg?v=2" type="image/jpeg" sizes="any" />
-        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
-        <link rel="shortcut icon" href="/logo_card.jpeg?v=2" type="image/jpeg" />
-        <link rel="apple-touch-icon" href="/logo_card.jpeg?v=2" />
+        <link rel="icon" href="/icon.png?v=3" type="image/png" sizes="any" />
+        <link rel="icon" href="/logo_card.jpeg?v=3" type="image/jpeg" sizes="any" />
+        <link rel="icon" href="/favicon.ico?v=3" sizes="any" />
+        <link rel="shortcut icon" href="/icon.png?v=3" />
+        <link rel="apple-touch-icon" href="/apple-icon.jpeg?v=3" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
