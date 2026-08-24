@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: "%s | ILoveStudy",
   },
   description:
-    "ILoveStudy (ilovestudy.in) is India's leading free platform for official PYQ question papers, real CBT mock test workspaces, and step-by-step solutions for JEE Main, NEET, SSC CGL, and GATE exams.",
+    "ILoveStudy (ilovestudy.in) is India’s leading free platform for official PYQ question papers, real CBT mock test workspaces, and step-by-step solutions for JEE Main, NEET, SSC CGL, and GATE exams.",
   keywords: [
     "ILoveStudy",
     "ilovestudy",
