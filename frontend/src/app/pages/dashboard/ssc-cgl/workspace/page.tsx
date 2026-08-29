@@ -912,7 +912,7 @@ function SscTestWorkspaceContent() {
                   <div className="my-3 border border-slate-200 rounded p-3 bg-slate-50 flex justify-start">
                     <QuestionImage
                       imageUrl={currentQuestion.imageUrl}
-                      examName="SSC CGL"
+                      examName={isSteno ? "SSC Stenographer" : isChsl ? "SSC CHSL" : "SSC CGL"}
                       year={year}
                       alt="Question Figure"
                       className="max-h-72 object-contain rounded"
@@ -951,7 +951,7 @@ function SscTestWorkspaceContent() {
                           {isImg ? (
                             <QuestionImage
                               imageUrl={cleanedOptText}
-                              examName="SSC CGL"
+                              examName={isSteno ? "SSC Stenographer" : isChsl ? "SSC CHSL" : "SSC CGL"}
                               year={year}
                               alt={`Option ${key}`}
                               className="max-h-24 object-contain rounded"
