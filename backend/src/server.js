@@ -27,6 +27,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/org', orgRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/upload', uploadRoutes);
 
 // Optional static uploads directory fallback
 const UPLOAD_BASE_DIR = process.env.UPLOAD_BASE_DIR || '/var/www/ilovestudy/uploads';

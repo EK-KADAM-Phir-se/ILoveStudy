@@ -23,10 +23,9 @@ export function getQuestionImageUrls(
   if (!imageUrl) return [];
   if (imageUrl.startsWith("data:")) return [imageUrl];
 
-  // Instantly return local static assets under /ssc/, /neetimages/, /papers/
+  // Instantly return local static assets under /ssc/, /papers/
   if (
     imageUrl.startsWith("/ssc/") || imageUrl.startsWith("ssc/") ||
-    imageUrl.startsWith("/neetimages/") || imageUrl.startsWith("neetimages/") ||
     imageUrl.startsWith("/papers/") || imageUrl.startsWith("papers/")
   ) {
     return [imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`];
@@ -56,30 +55,35 @@ export function getQuestionImageUrls(
 
   let folderExam = "Jee Mains";
   if (lowerExam.includes("advance")) folderExam = "Jee Advance";
+  else if (lowerExam.includes("ssc steno") || lowerExam.includes("stenographer") || lowerUrl.includes("sscstenographer")) folderExam = "SSC Stenographer";
   else if (lowerExam.includes("ssc cgl") || lowerExam.includes("cgl") || lowerUrl.includes("ssc")) folderExam = "SSC CGL";
   else if (lowerExam.includes("ssc chsl") || lowerExam.includes("chsl")) folderExam = "SSC CHSL";
   else if (lowerExam.includes("neet") || lowerUrl.includes("neet")) folderExam = "NEET";
   else if (lowerExam.includes("gate") || lowerUrl.includes("gate")) folderExam = "Gate";
 
-  const defaultYear = (lowerExam.includes("ssc") ? "2024" : "2025");
+  const defaultYear = (lowerExam.includes("ssc") ? "2025" : "2025");
   const folderYear = year ? String(year) : defaultYear;
 
   const candidates: string[] = [];
   const hasPathSlash = cleanPath.includes("/");
 
   if (hasPathSlash) {
-    // If path already has subfolder (e.g. ssc-cgl/images/foo.png or Jee Mains/2025/foo.png or NEET/foo.png)
-    candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${cleanPath}`);
-    if (folderExam === "NEET") {
+    if (folderExam === "NEET" || cleanPath.startsWith("neetimages/")) {
       candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/NEET/${cleanFileName}`);
+      candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${cleanPath}`);
+    } else if (folderExam === "SSC Stenographer" || lowerUrl.includes("sscstenographer")) {
+      candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/SSC Stenographer/${folderYear}/${cleanFileName}`);
+      candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${cleanPath}`);
     } else {
+      candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${cleanPath}`);
       candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${folderExam}/${folderYear}/${cleanFileName}`);
     }
     candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${cleanFileName}`);
   } else {
-    // Single filename (e.g. 28th_jan_q30_diagram.png) -> primary candidate is structured exam folder
     if (folderExam === "NEET") {
       candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/NEET/${cleanFileName}`);
+    } else if (folderExam === "SSC Stenographer" || lowerUrl.includes("sscstenographer")) {
+      candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/SSC Stenographer/${folderYear}/${cleanFileName}`);
     } else {
       candidates.push(`${UTHO_UPLOADS_BASE}/QuestionBank/${folderExam}/${folderYear}/${cleanFileName}`);
     }
