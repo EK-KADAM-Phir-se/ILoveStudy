@@ -55,14 +55,14 @@ model Question {
   id            String   @id @default(uuid())
   shiftId       String
   shift         Shift    @relation(fields: [shiftId], references: [id], onDelete: Cascade)
-  subject       String   // "Physics", "Chemistry", "Math"
+  subject       String
   questionText  String   @db.Text
-  imageUrl      String?  // If question contains a complex diagram
+  imageUrl      String?  
   optionA       String   @db.Text
   optionB       String   @db.Text
   optionC       String   @db.Text
   optionD       String   @db.Text
-  correctOption String   // "A", "B", "C", or "D"
+  correctOption String
   positiveMarks Float    @default(4)
   negativeMarks Float    @default(-1)
   orderIndex    Int      @default(0)
@@ -105,7 +105,7 @@ model ErrorReport {
 model Organization {
   id           String    @id @default(uuid())
   name         String
-  code         String    @unique // Unique short code / slug e.g. "DPS-DELHI"
+  code         String    @unique
   contactEmail String?
   contactPhone String?
   address      String?
@@ -121,16 +121,16 @@ model OrgTest {
   id              String           @id @default(uuid())
   organizationId  String
   organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  title           String           // e.g. "Term 1 Physics Olympiad 2026"
-  accessCode      String           @unique // e.g. "DPS-PHY-8821" or "EXAM-4821"
+  title           String           
+  accessCode      String           @unique
   description     String?          @db.Text
   subject         String           @default("General")
   durationMinutes Int              @default(60)
   positiveMarks   Float            @default(4)
   negativeMarks   Float            @default(-1)
-  startTime       DateTime?        // Optional window start
-  endTime         DateTime?        // Optional window end
-  status          String           @default("ACTIVE") // ACTIVE, DRAFT, CLOSED
+  startTime       DateTime?        
+  endTime         DateTime?        
+  status          String           @default("ACTIVE")
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -172,7 +172,7 @@ model OrgQuestion {
   optionB       String    @db.Text
   optionC       String    @db.Text
   optionD       String    @db.Text
-  correctOption String    // "A", "B", "C", "D"
+  correctOption String
   explanation   String?   @db.Text
   positiveMarks Float     @default(4)
   negativeMarks Float     @default(-1)
@@ -194,7 +194,7 @@ model OrgTestAttempt {
   correctCount      Int
   incorrectCount    Int
   unattemptedCount  Int
-  answersSaved      Json      // Map of questionId -> { selected, isCorrect, timeSpentSeconds }
+  answersSaved      Json
   violationsCount   Int       @default(0)
   terminatedBySecurity Boolean @default(false)
   submittedAt       DateTime  @default(now())
@@ -204,7 +204,7 @@ model OrgTestAttempt {
 model AdminEmail {
   id        String    @id @default(uuid())
   email     String    @unique
-  role      String    @default("ADMIN") // SUPERADMIN, ADMIN, TEACHER
+  role      String    @default("ADMIN")
   addedBy   String?
   createdAt DateTime  @default(now())
 }

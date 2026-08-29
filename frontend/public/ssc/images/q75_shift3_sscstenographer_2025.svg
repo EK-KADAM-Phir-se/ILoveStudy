@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" width="100%" height="240" style="background:#ffffff; border-radius:8px;">
+    <style>
+      .grid-box { fill: #ffffff; stroke: #1e293b; stroke-width: 2.5; }
+      .p-dot { fill: #000000; }
+    </style>
+    <g transform="translate(20, 10)">
+      <!-- Box 1 (Top): 4 dots -->
+      <rect x="30" y="10" width="45" height="45" class="grid-box"/>
+      <circle cx="42" cy="22" r="4" class="p-dot"/>
+      <circle cx="63" cy="22" r="4" class="p-dot"/>
+      <circle cx="42" cy="43" r="4" class="p-dot"/>
+      <circle cx="63" cy="43" r="4" class="p-dot"/>
+
+      <!-- Box 2 (Middle): 2 dots -->
+      <rect x="30" y="55" width="45" height="45" class="grid-box"/>
+      <circle cx="42" cy="67" r="4" class="p-dot"/>
+      <circle cx="63" cy="88" r="4" class="p-dot"/>
+
+      <!-- Box 3 (Bottom): 5 dots -->
+      <rect x="30" y="100" width="45" height="45" class="grid-box"/>
+      <circle cx="40" cy="110" r="4" class="p-dot"/>
+      <circle cx="65" cy="110" r="4" class="p-dot"/>
+      <circle cx="52.5" cy="122.5" r="4" class="p-dot"/>
+      <circle cx="40" cy="135" r="4" class="p-dot"/>
+      <circle cx="65" cy="135" r="4" class="p-dot"/>
+
+      <!-- Box 4 (Right of Box 3): 6 dots -->
+      <rect x="75" y="100" width="45" height="45" class="grid-box"/>
+      <circle cx="86" cy="110" r="3.5" class="p-dot"/>
+      <circle cx="86" cy="122.5" r="3.5" class="p-dot"/>
+      <circle cx="86" cy="135" r="3.5" class="p-dot"/>
+      <circle cx="109" cy="110" r="3.5" class="p-dot"/>
+      <circle cx="109" cy="122.5" r="3.5" class="p-dot"/>
+      <circle cx="109" cy="135" r="3.5" class="p-dot"/>
+
+      <!-- Box 5 (Below Box 4): 1 dot -->
+      <rect x="75" y="145" width="45" height="45" class="grid-box"/>
+      <circle cx="97.5" cy="167.5" r="4.5" class="p-dot"/>
+
+      <!-- Box 6 (Below Box 5): 3 dots -->
+      <rect x="75" y="190" width="45" height="45" class="grid-box"/>
+      <circle cx="85" cy="200" r="4" class="p-dot"/>
+      <circle cx="97.5" cy="212.5" r="4" class="p-dot"/>
+      <circle cx="110" cy="225" r="4" class="p-dot"/>
+    </g>
+  </svg>

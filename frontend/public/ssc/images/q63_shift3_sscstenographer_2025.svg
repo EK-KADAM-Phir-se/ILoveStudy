@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="180" style="background:#0f172a; border-radius:8px;">
+    <style>.grid { stroke: #38bdf8; stroke-width: 2; fill: none; }</style>
+    <rect x="20" y="20" width="160" height="160" class="grid"/>
+    <line x1="73.3" y1="20" x2="73.3" y2="180" class="grid"/>
+    <line x1="126.6" y1="20" x2="126.6" y2="180" class="grid"/>
+    <line x1="20" y1="73.3" x2="180" y2="73.3" class="grid"/>
+    <line x1="20" y1="126.6" x2="180" y2="126.6" class="grid"/>
+  </svg>

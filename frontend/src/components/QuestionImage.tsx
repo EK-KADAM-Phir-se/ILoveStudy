@@ -23,8 +23,12 @@ export function getQuestionImageUrls(
   if (!imageUrl) return [];
   if (imageUrl.startsWith("data:")) return [imageUrl];
 
-  // Instantly return local static assets under /ssc/
-  if (imageUrl.startsWith("/ssc/") || imageUrl.startsWith("ssc/")) {
+  // Instantly return local static assets under /ssc/, /neetimages/, /papers/
+  if (
+    imageUrl.startsWith("/ssc/") || imageUrl.startsWith("ssc/") ||
+    imageUrl.startsWith("/neetimages/") || imageUrl.startsWith("neetimages/") ||
+    imageUrl.startsWith("/papers/") || imageUrl.startsWith("papers/")
+  ) {
     return [imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`];
   }
 
