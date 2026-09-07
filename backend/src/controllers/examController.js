@@ -1,14 +1,25 @@
 const prisma = require("../lib/prisma");
+const redisClient = require("../config/redis");
 
 // Get all exams along with their corresponding shifts
 const getExams = async (req, res) => {
   try {
+    const cacheKey = "exams:all";
+    const cachedExams = await redisClient.get(cacheKey);
+    if (cachedExams) {
+      return res.status(200).json(JSON.parse(cachedExams));
+    }
+
     const exams = await prisma.exam.findMany({
       include: {
         shifts: true, // This automatically performs a SQL JOIN to pull in all shifts for each exam!
       },
     });
-    
+
+    if (exams && exams.length > 0) {
+      await redisClient.set(cacheKey, JSON.stringify(exams), "EX", 600); // 10 minutes TTL
+    }
+
     return res.status(200).json(exams);
   } catch (error) {
     console.error("Error fetching exams:", error);
@@ -21,6 +32,12 @@ const getShiftDetails = async (req, res) => {
   const { shiftId } = req.params;
 
   try {
+    const cacheKey = `shift:${shiftId}`;
+    const cachedShift = await redisClient.get(cacheKey);
+    if (cachedShift) {
+      return res.status(200).json(JSON.parse(cachedShift));
+    }
+
     const shift = await prisma.shift.findUnique({
       where: { id: shiftId },
       include: {
@@ -94,6 +111,7 @@ const getShiftDetails = async (req, res) => {
       });
     }
 
+    await redisClient.set(cacheKey, JSON.stringify(shift), "EX", 1800); // 30 minutes TTL
     return res.status(200).json(shift);
   } catch (error) {
     console.error("Error fetching shift details:", error);
