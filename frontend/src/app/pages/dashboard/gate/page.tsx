@@ -7,7 +7,7 @@ import NavBar from "../../../../components/NavBar";
 import Footer from "../../../../components/Footer";
 import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
 import { isGuestUser } from "@/src/lib/authUtils";
-import { API_BASE_URL } from "@/src/lib/apiConfig";
+import { API_BASE_URL, fetchExamsCached } from "@/src/lib/apiConfig";
 
 export default function GateDashboard() {
   const router = useRouter();
@@ -25,8 +25,7 @@ export default function GateDashboard() {
   const years = [2025, 2024];
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/exams`)
-      .then(r => r.json())
+    fetchExamsCached()
       .then(data => {
         const gate = data.find((e: any) => e.name && e.name.toLowerCase().includes("gate"));
         if (gate?.shifts) setDbShifts(gate.shifts);

@@ -10,7 +10,7 @@ import NavBar from "../../../../components/NavBar";
 import Footer from "../../../../components/Footer";
 import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
 import { isGuestUser } from "@/src/lib/authUtils";
-import { API_BASE_URL } from "@/src/lib/apiConfig";
+import { API_BASE_URL, fetchExamsCached } from "@/src/lib/apiConfig";
 
 /* ─────────────────────────── Static data ─────────────────────────── */
 const janExamDays = [22, 23, 24, 28, 29];
@@ -57,8 +57,7 @@ function JeeExamPageContent() {
   const years = Array.from({ length: 6 }, (_, i) => 2026 - i);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/exams`)
-      .then(r => r.json())
+    fetchExamsCached()
       .then(data => {
         const jee = data.find((e: any) => e.name === "JEE Main");
         if (jee?.shifts) setDbShifts(jee.shifts);

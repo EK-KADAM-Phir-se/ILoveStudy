@@ -11,7 +11,7 @@ import Footer from "@/src/components/Footer";
 
 import GuestRestrictionModal from "@/src/components/GuestRestrictionModal";
 import { isGuestUser } from "@/src/lib/authUtils";
-import { API_BASE_URL } from "@/src/lib/apiConfig";
+import { API_BASE_URL, fetchExamsCached } from "@/src/lib/apiConfig";
 
 const SUBJECT_TAGS = [
   { label: "Physics", icon: <Atom size={13} />, color: "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20" },
@@ -43,8 +43,7 @@ function NeetExamPageContent() {
   };
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/exams`)
-      .then(r => r.json())
+    fetchExamsCached()
       .then(data => {
         const neet = data.find((e: any) => e.name === "NEET" || e.name.toLowerCase().includes("neet"));
         if (neet?.shifts) {
