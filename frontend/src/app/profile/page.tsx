@@ -12,6 +12,7 @@ import {
   fetchProfile,
   updateProfile,
   fetchTestPerformance,
+  getCachedTestPerformance,
   EXAM_OPTIONS,
   type UserProfile,
   type PerformanceSummary,
@@ -123,6 +124,12 @@ export default function ProfilePage() {
       ...prev,
       fullName: cachedName,
     }));
+
+    const cachedPerf = getCachedTestPerformance();
+    if (cachedPerf) {
+      setPerformance(cachedPerf);
+    }
+
     setLoading(false);
 
     Promise.all([fetchProfile(), fetchTestPerformance()])

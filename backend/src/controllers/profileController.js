@@ -161,8 +161,11 @@ exports.syncFirebaseUser = async (req, res) => {
       return res.status(400).json({ error: "Email and full name are required." });
     }
 
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanFullName = fullName.trim();
+
     let user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: cleanEmail },
       include: { profiles: true },
     });
 
@@ -171,7 +174,7 @@ exports.syncFirebaseUser = async (req, res) => {
         await prisma.profile.update({
           where: { userId: user.id },
           data: {
-            fullName,
+            fullName: cleanFullName,
             ...(avatarUrl ? { avatarUrl } : {}),
           },
         });
@@ -179,7 +182,7 @@ exports.syncFirebaseUser = async (req, res) => {
         await prisma.profile.create({
           data: {
             userId: user.id,
-            fullName,
+            fullName: cleanFullName,
             avatarUrl: avatarUrl ?? null,
             currentStreak: 1,
             longestStreak: 1,
@@ -190,11 +193,11 @@ exports.syncFirebaseUser = async (req, res) => {
       }
     } else {
       user = await prisma.$transaction(async (tx) => {
-        const newUser = await tx.user.create({ data: { email } });
+        const newUser = await tx.user.create({ data: { email: cleanEmail } });
         await tx.profile.create({
           data: {
             userId: newUser.id,
-            fullName,
+            fullName: cleanFullName,
             avatarUrl: avatarUrl ?? null,
             currentStreak: 1,
             longestStreak: 1,
@@ -207,12 +210,18 @@ exports.syncFirebaseUser = async (req, res) => {
     }
 
     user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: cleanEmail },
       include: { profiles: true },
     });
 
-    const streakData = await updateAndGetStreak(user.id);
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "30d" });
+    let streakData = null;
+    try {
+      streakData = await updateAndGetStreak(user.id);
+    } catch (streakErr) {
+      console.warn("Non-fatal streak update warning during profile sync:", streakErr);
+    }
+
+    const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: "30d" });
 
     return res.json({
       message: "Profile synced successfully.",
@@ -348,7 +357,11 @@ exports.getTestAttempts = async (req, res) => {
 
     const attempts = await prisma.testAttempt.findMany({
       where: { userId },
-      include: {
+      select: {
+        id: true,
+        score: true,
+        submittedAt: true,
+        answersSaved: true,
         shift: {
           select: {
             id: true,
@@ -452,7 +465,8 @@ exports.getTestAttempts = async (req, res) => {
       }
     };
 
-    await redisClient.set(cacheKey, JSON.stringify(responsePayload), "EX", 60);
+    // Cache for 24 hours (86400s) because test submissions invalidate this key
+    await redisClient.set(cacheKey, JSON.stringify(responsePayload), "EX", 86400);
     return res.json(responsePayload);
   } catch (error) {
     console.error("Get Test Attempts Error:", error);

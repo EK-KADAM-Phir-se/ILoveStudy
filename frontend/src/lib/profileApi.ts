@@ -135,17 +135,26 @@ export type PerformanceSummary = {
   attempts: TestAttemptItem[];
 };
 
+export function getCachedTestPerformance(): PerformanceSummary | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const stored = sessionStorage.getItem("ilovestudy_performance_cache");
+    if (stored) return JSON.parse(stored);
+  } catch (e) {}
+  return null;
+}
+
 export async function fetchTestPerformance(): Promise<PerformanceSummary> {
-  const token = localStorage.getItem("backendToken");
-  if (!token) {
-    return {
-      highestScoresByExam: {},
-      overallMaxScore: 0,
-      totalTestsTaken: 0,
-      averagePercentage: 0,
-      attempts: [],
-    };
-  }
+  const token = typeof window !== "undefined" ? localStorage.getItem("backendToken") : null;
+  const emptyDefault: PerformanceSummary = {
+    highestScoresByExam: {},
+    overallMaxScore: 0,
+    totalTestsTaken: 0,
+    averagePercentage: 0,
+    attempts: [],
+  };
+
+  if (!token) return emptyDefault;
 
   try {
     const response = await fetch(`${API_BASE}/api/profile/attempts`, {
@@ -153,16 +162,18 @@ export async function fetchTestPerformance(): Promise<PerformanceSummary> {
     });
 
     const result = await handleJsonResponse(response, "Failed to fetch test performance");
-    return result.performance;
+    const perfData = result.performance || emptyDefault;
+
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("ilovestudy_performance_cache", JSON.stringify(perfData));
+      } catch (e) {}
+    }
+
+    return perfData;
   } catch (err) {
-    console.warn("Using fallback/empty test performance data:", err);
-    return {
-      highestScoresByExam: {},
-      overallMaxScore: 0,
-      totalTestsTaken: 0,
-      averagePercentage: 0,
-      attempts: [],
-    };
+    console.warn("Using fallback/cached test performance data:", err);
+    return getCachedTestPerformance() || emptyDefault;
   }
 }
 

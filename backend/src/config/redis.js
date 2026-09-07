@@ -1,17 +1,9 @@
 const Redis = require('ioredis');
 require('dotenv').config();
 
-let client;
-let isMock = false;
+let client = null;
+let isMock = true;
 const store = {};
-
-const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
-const redisClient = new Redis(redisUrl, {
-  lazyConnect: true,
-  retryStrategy: (times) => (times >= 2 ? null : 2000),
-  maxRetriesPerRequest: 1,
-  enableOfflineQueue: false,
-});
 
 const mockClient = {
   async set(key, value, mode, duration) {
@@ -46,36 +38,39 @@ const mockClient = {
 };
 
 try {
-  client = new Redis(process.env.REDIS_URL || 'redis://127.0.0.1:6379', {
+  const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+  client = new Redis(redisUrl, {
     maxRetriesPerRequest: 1,
+    connectTimeout: 500,
+    commandTimeout: 500,
+    enableOfflineQueue: false,
+    lazyConnect: true,
     retryStrategy(times) {
-      if (times > 2) {
-        // Stop retrying and fallback to mock
-        return null;
-      }
-      return 500;
+      if (times > 1) return null;
+      return 200;
     }
   });
 
-  client.on('connect', () => {
+  client.connect().then(() => {
+    isMock = false;
     console.log('⚡ Redis memory engine connected successfully!');
+  }).catch((err) => {
+    isMock = true;
+    console.warn('⚠️ Local Redis server is not running. Using fast in-memory mock Redis database instead.');
   });
 
   client.on('error', (err) => {
-    if (!isMock) {
-      console.warn('⚠️ Local Redis server is not running. Using in-memory mock Redis database instead.');
-      isMock = true;
-    }
+    isMock = true;
   });
 } catch (e) {
-  console.warn('⚠️ Failed to initialize Redis client. Using in-memory mock Redis database instead.');
   isMock = true;
+  console.warn('⚠️ Failed to initialize Redis client. Using fast in-memory mock Redis database instead.');
 }
 
-// Proxied Client that routes calls to either local Redis or the mock in-memory database
+// Proxied Client that routes calls to either local Redis or the mock in-memory database instantly
 const proxiedClient = {
   async set(...args) {
-    if (isMock) return mockClient.set(...args);
+    if (isMock || !client) return mockClient.set(...args);
     try {
       return await client.set(...args);
     } catch (e) {
@@ -84,7 +79,7 @@ const proxiedClient = {
     }
   },
   async get(...args) {
-    if (isMock) return mockClient.get(...args);
+    if (isMock || !client) return mockClient.get(...args);
     try {
       return await client.get(...args);
     } catch (e) {
@@ -93,7 +88,7 @@ const proxiedClient = {
     }
   },
   async hset(...args) {
-    if (isMock) return mockClient.hset(...args);
+    if (isMock || !client) return mockClient.hset(...args);
     try {
       return await client.hset(...args);
     } catch (e) {
@@ -102,7 +97,7 @@ const proxiedClient = {
     }
   },
   async hgetall(...args) {
-    if (isMock) return mockClient.hgetall(...args);
+    if (isMock || !client) return mockClient.hgetall(...args);
     try {
       return await client.hgetall(...args);
     } catch (e) {
@@ -111,7 +106,7 @@ const proxiedClient = {
     }
   },
   async del(...keys) {
-    if (isMock) return mockClient.del(...keys);
+    if (isMock || !client) return mockClient.del(...keys);
     try {
       return await client.del(...keys);
     } catch (e) {
