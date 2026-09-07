@@ -181,8 +181,8 @@ exports.submitTest = async (req, res) => {
       }
     });
 
-    // 5. Clean up temporary Redis cache keys to free memory space
-    await redisClient.del(redisAnswersKey, redisTimersKey);
+    // 5. Clean up temporary Redis cache keys to free memory space & invalidate user profile caches
+    await redisClient.del(redisAnswersKey, redisTimersKey, `user:profile:${userId}`, `user:streak:${userId}`, `user:attempts:${userId}`);
 
     // 6. Update user's profile streak history with today's date
     try {

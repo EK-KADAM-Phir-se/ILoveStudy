@@ -1,5 +1,6 @@
 const prisma = require("../lib/prisma");
 const jwt = require("jsonwebtoken");
+const redisClient = require("../config/redis");
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret";
 
@@ -226,8 +227,15 @@ exports.syncFirebaseUser = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
   try {
+    const userId = req.user.userId;
+    const cacheKey = `user:profile:${userId}`;
+    const cached = await redisClient.get(cacheKey);
+    if (cached) {
+      return res.json(JSON.parse(cached));
+    }
+
     const user = await prisma.user.findUnique({
-      where: { id: req.user.userId },
+      where: { id: userId },
       include: { profiles: true },
     });
 
@@ -236,8 +244,10 @@ exports.getProfile = async (req, res) => {
     }
 
     const streakData = await calculateStreak(user);
+    const responsePayload = { profile: formatProfile(user, streakData) };
 
-    return res.json({ profile: formatProfile(user, streakData) });
+    await redisClient.set(cacheKey, JSON.stringify(responsePayload), "EX", 60);
+    return res.json(responsePayload);
   } catch (error) {
     console.error("Get Profile Error:", error);
     return res.status(500).json({ error: "Failed to fetch profile." });
@@ -246,8 +256,18 @@ exports.getProfile = async (req, res) => {
 
 exports.getStreak = async (req, res) => {
   try {
-    const streakData = await calculateStreak(req.user.userId);
-    return res.json({ streak: streakData });
+    const userId = req.user.userId;
+    const cacheKey = `user:streak:${userId}`;
+    const cached = await redisClient.get(cacheKey);
+    if (cached) {
+      return res.json(JSON.parse(cached));
+    }
+
+    const streakData = await calculateStreak(userId);
+    const responsePayload = { streak: streakData };
+
+    await redisClient.set(cacheKey, JSON.stringify(responsePayload), "EX", 60);
+    return res.json(responsePayload);
   } catch (error) {
     console.error("Get Streak Error:", error);
     return res.status(500).json({ error: "Failed to fetch streak." });
@@ -256,7 +276,9 @@ exports.getStreak = async (req, res) => {
 
 exports.checkInStreak = async (req, res) => {
   try {
-    const streakData = await updateAndGetStreak(req.user.userId, true);
+    const userId = req.user.userId;
+    const streakData = await updateAndGetStreak(userId, true);
+    await redisClient.del(`user:profile:${userId}`, `user:streak:${userId}`);
     return res.json({ message: "Check-in recorded successfully!", streak: streakData });
   } catch (error) {
     console.error("Check In Error:", error);
@@ -303,6 +325,8 @@ exports.updateProfile = async (req, res) => {
       include: { profiles: true },
     });
 
+    await redisClient.del(`user:profile:${user.id}`, `user:streak:${user.id}`);
+
     return res.json({
       message: "Profile updated successfully.",
       profile: formatProfile(updatedUser),
@@ -316,6 +340,11 @@ exports.updateProfile = async (req, res) => {
 exports.getTestAttempts = async (req, res) => {
   try {
     const userId = req.user.userId;
+    const cacheKey = `user:attempts:${userId}`;
+    const cached = await redisClient.get(cacheKey);
+    if (cached) {
+      return res.json(JSON.parse(cached));
+    }
 
     const attempts = await prisma.testAttempt.findMany({
       where: { userId },
@@ -413,7 +442,7 @@ exports.getTestAttempts = async (req, res) => {
       ? parseFloat((totalPctSum / attempts.length).toFixed(1)) 
       : 0;
 
-    return res.json({
+    const responsePayload = {
       performance: {
         highestScoresByExam,
         overallMaxScore,
@@ -421,7 +450,10 @@ exports.getTestAttempts = async (req, res) => {
         averagePercentage,
         attempts: formattedAttempts
       }
-    });
+    };
+
+    await redisClient.set(cacheKey, JSON.stringify(responsePayload), "EX", 60);
+    return res.json(responsePayload);
   } catch (error) {
     console.error("Get Test Attempts Error:", error);
     return res.status(500).json({ error: "Failed to fetch test attempt history." });
