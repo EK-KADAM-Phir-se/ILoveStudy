@@ -20,12 +20,13 @@ export default function HomePage() {
       return;
     }
 
+    // Unauthenticated user -> render landing page instantly
+    setCheckingAuth(false);
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       const currentToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       if (user && (currentToken || isGuestUser())) {
         router.replace('/pages/dashboard');
-      } else {
-        setCheckingAuth(false);
       }
     });
 

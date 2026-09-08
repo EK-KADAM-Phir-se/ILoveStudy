@@ -22,7 +22,7 @@ export default function NavBar({
   darkMode: darkModeProp,
   onToggleDark,
 }: NavBarProps) {
-  const router   = useRouter();
+  const router = useRouter();
   const pathname = usePathname();
 
   const [isGuest, setIsGuest] = useState(false);
@@ -112,11 +112,10 @@ export default function NavBar({
           {/* Custom Test pill — right next to logo */}
           <button
             onClick={() => router.push("/pages/dashboard/create-test")}
-            className={`hidden sm:flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium tracking-wide uppercase rounded-xl transition cursor-pointer border ${
-              isActive("/pages/dashboard/create-test")
+            className={`hidden sm:flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium tracking-wide uppercase rounded-xl transition cursor-pointer border ${isActive("/pages/dashboard/create-test")
                 ? "bg-gray-900 text-white border-gray-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
                 : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-500 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
-            }`}
+              }`}
           >
             <ScanLine size={13} />
             Custom Test
@@ -125,11 +124,10 @@ export default function NavBar({
           {/* Organisation Portal Link */}
           <button
             onClick={() => router.push("/pages/dashboard/organisation")}
-            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium tracking-wide uppercase rounded-xl transition cursor-pointer border ${
-              isActive("/pages/dashboard/organisation")
+            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium tracking-wide uppercase rounded-xl transition cursor-pointer border ${isActive("/pages/dashboard/organisation")
                 ? "bg-blue-600 text-white border-blue-600"
                 : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-500 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
-            }`}
+              }`}
           >
             <span>🏢</span> Organisation
           </button>
@@ -151,11 +149,10 @@ export default function NavBar({
           {onStreakClick && !isGuest && (
             <button
               onClick={onStreakClick}
-              className={`flex items-center gap-1.5 h-8 px-3 rounded-xl border text-xs font-extrabold cursor-pointer transition-all hover:scale-105 ${
-                isStreakActive
+              className={`flex items-center gap-1.5 h-8 px-3 rounded-xl border text-xs font-extrabold cursor-pointer transition-all hover:scale-105 ${isStreakActive
                   ? "bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-900 text-orange-600 dark:text-orange-400"
                   : "bg-gray-100 dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-400 dark:text-slate-500 grayscale opacity-70"
-              }`}
+                }`}
             >
               <span className={isStreakActive ? "animate-bounce" : "opacity-60"}>🔥</span>
               <span>{streak}</span>

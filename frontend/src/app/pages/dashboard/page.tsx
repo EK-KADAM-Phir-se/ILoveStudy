@@ -23,15 +23,15 @@ export default function GeneralDashboard() {
   const router = useRouter();
 
   // ── NO localStorage in useState initialiser (prevents hydration mismatch) ──
-  const [loading,         setLoading]         = useState(false);
-  const [displayName,     setDisplayName]     = useState("Student");
-  const [mounted,         setMounted]         = useState(false);
-  const [isGuest,         setIsGuest]         = useState(false);
-  const [darkMode,        setDarkMode]        = useState(false);
-  const [showStreakModal, setShowStreakModal]  = useState(false);
-  const [checkingIn,      setCheckingIn]      = useState(false);
-  const [showSscModal,    setShowSscModal]    = useState(false);
-  const [activeCategory,  setActiveCategory]  = useState("All");
+  const [loading, setLoading] = useState(false);
+  const [displayName, setDisplayName] = useState("Student");
+  const [mounted, setMounted] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [showStreakModal, setShowStreakModal] = useState(false);
+  const [checkingIn, setCheckingIn] = useState(false);
+  const [showSscModal, setShowSscModal] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("All");
 
   const [streakData, setStreakData] = useState<StreakData>({
     currentStreak: 1,
@@ -71,13 +71,13 @@ export default function GeneralDashboard() {
         }
         if (prof) {
           const todayStr = new Date().toISOString().split("T")[0];
-          const history  = prof.streakHistory || [];
+          const history = prof.streakHistory || [];
           setStreakData({
-            currentStreak:  prof.currentStreak  ?? 1,
-            longestStreak:  prof.longestStreak  ?? 1,
+            currentStreak: prof.currentStreak ?? 1,
+            longestStreak: prof.longestStreak ?? 1,
             lastActiveDate: prof.lastActiveDate ?? new Date().toISOString(),
-            isActiveToday:  history.includes(todayStr),
-            streakHistory:  history,
+            isActiveToday: history.includes(todayStr),
+            streakHistory: history,
           });
         }
       })
@@ -98,11 +98,11 @@ export default function GeneralDashboard() {
   };
 
   const getPastSevenDays = () => {
-    const days    = [];
-    const today   = new Date();
+    const days = [];
+    const today = new Date();
     const history = streakData.streakHistory || [];
     for (let i = 6; i >= 0; i--) {
-      const d       = new Date(today);
+      const d = new Date(today);
       d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().split("T")[0];
       const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
@@ -118,8 +118,8 @@ export default function GeneralDashboard() {
     return "⚡ Unstoppable Legend!";
   };
 
-  const streakMessage  = getStreakMessage(streakData.currentStreak);
-  const pastSevenDays  = getPastSevenDays();
+  const streakMessage = getStreakMessage(streakData.currentStreak);
+  const pastSevenDays = getPastSevenDays();
 
   const exams = [
     {
@@ -202,7 +202,7 @@ export default function GeneralDashboard() {
   ];
 
   const CATEGORIES = ["All", "Institutions", "AI", "Engineering", "Medical", "Government"];
-  const filtered   = activeCategory === "All" ? exams : exams.filter(e => e.category === activeCategory);
+  const filtered = activeCategory === "All" ? exams : exams.filter(e => e.category === activeCategory);
 
   if (loading) {
     return (
