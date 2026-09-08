@@ -2,27 +2,57 @@ const jwt = require('jsonwebtoken');
 
 const prisma = require('../lib/prisma');
 
+// ---------------------------------------------------------------------------
+// In-memory auth cache
+// Eliminates a cross-region DB round-trip (→ Tokyo) on every request.
+// Without this, every API call hits Supabase twice: once for auth + once for
+// the actual query, causing 15-30s page loads when pool connections are stale.
+// ---------------------------------------------------------------------------
+const firebaseUserCache = new Map(); // email -> { userId, expiresAt }
+const FIREBASE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+let mockUserCache = null;             // { userId, expiresAt }
+const MOCK_CACHE_TTL = 60 * 1000;    // 1 minute
+
+function getCachedFirebaseUser(email) {
+  const cached = firebaseUserCache.get(email);
+  if (cached && cached.expiresAt > Date.now()) return cached.userId;
+  firebaseUserCache.delete(email);
+  return null;
+}
+
+function setCachedFirebaseUser(email, userId) {
+  firebaseUserCache.set(email, { userId, expiresAt: Date.now() + FIREBASE_CACHE_TTL });
+}
+
+async function getOrCreateMockUser() {
+  // Return cached mock user if still valid
+  if (mockUserCache && mockUserCache.expiresAt > Date.now()) {
+    return mockUserCache.userId;
+  }
+  let mockUser = await prisma.user.findFirst();
+  if (!mockUser) {
+    mockUser = await prisma.user.create({
+      data: {
+        email: "mockuser@example.com",
+        profiles: { create: { fullName: "Mock User" } }
+      }
+    });
+  }
+  mockUserCache = { userId: mockUser.id, expiresAt: Date.now() + MOCK_CACHE_TTL };
+  return mockUser.id;
+}
+// ---------------------------------------------------------------------------
+
 module.exports = async (req, res, next) => {
   // 1. Get the token from the request header
   const authHeader = req.header('Authorization');
   
   if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader === 'Bearer null' || authHeader === 'Bearer undefined') {
     try {
-      let mockUser = await prisma.user.findFirst();
-      if (!mockUser) {
-        mockUser = await prisma.user.create({
-          data: {
-            email: "mockuser@example.com",
-            profiles: {
-              create: {
-                fullName: "Mock User"
-              }
-            }
-          }
-        });
-      }
-      req.user = { userId: mockUser.id };
-      req.userId = mockUser.id;
+      const userId = await getOrCreateMockUser();
+      req.user = { userId };
+      req.userId = userId;
       return next();
     } catch (err) {
       return res.status(401).json({ error: "Access denied. No token provided." });
@@ -34,21 +64,9 @@ module.exports = async (req, res, next) => {
 
   if (token === 'SIMULATED_TOKEN' || token === 'null' || token === 'undefined') {
     try {
-      let mockUser = await prisma.user.findFirst();
-      if (!mockUser) {
-        mockUser = await prisma.user.create({
-          data: {
-            email: "mockuser@example.com",
-            profiles: {
-              create: {
-                fullName: "Mock User"
-              }
-            }
-          }
-        });
-      }
-      req.user = { userId: mockUser.id };
-      req.userId = mockUser.id;
+      const userId = await getOrCreateMockUser();
+      req.user = { userId };
+      req.userId = userId;
       return next();
     } catch (err) {
       console.error("Error in authMiddleware simulated token check:", err);
@@ -64,7 +82,7 @@ module.exports = async (req, res, next) => {
     req.user = decoded; 
     req.userId = decoded.userId || decoded.id;
     
-    // Pass control to the next handler
+    // Pass control to the next handler (no DB needed for JWT — it's self-contained)
     next();
   } catch (error) {
     // Try to decode as Firebase ID Token
@@ -72,6 +90,16 @@ module.exports = async (req, res, next) => {
       const decodedFirebase = jwt.decode(token);
       if (decodedFirebase && decodedFirebase.email && decodedFirebase.iss && decodedFirebase.iss.startsWith('https://securetoken.google.com/')) {
         const email = decodedFirebase.email;
+
+        // Check cache first — avoids a DB round-trip on every request
+        const cachedUserId = getCachedFirebaseUser(email);
+        if (cachedUserId) {
+          req.user = { userId: cachedUserId };
+          req.userId = cachedUserId;
+          return next();
+        }
+
+        // Cache miss: look up (or create) the user in DB
         let user = await prisma.user.findUnique({
           where: { email },
           include: { profiles: true }
@@ -89,6 +117,7 @@ module.exports = async (req, res, next) => {
             include: { profiles: true }
           });
         }
+        setCachedFirebaseUser(email, user.id);
         req.user = { userId: user.id };
         req.userId = user.id;
         return next();
@@ -99,10 +128,10 @@ module.exports = async (req, res, next) => {
 
     // Fallback to mock user if token expired so user isn't stuck on loading spinner
     try {
-      let mockUser = await prisma.user.findFirst();
-      if (mockUser) {
-        req.user = { userId: mockUser.id };
-        req.userId = mockUser.id;
+      const userId = await getOrCreateMockUser();
+      if (userId) {
+        req.user = { userId };
+        req.userId = userId;
         return next();
       }
     } catch (e) {}

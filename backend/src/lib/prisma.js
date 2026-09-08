@@ -13,8 +13,11 @@ if (!connectionString) {
 const pool = new Pool({
   connectionString,
   max: 15,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 15000,
+  // 10s: evict idle connections before Supavisor kills them (~15-30s server-side timeout).
+  // Previously 30s caused "Connection terminated unexpectedly" on stale pool connections.
+  idleTimeoutMillis: 10000,
+  // 8s: fail fast on dead connections so the pool can create a fresh one quickly.
+  connectionTimeoutMillis: 8000,
   keepAlive: true,
   keepAliveInitialDelayMillis: 10000,
   query_timeout: 15000,
