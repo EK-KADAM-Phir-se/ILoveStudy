@@ -15,13 +15,12 @@ if (dns.setDefaultResultOrder) {
 
 const pool = new Pool({
   connectionString,
-  ssl: { rejectUnauthorized: false },
   max: 15,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 15000, // 15s to allow sufficient time for cross-region TLS handshakes
+  connectionTimeoutMillis: 15000,
   keepAlive: true,
   keepAliveInitialDelayMillis: 10000,
-  query_timeout: 15000, // 15s client-side query timeout
+  query_timeout: 15000,
 });
 
 pool.on("error", (err, client) => {
