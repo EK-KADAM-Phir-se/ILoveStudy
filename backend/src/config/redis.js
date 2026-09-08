@@ -1,5 +1,5 @@
 const Redis = require('ioredis');
-require('dotenv').config();
+// NOTE: dotenv is already loaded in server.js; do not call dotenv.config() here
 
 let client = null;
 let isMock = true;
