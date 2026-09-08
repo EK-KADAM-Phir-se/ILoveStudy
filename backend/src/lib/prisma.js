@@ -1,4 +1,6 @@
-require("dotenv").config();
+// NOTE: dotenv is loaded in server.js before this module is required.
+// Do NOT call require('dotenv').config() here — dotenvx will re-parse .env
+// and expand variables like $aAJn in the password, mangling DATABASE_URL.
 const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
 const { Pool } = require("pg");
@@ -6,11 +8,6 @@ const { Pool } = require("pg");
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
   throw new Error("DATABASE_URL is not set in .env");
-}
-
-const dns = require("dns");
-if (dns.setDefaultResultOrder) {
-  dns.setDefaultResultOrder("ipv4first");
 }
 
 const pool = new Pool({
