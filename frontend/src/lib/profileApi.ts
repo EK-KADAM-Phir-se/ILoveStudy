@@ -24,6 +24,25 @@ export type UserProfile = {
   streakHistory?: string[];
 };
 
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 10000): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    return response;
+  } catch (error: any) {
+    if (error.name === "AbortError") {
+      throw new Error(`Request timed out after ${timeoutMs / 1000}s. Server may be busy or slow to respond.`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function handleJsonResponse(response: Response, defaultErrorMessage: string) {
   const contentType = response.headers.get("content-type");
   if (!contentType || !contentType.includes("application/json")) {
@@ -46,7 +65,7 @@ export async function syncUserProfile(data: {
   avatarUrl?: string | null;
 }): Promise<{ token: string; profile: UserProfile }> {
   try {
-    const response = await fetch(`${API_BASE}/api/profile/sync`, {
+    const response = await fetchWithTimeout(`${API_BASE}/api/profile/sync`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -75,7 +94,7 @@ export async function fetchProfile(): Promise<UserProfile> {
   const token = localStorage.getItem("backendToken");
   if (!token) throw new Error("Not authenticated");
 
-  const response = await fetch(`${API_BASE}/api/profile`, {
+  const response = await fetchWithTimeout(`${API_BASE}/api/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -89,7 +108,7 @@ export async function updateProfile(
   const token = localStorage.getItem("backendToken");
   if (!token) throw new Error("Not authenticated");
 
-  const response = await fetch(`${API_BASE}/api/profile`, {
+  const response = await fetchWithTimeout(`${API_BASE}/api/profile`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

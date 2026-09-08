@@ -33,15 +33,35 @@ app.use('/upload', uploadRoutes);
 const UPLOAD_BASE_DIR = process.env.UPLOAD_BASE_DIR || '/var/www/ilovestudy/uploads';
 app.use('/uploads', express.static(UPLOAD_BASE_DIR));
 
-// Health check route
-app.get('/health', (req, res) => {
-  res.json({ status: "Server is running smoothly!" });
+// Health check route with database ping
+app.get('/health', async (req, res) => {
+  try {
+    const prisma = require('./lib/prisma');
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: "healthy", database: "connected" });
+  } catch (err) {
+    res.status(503).json({ status: "unhealthy", database: "disconnected", error: err.message });
+  }
+});
+
+// Centralized Express error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled API error:', err);
+  if (!res.headersSent) {
+    res.status(500).json({
+      error: 'Internal server error',
+      message: process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : err.message,
+    });
+  }
 });
 
 // Start listening
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is roaring to go on port ${PORT}`);
 });
+
+server.keepAliveTimeout = 30000;
+server.headersTimeout = 35000;
 
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
