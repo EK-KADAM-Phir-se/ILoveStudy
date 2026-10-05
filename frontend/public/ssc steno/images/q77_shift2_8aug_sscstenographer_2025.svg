@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 110" width="380" height="110">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <defs>
+    <marker id="uparr77" viewBox="0 0 10 10" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 6 L 5 0 L 10 6 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <text x="190" y="22" font-family="sans-serif" font-size="11" font-weight="bold" fill="#475569" text-anchor="middle">7 People in Line Facing North</text>
+  <g font-family="sans-serif" font-size="13" font-weight="bold" text-anchor="middle">
+    <rect x="25" y="45" width="36" height="36" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="43" y="68" fill="#065f46">L</text>
+    <line x1="43" y1="43" x2="43" y2="32" stroke="#059669" stroke-width="2" marker-end="url(#uparr77)"/>
+    <text x="43" y="98" font-size="10" fill="#059669">Left End</text>
+    <rect x="75" y="45" width="36" height="36" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+    <text x="93" y="68" fill="#0f172a">M</text>
+    <line x1="93" y1="43" x2="93" y2="32" stroke="#2563eb" stroke-width="2" marker-end="url(#uparr77)"/>
+    <rect x="125" y="45" width="36" height="36" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+    <text x="143" y="68" fill="#0f172a">H</text>
+    <line x1="143" y1="43" x2="143" y2="32" stroke="#2563eb" stroke-width="2" marker-end="url(#uparr77)"/>
+    <rect x="175" y="45" width="36" height="36" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+    <text x="193" y="68" fill="#0f172a">G</text>
+    <line x1="193" y1="43" x2="193" y2="32" stroke="#2563eb" stroke-width="2" marker-end="url(#uparr77)"/>
+    <rect x="225" y="45" width="36" height="36" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+    <text x="243" y="68" fill="#0f172a">I</text>
+    <line x1="243" y1="43" x2="243" y2="32" stroke="#2563eb" stroke-width="2" marker-end="url(#uparr77)"/>
+    <rect x="275" y="45" width="36" height="36" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+    <text x="293" y="68" fill="#0f172a">J</text>
+    <line x1="293" y1="43" x2="293" y2="32" stroke="#2563eb" stroke-width="2" marker-end="url(#uparr77)"/>
+    <rect x="325" y="45" width="36" height="36" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+    <text x="343" y="68" fill="#0f172a">K</text>
+    <line x1="343" y1="43" x2="343" y2="32" stroke="#2563eb" stroke-width="2" marker-end="url(#uparr77)"/>
+  </g>
+</svg>

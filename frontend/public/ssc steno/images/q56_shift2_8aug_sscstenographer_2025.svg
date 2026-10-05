@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 210" width="360" height="210">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <!-- Compass -->
+  <g transform="translate(300, 60)" stroke="#64748b" stroke-width="1.5" font-family="sans-serif" font-size="10" fill="#475569" text-anchor="middle">
+    <line x1="0" y1="-25" x2="0" y2="25"/>
+    <line x1="-25" y1="0" x2="25" y2="0"/>
+    <text x="0" y="-30" font-weight="bold">N</text>
+    <text x="0" y="38" font-weight="bold">S</text>
+    <text x="34" y="3" font-weight="bold">E</text>
+    <text x="-34" y="3" font-weight="bold">W</text>
+  </g>
+  <!-- Path -->
+  <g stroke="#2563eb" stroke-width="2" fill="none">
+    <line x1="200" y1="45" x2="200" y2="95" marker-end="url(#arr)"/>
+    <line x1="200" y1="95" x2="115" y2="95" marker-end="url(#arr)"/>
+    <line x1="115" y1="95" x2="115" y2="145" marker-end="url(#arr)"/>
+    <line x1="115" y1="145" x2="115" y2="45" stroke="#10b981" marker-end="url(#arr)"/>
+    <line x1="115" y1="45" x2="35" y2="45" marker-end="url(#arr)"/>
+    <line x1="35" y1="45" x2="200" y2="45" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.5"/>
+  </g>
+  <g font-family="sans-serif" font-size="11" fill="#1e293b">
+    <circle cx="200" cy="45" r="4" fill="#16a34a"/>
+    <text x="208" y="42" font-weight="bold">Home</text>
+    <circle cx="200" cy="95" r="4" fill="#2563eb"/>
+    <text x="208" y="98">Grocery (8m S)</text>
+    <circle cx="115" cy="95" r="4" fill="#2563eb"/>
+    <text x="50" y="108">Bakery (12m W)</text>
+    <circle cx="115" cy="145" r="4" fill="#2563eb"/>
+    <text x="95" y="162">Bookstore (6m S)</text>
+    <circle cx="115" cy="45" r="4" fill="#10b981"/>
+    <text x="110" y="32" font-weight="bold">Clinic (14m N)</text>
+    <circle cx="35" cy="45" r="4" fill="#dc2626"/>
+    <text x="15" y="32" font-weight="bold">End</text>
+    <text x="95" y="192" font-size="11" fill="#ef4444" font-weight="bold">Total Distance: 12 + 12 = 24m East to Home</text>
+  </g>
+</svg>

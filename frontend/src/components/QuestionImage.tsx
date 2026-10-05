@@ -23,9 +23,10 @@ export function getQuestionImageUrls(
   if (!imageUrl) return [];
   if (imageUrl.startsWith("data:")) return [imageUrl];
 
-  // Instantly return local static assets under /ssc/, /papers/
+  // Instantly return local static assets under /ssc/, /ssc steno/, /papers/
   if (
     imageUrl.startsWith("/ssc/") || imageUrl.startsWith("ssc/") ||
+    imageUrl.startsWith("/ssc steno/") || imageUrl.startsWith("ssc steno/") ||
     imageUrl.startsWith("/papers/") || imageUrl.startsWith("papers/")
   ) {
     return [imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`];

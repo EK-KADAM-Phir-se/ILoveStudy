@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 160" width="180" height="160">
+  <rect width="100%" height="100%" fill="#ffffff" rx="6"/>
+  
+  <g stroke="#1e293b" stroke-width="1.5" fill="none">
+    <!-- Outer Triangle -->
+    <polygon points="90,15 15,145 165,145"/>
+    <!-- Level 1 horizontal -->
+    <line x1="71.25" y1="47.5" x2="108.75" y2="47.5"/>
+    <!-- Level 2 horizontal -->
+    <line x1="52.5" y1="80" x2="127.5" y2="80"/>
+    <!-- Level 3 horizontal -->
+    <line x1="33.75" y1="112.5" x2="146.25" y2="112.5"/>
+    <!-- Slanted lines from base upwards -->
+    <!-- Down-right slants -->
+    <line x1="52.5" y1="145" x2="108.75" y2="47.5"/>
+    <line x1="90" y1="145" x2="127.5" y2="80"/>
+    <line x1="127.5" y1="145" x2="146.25" y2="112.5"/>
+    <!-- Down-left slants -->
+    <line x1="127.5" y1="145" x2="71.25" y2="47.5"/>
+    <line x1="90" y1="145" x2="52.5" y2="80"/>
+    <line x1="52.5" y1="145" x2="33.75" y2="112.5"/>
+  </g>
+
+</svg>

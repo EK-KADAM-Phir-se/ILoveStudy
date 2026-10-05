@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" width="90" height="90">
+  <rect width="100%" height="100%" fill="#ffffff" rx="6"/>
+  
+  <g stroke="#1e293b" stroke-width="1.5" stroke-linejoin="round" fill="#f8fafc">
+    <!-- Top Face -->
+    <polygon points="45,15 75,30 45,45 15,30"/>
+    <circle cx="45" cy="30" r="4" fill="#1e293b"/>
+    <!-- Front Face -->
+    <polygon points="15,30 45,45 45,75 15,60"/>
+    
+    <!-- Right Face -->
+    <polygon points="45,45 75,30 75,60 45,75"/>
+    
+  </g>
+  
+</svg>

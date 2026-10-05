@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 90" width="280" height="90">
+  <rect width="100%" height="100%" fill="#ffffff" rx="6"/>
+  
+  <g stroke="#1e293b" stroke-width="1.5" fill="#f8fafc" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">
+    <!-- Row 1 -->
+    <rect x="10" y="15" width="40" height="28"/><text x="30" y="34">P</text>
+    <rect x="55" y="15" width="40" height="28"/><text x="75" y="34">K J</text>
+    <rect x="100" y="15" width="40" height="28"/><text x="120" y="34">Q T</text>
+    <rect x="145" y="15" width="40" height="28"/><text x="165" y="34">G V</text>
+    <rect x="190" y="15" width="40" height="28"/><text x="210" y="34">E K</text>
+    <rect x="235" y="15" width="40" height="28" fill="#e0e7ff"/><text x="255" y="34" fill="#4f46e5">?</text>
+    <!-- Row 2 -->
+    <rect x="10" y="47" width="40" height="28"/><text x="30" y="66">Q</text>
+    <rect x="55" y="47" width="40" height="28"/><text x="75" y="66">J S</text>
+    <rect x="100" y="47" width="40" height="28"/><text x="120" y="66">H U</text>
+    <rect x="145" y="47" width="40" height="28"/><text x="165" y="66">F W</text>
+    <rect x="190" y="47" width="40" height="28"/><text x="210" y="66">D L</text>
+    <rect x="235" y="47" width="40" height="28" fill="#e0e7ff"/><text x="255" y="66" fill="#4f46e5">?</text>
+  </g>
+
+</svg>

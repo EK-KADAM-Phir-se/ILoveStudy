@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 140" width="360" height="140">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <g font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">
+    <text x="40" y="40" fill="#1e293b">4</text>
+    <text x="105" y="40" fill="#1e293b">9</text>
+    <text x="175" y="40" fill="#1e293b">19</text>
+    <text x="245" y="40" fill="#1e293b">39</text>
+    <text x="315" y="40" fill="#dc2626">79</text>
+    <path d="M 40 45 Q 72 75 105 45" fill="none" stroke="#2563eb" stroke-width="2"/>
+    <path d="M 105 45 Q 140 75 175 45" fill="none" stroke="#2563eb" stroke-width="2"/>
+    <path d="M 175 45 Q 210 75 245 45" fill="none" stroke="#2563eb" stroke-width="2"/>
+    <path d="M 245 45 Q 280 75 315 45" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,3"/>
+    <text x="72" y="80" font-size="12" fill="#2563eb">+5</text>
+    <text x="140" y="80" font-size="12" fill="#2563eb">+10</text>
+    <text x="210" y="80" font-size="12" fill="#2563eb">+20</text>
+    <text x="280" y="80" font-size="12" fill="#dc2626">+40</text>
+    <text x="106" y="115" font-size="11" fill="#64748b">(×2)</text>
+    <text x="175" y="115" font-size="11" fill="#64748b">(×2)</text>
+    <text x="245" y="115" font-size="11" fill="#64748b">(×2)</text>
+  </g>
+</svg>

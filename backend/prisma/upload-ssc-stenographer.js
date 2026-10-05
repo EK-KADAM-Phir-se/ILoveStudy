@@ -1,3 +1,4 @@
+require('dotenv').config();
 const prisma = require('../src/lib/prisma');
 const fs = require('fs');
 const path = require('path');

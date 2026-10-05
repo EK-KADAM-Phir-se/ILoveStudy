@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 60" width="70" height="60">
+  <rect width="100%" height="100%" fill="#ffffff" rx="6"/>
+  
+  <!-- 7-sided heptagon + circle -->
+  <polygon points="25,12 37,17 42,30 35,43 20,45 12,35 15,20" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+  <circle cx="54" cy="30" r="4" fill="#1e293b"/>
+
+</svg>
