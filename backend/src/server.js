@@ -8,7 +8,24 @@ const cors = require('cors');
 require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(cors());
+// CORS: allow frontend origins
+const allowedOrigins = [
+  'https://ilovestudy.in',
+  'https://www.ilovestudy.in',
+  'http://localhost:3000',
+  'http://localhost:3001',
+];
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Also allow any .onrender.com subdomain
+    if (origin.endsWith('.onrender.com')) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -34,8 +51,8 @@ app.use('/api/org', orgRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/upload', uploadRoutes);
 
-// Optional static uploads directory fallback
-const UPLOAD_BASE_DIR = process.env.UPLOAD_BASE_DIR || '/var/www/ilovestudy/uploads';
+// Serve uploaded files statically (works on Render with /tmp or persistent disk)
+const UPLOAD_BASE_DIR = process.env.UPLOAD_BASE_DIR || '/tmp/uploads';
 app.use('/uploads', express.static(UPLOAD_BASE_DIR));
 
 // Health check route with database ping

@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-// Base directory and public domain for Utho uploads
-const UPLOAD_BASE_DIR = process.env.UPLOAD_BASE_DIR || '/var/www/ilovestudy/uploads';
-const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || 'https://ilovestudy.in/uploads').replace(/\/$/, '');
+// Base directory and public domain for uploads
+// On Render: use /tmp/uploads (ephemeral) or a Render Persistent Disk mount path
+// On Utho/VPS: use /var/www/ilovestudy/uploads
+const UPLOAD_BASE_DIR = process.env.UPLOAD_BASE_DIR || '/tmp/uploads';
+const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || `${process.env.RENDER_EXTERNAL_URL || 'http://localhost:5000'}/uploads`).replace(/\/$/, '');
 
 // Utility: Convert legacy Supabase Storage URLs to Utho URLs
 function convertSupabaseUrlToUthoUrl(url) {
