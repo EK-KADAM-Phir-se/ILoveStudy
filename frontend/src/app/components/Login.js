@@ -8,6 +8,18 @@ import { syncUserProfile } from '../../lib/profileApi';
 import { clearGuestMode } from '../../lib/authUtils';
 import { API_BASE_URL } from '../../lib/apiConfig';
 
+async function safeParseJson(res) {
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    const text = await res.text();
+    if (res.status === 404) {
+      throw new Error(`API endpoint not found (404). Please ensure the backend is active at ${API_BASE_URL}`);
+    }
+    throw new Error(`Server returned error (${res.status}): ${text.slice(0, 100) || 'Unexpected non-JSON response'}`);
+  }
+  return res.json();
+}
+
 const Login = () => {
   const router = useRouter();
 
@@ -173,7 +185,7 @@ const Login = () => {
         body: JSON.stringify({ email: cleanEmail, password }),
       });
 
-      const data = await res.json();
+      const data = await safeParseJson(res);
 
       if (!res.ok) {
         throw new Error(data.error || 'Invalid email or password.');
@@ -209,7 +221,7 @@ const Login = () => {
         body: JSON.stringify({ email: cleanEmail, purpose }),
       });
 
-      const data = await res.json();
+      const data = await safeParseJson(res);
 
       if (!res.ok) {
         if (res.status === 409 && data.code === 'ACCOUNT_EXISTS') {
@@ -256,7 +268,7 @@ const Login = () => {
         body: JSON.stringify({ email: cleanEmail, otp, purpose: 'LOGIN' }),
       });
 
-      const data = await res.json();
+      const data = await safeParseJson(res);
 
       if (!res.ok) {
         throw new Error(data.error || 'Invalid verification code.');
@@ -316,7 +328,7 @@ const Login = () => {
         }),
       });
 
-      const data = await res.json();
+      const data = await safeParseJson(res);
 
       if (!res.ok) {
         if (res.status === 409) {
@@ -360,7 +372,7 @@ const Login = () => {
         body: JSON.stringify({ email: cleanEmail, otp, purpose: 'PASSWORD_RESET' }),
       });
 
-      const data = await res.json();
+      const data = await safeParseJson(res);
 
       if (!res.ok) {
         throw new Error(data.error || 'Invalid verification code.');
@@ -404,7 +416,7 @@ const Login = () => {
         }),
       });
 
-      const data = await res.json();
+      const data = await safeParseJson(res);
 
       if (!res.ok) {
         throw new Error(data.error || 'Failed to update password.');
@@ -443,7 +455,7 @@ const Login = () => {
           }),
         });
 
-        const syncData = await syncRes.json();
+        const syncData = await safeParseJson(syncRes);
 
         if (syncRes.ok && syncData.token) {
           await persistSession(syncData.token, userEmail, syncData.user?.fullName || displayName, firebaseUser.photoURL);
