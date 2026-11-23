@@ -208,3 +208,19 @@ model AdminEmail {
   addedBy   String?
   createdAt DateTime  @default(now())
 }
+
+// 7. OTP Verification Model
+model OtpVerification {
+  id                String    @id @default(uuid())
+  email             String
+  otpHash           String
+  purpose           String    // "REGISTRATION" | "LOGIN" | "PASSWORD_RESET"
+  attempts          Int       @default(0)
+  expiresAt         DateTime
+  resendAvailableAt DateTime
+  isUsed            Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+
+  @@index([email, purpose])
+  @@map("otp_verifications")
+}
